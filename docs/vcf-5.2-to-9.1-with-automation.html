@@ -1196,6 +1196,11 @@
                     phaseTitle = componentData ? componentData.name : componentId;
                     //phaseDescription = componentData ? componentData.description : 'Upgrade ' + phaseTitle;
                     phaseDescription = 'Upgrade ' + phaseTitle;
+                } else if (componentId === 'logs') {
+                    // Logs is a fresh install, not an upgrade
+                    shouldInclude = selectedProducts[componentId] === true;
+                    phaseTitle = componentData ? componentData.name : componentId;
+                    phaseDescription = 'Deploy ' + phaseTitle;
                 } else if (componentId === 'vxrail') {
                     // VxRail only if selected - replaces ESX
                     shouldInclude = selectedProducts['vxrail'] === true;
@@ -1300,6 +1305,7 @@
             const witnessPhases = [];
             const esxPhases = [];
             const automationPhases = [];
+            const networkPhases = [];
             const advancedPhases = [];
             const vidmPhases =[];
             const vxrailPhases = [];
@@ -1339,6 +1345,8 @@
                     automationPhases.push(phase);
                 } else if (phase.componentId === 'vidm') {
                     vidmPhases.push(phase);
+                } else if (phase.componentId === 'network') {
+                    networkPhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 }
@@ -1357,6 +1365,7 @@
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
             automationPhases.sort((a, b) => a.number - b.number);
+            networkPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
             vidmPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
@@ -1450,10 +1459,15 @@
                     description: 'Migration from VMware Identity Manager(vIDM) to VMware Identity Broker(vIDB)'
 
                 },
+                'network': {
+                    phases: networkPhases,
+                    title: 'VCF Operations for Networks',
+                    description: 'Upgrade VCF Operations for Networks'
+                },
                 'advanced': {
                     phases: advancedPhases,
                     title: 'Post-Infrastructure Products',
-                    description: 'Upgrade additional products (Operations for Logs, Operations for Networks)'
+                    description: 'Upgrade additional products (Log Management)'
                 }
             };
             
@@ -1474,7 +1488,7 @@
                 'esx': 'esx',
                 'automation': 'automation',
                 'logs': 'advanced',
-                'network': 'advanced',
+                'network': 'network',
                 'sddc_manager': 'sddc_manager',
                 'vcfms': 'vcfms',
                 'vidm': 'vidm'

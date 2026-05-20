@@ -1308,6 +1308,11 @@
                     shouldInclude = nsxSelected;
                     phaseTitle = componentData ? componentData.name : 'NSX';
                     phaseDescription = 'Upgrade ' + phaseTitle;
+                } else if (componentId === 'logs') {
+                    // Logs is a fresh install, not an upgrade
+                    shouldInclude = selectedProducts[componentId] === true;
+                    phaseTitle = componentData ? componentData.name : componentId;
+                    phaseDescription = 'Deploy ' + phaseTitle;
                 } else if (componentId === 'vum_migration') {
                     // vLCM only if checkbox selected
                     shouldInclude = vlcmSelected;
@@ -1717,7 +1722,7 @@
                 steps.push({
                     number: steps.length + 1,
                     title: 'Post-Infrastructure Products',
-                    description: 'Upgrade additional products (Operations for Logs, Operations for Networks)',
+                    description: 'Upgrade additional products (Log Management)',
                     phases: advancedPhases
                 });
             }

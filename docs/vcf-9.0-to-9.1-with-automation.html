@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCF 9.0 to VCF 9.1 - (VCF Automation not included)</title>
+    <title>VCF 9.0 to VCF 9.1 - with Automation</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <script>
         mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
@@ -1178,7 +1178,7 @@
                     const automationComponentId = window.automationIsUpgrade ? 'automation' : 'automation_install';
                     componentData = upgradeData.components[automationComponentId] || upgradeData.components['automation'];
                     phaseTitle = componentData ? componentData.name : 'Aria Automation';
-                    phaseDescription = window.automationIsUpgrade ? 'Upgrade Aria Automation to 9.1' : 'Install Aria Automation 9.1';
+                    phaseDescription = window.automationIsUpgrade ? 'Upgrade VCF Automation to 9.1' : 'Install VCF Automation 9.1';
 
                     // Select size-variant tables based on upgrade vs install path
                     if (componentData) {
@@ -1216,6 +1216,11 @@
                     phaseTitle = componentData ? componentData.name : componentId;
                     //phaseDescription = componentData ? componentData.description : 'Upgrade ' + phaseTitle;
                     phaseDescription = 'Upgrade ' + phaseTitle;
+                } else if (componentId === 'logs') {
+                    // Logs is a fresh install, not an upgrade
+                    shouldInclude = selectedProducts[componentId] === true;
+                    phaseTitle = componentData ? componentData.name : componentId;
+                    phaseDescription = 'Deploy ' + phaseTitle;
                 } else {
                     // ALL OTHER components are OPTIONAL - only include if selected
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1334,6 +1339,7 @@
             const witnessPhases = [];
             const esxPhases = [];
             const automationPhases = [];
+            const networkPhases = [];
             const advancedPhases = [];
             const vidbPhases =[];
             const vxrailPhases = [];
@@ -1371,7 +1377,9 @@
                     automationPhases.push(phase);
                 } else if (phase.componentId === 'vidb') {
                     vidbPhases.push(phase);
-                }else if (isPostInfraOptional) {
+                } else if (phase.componentId === 'network') {
+                    networkPhases.push(phase);
+                } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 }
             });
@@ -1388,6 +1396,7 @@
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
             automationPhases.sort((a, b) => a.number - b.number);
+            networkPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
             vidbPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
@@ -1468,7 +1477,7 @@
                 'automation': {
                     phases: automationPhases,
                     title: 'Automation Deployment',
-                    description: 'Deploy Aria Automation'
+                    description: 'Deploy VCF Automation'
                 },
                  'vidb': {
                     phases: vidbPhases,
@@ -1476,10 +1485,15 @@
                     description: 'VIDB is consolidated into VCF Management Services)'
 
                 },
+                'network': {
+                    phases: networkPhases,
+                    title: 'VCF Operations for Networks',
+                    description: 'Upgrade VCF Operations for Networks'
+                },
                 'advanced': {
                     phases: advancedPhases,
                     title: 'Post-Infrastructure Products',
-                    description: 'Upgrade additional products (Operations for Logs, Operations for Networks)'
+                    description: 'Upgrade additional products (Log Management)'
                 }
             };
             
@@ -1499,7 +1513,7 @@
                 'esx': 'esx',
                 'automation': 'automation',
                 'logs': 'advanced',
-                'network': 'advanced',
+                'network': 'network',
                 'sddc_manager': 'sddc_manager',
                 'vcfms': 'vcfms',
                 'vidb': 'vidb'
@@ -1508,8 +1522,20 @@
             // Track which step groups have been added
             const addedStepGroups = new Set();
             
-            // Iterate through currentOrder and add step groups in that sequence
-            currentOrder.forEach(componentId => {
+            // For automation install, move 'automation' to just before 'logs' in the order
+            let orderedComponents = [...currentOrder];
+            if (!window.automationIsUpgrade) {
+                const autoIdx = orderedComponents.indexOf('automation');
+                const logsIdx = orderedComponents.indexOf('logs');
+                if (autoIdx !== -1 && logsIdx !== -1) {
+                    orderedComponents.splice(autoIdx, 1);
+                    const newLogsIdx = orderedComponents.indexOf('logs');
+                    orderedComponents.splice(newLogsIdx, 0, 'automation');
+                }
+            }
+
+            // Iterate through orderedComponents and add step groups in that sequence
+            orderedComponents.forEach(componentId => {
                 const stepGroup = componentToStepGroup[componentId];
                 if (stepGroup && !addedStepGroups.has(stepGroup)) {
                     const stepDef = stepDefinitions[stepGroup];
@@ -1849,11 +1875,11 @@
             const opsData = upgradeData ? upgradeData.components.operations : null;
             
             if (operationsSelected && operationsVersion === '8.18.x') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade Aria Operations', description: 'Upgrade Aria Operations from 8.18.x to 9.0', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations from 8.18.x to 9.0', data: opsData });
             } else if (operationsSelected && operationsVersion === '9.0.x') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade Aria Operations', description: 'Upgrade Aria Operations from 9.0.x to 9.1', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations from 9.0.x to 9.1', data: opsData });
             } else if (!operationsSelected) {
-                phases.push({ number: phases.length + 1, title: 'Install Aria Operations', description: 'Install Aria Operations 9.0 (new installation)', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.0 (new installation)', data: opsData });
             }
 
             const vcenterData = upgradeData ? upgradeData.components.vcenter : null;

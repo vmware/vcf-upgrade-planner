@@ -1,13 +1,14 @@
 {
     "upgrade_order": [
+        "operations",
+        "license",
         "replication",
         "srm",
         "avi",
-        "hcx",
-        "operations",
-        "license",
         "sddc_manager",
         "vcfms",
+        "network",
+        "hcx",
         "nsx_federation",
         "nsx",
         "vcenter",
@@ -17,8 +18,7 @@
         "vxrail",
         "esx",
         "vidm",
-        "logs",
-        "network"
+        "logs"
     ],
     "optional_products": [
         {

@@ -1,13 +1,15 @@
 {
     "upgrade_order": [
+        "operations",
+        "license",
         "replication",
         "srm",
         "avi",
-        "hcx",
-        "operations",
-        "license",
         "sddc_manager",
         "vcfms",
+        "vidb",
+        "network",
+        "hcx",
         "nsx_federation",
         "nsx",
         "vcenter",
@@ -15,9 +17,7 @@
         "vsan_witness",
         "esx",
         "vxrail",
-        "vidb",
-        "logs",
-        "network"
+        "logs"
     ],
     "optional_products": [
         {
@@ -58,7 +58,7 @@
         },
         {
             "id": "logs",
-            "display_name": "Aria Operations for Logs",
+            "display_name": "VCF Operations for Logs",
             "category": "advanced",
             "upgrade_phase": "post_infrastructure"
         },
@@ -107,7 +107,7 @@
         "operations": {
             "name": "VCF Operations (Aria Operations) Upgrade",
             "steps": [
-                "Upgrade Aria Operations to version 9.1 compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+                "Upgrade VCF Operations to version 9.1 compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {
@@ -144,15 +144,15 @@
             ]
         },
         "logs": {
-            "name": "Aria Operations for Logs",
+            "name": "Log Management",
             "steps": [
                 "Deploy new Log Management 9.1 services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "network": {
-            "name": "Aria Operations for Network",
+            "name": "VCF Operations for Network",
             "steps": [
-                "Upgrade Aria Operations for Network to version 9.1 compatible - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
+                "Upgrade VCF Operations for Network to version 9.1 compatible - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "vidb": {
