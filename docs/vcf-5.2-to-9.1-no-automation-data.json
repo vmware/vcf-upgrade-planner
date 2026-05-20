@@ -241,7 +241,7 @@
             ]
         },
         "logs": {
-            "name": "VCF Operations for Logs",
+            "name": "Log Management",
             "steps": [
                 "Deploy new Log Management 9.1 services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
             ]
