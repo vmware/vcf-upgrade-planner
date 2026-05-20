@@ -1,0 +1,781 @@
+{
+  "upgrade_order": [
+    "operations",
+    "license",
+    "replication",
+    "srm",
+    "avi",
+    "vcha",
+    "vcenter",
+    "vum_migration",
+    "vks",
+    "vsan_witness",
+    "vxrail",
+    "esx",
+    "logs",
+    "network"
+  ],
+  "optional_products": [
+    {
+      "id": "network",
+      "display_name": "VCF Operations for Networks",
+      "category": "advanced",
+      "upgrade_phase": "post_infrastructure"
+    },
+    {
+      "id": "srm",
+      "display_name": "Site Recovery Manager (SRM)",
+      "category": "advanced",
+      "upgrade_phase": "pre_infrastructure"
+    },
+    {
+      "id": "replication",
+      "display_name": "vSphere Replication",
+      "category": "advanced",
+      "upgrade_phase": "pre_infrastructure"
+    },
+    {
+      "id": "logs",
+      "display_name": "VCF Operations for Logs",
+      "category": "advanced",
+      "upgrade_phase": "post_infrastructure"
+    },
+    {
+      "id": "avi",
+      "display_name": "NSX Advanced Load Balancer (Avi)",
+      "category": "advanced",
+      "upgrade_phase": "pre_infrastructure"
+    },
+    {
+      "id": "vks",
+      "display_name": "vSphere with Kubernetes Supervisor Service",
+      "category": "advanced",
+      "upgrade_phase": "mid_infrastructure"
+    }
+  ],
+  "components": {
+    "vcenter": {
+      "name": "vCenter",
+      "tables": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Temp Address)"],
+          "rows": [
+            ["vCenter", "1"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Component", "Size"],
+          "rows": [
+            ["vCenter", "Existing Size"]
+          ]
+        }
+      ],
+      "steps": [
+        "Upgrade vCenter to version 9.1 using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Integrated Windows Authentication on vCenter",
+          "bullets": [
+            "Replace Integrated Windows Authentication configured with another IDP configuration"
+          ]
+        }
+      ]
+    },
+    "esx": {
+      "name": "ESX",
+      "steps": [
+        "Upgrade ESX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/esx-upgrade.html' target='_blank'>View Documentation</a>).",
+        "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
+        "(Optional) Upgrade vSAN On-Disk Format Versions - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-on-disk-format-versions.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "ESX bootbank",
+          "bullets": [
+            "Validate ESX bootbank is at least 1gb in size by running command on host df -h /bootbank"
+          ]
+        },
+        {
+          "type": "info",
+          "title": "Check HCL for Hardware support on VCF 9.1",
+          "bullets": [
+            "Intel Skylake (Broadwell, Kabylake & Skylake) Processors no longer supported (deprecated in earlier releases), requires RPQ"
+          ]
+        }
+      ]
+    },
+    "vum_migration": {
+      "name": "VUM-Based Clusters",
+      "steps": [
+        "Migrate from vLCM Baselines to vLCM Images - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/using-images-to-install-and-update-esxi-hosts-and-clusters/switching-from-baselines-to-images.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "vSphere Lifecycle Management with Baselines is no longer supported",
+          "bullets": [
+            "vSphere Lifecycle Management with Baselines is no longer supported, clusters will need to be transition as part of the upgrade which is discussed on the upgrade paths"
+          ]
+        }
+      ]
+    },
+    "operations": {
+      "name": "VCF Operations",
+      "tables": [
+        {
+          "title": "Required Component Sizes Cloud Proxy",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "rows": [
+            ["Classic Small",   "2", "8gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
+            ["Classic Standard", "4", "32gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"],
+            ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
+            ["Unified Standard", "8", "48gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"]
+          ]
+        }
+      ],
+      "steps": [
+        "Upgrade VVCF Operations to version 9.1 compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "operations_install": {
+      "name": "Install VCF Operations",
+      "tables": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Deployment Type", "Number Node", "Number of Address(es)", "FQDN", "Example"],
+           "rows": [
+            ["Simple", "1", "1", "1", "vcfops.rainpole.io"],
+            ["High Availability(HA)", "3", "3", "3","opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io)"],
+            ["High Availability VIP(HA)", "0", "1", "1","vipops.sfo.rainpole.io"],
+            ["Continuous Availability(CA)", "5", "5", "5", "opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io,opsd01.sfo.rainpole.io,opswit01.sfo.rainpole.io"],
+            ["Continuous Availability VIP(CA)", "0", "1", "1", "(optional) vipops.sfo.rainpole.io"],
+            ["VCF Operations Cloud Proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes Simple/HA",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "rows": [
+            ["Extra Small", "2", "8gb", "274gb", "1", "700, 140,000", "N/A", "700, 140,000"],
+            ["Small", "4", "16gb", "274gb", "2", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
+            ["Medium", "8", "32gb", "274gb", "8", "30,000, 5,000,000", "17,000, 4,000,000", "136,000, 32,000,000"],
+            ["Large", "16", "48gb", "274gb", "16", "44,000, 8,000,000", "36,000, 6,000,000", "576,000, 81,600,000"],
+            ["Extra Large", "24", "128gb", "274gb", "12", "100,000, 20,000,000", "88,000, 15,000,000", "1,056,000, 126,000,000"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes CA",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "rows": [
+            ["Small", "4", "16gb", "274gb", "1", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
+            ["Medium", "8", "32gb", "274gb", "4", "30,000, 5,000,000", "17,000, 4,000,000", "136,000, 32,000,000"],
+            ["Large", "16", "48gb", "274gb", "8", "44,000, 8,000,000", "36,000, 6,000,000", "576,000, 81,600,000"],
+            ["Extra Large", "24", "128gb", "gb", "6", "100,000, 20,000,000", "88,000, 15,000,000", "1,056,000, 126,000,000"],
+            ["Witness", "2", "8gb", "274gb", "N/A", "N/A", "N/A", "N/A"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes Cloud Proxy",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "rows": [
+            ["Classic Small",   "2", "8gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
+            ["Classic Standard", "4", "32gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"],
+            ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
+            ["Unified Standard", "8", "48gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"]
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy VCF Operations 9.1  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "New Installation",
+          "bullets": [
+            "This is a fresh installation of VCF Operations 9.1",
+            "Configure cluster settings after deployment",
+            "Add vCenter endpoints for monitoring",
+            "The maximum number of Cloud Proxies and Unified Cloud Proxies per cluster node is 100 for Small and Medium configurations, and 200 for Large and Extra-Large configurations."
+          ]
+        }
+      ]
+    },
+    "vcha": {
+      "name": "vCenter High Availability (vCHA)",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "vCenter High Availability",
+          "bullets": [
+            "vCenter High Availability(vCHA) is not supported for Convert or Import"
+          ]
+        }
+    ],
+      "steps": [
+        "Disable vCenter High Availability(vCHA) - All Guidance is provided in link ((<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-availability/vcenter-server-high-availability/manage-your-vcenter-ha-cluster/remove-a-vcenter-ha-configuration.html' target='_blank'>View Documentation</a>)"
+      ]
+    },
+    "license": {
+      "name": "VCF License Server",
+      "tables": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["License Server", "1", "1", "vcflic.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF License Node", "Small", "1", "2", "4gb", "12gb"]
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy license server and registration - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations/add-license-server.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "logs": {
+      "name": "Log Management",
+      "steps": [
+        "There is no upgrade path here - customers can stay on VCF Operations for Logs 8.18 or 9.0"
+      ]
+    },
+    "network": {
+      "name": "VCF Operations for Network",
+      "steps": [
+        "Upgrade VCF Operations for Network to version 9.1 compatible release (standalone) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "replication": {
+      "name": "vSphere Replication",
+      "steps": [
+        "Upgrade vSphere Replication to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "srm": {
+      "name": "Site Recovery Manager",
+      "steps": [
+        "Upgrade Site Recovery Manager to version 9.1 - ll Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "avi": {
+      "name": "AVI (NSX ALB)",
+      "steps": [
+        "Upgrade NSX Advanced Load Balancer to compatible version - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer/32-1/vmware-avi-load-balancer-administration-guide/nsx-advanced-load-balancer-controller-operations/upgrade-and-patches/upgrade-guide.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "vks": {
+      "name": "VKS (vSphere Kubernetes Supervisor Service)",
+      "steps": [
+        "Upgrade vSphere with Tanzu to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "VKS deployed on vSphere Lifecycle Baseline Clusters(VUM)",
+          "bullets": [
+            "Customers with VKS clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"
+          ]
+        }
+      ]
+    },
+    "vsan_witness": {
+      "name": "vSAN Witness Host",
+      "steps": [
+        "Deploy Witness Node - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsan-deployment-administration-and-monitoring/vsan-planning-and-deployment/working-with-virtual-san-stretched-cluster/deploying-a-witness-appliance.html' target='_blank'>View Documentation</a>).",
+        "Replace Witness Node - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsan-deployment-administration-and-monitoring/vsan-planning-and-deployment/working-with-virtual-san-stretched-cluster/removing-a-witness-host.html' target='_blank'>View Documentation</a>)."
+
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "vSAN Witness Host Upgrade",
+          "bullets": [
+            "vSAN Witness hosts must be upgraded before ESX hosts in stretched clusters"
+          ]
+        }
+      ]
+    },
+    "vxrail": {
+      "name": "Dell VxRail",
+      "steps": [
+        "Please Reach out to Dell on Steps and Services"
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "VxRail Upgrades",
+          "bullets": [
+            "All upgrades for VxRail Appliances will be validated thru DELL-EMC support team or Dell-EMC Field/Partner(s).There are different pre-check and Solve Desktop Procedure based on the VxRail Hardware and VxRail versions. It is recommended not to attempt online upgrade thru VxRail Manager UI/VxL Manager vCenter Plugin."
+          ]
+        }
+      ]
+    },
+    "vcf_installer_vcenter_only": {
+      "name": "VCF Installer",
+      "tables": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": [
+            "Component",
+            "Number of Address(es)",
+            "FQDN",
+            "Example"
+          ],
+          "rows": [
+            [
+              "VCF Operations",
+              "1",
+              "1",
+              "vcfops.rainpole.io"
+            ],
+            [
+              "License Server",
+              "1",
+              "1",
+              "vcflic.rainpole.io"
+            ],
+            [
+              "VCF Management Services",
+              "12-30",
+              "None",
+              "N/A"
+            ],
+            [
+              "Fleet Component Service",
+              "1",
+              "1",
+              "vcffleet.rainpole.io"
+            ],
+            [
+              "Instance Service",
+              "1",
+              "1",
+              "vcfins.rainpole.io"
+            ],
+            [
+              "VCF Instance Service Runtime",
+              "1",
+              "1",
+              "vcfrun.rainpole.io"
+            ]
+          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requiremets for all nodes",
+          "headers": [
+            "Component",
+            "Size",
+            "Number of Nodes",
+            "vCPU",
+            "Memory",
+            "Storage"
+          ],
+          "rows": [
+            [
+              "VCF Operations Node",
+              "Medium",
+              "1",
+              "8",
+              "32gb",
+              "274gb"
+            ],
+            [
+              "VCF License Node",
+              "Small",
+              "1",
+              "2",
+              "4gb",
+              "12gb"
+            ],
+            [
+              "VCF Management Services Nodes",
+              "Small",
+              "3",
+              "12",
+              "24gb",
+              "1,807gb"
+            ]
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server and VCF Operations deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "VCF Installer Deployment",
+          "bullets": [
+            "The VCF Installer automatically deploys and configures the License Server",
+            "VCF Operations will be deployed as part of this process",
+            "Management Services will be deployed",
+            "Configure cluster settings after deployment"
+          ]
+        }
+      ]
+    },
+    "vcf_installer_vcenter_with_ops": {
+      "name": "VCF Installer",
+      "tables": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": [
+            "Component",
+            "Number of Address(es)",
+            "FQDN",
+            "Example"
+          ],
+          "rows": [
+            [
+              "License Server",
+              "1",
+              "1",
+              "vcflic.rainpole.io"
+            ],
+            [
+              "VCF Management Services",
+              "12-30",
+              "None",
+              "N/A"
+            ],
+            [
+              "Fleet Component Service",
+              "1",
+              "1",
+              "vcffleet.rainpole.io"
+            ],
+            [
+              "Instance Service",
+              "1",
+              "1",
+              "vcfins.rainpole.io"
+            ],
+            [
+              "VCF Instance Service Runtime",
+              "1",
+              "1",
+              "vcfrun.rainpole.io"
+            ]
+          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requiremets for all nodes (All nodes are ",
+          "headers": [
+            "Component",
+            "Size",
+            "Number of Nodes",
+            "vCPU",
+            "Memory",
+            "Storage"
+          ],
+          "rows": [
+            [
+              "VCF License Node",
+              "Small",
+              "1",
+              "2",
+              "4gb",
+              "12gb"
+            ],
+            [
+              "VCF Management Services Nodes",
+              "Small",
+              "3",
+              "36",
+              "72gb",
+              "5,421gb"
+            ]
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "VCF Installer Deployment",
+          "bullets": [
+            "The VCF Installer automatically deploys and configures the License Server",
+            "Management Services will be deployed",
+            "VCF Operations was already upgraded in a previous step",
+            "Configure cluster settings after deployment"
+          ]
+        }
+      ]
+    },
+    "vcf_installer_elm_with_ops": {
+      "name": "VCF Installer - Management Services Only",
+      "tables": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": [
+            "Component",
+            "Number of Address(es)",
+            "FQDN",
+            "Example"
+          ],
+          "rows": [
+            [
+              "License Server",
+              "1",
+              "1",
+              "vcflic.rainpole.io"
+            ],
+            [
+              "VCF Management Services",
+              "12-30",
+              "None",
+              "N/A"
+            ],
+            [
+              "Fleet Component Service",
+              "1",
+              "1",
+              "vcffleet.rainpole.io"
+            ],
+            [
+              "Instance Service",
+              "1",
+              "1",
+              "vcfins.rainpole.io"
+            ],
+            [
+              "VCF Instance Service Runtime",
+              "1",
+              "1",
+              "vcfrun.rainpole.io"
+            ]
+          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requiremets for all nodes (All nodes are ",
+          "headers": [
+            "Component",
+            "Size",
+            "Number of Nodes",
+            "vCPU",
+            "Memory",
+            "Storage"
+          ],
+          "rows": [
+            [
+              "VCF License Node",
+              "Small",
+              "1",
+              "2",
+              "4gb",
+              "12gb"
+            ],
+            [
+              "VCF Management Services Nodes",
+              "Small",
+              "3",
+              "36",
+              "72gb",
+              "5,421gb"
+            ]
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Enhanced Linked Mode (ELM) Detected",
+          "bullets": [
+            "Enhanced Linked Mode must be broken BEFORE deploying VCF Installer",
+            "Using the VCF Installer does not support ELM configurations",
+            "Follow the ELM breaking procedure in the prerequisites",
+            "Ensure all linked vCenter instances are properly separated"
+          ]
+        },
+        {
+          "type": "info",
+          "title": "VCF Installer Deployment",
+          "bullets": [
+            "The VCF Installer automatically deploys and configures the License Server",
+            "Management Services will be deployed",
+            "VCF Operations was already upgraded in a previous step",
+            "Configure cluster settings after deployment"
+          ]
+        }
+      ]
+    },
+    "vcf_installer_elm_no_ops": {
+      "name": "VCF Installer - Operations + Management Services",
+      "tables": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": [
+            "Component",
+            "Number of Address(es)",
+            "FQDN",
+            "Example"
+          ],
+          "rows": [
+            [
+              "VCF Operations",
+              "1",
+              "1",
+              "vcfops.rainpole.io"
+            ],
+            [
+              "License Server",
+              "1",
+              "1",
+              "vcflic.rainpole.io"
+            ],
+            [
+              "VCF Management Services",
+              "12-30",
+              "None",
+              "N/A"
+            ],
+            [
+              "Fleet Component Service",
+              "1",
+              "1",
+              "vcffleet.rainpole.io"
+            ],
+            [
+              "Instance Service",
+              "1",
+              "1",
+              "vcfins.rainpole.io"
+            ],
+            [
+              "VCF Instance Service Runtime",
+              "1",
+              "1",
+              "vcfrun.rainpole.io"
+            ]
+          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requiremets for all nodes",
+          "headers": [
+            "Component",
+            "Size",
+            "Number of Nodes",
+            "vCPU",
+            "Memory",
+            "Storage"
+          ],
+          "rows": [
+            [
+              "VCF Operations Node",
+              "Medium",
+              "1",
+              "8",
+              "32gb",
+              "274gb"
+            ],
+            [
+              "VCF License Node",
+              "Small",
+              "1",
+              "2",
+              "4gb",
+              "12gb"
+            ],
+            [
+              "VCF Management Services Nodes",
+              "Small",
+              "3",
+              "12",
+              "24gb",
+              "1,807gb"
+            ]
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server and VCF Operations deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Enhanced Linked Mode (ELM) Detected",
+          "bullets": [
+            "Enhanced Linked Mode must be broken BEFORE deploying VCF Installer",
+            "Using the VCF Installer does not support ELM configurations",
+            "Follow the ELM breaking procedure in the prerequisites",
+            "Ensure all linked vCenter instances are properly separated"
+          ]
+        },
+        {
+          "type": "info",
+          "title": "VCF Installer Deployment",
+          "bullets": [
+            "The VCF Installer automatically deploys and configures the License Server",
+            "VCF Operations will be deployed as part of this process",
+            "Management Services will be deployed",
+            "Configure cluster settings after deployment"
+          ]
+        }
+      ]
+    },
+    "vcenter_esx_prereq": {
+      "name": "Pre-Upgrade: Upgrade vCenter and ESX to 8.0u3",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "Your current vCenter and/or ESX version must be upgraded to 8.0u3 before continuing with this upgrade path"
+          ]
+        }
+      ],
+      "steps": [
+        "vCenter upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso.html' target='_blank'>View Documentation</a>).",
+        "ESX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/overview-of-the-esxi-host-upgrade-process.html#GUID-FE668788-1F32-4CB2-845C-5547DD59EB48-en' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "operations_prereq": {
+      "name": "Pre-Upgrade: Upgrade VCF Operations to 8.18.x",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "Your current VCF Operations version must be upgraded to 8.18.x before upgrading to 9.1"
+          ]
+        }
+      ],
+      "steps": [
+        "Upgrade VCF Operations Standalone - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/getting-started-with-vmware-aria-operations-8-18/upgrade-backup-and-restore/software-updates-admin-ui-only/install-a-software-update.html' target='_blank'>View Documentation</a>).",
+        "Upgrade VCF Operations managed by vRSLCM - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-suite-lifecycle/8-16/vmware-aria-suite-lifecycle-installation-upgrade-and-management-8-16/upgrading-product-versions-in-the-lifecycle-operations-service/upgrade-a-vrealize-suite-product/upgrade-vrealize-operations-manager.html' target='_blank'>View Documentation</a>)."
+      ]
+    }
+  }
+}

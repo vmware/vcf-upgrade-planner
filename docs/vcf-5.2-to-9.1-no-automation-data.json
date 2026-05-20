@@ -1,0 +1,446 @@
+{
+    "upgrade_order": [
+        "replication",
+        "srm",
+        "avi",
+        "hcx",
+        "operations",
+        "license",
+        "sddc_manager",
+        "vcfms",
+        "nsx_federation",
+        "nsx",
+        "vcenter",
+        "vum_migration",
+        "vks",
+        "vsan_witness",
+        "vxrail",
+        "esx",
+        "vidm",
+        "logs",
+        "network"
+    ],
+    "optional_products": [
+        {
+            "id": "replication",
+            "display_name": "vSphere Replication",
+            "category": "advanced",
+            "upgrade_phase": "pre_infrastructure"
+        },
+        {
+            "id": "srm",
+            "display_name": "Site Recovery Manager (SRM)",
+            "category": "advanced",
+            "upgrade_phase": "pre_infrastructure"
+        },
+        {
+            "id": "avi",
+            "display_name": "NSX Advanced Load Balancer (Avi)",
+            "category": "advanced",
+            "upgrade_phase": "pre_infrastructure"
+        },
+        {
+            "id": "hcx",
+            "display_name": "VMware HCX",
+            "category": "advanced",
+            "upgrade_phase": "pre_infrastructure"
+        },
+        {
+            "id": "nsx_federation",
+            "display_name": "NSX Federation",
+            "category": "advanced",
+            "upgrade_phase": "mid_infrastructure"
+        },
+        {
+            "id": "vks",
+            "display_name": "vSphere with Kubernetes Supervisor Service",
+            "category": "advanced",
+            "upgrade_phase": "mid_infrastructure"
+        },
+        {
+            "id": "logs",
+            "display_name": "VCF Operations for Logs",
+            "category": "advanced",
+            "upgrade_phase": "post_infrastructure"
+        },
+        {
+            "id": "network",
+            "display_name": "VCF Operations for Networks",
+            "category": "advanced",
+            "upgrade_phase": "post_infrastructure"
+        },
+        {
+            "id": "vidm",
+            "display_name": "VMware Identity Manager(vIDM)",
+            "category": "advanced",
+            "upgrade_phase": "post_infrastructure"
+        },
+        {
+            "id": "vxrail",
+            "display_name": "Dell VxRail",
+            "category": "advanced",
+            "upgrade_phase": "mid_infrastructure"
+        }
+    ],
+    "components": {
+        "vcenter": {
+            "name": "vCenter",
+            "steps": [
+                "Upgrade vCenter to version 9.1 using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "Integrated Windows Authentication on vCenter",
+                    "bullets": [
+                        "Replace Integrated Windows Authentication configured with another IDP configuration"
+                    ]
+                }
+            ]
+        },
+        "esx": {
+            "name": "ESX",
+            "steps": [
+                "All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-esxi-for-vmware-cloud-foundation-5-2-1.html' target='_blank'>View Documentation</a>).",
+                "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
+                "(Optional) Upgrade vSAN On-Disk Format Versions - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-on-disk-format-versions.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "ESX bootbank",
+                    "bullets": [
+                        "Validate ESX bootbank is at least 1gb in size by running command on host df -h /bootbank"
+                    ]
+                },
+                {
+                    "type": "info",
+                    "title": "Check HCL for Hardware support on VCF 9.1",
+                    "bullets": [
+                        "Intel Skylake (Broadwell, Kabylake & Skylake) Processors no longer supported (deprecated in earlier releases), requires RPQ"
+                    ]
+                }
+            ]
+        },
+        "vum_migration": {
+            "name": "VUM-Based Clusters",
+            "steps": [
+                "Migrate from vLCM Baselines to vLCM Images - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/using-images-to-install-and-update-esxi-hosts-and-clusters/switching-from-baselines-to-images.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "vSphere Lifecycle Management with Baselines is no longer supported",
+                    "bullets": [
+                        "vSphere Lifecycle Management with Baselines is no longer supported, clusters will need to be transition as part of the upgrade which is discussed on the upgrade paths"
+                    ]
+                }
+            ]
+        },
+        "operations": {
+            "name": "VCF Operations Upgrade",
+             "tables": [
+                {
+                    "title": "Required Network Configuration",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Deployment Type", "Number Node", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["VCF Operations Cloud Proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
+
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes Cloud Proxy",
+                    "description": "Size requiremets for all nodes",
+                    "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+                    "rows": [
+                        ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
+                        ["Unified Standard", "8", "48gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"]
+                    ]
+                }
+             ],
+            "steps": [
+                "Upgrade VCF Operations to version 9.1 compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "operations_install": {
+            "name": "VCF Operations Installation",
+            "tables": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Deployment Type", "Number Node", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["Simple", "1", "1", "1", "vcfops.rainpole.io"],
+            ["High Availability(HA)", "4", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io)"],
+            ["Continuous Availability(CA)", "4", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io,opsd01.sfo.rainpole.io"],
+            ["VCF Operations Cloud Proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
+
+          ]
+        },
+        {
+          "title": "Required Component Sizes Simple/HA",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "rows": [
+            ["Extra Small", "2", "8gb", "274gb", "1", "700, 140,000", "N/A", "700, 140,000"],
+            ["Small", "4", "16gb", "274gb", "2", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
+            ["Medium", "8", "32gb", "274gb", "8", "30,000, 5,000,000", "17,000, 4,000,000", "136,000, 32,000,000"],
+            ["Large", "16", "48gb", "274gb", "16", "44,000, 8,000,000", "36,000, 6,000,000", "576,000, 81,600,000"],
+            ["Extra Large", "24", "128gb", "274gb", "12", "100,000, 20,000,000", "88,000, 15,000,000", "1,056,000, 126,000,000"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes CA",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "rows": [
+            ["Small", "4", "16gb", "274gb", "1", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
+            ["Medium", "8", "32gb", "274gb", "4", "30,000, 5,000,000", "17,000, 4,000,000", "136,000, 32,000,000"],
+            ["Large", "16", "48gb", "274gb", "8", "44,000, 8,000,000", "36,000, 6,000,000", "576,000, 81,600,000"],
+            ["Extra Large", "24", "128gb", "gb", "6", "100,000, 20,000,000", "88,000, 15,000,000", "1,056,000, 126,000,000"],
+            ["Witness", "2", "8gb", "274gb", "N/A", "N/A", "N/A", "N/A"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes Cloud Proxy",
+          "description": "Size requiremets for all nodes",
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "rows": [
+            ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
+            ["Unified Standard", "8", "48gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"]
+          ]
+        }
+      ],
+            "steps": [
+                "Deploy VCF Operations 9.1  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "license": {
+            "name": "VCF License Server",
+            "tables": [
+                {
+                    "title": "Required Network Configuration",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["License Server", "1", "1", "vcflic.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes",
+                    "description": "Size requiremets for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+                    "rows": [
+                        ["VCF License Node", "Small", "1", "2", "4gb", "12gb"]
+                    ]
+                }
+            ],
+            "steps": [
+                "Deploy license server and registration - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations/add-license-server.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "logs": {
+            "name": "VCF Operations for Logs",
+            "steps": [
+                "Deploy new Log Management 9.1 services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "network": {
+            "name": "VCF Operations for Network",
+            "steps": [
+                "Upgrade VCF Operations for Network to version 9.1 compatible - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "vidm": {
+            "name": "VMware Identity Manager (vIDM)",
+            "steps": [
+                "Move from VMware Identity Manager(VIDM) to VMware Identity Broker(VIDB) - Deployed of Identity Broker is part of the Management Service deployment"
+            ],
+            "notices": [
+                {
+                    "type": "info",
+                    "title": "VMware Identity Management",
+                    "bullets": [
+                        "Will Continue to work and function after products are upgrade to 9.1, there is just no upgrade path"
+                    ]
+                }
+            ]
+        },
+        "replication": {
+            "name": "vSphere Replication",
+            "steps": [
+                "Upgrade vSphere Replication to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "srm": {
+            "name": "Site Recovery Manager",
+            "steps": [
+                "Upgrade Site Recovery Manager to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "avi": {
+            "name": "AVI (NSX ALB)",
+            "steps": [
+                "Upgrade NSX Advanced Load Balancer to compatible version - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer/32-1/vmware-avi-load-balancer-administration-guide/nsx-advanced-load-balancer-controller-operations/upgrade-and-patches/upgrade-guide.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "hcx": {
+            "name": "VMware HCX",
+            "steps": [
+                "Upgrade HCX to version compatible with vSphere 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/updating-vmware-hcx.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "vks": {
+            "name": "VKS (vSphere Kubernetes Supervisor Service)",
+            "steps": [
+                "Upgrade vSphere with Tanzu to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "VKS deployed on vSphere Lifecycle Baseline Clusters(VUM)",
+                    "bullets": [
+                        "Customers with VKS clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"
+                    ]
+                }
+            ]
+        },
+        "vsan_witness": {
+            "name": "vSAN Witness Host",
+            "steps": [
+                "Upgrade vSAN Witness host to version 9.1 - will happen as part of ESX upgrade workflow in VCF Operations"            
+            ],
+            "notices": [
+                {
+                    "type": "info",
+                    "title": "vSAN Witness Host Upgrade",
+                    "bullets": [
+                        "vSAN Witness hosts must be upgraded before ESX hosts in stretched clusters"
+                    ]
+                }
+            ]
+        },
+        "sddc_manager": {
+            "name": "SDDC Manager",
+            "steps": [
+                "Upgrade SDDC Manager to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>."
+            ]
+        },
+        "vcfms": {
+            "name": "VCF Management Service Deployment",
+            "steps": [
+                "Deploy VCF Mnaagement Services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>."
+            ],
+        "tables_simple_small": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Management Services", "/26 (CIDR block)", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requirements for VCF Management Services nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Management Services Nodes", "Small", "4", "12", "24gb", "3,000gb"]
+          ]
+        }
+      ],
+      "tables_ha_medium": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Management Services", "/26 (CIDR block)", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requirements for VCF Management Services nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]          
+          ]
+        }
+      ],
+      "tables_ha_large": [
+        {
+          "title": "Required Network Configuration",
+          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Management Services", "/26 (CIDR block)", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]          ]
+        },
+        {
+          "title": "Required Component Sizes",
+          "description": "Size requirements for VCF Management Services nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"]          
+          ]
+        }
+      ]
+        },
+        "nsx": {
+            "name": "NSX",
+            "steps": [
+                "Upgrade NSX Local Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/checklist-for-upgrading-nsx.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "NSX Version Compatibility",
+                    "bullets": [
+                        "Ensure NSX version is compatible with vSphere 9.1",
+                        "Review VMware Product Interoperability Matrix"
+                    ]
+                }
+            ]
+        },
+        "nsx_federation": {
+            "name": "NSX Federation",
+            "steps": [
+                "Upgrade NSX Global Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-nsx-in-a-federated-environment.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "Federation Prerequisites",
+                    "bullets": [
+                        "All NSX sites must be on compatible versions",
+                        "Network connectivity required between all sites",
+                        "Upgrade BEFORE NSX Local Managers"
+                    ]
+                }
+            ]
+        },
+        "vxrail": {
+            "name": "Dell VxRail",
+            "steps": [
+             "Please Reach out to Dell on Steps and Services"
+            ],
+            "notices": [
+                {
+                    "type": "info",
+                    "title": "VxRail Upgrades",
+                    "bullets": [
+                        "All upgrades for VxRail Appliances will be validated thru Dell support team or Dell Field/Partner(s).There are different pre-check and Solve Desktop Procedure based on the VxRail Hardware and VxRail versions. It is recommended not to attempt online upgrade thru VxRail Manager UI/VxL Manager vCenter Plugin."
+                    ]
+                }
+            ]
+        }
+    }
+}

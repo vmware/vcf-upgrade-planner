@@ -1,0 +1,2439 @@
+ <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCF 5.2 to VCF 9.1 - (VCF Automation included)</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+    <style>
+        :root {
+            --vmw-blue: #0098C7;
+            --vmw-dark: #092138;
+            --vmw-gray: #53565A;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #D1D2D5;
+            --pulse-red: #CC092F;
+            --lime: #61A60E;
+            --jade: #007B8C;
+            --sapphire: #092138;
+            --gray-100: #E8E8E8;
+            --gray-400: #A4A5AF;
+            --text-primary: #092138;
+            --text-secondary: #53565A;
+        }
+
+        [data-theme="dark"] {
+            --vmw-blue: #40B4E5;
+            --vmw-dark: #FFFFFF;
+            --vmw-gray: #9CA3AF;
+            --bg: #0d1117;
+            --card-bg: #1c2128;
+            --border-color: #3d444d;
+            --text-primary: #FFFFFF;
+            --text-secondary: #C9D1D9;
+            --pulse-red: #FF6B6B;
+            --lime: #7CFC00;
+        }
+
+        a {
+            color: #0098C7;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        [data-theme="dark"] a {
+            color: #58D3FF;
+        }
+
+        [data-theme="dark"] a:hover {
+            color: #8FE3FF;
+        }
+
+        /* Dark Mode Toggle Switch */
+        .theme-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .theme-toggle-wrapper .theme-toggle-label {
+            color: white;
+        }
+
+        .theme-toggle-label {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active,
+        [data-theme="dark"] .toggle-switch {
+            background: #0098C7;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider,
+        [data-theme="dark"] .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background: var(--bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* Sidebar Layout */
+        .app-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #092138;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        [data-theme="dark"] .sidebar {
+            background: #161b22;
+            border-right: 1px solid #30363d;
+        }
+
+        .sidebar-header {
+            padding: 28px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-logo h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .back-link {
+            color: #58D3FF;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            gap: 10px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 12px;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.5;
+            margin: 20px 0 10px 14px;
+        }
+
+        .nav-item {
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #0098C7;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
+            padding: 32px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        [data-theme="dark"] .container {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header {
+            border-bottom: 3px solid var(--vmw-blue);
+            margin-bottom: 30px;
+            padding-bottom: 16px;
+        }
+
+        h1 {
+            color: var(--vmw-blue);
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            color: var(--vmw-dark);
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            color: var(--vmw-dark);
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 28px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        [data-theme="dark"] .section {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .section h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+        }
+
+        .section.active {
+            opacity: 1;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .section.completed {
+            opacity: 1;
+            border-color: #28a745;
+        }
+
+        .section.completed h2::after {
+            content: " ✓";
+            color: #28a745;
+            margin-left: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .badge.included {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.version {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .checkbox-group {
+            margin-bottom: 16px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkbox-label:hover {
+            background: rgba(0, 119, 200, 0.05);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: var(--vmw-blue);
+        }
+
+        .btn {
+            background: var(--vmw-blue);
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn:hover {
+            background: #007BA3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 152, 199, 0.3), 0 2px 6px rgba(0, 152, 199, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:disabled {
+            background: var(--vmw-gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .phase-container {
+            margin-top: 30px;
+        }
+
+        .phase {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--vmw-blue);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .phase h3 {
+            color: var(--vmw-blue);
+            margin-bottom: 12px;
+        }
+
+        .component-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .component-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .component-list li:last-child {
+            border-bottom: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .export-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-export {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border: 2px solid var(--vmw-blue);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-export.pdf {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .btn-export.pdf:hover {
+            background: #b02a37;
+            border-color: #b02a37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-export.pptx {
+            background: #d35230;
+            color: white;
+            border-color: #d35230;
+        }
+
+        .btn-export.pptx:hover {
+            background: #b8432a;
+            border-color: #b8432a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(211, 82, 48, 0.3);
+        }
+
+        /* Print styles for PDF export */
+        @media print {
+            .sidebar { display: none !important; }
+            .main-wrapper { margin-left: 0 !important; }
+            body { background: white; padding: 0; display: block; }
+            .container { box-shadow: none; max-width: 100%; }
+            .btn, .btn-export, .export-bar { display: none !important; }
+            .section { opacity: 1 !important; border: 1px solid #ccc; page-break-inside: avoid; }
+            .phase { page-break-inside: avoid; }
+            #printAllPhases { display: block !important; }
+            #phaseContainer { display: none !important; }
+            #diagramContainer { 
+                display: block !important; 
+                page-break-before: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        #printAllPhases {
+            display: none;
+        }
+
+        .diagram-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        @keyframes planUpdate {
+            0% { opacity: 0.5; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .plan-updating {
+            animation: planUpdate 0.4s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-wrapper {
+                margin-left: 0;
+            }
+            
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 24px;
+            }
+        }
+        .doc-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 99999;
+        }
+        .doc-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .doc-modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            max-width: 1400px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .doc-modal-header {
+            padding: 20px 24px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--vmw-blue);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            flex-shrink: 0;
+        }
+        .doc-modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: white;
+        }
+        .doc-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .doc-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        .doc-modal-back {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .doc-modal-back:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+        .doc-modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+            color: var(--text-primary);
+            min-height: 0;
+        }
+        .doc-modal-body::-webkit-scrollbar { width: 12px; }
+        .doc-modal-body::-webkit-scrollbar-track { background: var(--bg); }
+        .doc-modal-body::-webkit-scrollbar-thumb { background: var(--vmw-blue); border-radius: 6px; }
+        .doc-modal-body h1, .doc-modal-body h2, .doc-modal-body h3 {
+            color: var(--vmw-blue); margin-top: 24px; margin-bottom: 12px;
+        }
+        .doc-modal-body ul, .doc-modal-body ol { padding-left: 28px; margin: 12px 0; }
+        .doc-modal-body li { margin: 10px 0; line-height: 1.7; }
+        .doc-modal-body table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .doc-modal-body table th, .doc-modal-body table td {
+            padding: 14px; border: 1px solid var(--border-color); text-align: left;
+        }
+        .doc-modal-body table th { background: var(--bg); font-weight: 600; }
+        .doc-modal-footer {
+            padding: 16px 24px;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg);
+            border-radius: 0 0 12px 12px;
+            flex-shrink: 0;
+        }
+        .doc-modal-footer .external-link {
+            color: var(--vmw-blue); text-decoration: none; font-weight: 600; cursor: pointer;
+        }
+        .doc-modal-footer .external-link:hover { text-decoration: underline; }
+        /* Sub-pages sidebar */
+        .doc-modal-inner {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .doc-subpages-sidebar {
+            width: 240px;
+            min-width: 200px;
+            border-right: 2px solid var(--border-color);
+            overflow-y: auto;
+            background: var(--bg);
+            flex-shrink: 0;
+            display: none;
+            flex-direction: column;
+        }
+        .doc-subpages-sidebar.has-pages {
+            display: flex;
+        }
+        .doc-subpages-sidebar h4 {
+            margin: 0;
+            padding: 14px 16px 10px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--vmw-blue);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .doc-subpages-list {
+            list-style: none;
+            margin: 0;
+            padding: 8px 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .doc-subpages-list li a {
+            display: block;
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            line-height: 1.4;
+            border-left: 3px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .doc-subpages-list li a:hover,
+        .doc-subpages-list li a.sp-active {
+            background: rgba(0, 100, 210, 0.08);
+            border-left-color: var(--vmw-blue);
+            color: var(--vmw-blue);
+            font-weight: 600;
+        }
+        .doc-modal-body {
+            flex: 1;
+            min-width: 0;
+        }
+    
+        /* ── TechDocs DITA normalisation ──────────────────────────────────────── */
+        .doc-modal-body .linklist,
+        .doc-modal-body .relatedlinks,
+        .doc-modal-body .linkpool,
+        .doc-modal-body [class*="linklist"],
+        .doc-modal-body [class*="relatedlinks"] { display: none !important; }
+
+        .doc-modal-body .section, .doc-modal-body .prereq, .doc-modal-body .context,
+        .doc-modal-body .steps, .doc-modal-body .postreq, .doc-modal-body .result,
+        .doc-modal-body .shortdesc, .doc-modal-body .topic,
+        .doc-modal-body .dita, .doc-modal-body .main-content { display: block !important; }
+
+        .doc-modal-body ol.steps, .doc-modal-body ul.ul { display: block !important; padding-left: 24px; margin: 12px 0; }
+        .doc-modal-body li.step, .doc-modal-body li.li { display: list-item !important; margin: 8px 0; line-height: 1.6; }
+
+        .doc-modal-body .itemgroup, .doc-modal-body .stepresult, .doc-modal-body .info {
+            display: block !important; margin-top: 6px; padding-left: 12px;
+            border-left: 3px solid var(--border-color); color: var(--text-secondary); font-size: 0.9em;
+        }
+        .doc-modal-body .note {
+            display: block !important; background: #f0f7ff;
+            border-left: 4px solid var(--vmw-blue); border-radius: 4px;
+            padding: 10px 14px; margin: 14px 0; font-size: 0.92em;
+        }
+        .doc-modal-body .note::before {
+            content: attr(data-label); display: block; font-weight: 700;
+            font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase;
+            color: var(--vmw-blue); margin-bottom: 4px;
+        }
+        [data-theme="dark"] .doc-modal-body .note { background: rgba(0,152,199,0.1); }
+
+        .doc-modal-body code, .doc-modal-body .ph.codeph, .doc-modal-body .ph.filepath {
+            font-family: 'SFMono-Regular', Consolas, monospace;
+            background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-size: 0.88em;
+        }
+        [data-theme="dark"] .doc-modal-body code { background: rgba(255,255,255,0.1); }
+        .doc-modal-body .p, .doc-modal-body p { display: block !important; margin: 8px 0; line-height: 1.7; }
+    </style>
+    <script src="docs_inline.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span style="font-size: 1.5rem;"></span>
+                    <h1></h1>
+                </div>
+                <a href="index.html" class="back-link">← Back to Start</a>
+            </div>
+
+             <div class="sidebar-nav">
+                <div class="nav-section-title">Your Plan</div>
+                <div class="nav-item active" onclick="scrollToSection('environment')">
+                    <span>🖥️</span> Current Environment
+                </div>
+                <div class="nav-item" onclick="scrollToSection('phases')">
+                    <span>📋</span> Upgrade Phases
+                </div>
+                <div class="nav-item" onclick="scrollToSection('diagram')">
+                    <span>📊</span> Upgrade Workflow
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="theme-toggle-wrapper">
+                    <span class="theme-toggle-label">Dark Mode</span>
+                    <div class="toggle-switch" onclick="toggleDarkMode()" id="themeToggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <div class="container">
+                <header id="environment">
+                    <h1>VCF 5.2 to VCF 9.1 - With Automation</h1>
+                </header>
+        <!-- Configuration Section -->
+        <div class="section" style="opacity: 1;">
+            <h2>🖥️ Current Environment</h2>
+            
+            <!-- Part 1: Summary -->
+            <div style="background: var(--card-bg); border-left: 4px solid var(--vmw-blue); border-radius: 6px; padding: 16px; margin-bottom: 24px; border: 1px solid var(--border-color);">
+                <h3 style="color: var(--vmw-blue); margin-bottom: 12px; font-size: 1.1rem;">✅ Selected Components</h3>
+                <div id="selectedSummary">
+                    <!-- Will be populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Part 2: Additional Components -->
+            <h3 style="color: var(--text-primary); margin-bottom: 16px;">🔧 Optional Features</h3>
+            <p style="margin-bottom: 16px; color: var(--text-secondary);">Optional Features (plan updates automatically):</p>
+            
+            <div style="margin-bottom: 20px;">
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="vlcmCheck" onchange="autoGenerateUpgradePlan()">
+                        <span>VUM-Cluster Based</span>
+                    </label>
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="witnessCheck" onchange="autoGenerateUpgradePlan()">
+                        <span>vSAN Witness Host</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Deployment Configuration -->
+            <h3 style="color: var(--text-primary); margin-top: 30px; margin-bottom: 16px;">🏗️ Deployment Configuration</h3>
+            
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <!-- Deployment Type -->
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 10px;">Deployment Type:</label>
+                    <div style="display: flex; gap: 20px;">
+                        <label class="checkbox-label" style="cursor: pointer;">
+                            <input type="radio" name="deploymentType" value="simple" id="simpleRadio" checked onchange="updateDeploymentSize()">
+                            <span>Simple</span>
+                        </label>
+                        <label class="checkbox-label" style="cursor: pointer;">
+                            <input type="radio" name="deploymentType" value="ha" id="haRadio" onchange="updateDeploymentSize()">
+                            <span>High Availability</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Deployment Size -->
+                <div style="margin-bottom: 0;">
+                    <label style="font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 10px;">Deployment Size:</label>
+                    <select id="deploymentSize" onchange="autoGenerateUpgradePlan()" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); color: var(--text-primary); font-size: 1rem;">
+                        <option value="small">Small</option>
+                        <option value="medium" disabled>Medium (High Availability only)</option>
+                        <option value="large" disabled>Large (High Availability only)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- VCF Operations checkbox (always visible, outside the collapsible section) -->
+            <div style="margin-bottom: 16px; padding: 16px; background: var(--card-bg); border-radius: 8px; border: 2px solid var(--vmw-blue);">
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="operationsCheck" onchange="autoGenerateUpgradePlan()" checked>
+                        <span>VCF Operations (Aria Operations)</span>
+                    </label>
+                </div>
+                <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
+                    ℹ️ Operations is always included. <strong>Checked</strong> = Upgrade existing installation | <strong>Unchecked</strong> = Fresh install
+                </p>
+            </div>
+
+              <!-- Automation checkbox (special: always included, checkbox controls upgrade vs install) -->
+                <div style="margin-bottom: 20px; padding: 16px; background: var(--card-bg); border-radius: 8px; border: 2px solid var(--vmw-blue);">
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="automationCheck" onchange="autoGenerateUpgradePlan()" checked>
+                            <span>VCF Automation (Aria Automation)</span>
+                        </label>
+                    </div>
+                    <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
+                        ℹ️ Automation is always included. <strong>Checked</strong> = Upgrade existing installation | <strong>Unchecked</strong> = Fresh install
+                    </p>
+                </div>
+            <!-- Advanced Mode Toggle -->
+            <button class="btn" onclick="toggleAdvancedMode()" style="background: var(--vmw-gray); margin-bottom: 20px; color: white;">
+                <span id="advancedToggleText" style="color: white;">➕ Additional VMware Products</span>
+            </button>
+
+            <!-- Advanced Products Section (Hidden by default) -->
+            <div id="advancedProducts" style="display: none; margin-bottom: 20px; padding: 24px; background: var(--card-bg); border-radius: 12px; border-left: 4px solid var(--vmw-blue); border: 1px solid var(--border-color);">
+                <h3 style="color: var(--text-primary); margin-bottom: 16px; font-size: 18px;">📦 Additional VMware Products</h3>
+                
+                
+                <div id="advancedProductsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+                    <!-- Products will be dynamically generated from JSON -->
+                </div>
+
+                <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary); font-style: italic;">
+                    Note: These products will add additional upgrade phases to your plan based on dependency and compatibility requirements.
+                </p>
+            </div>
+        </div>
+        <div class="diagram-container" id="diagram">
+                <!-- Safe Stopping Point Info Banner -->
+                <div style="background: linear-gradient(135deg, #E1D5E7 0%, #F3E8FA 100%); border-left: 4px solid #7C3AED; padding: 16px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div>
+                            <strong style="color: #7C3AED; font-size: 16px;">Safe Stopping Points</strong>
+                            <p style="margin: 4px 0 0 0; color: #5a6778; font-size: 14px;">
+                                Each Phases is safe stopping points where you can pause for validation and testing before proceeding with the next phase.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+        <!-- Upgrade Phases Section -->
+        <div id="phases" class="section" style="opacity: 1;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h2 style="margin-bottom: 4px;">📋 Your Upgrade Plan</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
+                        <span id="phaseCounter"></span> • Updates automatically as you select components above
+                    </p>
+                </div>
+                <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0;">
+                    📄 Export Complete Plan
+                </button>
+            </div>
+            
+            <div class="diagram-container" id="diagram">
+                <div id="diagramContainer">
+                    <!-- Mermaid diagram will be generated here -->
+                </div>
+            </div>
+
+            <div id="phaseContainer" class="phase-container">
+                <!-- Phases will be generated dynamically -->
+            </div>
+
+            <!-- Hidden container for PDF print view (shows ALL phases) -->
+            <div id="printAllPhases"></div>
+
+        <!-- Export Section -->
+        <div id="export" style="margin-top: 40px; text-align: center;">
+            <!-- Export button already in phases section -->
+        </div>
+
+        </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables to store selections
+        let vlcmSelected = false;
+        let witnessSelected = false;
+        let deploymentType = 'simple';
+        let deploymentSize = 'small';
+        let vxrailSelected = false;
+        let upgradeData = null; // Will hold the loaded JSON data
+        let allPhases = []; // Store all phases
+        let currentPhaseIndex = 0; // Track which phase we're showing
+        let allSteps = []; // Store all steps (groups of phases)
+        let currentStepIndex = 0; // Track which phase we're showing (called stepIndex for code consistency)
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', async function() {
+            await loadUpgradeData();
+            loadSelectionsFromStorage();
+            displaySelectedSummary();
+            generateAdvancedProductsFromJSON();
+            // Auto-generate the initial upgrade plan
+            autoGenerateUpgradePlan();
+        });
+
+        async function loadUpgradeData() {
+            try {
+                const response = await fetch('vcf-5.2-to-9.1-with-automation-data.json');
+                upgradeData = await response.json();
+                console.log('Upgrade data loaded successfully');
+            } catch (error) {
+                console.error('Error loading upgrade data:', error);
+            }
+        }
+
+        function generateAdvancedProductsFromJSON() {
+            if (!upgradeData || !upgradeData.optional_products) {
+                console.warn('No optional products defined in JSON');
+                return;
+            }
+
+            const gridContainer = document.getElementById('advancedProductsGrid');
+            if (!gridContainer) {
+                console.error('advancedProductsGrid container not found');
+                return;
+            }
+
+            // Clear existing content
+            gridContainer.innerHTML = '';
+
+            // Generate checkboxes from JSON
+            upgradeData.optional_products.forEach(product => {
+                const checkboxGroup = document.createElement('div');
+                checkboxGroup.className = 'checkbox-group';
+                
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = product.id + 'Check';
+                input.onchange = autoGenerateUpgradePlan; // Auto-update on change
+                
+                const span = document.createElement('span');
+                span.textContent = product.display_name;
+                
+                label.appendChild(input);
+                label.appendChild(span);
+                checkboxGroup.appendChild(label);
+                gridContainer.appendChild(checkboxGroup);
+            });
+
+            console.log('Generated ' + upgradeData.optional_products.length + ' advanced product checkboxes');
+        }
+
+        function loadSelectionsFromStorage() {
+           vcfVersion =  localStorage.getItem('vcf-version') || '5.2';
+           vcfdetailVersion = localStorage.getItem('vcf-detailed-version');
+    
+            console.log('=== LOAD SELECTIONS DEBUG ===');
+     
+        }
+
+        function displaySelectedSummary() {
+            const summary = document.getElementById('selectedSummary');
+            let html = '<ul class="component-list">';
+            
+            html += `<li><span class="badge included">✓ VCF Version</span><span class="badge version">v${vcfdetailVersion}</span></li>`;
+            
+            
+            html += '</ul>';
+            summary.innerHTML = html;
+        }
+
+        function updateDeploymentSize() {
+            const simpleRadio = document.getElementById('simpleRadio');
+            const sizeSelect = document.getElementById('deploymentSize');
+            
+            deploymentType = simpleRadio.checked ? 'simple' : 'ha';
+            
+            if (deploymentType === 'simple') {
+                sizeSelect.innerHTML = '<option value="small">Small</option>';
+                deploymentSize = 'small';
+            } else {
+                sizeSelect.innerHTML = '<option value="medium">Medium</option><option value="large">Large</option>';
+                deploymentSize = 'medium';
+            }
+            
+            autoGenerateUpgradePlan();
+        }
+
+        function autoGenerateUpgradePlan() {
+            vlcmSelected = document.getElementById('vlcmCheck').checked;
+            witnessSelected = document.getElementById('witnessCheck').checked;
+            vksSelected = document.getElementById('vksCheck') ? document.getElementById('vksCheck').checked : false;
+            
+            // Get deployment configuration from DOM (ensures correct values on initial load)
+            const simpleRadio = document.getElementById('simpleRadio');
+            deploymentType = simpleRadio && simpleRadio.checked ? 'simple' : 'ha';
+            const sizeSelect = document.getElementById('deploymentSize');
+            deploymentSize = sizeSelect ? sizeSelect.value : 'small';
+            
+            // Collect advanced product selections
+            const selectedProducts = {};
+            
+            // Add Optional Features checkboxes (VUM and vSAN Witness)
+            selectedProducts['vum_migration'] = vlcmSelected;
+            selectedProducts['vsan_witness'] = witnessSelected;
+            selectedProducts['vks'] = vksSelected;
+            selectedProducts['vxrail'] = vxrailSelected;
+            
+            if (upgradeData && upgradeData.optional_products) {
+                upgradeData.optional_products.forEach(product => {
+                    const checkbox = document.getElementById(product.id + 'Check');
+                    if (checkbox) {
+                        selectedProducts[product.id] = checkbox.checked;
+                    }
+                });
+            }
+            
+            // Store for use in generateUpgradePlan
+            window.selectedAdvancedProducts = selectedProducts;
+            
+            // Store Operations state for special handling (checked = upgrade, unchecked = install)
+            const operationsCheck = document.getElementById('operationsCheck');
+            window.operationsIsUpgrade = operationsCheck ? operationsCheck.checked : true;
+
+            const automationCheck = document.getElementById('automationCheck');
+            window.automationIsUpgrade = automationCheck ? automationCheck.checked : true;
+            
+            // Auto-generate without requiring button click
+            generateUpgradePlan();
+        }
+
+        function toggleAdvancedMode() {
+            const advancedSection = document.getElementById('advancedProducts');
+            const toggleText = document.getElementById('advancedToggleText');
+            
+            if (advancedSection.style.display === 'none') {
+                advancedSection.style.display = 'block';
+                toggleText.textContent = 'Hide Additional Products';
+            } else {
+                advancedSection.style.display = 'none';
+                toggleText.textContent = 'Show Additional Products';
+            }
+        }
+
+        function generateUpgradePlan() {
+            const phases = [];
+            const selectedProducts = window.selectedAdvancedProducts || {};
+            
+            if (!upgradeData || !upgradeData.upgrade_order) {
+                console.error('No upgrade order defined in JSON');
+                return;
+            }
+
+            // Use install_order when Automation is a fresh install (unchecked),
+            // so automation is placed after ESX instead of immediately after vcfms.
+            const orderArray = (!window.automationIsUpgrade && upgradeData.install_order)
+                ? upgradeData.install_order
+                : upgradeData.upgrade_order;
+
+            // Iterate through the selected upgrade order array to maintain strict sequence
+            orderArray.forEach(componentId => {
+                let shouldInclude = false;
+                let componentData = upgradeData.components[componentId];
+                let phaseTitle = '';
+                let phaseDescription = '';
+                
+                // Define CORE components that are ALWAYS included
+                const coreComponents = ['vcenter', 'sddc_manager', 'nsx', 'operations', 'operations_install', 'automation', 'automation_install', 'license', 'vcfms'];
+                
+                // Determine if this component should be included based on component type
+                if (componentId === 'operations' || componentId === 'operations_install') {
+                    // Operations ALWAYS included
+                    shouldInclude = true;
+                    // Use upgrade or install component based on checkbox
+                    const operationsComponentId = window.operationsIsUpgrade ? 'operations' : 'operations_install';
+                    componentData = upgradeData.components[operationsComponentId];
+                    phaseTitle = componentData ? componentData.name : componentId;
+                } else if (componentId === 'automation' || componentId === 'automation_install'){
+                    shouldInclude = true;
+                    const automationComponentId = window.automationIsUpgrade ? 'automation' : 'automation_install';
+                    componentData = upgradeData.components[automationComponentId];
+                    phaseTitle = componentData ? componentData.name : componentId;
+                    phaseDescription = window.automationIsUpgrade ? 'Upgrade Aria Automation to 9.1' : 'Install Aria Automation 9.1';
+
+                    // Select size-variant tables based on upgrade vs install path
+                    if (componentData) {
+                        try {
+                            if (window.automationIsUpgrade) {
+                                // Upgrade: pick tables_simple_small / tables_ha_medium / tables_ha_large
+                                const upgradeTableKey = deploymentType === 'simple'
+                                    ? 'tables_simple_small'
+                                    : (deploymentSize === 'large' ? 'tables_ha_large' : 'tables_ha_medium');
+                                const cloned = JSON.parse(JSON.stringify(componentData));
+                                if (cloned[upgradeTableKey]) {
+                                    console.log('automation upgrade: using table key:', upgradeTableKey);
+                                    cloned.tables = cloned[upgradeTableKey];
+                                    componentData = cloned;
+                                }
+                            } else {
+                                // Install: pick automation_install_tableKey
+                                const automation_install_tableKey = deploymentType === 'simple'
+                                    ? 'automation_install_tables_simple_small'
+                                    : (deploymentSize === 'large' ? 'automation_install_tables_ha_large' : 'automation_install_tables_ha_medium');
+                                const cloned = JSON.parse(JSON.stringify(componentData));
+                                if (cloned[automation_install_tableKey]) {
+                                    console.log('automation install: using table key:', automation_install_tableKey);
+                                    cloned.tables = cloned[automation_install_tableKey];
+                                    componentData = cloned;
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error selecting automation tables:', e);
+                        }
+                    }
+                } else if (componentId === 'vcfms') {
+                    // VCF Management Services always included — select size-variant tables
+                    shouldInclude = true;
+                    phaseTitle = componentData ? componentData.name : 'VCF Management Service Deployment';
+                    phaseDescription = 'Deploy VCF Management Services';
+                    if (componentData) {
+                        try {
+                            const tableKey = 'tables_' + deploymentType + '_' + deploymentSize;
+                            const cloned = JSON.parse(JSON.stringify(componentData));
+                            if (cloned[tableKey]) {
+                                console.log('vcfms: using table key:', tableKey);
+                                cloned.tables = cloned[tableKey];
+                            } else {
+                                const fallback = 'tables_simple_small';
+                                console.log('vcfms: key not found, falling back to:', fallback);
+                                if (cloned[fallback]) cloned.tables = cloned[fallback];
+                            }
+                            componentData = cloned;
+                        } catch (e) {
+                            console.error('Error selecting vcfms tables:', e);
+                        }
+                    }
+                } else if (coreComponents.includes(componentId)) {
+                    // Core components ALWAYS included
+                    shouldInclude = true;
+                    phaseTitle = componentData ? componentData.name : componentId;
+                    //phaseDescription = componentData ? componentData.description : 'Upgrade ' + phaseTitle;
+                    phaseDescription = 'Upgrade ' + phaseTitle;
+                } else if (componentId === 'vxrail') {
+                    // VxRail only if selected - replaces ESX
+                    shouldInclude = selectedProducts['vxrail'] === true;
+                    phaseTitle = componentData ? componentData.name : 'vxrail';
+                    phaseDescription = 'Upgrade ' + phaseTitle; 
+                } else if (componentId === 'esx') {
+                    // ESX only if VxRail is NOT selected
+                    shouldInclude = selectedProducts['vxrail'] !== true;
+                    phaseTitle = componentData ? componentData.name : 'esx';
+                    phaseDescription = 'Upgrade ' + phaseTitle;
+                } else {
+                    // ALL OTHER components are OPTIONAL - only include if selected
+                    shouldInclude = selectedProducts[componentId] === true;
+                    phaseTitle = componentData ? componentData.name : componentId;
+                    //phaseDescription = componentData ? componentData.description : 'Upgrade ' + phaseTitle;
+                    phaseDescription = 'Upgrade ' + phaseTitle;
+                }
+                
+                if (shouldInclude && componentData) {
+                    console.log('Adding phase for:', componentId, '- Title:', phaseTitle);
+                    phases.push({
+                        number: phases.length + 1,
+                        title: phaseTitle,
+                        description: phaseDescription,
+                        data: componentData,
+                        componentId: componentId  // Store the component ID for grouping
+                    });
+                }
+            });
+            
+            // Renumber all phases to ensure sequential numbering
+            phases.forEach((phase, index) => {
+                phase.number = index + 1;
+            });
+            
+            console.log('Generated', phases.length, 'phases in upgrade_order sequence');
+            console.log('Phases array:', phases.map(p => p.componentId));
+            allPhases = phases;
+            
+            // Group phases into steps using the same order array
+            const steps = groupPhasesIntoSteps(phases, orderArray);
+            console.log('Steps created:', steps.length);
+            console.log('Steps array:', steps.map(s => s.title));
+            allSteps = steps;
+            currentStepIndex = 0; // Always start from first step
+            
+            // Update counter
+            const counter = document.getElementById('phaseCounter');
+            if (counter) {
+                counter.textContent = `${steps.length} phase${steps.length !== 1 ? 's' : ''}, ${phases.length} step${phases.length !== 1 ? 's' : ''}`;
+            }
+            
+            // Even if no steps, show a helpful message
+            if (steps.length === 0) {
+                const container = document.getElementById('phaseContainer');
+                container.innerHTML = `
+                    <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 30px; border-radius: 8px;">
+                        <h3 style="color: #856404; margin-bottom: 16px;">⚠️ No Upgrade Plan Generated</h3>
+                        <p style="margin-bottom: 20px;">Please ensure you've selected all required components from the previous page (index.html).</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            displayStepsView();
+            setTimeout(() => initInlineDocumentation(), 100);
+            
+            // Smooth scroll on first generation
+            if (steps.length > 0) {
+                setTimeout(() => {
+                    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+        
+        function groupPhasesIntoSteps(phases, orderArray) {
+            const steps = [];
+            
+            // Use the passed orderArray (which is either upgrade_order or upgrade_order_without_nsx)
+            const currentOrder = orderArray || upgradeData.upgrade_order;
+            
+            // Categorize phases based on the current order:
+            // 1. Optional Products (SRM, Replication, AVI, HCX)
+            // 2. Operations Upgrade (only if already installed)
+            // 3. sddc to VCF (includes Ops install if not installed)
+            // 4. NSX
+            // 5. vCenter
+            // 6. Pre-ESX Infrastructure (vLCM, vSAN Witness, VKS)
+            // 7. ESX Hosts
+            // 8. Automation Deployment
+            // 9. Post-Infrastructure (Logs, Network)
+            
+            const optionalPreInfraPhases = [];
+            const operationsPhases = [];
+            const sddcPhases = [];
+            const vcfmsPhases = [];
+            const nsxfedPhases = [];
+            const nsxPhases = [];
+            const vcenterPhases = [];
+            const vlcmPhases = [];
+            const vksPhases = [];
+            const witnessPhases = [];
+            const esxPhases = [];
+            const automationPhases = [];
+            const advancedPhases = [];
+            const vidmPhases =[];
+            const vxrailPhases = [];
+            
+            phases.forEach(phase => {
+                const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
+                const isPreInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'pre_infrastructure';
+                const isPostInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'post_infrastructure';
+                
+                if (isPreInfraOptional) {
+                    optionalPreInfraPhases.push(phase);
+                } else if (phase.componentId === 'operations') {
+                    operationsPhases.push(phase);
+                }else if (phase.componentId === 'license'){
+                    operationsPhases.push(phase);
+                }else if (phase.componentId === 'sddc_manager') {
+                    sddcPhases.push(phase);
+                }else if (phase.componentId === 'vcfms') {
+                    vcfmsPhases.push(phase);
+                }else if (phase.componentId === 'nsx_federation') {
+                    nsxfedPhases.push(phase);
+                } else if (phase.componentId === 'nsx') {
+                    nsxPhases.push(phase);
+                } else if (phase.componentId === 'vcenter') {
+                    vcenterPhases.push(phase);
+                } else if (phase.componentId === 'vum_migration') {
+                    vlcmPhases.push(phase);
+                } else if (phase.componentId === 'vsan_witness') {
+                    witnessPhases.push(phase);
+                } else if (phase.componentId === 'vks') {
+                    vksPhases.push(phase);
+                } else if (phase.componentId === 'vxrail') {
+                    vxrailPhases.push(phase);
+                } else if (phase.componentId === 'esx') {
+                    esxPhases.push(phase);
+                } else if (phase.componentId === 'automation' || phase.componentId === 'automation_install') {
+                    automationPhases.push(phase);
+                } else if (phase.componentId === 'vidm') {
+                    vidmPhases.push(phase);
+                } else if (isPostInfraOptional) {
+                    advancedPhases.push(phase);
+                }
+            });
+            
+            // Sort groups
+            optionalPreInfraPhases.sort((a, b) => a.number - b.number);
+            operationsPhases.sort((a, b) => a.number - b.number);
+            sddcPhases.sort((a, b) => a.number - b.number);
+            vcfmsPhases.sort((a, b) => a.number - b.number);
+            nsxfedPhases.sort((a, b) => a.number - b.number);
+            nsxPhases.sort((a, b) => a.number - b.number);
+            vcenterPhases.sort((a, b) => a.number - b.number);
+            vlcmPhases.sort((a, b) => a.number - b.number);
+            vksPhases.sort((a, b) => a.number - b.number);
+            witnessPhases.sort((a, b) => a.number - b.number);
+            esxPhases.sort((a, b) => a.number - b.number);
+            automationPhases.sort((a, b) => a.number - b.number);
+            advancedPhases.sort((a, b) => a.number - b.number);
+            vidmPhases.sort((a, b) => a.number - b.number);
+            vxrailPhases.sort((a, b) => a.number - b.number);
+            
+            // Build steps in the order defined by currentOrder (dynamic based on NSX selection)
+            // Group Replication + SRM together, keep AVI and HCX separate
+            const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'replication' || p.componentId === 'srm');
+            const aviPhases = optionalPreInfraPhases.filter(p => p.componentId === 'avi');
+            const hcxPhases = optionalPreInfraPhases.filter(p => p.componentId === 'hcx');
+            
+            // Create a map of component groups to their step definitions
+            const stepDefinitions = {
+                'drProducts': {
+                    phases: replicationPhases,
+                    title: 'Disaster Recovery Products',
+                    description: 'Upgrade vSphere Replication and Site Recovery Manager'
+                },
+                'avi': {
+                    phases: aviPhases,
+                    title: aviPhases.length > 0 ? aviPhases[0].title : 'NSX Advanced Load Balancer',
+                    description: aviPhases.length > 0 ? aviPhases[0].description : 'Upgrade NSX ALB (AVI)'
+                },
+                'hcx': {
+                    phases: hcxPhases,
+                    title: hcxPhases.length > 0 ? hcxPhases[0].title : 'VMware HCX',
+                    description: hcxPhases.length > 0 ? hcxPhases[0].description : 'Upgrade VMware HCX'
+                },
+                'operations': {
+                    phases: operationsPhases,
+                    title: window.operationsIsUpgrade ? 'VCF Operations Upgrade' : 'VCF Operations Install'
+                },
+                'sddc_manager': {
+                    phases: sddcPhases,
+                    title: 'SDDC Manager Upgrade',
+                    description: 'Deploy SDDC Manager and sddc to VCF (includes Operations install if not already installed)'
+                },
+                'vcfms':{
+                    phases: vcfmsPhases,
+                    title: 'VCF Management Service Deployment 9.1',
+                    description: 'Deploy VCF Management Services on first SDDC Instance'
+                },
+                'nsx_federation': {
+                    phases: nsxfedPhases,
+                    title: 'NSX Global Manager Upgrade',
+                    description: 'Upgrade Fderation'
+                },
+
+                'nsx': {
+                    phases: nsxPhases,
+                    title: 'NSX Local Manager Upgrade',
+                    description: 'Upgrade NSX'
+                },
+                'vcenter': {
+                    phases: vcenterPhases,
+                    title: 'vCenter Upgrade',
+                    description: 'Upgrade vCenter Server'
+                },
+                'vlcm': {
+                    phases: vlcmPhases,
+                    title: 'Migrate to vLCM',
+                    description: 'Migrate from VUM to vSphere Lifecycle Manager'
+                },
+                'vks': {
+                    phases: vksPhases,
+                    title: 'vSphere with Kubernetes',
+                    description: 'Upgrade vSphere with Kubernetes (VKS)'
+                },
+                'witness': {
+                    phases: witnessPhases,
+                    title: 'vSAN Witness Host',
+                    description: 'Upgrade vSAN Witness Host'
+                },
+                'vxrail': {
+                    phases: vxrailPhases,
+                    title: 'VxRail',
+                    description: 'Upgrade VxRail hardware and software'
+
+                },
+                'esx': {
+                    phases: esxPhases,
+                    title: 'ESX Hosts',
+                    description: 'Upgrade ESX host infrastructure'
+                },
+                'automation': {
+                    phases: automationPhases,
+                    title: window.automationIsUpgrade ? 'VCF Automation Upgrade' : 'VCF Automation Install'
+                },
+                'vidm': {
+                    phases: vidmPhases,
+                    title: 'VIDM Replacement',
+                    description: 'Migration from VMware Identity Manager(vIDM) to VMware Identity Broker(vIDB)'
+
+                },
+                'advanced': {
+                    phases: advancedPhases,
+                    title: 'Post-Infrastructure Products',
+                    description: 'Upgrade additional products (Operations for Logs, Operations for Networks)'
+                }
+            };
+            
+            // Map component IDs to their step groups
+            const componentToStepGroup = {
+                'replication': 'drProducts',
+                'srm': 'drProducts',
+                'avi': 'avi',
+                'hcx': 'hcx',
+                'operations': 'operations',
+                'nsx': 'nsx',
+                'nsx_federation': 'nsx_federation',
+                'vcenter': 'vcenter',
+                'vum_migration': 'vlcm',
+                'vsan_witness': 'witness',
+                'vks': 'vks',
+                'vxrail': 'vxrail',
+                'esx': 'esx',
+                'automation': 'automation',
+                'logs': 'advanced',
+                'network': 'advanced',
+                'sddc_manager': 'sddc_manager',
+                'vcfms': 'vcfms',
+                'vidm': 'vidm'
+            };
+            
+            // Track which step groups have been added
+            const addedStepGroups = new Set();
+            
+            // Iterate through currentOrder and add step groups in that sequence
+            currentOrder.forEach(componentId => {
+                const stepGroup = componentToStepGroup[componentId];
+                if (stepGroup && !addedStepGroups.has(stepGroup)) {
+                    const stepDef = stepDefinitions[stepGroup];
+                    if (stepDef && stepDef.phases.length > 0) {
+                        steps.push({
+                            number: steps.length + 1,
+                            title: stepDef.title,
+                            description: stepDef.description,
+                            phases: stepDef.phases
+                        });
+                        addedStepGroups.add(stepGroup);
+                    }
+                }
+            });
+            
+            return steps;
+        }
+        
+        function displayStepsView() {
+            try {
+            const container = document.getElementById('phaseContainer');
+            container.classList.add('plan-updating');
+            setTimeout(() => container.classList.remove('plan-updating'), 400);
+            
+            if (currentStepIndex >= allSteps.length) {
+                // All steps complete
+                container.innerHTML = `
+                    <div style="background: #d4edda; border: 2px solid #28a745; padding: 30px; border-radius: 8px; text-align: center;">
+                        <h3 style="color: #28a745; margin-bottom: 16px;">✓ All Phases Complete!</h3>
+                        <p style="margin-bottom: 20px;">You have reviewed all upgrade phases. You can now proceed with the upgrade following the documented steps.</p>
+                        <button class="btn" onclick="window.location.href='index.html'" style="background: #6c757d;">Start Over</button>
+                    </div>
+                `;
+                generateDiagram();
+                return;
+            }
+            
+            const step = allSteps[currentStepIndex];
+            let html = '';
+            
+            // Current step display
+            html += `<div style="margin-bottom: 30px;">`;
+            html += `<div style="background: var(--vmw-blue); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">`;
+            html += `<span style="font-size: 1.2rem; font-weight: bold;">Phase ${step.number} of ${allSteps.length}: ${step.title}</span>`;
+            html += `<button onclick="exportStep(${step.number})" style="background: white; color: var(--vmw-blue); border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">📄 Export Current Phase</button>`;
+            html += `</div>`;
+            html += `<div style="border: 2px solid var(--vmw-blue); border-top: none; padding: 20px; border-radius: 0 0 8px 8px; background: var(--card-bg);">`;
+           // html += `<p style="color: var(--text-secondary); margin-bottom: 20px;">${step.description}</p>`;
+            
+            // Sort phases by their original phase number to maintain order
+            const sortedPhases = [...step.phases].sort((a, b) => a.number - b.number);
+            
+            // Steps
+            sortedPhases.forEach(phase => {
+                html += `<div style="background: var(--card-bg); border: 2px solid var(--vmw-blue); padding: 15px; margin: 10px 0; border-radius: 6px;">`;
+                html += `<h4 style="margin: 0 0 10px 0; color: var(--vmw-blue);">Step ${phase.number}: ${phase.title}</h4>`;
+                html += `<p style="margin-bottom: 10px; color: var(--text-primary);">${phase.description}</p>`;
+                
+                if (phase.data) {
+                    if (phase.data.prereqs && phase.data.prereqs.length > 0) {
+                        html += `<p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px;"><strong>Prerequisites:</strong></p><ul style="margin: 5px 0 10px 20px; font-size: 0.9rem; color: var(--text-primary);">`;
+                        phase.data.prereqs.forEach(p => html += `<li>${p}</li>`);
+                        html += `</ul>`;
+                    }
+                    if (phase.data.tables && phase.data.tables.length > 0) {
+                        phase.data.tables.forEach(table => {
+                            html += `<div style="margin-top: 15px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;">`;
+                            html += `<div style="background: var(--vmw-blue); color: white; padding: 10px; font-weight: 600;">${table.title}</div>`;
+                            if (table.description) {
+                                html += `<div style="padding: 10px; background: var(--bg); font-size: 0.85rem; color: var(--text-secondary);">${table.description}</div>`;
+                            }
+                            html += `<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">`;
+                            html += `<thead><tr style="background: var(--bg);">`;
+                            table.headers.forEach(header => {
+                                html += `<th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--border-color); font-weight: 600; color: var(--vmw-dark);">${header}</th>`;
+                            });
+                            html += `</tr></thead><tbody>`;
+                            table.rows.forEach((row, idx) => {
+                                const bgColor = idx % 2 === 0 ? 'var(--card-bg)' : 'var(--bg)';
+                                html += `<tr style="background: ${bgColor};">`;
+                                row.forEach(cell => {
+                                    html += `<td style="padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--text-primary);">${cell}</td>`;
+                                });
+                                html += `</tr>`;
+                            });
+                            html += `</tbody></table></div></div>`;
+                        });
+                    }
+                      if (phase.data.notices && phase.data.notices.length > 0) {
+                        phase.data.notices.forEach(notice => {
+                            const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
+                            const icon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
+                            html += `<div style="background: var(--card-bg); border-left: 4px solid ${color}; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>${icon} ${notice.title}</strong>`;
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += `<ul style="margin: 5px 0 0 20px;">`;
+                                notice.bullets.forEach(b => html += `<li>${b}</li>`);
+                                html += `</ul>`;
+                            }
+                            html += `</div>`;
+                        });
+                    }
+                    if (phase.data.steps && phase.data.steps.length > 0) {
+                        html +=`<p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px;"><strong>Steps:</strong></p><ul style="margin: 5px 0 10px 20px; font-size: 0.9rem; color: var(--text-primary);">`;
+                        phase.data.steps.forEach(s => html += `<li>${s}</li>`);
+                        html += `</ul>`;
+                    }
+                
+                }
+                
+                html += `</div>`;
+            });
+            
+            // Safe Stopping Point Banner - AFTER all steps in the Phase
+            const hasSafeStop = step.phases.some(phase => phase.data && phase.data.safe_stopping_point);
+            if (hasSafeStop) {
+                // Get the first step with a safe stopping point to get the reason
+                const safeStopPhase = step.phases.find(phase => phase.data && phase.data.safe_stopping_point);
+                html += `<div style="background: #E1D5E7; border-left: 4px solid #7C3AED; padding: 16px; margin: 20px 0; border-radius: 6px; font-size: 1rem; color: #000;"><strong>⏸️ After this Step: SAFE STOPPING POINT</strong>`;
+                if (safeStopPhase && safeStopPhase.data && safeStopPhase.data.stopping_point_reason) {
+                    html += `<p style="margin: 10px 0 0 0;">${safeStopPhase.data.stopping_point_reason}</p>`;
+                }
+                html += `</div>`;
+            }
+            
+            // Navigation buttons
+            html += `<div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">`;
+            
+            // Back button (only show after first phase)
+            if (currentStepIndex > 0) {
+                html += `<button class="btn" onclick="previousStep()" style="background: var(--vmw-gray); flex: 0 0 auto;">← Back</button>`;
+            }
+            
+            // Next Phase button
+            if (currentStepIndex < allSteps.length - 1) {
+                html += `<button class="btn" onclick="nextStep()" style="flex: 1; background: var(--vmw-blue);">Next Phase →</button>`;
+            } else {
+                html += `<button class="btn" onclick="nextStep()" style="flex: 1; background: var(--lime);">Complete Review ✓</button>`;
+            }
+            
+            
+            // Start Over button
+            html += `<button class="btn" onclick="if(confirm('Start over? This will return to the beginning.')) window.location.href='index.html'" style="background: var(--vmw-gray); flex: 0 0 auto;">Start Over</button>`;
+            
+            html += `</div>`;
+            
+            html += `</div></div>`;
+            
+            container.innerHTML = html;
+            generateDiagram();
+            } catch(err) {
+                console.error('displayStepsView CRASH at stepIndex', currentStepIndex, ':', err);
+                document.getElementById('phaseContainer').innerHTML = '<div style="color:red;padding:20px;"><strong>Render error (see console):</strong> ' + err.message + '</div>';
+            }
+        }
+        
+        function nextStep() {
+            currentStepIndex++;
+            displayStepsView();
+        }
+        
+        function previousStep() {
+            if (currentStepIndex > 0) {
+                currentStepIndex--;
+                displayStepsView();
+            }
+        }
+        
+        function exportStep(stepNumber) {
+            const step = allSteps.find(s => s.number === stepNumber);
+            if (!step) return alert('Step not found');
+            
+            const printDiv = document.getElementById('printAllPhases');
+            let html = '<div style="padding: 20px;">';
+            html += `<h2 style="color: #0077c8; margin-bottom: 20px;">Step ${step.number}: ${step.title}</h2>`;
+            
+            step.phases.forEach(phase => {
+                html += '<div style="background: #f8f9fa; border-left: 4px solid #0077c8; padding: 20px; margin-bottom: 20px; border-radius: 8px;">';
+                html += '<h3 style="color: #0077c8;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
+                html += '<p>' + phase.description + '</p>';
+                
+                if (phase.data) {
+                    if (phase.data.prereqs && phase.data.prereqs.length > 0) {
+                        html += '<h4>Prerequisites:</h4><ul>';
+                        phase.data.prereqs.forEach(p => html += '<li>' + p + '</li>');
+                        html += '</ul>';
+                    }
+                    if (phase.data.tables && phase.data.tables.length > 0) {
+                        phase.data.tables.forEach(table => {
+                            html += '<div style="margin-top: 15px; border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden;">';
+                            html += '<div style="background: #0077c8; color: white; padding: 10px; font-weight: 600;">' + table.title + '</div>';
+                            if (table.description) {
+                                html += '<div style="padding: 10px; background: #f8f9fa; font-size: 0.85rem;">' + table.description + '</div>';
+                            }
+                            html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
+                            html += '<thead><tr style="background: #f8f9fa;">';
+                            table.headers.forEach(header => {
+                                html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">' + header + '</th>';
+                            });
+                            html += '</tr></thead><tbody>';
+                            table.rows.forEach((row, idx) => {
+                                const bg = idx % 2 === 0 ? '#ffffff' : '#f8f9fa';
+                                html += '<tr style="background: ' + bg + ';">';
+                                row.forEach(cell => { html += '<td style="padding: 10px; border-bottom: 1px solid #dee2e6;">' + cell + '</td>'; });
+                                html += '</tr>';
+                            });
+                            html += '</tbody></table></div></div>';
+                        });
+                    }
+                     if (phase.data.notices && phase.data.notices.length > 0) {
+                        phase.data.notices.forEach(notice => {
+                            const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
+                            html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += '<ul>';
+                                notice.bullets.forEach(b => html += '<li>' + stripHtml(b) + '</li>');
+                                html += '</ul>';
+                            }
+                            html += '</div>';
+                        });
+                    }
+
+                    if (phase.data.steps && phase.data.steps.length > 0) {
+                        html += '<h4>Steps:</h4><ul>';
+                        phase.data.steps.forEach(s => {
+                            html += '<li>' + s + '</li>';
+                            const docUrl = extractDocUrlFromStep(s);
+                            if (docUrl) {
+                                const inlineDoc = getInlineDocForUrl(docUrl);
+                                if (inlineDoc) {
+                                    html += '<div style="background: white; border: 2px solid #0077c8; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px;">';
+                                    html += '<h5 style="color: #0077c8; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
+                                    html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
+                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);"><strong>Source:</strong> ' + docUrl + '</p>';
+                                    html += '</div>';
+                                }
+                            }
+                        });
+                        html += '</ul>';
+                    }
+
+                }
+                html += '</div>';
+            });
+            
+            html += '</div>';
+            printDiv.innerHTML = html;
+            printDiv.style.display = 'block';
+            document.getElementById('phaseContainer').style.display = 'none';
+            document.getElementById('diagramContainer').style.display = 'none';
+            
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    printDiv.style.display = 'none';
+                    document.getElementById('phaseContainer').style.display = '';
+                    document.getElementById('diagramContainer').style.display = '';
+                }, 500);
+            }, 100);
+        }
+
+        // Keep old functions for compatibility
+        function displayCurrentPhase() {
+            displayStepsView();
+        }
+        function nextPhase() {
+            displayStepsView();
+        }
+
+        function displayPhases(phases) {
+            const container = document.getElementById('phaseContainer');
+            let html = '';
+            
+            phases.forEach(phase => {
+                html += `<div class="phase">`;
+                html += `<h3>Phase ${phase.number}: ${phase.title}</h3>`;
+                html += `<p>${phase.description}</p>`;
+                
+                // If we have detailed data from JSON, show it
+                if (phase.data) {
+                    // Prerequisites
+                    if (phase.data.prereqs && phase.data.prereqs.length > 0) {
+                        html += `<h4 style="margin-top: 16px; color: var(--vmw-blue);">Prerequisites:</h4>`;
+                        html += `<ul class="component-list">`;
+                        phase.data.prereqs.forEach(prereq => {
+                            html += `<li>${prereq}</li>`;
+                        });
+                        html += `</ul>`;
+                    }
+
+                    // Notices/Warnings
+                    if (phase.data.notices && phase.data.notices.length > 0) {
+                        phase.data.notices.forEach(notice => {
+                            const noticeColor = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
+                            const noticeIcon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
+                            html += `<div style="background: #f8f9fa; border-left: 4px solid ${noticeColor}; padding: 12px; margin-top: 16px; border-radius: 4px;">`;
+                            html += `<strong>${noticeIcon} ${notice.title}</strong>`;
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += `<ul style="margin: 8px 0 0 20px;">`;
+                                notice.bullets.forEach(bullet => {
+                                    html += `<li>${bullet}</li>`;
+                                });
+                                html += `</ul>`;
+                            }
+                            html += `</div>`;
+                        });
+                    }
+                    
+                    // Upgrade Steps
+                    if (phase.data.steps && phase.data.steps.length > 0) {
+                        html += `<h4 style="margin-top: 16px; color: var(--vmw-blue);">Steps:</h4>`;
+                        html += `<ul class="component-list">`;
+                        phase.data.steps.forEach(step => {
+                            html += `<li>${step}</li>`;
+                        });
+                        html += `</ul>`;
+                    }
+                    
+                }
+                
+                // Add Next Phase button if not the last phase
+                if (currentPhaseIndex < allPhases.length - 1) {
+                    html += `<button class="btn" onclick="nextPhase()" style="margin-top: 20px;">Next Phase →</button>`;
+                } else {
+                    html += `<button class="btn" style="margin-top: 20px; background: #28a745;" onclick="nextPhase()">Complete Review ✓</button>`;
+                }
+                
+                html += `</div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // ==========================================
+        // EXPORT FUNCTIONS
+        // ==========================================
+
+        function getAllPhasesForExport() {
+            // Regenerate ALL phases regardless of current progress
+            const phases = [];
+            const opsData = upgradeData ? upgradeData.components.operations : null;
+            
+            if (operationsSelected && operationsVersion === '8.18.x') {
+                phases.push({ number: phases.length + 1, title: 'Upgrade Aria Operations', description: 'Upgrade Aria Operations from 8.18.x to 9.0', data: opsData });
+            } else if (operationsSelected && operationsVersion === '9.0.x') {
+                phases.push({ number: phases.length + 1, title: 'Upgrade Aria Operations', description: 'Upgrade Aria Operations from 9.0.x to 9.1', data: opsData });
+            } else if (!operationsSelected) {
+                phases.push({ number: phases.length + 1, title: 'Install Aria Operations', description: 'Install Aria Operations 9.0 (new installation)', data: opsData });
+            }
+
+            const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
+            if (vcenterVersion === '8') {
+                phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: 'Upgrade vCenter from 8.x to 9.1', data: vcenterData });
+            } else {
+                phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: 'Upgrade vCenter from 9.0.x to 9.1', data: vcenterData });
+            }
+
+            if (vlcmSelected) {
+                const vlcmData = upgradeData ? upgradeData.components.vum_migration : null;
+                phases.push({ number: phases.length + 1, title: 'vLCM Baseline to Image Migration', description: 'Migrate from Baseline to Image-based management', data: vlcmData });
+            }
+
+            if (witnessSelected) {
+                const witnessData = upgradeData ? upgradeData.components.vsan_witness : null;
+                phases.push({ number: phases.length + 1, title: 'vSAN Witness Host', description: 'Upgrade vSAN Witness Host', data: witnessData });
+            }
+
+            const esxData = upgradeData ? upgradeData.components.esx : null;
+            if (esxVersion === '8') {
+                phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: 'Upgrade all ESX hosts from 8.x to 9.1', data: esxData });
+            } else {
+                phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: 'Upgrade all ESX hosts from 9.0.x to 9.1', data: esxData });
+            }
+
+            return phases;
+        }
+
+        function stripHtml(html) {
+            if (!html) return '';
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            let text = tmp.textContent || tmp.innerText || '';
+            // Remove special characters that cause PowerPoint issues
+            text = text.replace(/[""]/g, '"').replace(/['']/g, "'").replace(/…/g, '...');
+            text = text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+            text = text.replace(/[\u2013\u2014]/g, '-');
+            text = text.replace(/[\u00A0]/g, ' ');
+            text = text.replace(/[\u2022]/g, '-');
+            text = text.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+            return text.trim();
+        }
+
+        function exportToPDF() {
+            // Use allSteps to export everything properly grouped
+            const phases = allPhases; // Use the actual generated phases
+            const printDiv = document.getElementById('printAllPhases');
+            
+            let html = '<div style="padding: 20px;">';
+            
+            // Core Components Summary
+            html += '<div style="background: #f0f7ff; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #0077c8;">';
+            html += '<h3 style="margin-bottom: 8px;">Selected Components:</h3>';
+            html += '<ul style="margin-left: 20px;">';
+            html += `<li><span class="badge included">✓ VCF Version</span><span class="badge version">v${vcfdetailVersion}</span></li>`;
+
+            
+            html += '</ul>';
+            
+            // Additional Products Section (only show if any selected)
+            const selectedProducts = window.selectedAdvancedProducts || {};
+            const hasAdditionalProducts = vlcmSelected || witnessSelected || 
+                Object.values(selectedProducts).some(val => val === true);
+            
+            if (hasAdditionalProducts) {
+                html += '<h3 style="margin-top: 16px; margin-bottom: 8px;">Additional Products:</h3>';
+                html += '<ul style="margin-left: 20px;">';
+                if (vlcmSelected) html += '<li>vLCM Baseline to Image Migration</li>';
+                if (witnessSelected) html += '<li>vSAN Witness Host</li>';
+                
+                // Add selected advanced products
+                if (upgradeData && upgradeData.optional_products) {
+                    upgradeData.optional_products.forEach(product => {
+                        if (selectedProducts[product.id] === true) {
+                            html += '<li>' + product.display_name + '</li>';
+                        }
+                    });
+                }
+                html += '</ul>';
+            }
+            
+            html += '</div>';
+
+        
+
+            // All phases
+            phases.forEach(phase => {
+                html += '<div style="background: #f8f9fa; border-left: 4px solid #0077c8; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
+                html += '<h3 style="color: #0077c8; margin-bottom: 8px;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
+                html += '<p style="color: #5a6778; margin-bottom: 12px;">' + phase.description + '</p>';
+                
+                if (phase.data) {
+                    if (phase.data.prereqs && phase.data.prereqs.length > 0) {
+                        html += '<h4 style="color: #1a2332; margin-top: 12px;">Prerequisites:</h4>';
+                        html += '<ul style="margin-left: 20px;">';
+                        phase.data.prereqs.forEach(p => { html += '<li>' + p + '</li>'; });
+                        html += '</ul>';
+                    }
+                    if (phase.data.tables && phase.data.tables.length > 0) {
+                        phase.data.tables.forEach(table => {
+                            html += '<div style="margin-top: 15px; border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden; page-break-inside: avoid;">';
+                            html += '<div style="background: #0077c8; color: white; padding: 10px; font-weight: 600;">' + table.title + '</div>';
+                            if (table.description) {
+                                html += '<div style="padding: 10px; background: #f8f9fa; font-size: 0.85rem;">' + table.description + '</div>';
+                            }
+                            html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
+                            html += '<thead><tr style="background: #f8f9fa;">';
+                            table.headers.forEach(header => {
+                                html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">' + header + '</th>';
+                            });
+                            html += '</tr></thead><tbody>';
+                            table.rows.forEach((row, idx) => {
+                                const bg = idx % 2 === 0 ? '#ffffff' : '#f8f9fa';
+                                html += '<tr style="background: ' + bg + ';">';
+                                row.forEach(cell => { html += '<td style="padding: 10px; border-bottom: 1px solid #dee2e6;">' + cell + '</td>'; });
+                                html += '</tr>';
+                            });
+                            html += '</tbody></table></div></div>';
+                        });
+                    }
+
+                      if (phase.data.notices && phase.data.notices.length > 0) {
+                        phase.data.notices.forEach(notice => {
+                            const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
+                            const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
+                            html += '<div style="background: white; border-left: 4px solid ' + color + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
+                            html += '<strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += '<ul style="margin: 8px 0 0 20px;">';
+                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                                html += '</ul>';
+                            }
+                            html += '</div>';
+                        });
+                    }
+                    
+                    if (phase.data.steps && phase.data.steps.length > 0) {
+                        html += '<h4 style="color: #1a2332; margin-top: 12px;">Steps:</h4>';
+                        html += '<ul style="margin-left: 20px;">';
+                        phase.data.steps.forEach(s => {
+                            html += '<li>' + s + '</li>';
+                            const docUrl = extractDocUrlFromStep(s);
+                            if (docUrl) {
+                                const inlineDoc = getInlineDocForUrl(docUrl);
+                                if (inlineDoc) {
+                                    html += '<div style="background: white; border: 2px solid #0077c8; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px; page-break-inside: avoid;">';
+                                    html += '<h5 style="color: #0077c8; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
+                                    html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
+                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);"><strong>Source:</strong> ' + docUrl + '</p>';
+                                    html += '</div>';
+                                }
+                            }
+                        });
+                        html += '</ul>';
+                    }
+                  
+                }
+                html += '</div>';
+            });
+            html += '</div>';
+            
+            printDiv.innerHTML = html;
+            printDiv.style.display = 'block';
+            
+            // Hide interactive elements
+            document.getElementById('phaseContainer').style.display = 'none';
+            
+            // Wait for Mermaid to render the diagram, then print
+            setTimeout(() => {
+                mermaid.contentLoaded();
+                setTimeout(() => {
+                    window.print();
+                    
+                    // Restore after print
+                    setTimeout(() => {
+                        printDiv.style.display = 'none';
+                        document.getElementById('phaseContainer').style.display = '';
+                    }, 500);
+                }, 500);
+            }, 100);
+        }
+
+
+        function generateDiagram() {
+            let diagram = '%%{init: {"flowchart": {"nodeSpacing": 40, "rankSpacing": 50}} }%%\ngraph LR\n    Start["Start<br/>Upgrade"]';
+            
+            // Build diagram with phases as subgraphs containing steps
+            allSteps.forEach((step, stepIndex) => {
+                const phaseId = `Phase${step.number}`;
+                const isCurrentPhase = stepIndex === currentStepIndex;
+                const isCompletedPhase = stepIndex < currentStepIndex;
+                
+                // Check if this phase has a safe stopping point
+                const hasSafeStop = step.phases.some(phase => phase.data && phase.data.safe_stopping_point);
+                // ONLY show icon if this is the CURRENT phase AND it's a safe stop
+                const safeStopIcon = (hasSafeStop && isCurrentPhase) ? '⏸️ ' : '';
+                
+                // Start subgraph for this phase
+                diagram += `\n    subgraph ${phaseId}["${safeStopIcon}Phase ${step.number}: ${step.title}"]`;
+                
+                // Add each step within the phase
+                step.phases.forEach((phase, phaseIdx) => {
+                    const stepNodeId = `P${step.number}S${phaseIdx + 1}`;
+                    const safeStopIcon = (phase.data && phase.data.safe_stopping_point) ? '' : '';
+                    const stepLabel = `Step ${phaseIdx + 1}: ${safeStopIcon}${phase.title}`;
+                    diagram += `\n        ${stepNodeId}["${stepLabel}"]`;
+                });
+                
+                diagram += `\n    end`;
+            });
+            
+            // Connect phases in sequence
+            diagram += `\n    Start`;
+            allSteps.forEach((step, index) => {
+                diagram += ` --> Phase${step.number}`;
+            });
+            diagram += ` --> End["Complete"]`;
+            
+            diagram += '\n    ';
+            
+            // Add styles
+            diagram += 'style Start fill:#e9ecef,stroke:#495057,stroke-width:3px,color:#000\n    ';
+            
+            // Style phases based on status
+            allSteps.forEach((step, index) => {
+                const phaseId = `Phase${step.number}`;
+                const hasSafeStop = step.phases.some(phase => phase.data && phase.data.safe_stopping_point);
+                const isCurrentPhase = index === currentStepIndex;
+                
+                if (isCurrentPhase && hasSafeStop) {
+                    // Current phase at safe stop - purple/violet
+                    diagram += `style ${phaseId} fill:#E1D5E7,stroke:#7C3AED,stroke-width:4px\n    `;
+                } else if (index === currentStepIndex) {
+                    // Current phase (no safe stop) - blue background
+                    diagram += `style ${phaseId} fill:#cce5ff,stroke:#0077c8,stroke-width:4px\n    `;
+                } else if (index < currentStepIndex) {
+                    // Completed phase - green background
+                    diagram += `style ${phaseId} fill:#d4edda,stroke:#28a745,stroke-width:3px\n    `;
+                } else {
+                    // Future phase - light gray background
+                    diagram += `style ${phaseId} fill:#f8f9fa,stroke:#adb5bd,stroke-width:2px\n    `;
+                }
+                
+                // Style individual steps within phases
+                step.phases.forEach((phase, phaseIdx) => {
+                    const stepNodeId = `P${step.number}S${phaseIdx + 1}`;
+                    
+                    if (index === currentStepIndex) {
+                        // Steps in current phase - darker blue
+                        diagram += `style ${stepNodeId} fill:#0077c8,stroke:#005fa3,stroke-width:2px,color:#fff\n    `;
+                    } else if (index < currentStepIndex) {
+                        // Steps in completed phase - darker green
+                        diagram += `style ${stepNodeId} fill:#28a745,stroke:#1e7e34,stroke-width:2px,color:#fff\n    `;
+                    } else {
+                        // Steps in future phase - white
+                        diagram += `style ${stepNodeId} fill:#ffffff,stroke:#6c757d,stroke-width:1px,color:#000\n    `;
+                    }
+                });
+            });
+            
+            diagram += 'style End fill:#d4edda,stroke:#28a745,stroke-width:3px,color:#000';
+            
+            const container = document.getElementById('diagramContainer');
+            container.innerHTML = `<pre class="mermaid">${diagram}</pre>`;
+            
+            mermaid.contentLoaded();
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle switch
+            const toggle = document.getElementById('themeToggle');
+            if (newTheme === 'dark') {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+            
+            // Regenerate diagram with new theme colors
+            if (typeof generateDiagram === 'function') {
+                generateDiagram();
+            }
+        }
+
+        // Load saved theme on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Update toggle switch if dark mode is active
+            const toggle = document.getElementById('themeToggle');
+            if (savedTheme === 'dark') {
+                toggle.classList.add('active');
+            }
+        });
+
+        // Sidebar navigation function
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+    <script>
+        // Zoom functionality
+        let currentZoom = 1.0;
+        
+        function zoomDiagram(factor) {
+            currentZoom *= factor;
+            const wrapper = document.getElementById('mermaidWrapper');
+            if (wrapper) {
+                wrapper.style.transform = `scale(${currentZoom})`;
+            }
+        }
+        
+        function resetZoom() {
+            currentZoom = 1.0;
+            const wrapper = document.getElementById('mermaidWrapper');
+            if (wrapper) {
+                wrapper.style.transform = 'scale(1)';
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle switch
+            const toggle = document.getElementById('themeToggle');
+            if (newTheme === 'dark') {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+            
+            // Regenerate diagram with new theme colors
+            if (typeof generateDiagram === 'function') {
+                generateDiagram();
+            }
+        }
+
+        // Load saved theme on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Update toggle switch if dark mode is active
+            const toggle = document.getElementById('themeToggle');
+            if (savedTheme === 'dark') {
+                toggle.classList.add('active');
+            }
+        });
+
+        // Sidebar navigation function
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    
+        function extractDocUrlFromStep(stepHtml) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = stepHtml;
+            const link = tempDiv.querySelector('a[href*="techdocs.broadcom.com"]');
+            if (link) { return link.href.split('#')[0]; }
+            return null;
+        }
+
+        function getInlineDocForUrl(url) {
+            if (window.INLINE_DOCS && window.INLINE_DOCS[url]) { return window.INLINE_DOCS[url]; }
+            return null;
+        }        // INLINE DOCUMENTATION MODAL SYSTEM
+        function initInlineDocumentation() {
+            if (typeof window.INLINE_DOCS === 'undefined') {
+                console.warn('INLINE_DOCS not loaded');
+                return;
+            }
+            console.log('Inline docs loaded:', Object.keys(window.INLINE_DOCS).length);
+            // Use event delegation — intercepts ALL Broadcom/KB links including those injected dynamically
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href*="techdocs.broadcom.com"], a[href*="knowledge.broadcom.com"]');
+                if (!link) return;
+                e.preventDefault();
+                e.stopPropagation();
+                const fullUrl = link.href;
+                const urlWithoutFragment = fullUrl.split('#')[0];
+                if (window.INLINE_DOCS && window.INLINE_DOCS[urlWithoutFragment]) {
+                    showInlineDocumentation(urlWithoutFragment, fullUrl);
+                } else {
+                    // Not in inline docs — open in new tab, never navigate current page
+                    window.open(fullUrl, '_blank');
+                }
+            }, true);
+        }
+
+        // Navigation stack for back-button support
+        var docNavStack = [];
+
+        function showInlineDocumentation(url, originalUrl, pushToStack) {
+            const cleanUrl = (url || '').split('#')[0];
+            const docData = window.INLINE_DOCS ? window.INLINE_DOCS[cleanUrl] : null;
+            if (!docData) {
+                window.open(originalUrl || url, '_blank');
+                return;
+            }
+
+            // Push current state onto the nav stack so we can go back
+            if (pushToStack !== false) {
+                const currentExternalLink = document.getElementById('docModalExternalLink');
+                const currentTitle = document.getElementById('docModalTitle');
+                if (currentTitle && currentTitle.textContent && currentTitle.textContent !== 'Documentation') {
+                    docNavStack.push({
+                        url: currentExternalLink ? currentExternalLink.href : '',
+                        originalUrl: currentExternalLink ? currentExternalLink.href : ''
+                    });
+                }
+            }
+
+            const modal = document.getElementById('docModal');
+            const title = document.getElementById('docModalTitle');
+            const body = document.getElementById('docModalBody');
+            const externalLink = document.getElementById('docModalExternalLink');
+            const backBtn = document.getElementById('docModalBackBtn');
+
+            if (backBtn) backBtn.style.display = docNavStack.length > 0 ? 'flex' : 'none';
+
+            title.textContent = docData.title || 'Documentation';
+            body.innerHTML = docData.content || '<p>No content available.</p>';
+
+            // Remove linklist / relatedlinks nav blocks
+            body.querySelectorAll(
+                '.linklist, .relatedlinks, .linkpool, [class*="linklist"], [class*="relatedlinks"]'
+            ).forEach(function(el) { el.remove(); });
+
+            // Strip display:inline from block elements, but skip if parent is inline (e.g. span.keyword)
+            var BLOCK_TAGS = new Set([
+                'DIV','P','LI','UL','OL','SECTION','H1','H2','H3','H4','H5','H6',
+                'TABLE','TR','TD','TH','THEAD','TBODY','TFOOT',
+                'ARTICLE','ASIDE','BLOCKQUOTE','FIGURE','FIGCAPTION',
+                'HEADER','FOOTER','MAIN','NAV','DETAILS','SUMMARY',
+                'DL','DT','DD','PRE','HR','FIELDSET','FORM'
+            ]);
+            var INLINE_PARENTS = new Set([
+                'SPAN','A','B','I','EM','STRONG','CODE','KBD','LABEL',
+                'CITE','ABBR','BIG','SMALL','SUB','SUP','VAR','Q','S','U'
+            ]);
+            body.querySelectorAll('*').forEach(function(el) {
+                if (BLOCK_TAGS.has(el.tagName) && el.style.display === 'inline') {
+                    if (el.parentElement && INLINE_PARENTS.has(el.parentElement.tagName)) return;
+                    el.style.removeProperty('display');
+                }
+            });
+
+            // Normalise injected TechDocs colour/opacity styles
+            body.querySelectorAll('*').forEach(function(el) {
+                el.style.removeProperty('color');
+                el.style.removeProperty('-webkit-text-fill-color');
+                el.style.removeProperty('opacity');
+                el.style.setProperty('color', '#111111', 'important');
+                el.style.setProperty('-webkit-text-fill-color', '#111111', 'important');
+                el.style.setProperty('opacity', '1', 'important');
+            });
+            body.querySelectorAll('a').forEach(function(el) {
+                el.style.setProperty('color', '#0098C7', 'important');
+                el.style.setProperty('-webkit-text-fill-color', '#0098C7', 'important');
+            });
+
+            // Intercept link clicks — load inline if available
+            body.querySelectorAll('a[href]').forEach(function(a) {
+                const href = a.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
+                a.addEventListener('click', function(e) {
+                    const cleanHref = href.split('#')[0];
+                    if (window.INLINE_DOCS && window.INLINE_DOCS[cleanHref]) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showInlineDocumentation(cleanHref, href);
+                    }
+                });
+            });
+
+            if (externalLink) externalLink.href = originalUrl || url;
+
+            // Populate sub-pages sidebar
+            const sidebar = document.getElementById('docSubpagesSidebar');
+            const spList = document.getElementById('docSubpagesList');
+            if (sidebar && spList) {
+                const subpages = docData.subpages || [];
+                spList.innerHTML = '';
+                if (subpages.length > 0) {
+                    subpages.forEach(function(sp) {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.textContent = sp.label;
+                        a.href = sp.url;
+                        a.title = sp.url;
+                        a.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            spList.querySelectorAll('a').forEach(function(x) { x.classList.remove('sp-active'); });
+                            a.classList.add('sp-active');
+                            if (window.INLINE_DOCS && window.INLINE_DOCS[sp.url]) {
+                                showInlineDocumentation(sp.url, sp.url);
+                            } else {
+                                window.open(sp.url, '_blank');
+                            }
+                        });
+                        li.appendChild(a);
+                        spList.appendChild(li);
+                    });
+                    sidebar.classList.add('has-pages');
+                } else {
+                    sidebar.classList.remove('has-pages');
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function docModalGoBack() {
+            if (docNavStack.length === 0) return;
+            const prev = docNavStack.pop();
+            showInlineDocumentation(prev.url, prev.originalUrl, false);
+        }
+
+        function closeDocModal() {
+            const modal = document.getElementById('docModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            docNavStack = [];
+            const backBtn = document.getElementById('docModalBackBtn');
+            if (backBtn) backBtn.style.display = 'none';
+        }
+
+        function openExternalLink() {
+            const url = document.getElementById('docModalExternalLink').href;
+            window.open(url, '_blank');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeDocModal();
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => initInlineDocumentation(), 1000);
+        });
+
+</script>
+            </div>
+        </div>
+    </div>
+    <!-- Documentation Modal -->
+    <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
+        <div class="doc-modal-content">
+                        <div class="doc-modal-header">
+                <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+                    <button id="docModalBackBtn" class="doc-modal-back" onclick="docModalGoBack()" style="display:none;" title="Go back">&#8592; Back</button>
+                    <h2 id="docModalTitle" style="margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Documentation</h2>
+                </div>
+                <button class="doc-modal-close" onclick="closeDocModal()">&times;</button>
+            </div>
+            <div class="doc-modal-inner">
+                <div class="doc-subpages-sidebar" id="docSubpagesSidebar">
+                    <h4>Related Pages</h4>
+                    <ul class="doc-subpages-list" id="docSubpagesList"></ul>
+                </div>
+                <div class="doc-modal-body" id="docModalBody"></div>
+            </div>
+            <div class="doc-modal-footer">
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">Inline documentation from Broadcom TechDocs</span>
+                <a id="docModalExternalLink" href="#" class="external-link" onclick="openExternalLink(); return false;">
+                    Open on Broadcom TechDocs &#8599;
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

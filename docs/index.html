@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>VCF Upgrade Planner</title>
+    <style>
+        :root {
+            --vmw-blue: #0098C7;
+            --vmw-dark: #092138;
+            --vmw-gray: #53565A;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #D1D2D5;
+            --pulse-red: #CC092F;
+            --lime: #61A60E;
+            --jade: #007B8C;
+            --sapphire: #092138;
+            --gray-100: #E8E8E8;
+            --gray-400: #A4A5AF;
+            --text-primary: #092138;
+            --text-secondary: #53565A;
+            --warning-bg: #fff3cd;
+            --warning-border: #ffc107;
+            --warning-text: #856404;
+        }
+
+        [data-theme="dark"] {
+            --vmw-blue: #40B4E5;
+            --vmw-dark: #FFFFFF;
+            --vmw-gray: #9CA3AF;
+            --bg: #0d1117;
+            --card-bg: #1c2128;
+            --border-color: #3d444d;
+            --text-primary: #FFFFFF;
+            --text-secondary: #C9D1D9;
+            --pulse-red: #FF6B6B;
+            --lime: #7CFC00;
+            --warning-bg: #332701;
+            --warning-border: #ffc107;
+            --warning-text: #ffd43b;
+        }
+
+        a {
+            color: #0098C7;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: #007BA3;
+            text-decoration: underline;
+        }
+
+        [data-theme="dark"] a {
+            color: #58D3FF;
+        }
+
+        [data-theme="dark"] a:hover {
+            color: #8FE3FF;
+        }
+
+        /* Dark Mode Toggle Switch */
+        .theme-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .theme-toggle-wrapper .theme-toggle-label {
+            color: white;
+        }
+
+        .theme-toggle-label {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active,
+        [data-theme="dark"] .toggle-switch {
+            background: #0098C7;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider,
+        [data-theme="dark"] .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.65;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sidebar Layout */
+        .app-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #092138;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        [data-theme="dark"] .sidebar {
+            background: #161b22;
+            border-right: 1px solid #30363d;
+        }
+
+        .sidebar-header {
+            padding: 28px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-logo h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 12px;
+        }
+
+        .nav-item {
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #0098C7;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-item.nav-hidden {
+            display: none;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 48px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .header img {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .header img {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .header img {
+            background: white;
+            opacity: 0.95;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            color: var(--text-primary);
+        }
+
+        h3 {
+            color: var(--text-primary);
+        }
+
+        h4 {
+            color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-primary);
+        }
+
+        li {
+            color: var(--text-primary);
+        }
+
+        label {
+            color: var(--text-primary);
+        }
+
+        .explanation {
+            background: var(--card-bg);
+            border-left: 4px solid var(--vmw-blue);
+            border-radius: 12px;
+            padding: 28px 32px;
+            margin-bottom: 48px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+            border-left-width: 4px;
+        }
+
+        [data-theme="dark"] .explanation {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .explanation h2 {
+            color: var(--vmw-blue);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .explanation h2::before {
+            content: "📋 ";
+            margin-right: 8px;
+        }
+
+        .question-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .question-section {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .question-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--vmw-dark);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--vmw-gray);
+            margin-bottom: 8px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 16px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .checkbox-label:hover {
+            background: rgba(0, 152, 199, 0.05);
+        }
+
+        [data-theme="dark"] .checkbox-label:hover {
+            background: rgba(64, 180, 229, 0.1);
+        }
+
+        .checkbox-label:hover {
+            background: rgba(0, 119, 200, 0.05);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 0;
+            cursor: pointer;
+            accent-color: var(--vmw-blue);
+            flex-shrink: 0;
+        }
+
+        .checkbox-label > span {
+            flex-shrink: 0;
+            min-width: 150px;
+        }
+
+        .version-dropdown {
+            display: inline-flex;
+            animation: slideDown 0.3s ease-out;
+            margin-left: 30px;
+        }
+
+        .version-dropdown select {
+            width: auto;
+            min-width: 180px;
+            padding: 8px 12px;
+            font-size: 0.95rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        select:hover {
+            border-color: var(--vmw-blue);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--vmw-blue);
+            box-shadow: 0 0 0 3px rgba(0, 119, 200, 0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #vsphereQuestions,
+        #vcfQuestions {
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .path-selection {
+            margin-top: 30px;
+        }
+
+        .path-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .path-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .path-card:hover {
+            border-color: var(--vmw-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 152, 199, 0.15), 0 3px 8px rgba(0, 152, 199, 0.1);
+        }
+
+        [data-theme="dark"] .path-card {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .path-card:hover {
+            box-shadow: 0 8px 20px rgba(64, 180, 229, 0.25), 0 3px 8px rgba(64, 180, 229, 0.15);
+        }
+
+        .path-card h3 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .path-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .path-icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.3rem;
+            vertical-align: middle;
+        }
+
+        .path-icon img {
+            width: 32px;
+            height: 32px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-wrapper {
+                margin-left: 0;
+            }
+            
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .question-section {
+                padding: 20px;
+            }
+            
+            .header img {
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span style="font-size: 1.5rem;"></span>
+                    <h1>VCF Upgrade Planner</h1>
+                </div>
+                <p class="sidebar-subtitle"></p>
+            </div>
+
+            <div class="sidebar-nav">
+                <div class="nav-item active" onclick="scrollToTop()">
+                    <span>🏠</span> Home
+                </div>
+                <div class="nav-item nav-hidden" id="navDeployment" onclick="scrollToElement('startingPoint')">
+                    <span>💼</span> Deployment
+                </div>
+                <div class="nav-item nav-hidden" id="navProducts" onclick="scrollToElement('vsphereQuestions')">
+                    <span>📦</span> Products
+                </div>
+                <div class="nav-item nav-hidden" id="navPath" onclick="scrollToElement('pathSelection')">
+                    <span>🛤️</span> Upgrade Path
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="theme-toggle-wrapper">
+                    <span class="theme-toggle-label">Dark Mode</span>
+                    <div class="toggle-switch" id="themeToggle" onclick="toggleDarkMode()">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <div class="container">
+                <div class="header">
+                    <h1>VCF Upgrade Planner</h1>
+        <!-- First Question -->
+            <div class="question-section">
+            <label class="question-label">🏢 What is your current deployment?</label>
+            <select id="startingPoint" onchange="handleStartingPointChange()">
+                <option value="">-- Select --</option>
+                <option value="vsphere">vSphere</option>
+                <option value="vcf">VCF</option>
+            </select>
+        </div>
+
+        <!-- vSphere Questions -->
+        <div class="hidden" id="vsphereQuestions">
+            <div class="question-section">
+                <label class="question-label">📦 Select your current products:</label>
+                
+                <div style="background: rgba(1, 152, 199, 0.1); border-left: 4px solid var(--vmw-blue); border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.95rem; color: var(--text-primary);">
+                    <strong>ℹ️ Note: vCenter and either ESX or VxRail must be selected to proceed with upgrade paths.
+                </strong></div><strong>
+                
+                <!-- vCenter -->
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input id="vcenterCheck" onchange="toggleDropdown('vcenterCheck', 'vcenterDropdown')" type="checkbox"/>
+                        <span>vCenter</span>
+                        <div class="version-dropdown hidden" id="vcenterDropdown">
+                            <select id="vcenter">
+                                <option value="">-- Select Version --</option>
+                                <option value="8.0u1">8.0u1</option>
+                                <option value="8.0u2">8.0u2</option>
+                                <option value="8.0u3">8.0u3</option>
+                                <option value="9.0.x">9.0.x</option>
+                                <option value="9.1.x">9.1.x</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- ESX -->
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input id="esxCheck" onchange="toggleDropdown('esxCheck', 'esxDropdown')" type="checkbox"/>
+                        <span>ESX</span>
+                        <div class="version-dropdown hidden" id="esxDropdown">
+                            <select id="esx">
+                                <option value="">-- Select Version --</option>
+                                <option value="8.0u1">8.0u1</option>
+                                <option value="8.0u2">8.0u2</option>
+                                <option value="8.0u3">8.0u3</option>
+                                <option value="9.0.x">9.0.x</option>
+                                <option value="9.1.x">9.1.x</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- VCF Operations -->
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input id="operationsCheck" onchange="toggleDropdown('operationsCheck', 'operationsDropdown')" type="checkbox"/>
+                        <span>VCF Operations (Aria Operations)</span>
+                        <div class="version-dropdown hidden" id="operationsDropdown">
+                            <select id="operations">
+                                <option value="">-- Select Version --</option>
+                                <option value="8.16.x">8.16.x</option>
+                                <option value="8.17.x">8.17.x</option>
+                                <option value="8.18.x">8.18.x</option>
+                                <option value="9.0.x">9.0.x</option>
+                                <option value="9.1.x">9.1.x</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Convert-only info note (shown when vCenter+ESX are already on 9.1.x) -->
+                <div id="convertOnlyNote" style="display: none; margin: 8px 0 12px 0; padding: 12px 16px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px; font-size: 0.88rem; color: #856404;">
+                    <strong>⚠️ Convert to VCF is the only option at this stage.</strong><br/>
+                    NSX and VCF Automation can only be upgraded as part of the VCF Conversion process. Because vCenter and ESX are already on 9.1.x, that upgrade window has passed — these components cannot be selected independently.
+                </div>
+
+                <!-- VCF Automation -->
+                <div class="checkbox-group" id="automationCheckboxGroup">
+                    <label class="checkbox-label">
+                        <input id="automationCheck" onchange="toggleDropdown('automationCheck', 'automationDropdown')" type="checkbox"/>
+                        <span>VCF Automation (Aria Automation)</span>
+                        <div class="version-dropdown hidden" id="automationDropdown">
+                            <select id="automation">
+                                <option value="">-- Select Version --</option>
+                                <option value="8.17.x">8.17.x</option>
+                                <option value="8.18.x">8.18.x</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- NSX -->
+                <div class="checkbox-group" id="nsxCheckboxGroup">
+                    <label class="checkbox-label">
+                        <input id="nsxCheck" onchange="toggleDropdown('nsxCheck', 'nsxDropdown')" type="checkbox"/>
+                        <span>NSX</span>
+                        <div class="version-dropdown hidden" id="nsxDropdown">
+                            <select id="nsx">
+                                <option value="">-- Select Version --</option>
+                                <option value="4.1.x">4.1.x</option>
+                                <option value="4.2.x">4.2.x</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- VXRail -->
+                <div class="checkbox-group" id="vxrailCheckboxGroup">
+                    <label class="checkbox-label">
+                        <input id="vxrailCheck" onchange="toggleDropdown('vxrailCheck', 'vxrailDropdown')" type="checkbox"/>
+                        <span>Dell VxRail</span>
+                        <div class="version-dropdown hidden" id="vxrailDropdown">
+                            <select id="vxrail">
+                                <option value="">-- Select Version --</option>
+                                <option value="8.0.320-8.0.330">8.0.320-8.0.330</option>
+                                <option value="9.0.000-9.0.200">9.0.000-9.0.200</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+            </strong></div><strong>
+
+            <!-- vSphere Path Selection (appears after products selected) -->
+            <div class="path-selection hidden" id="pathSelection">
+                <div class="question-section">
+                    <label class="question-label">Destination Options</label>
+                    <div class="path-options" id="pathOptions">
+                        <!-- Paths will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </strong></div><strong>
+
+        <!-- VCF Questions -->
+        <div class="hidden" id="vcfQuestions">
+            <div class="question-section">
+                <label class="question-label">Select Your Current Environment</label>
+                
+                <!-- VCF Version Checkboxes -->
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input id="vcf52Check" onchange="toggleVCFDropdown('vcf52Check', 'vcf52Dropdown')" type="checkbox"/>
+                        <span>VCF 5.2</span>
+                        <div class="version-dropdown hidden" id="vcf52Dropdown">
+                            <select id="vcf52">
+                                <option value="">-- Select Version --</option>
+                                <option value="5.2.0">5.2.0</option>
+                                <option value="5.2.1">5.2.1</option>
+                                <option value="5.2.2">5.2.2</option>
+                                <option value="5.2.3">5.2.3</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input id="vcf90Check" onchange="toggleVCFDropdown('vcf90Check', 'vcf90Dropdown')" type="checkbox"/>
+                        <span>VCF 9.0</span>
+                        <div class="version-dropdown hidden" id="vcf90Dropdown">
+                            <select id="vcf90">
+                                <option value="">-- Select Version --</option>
+                                <option value="9.0.0">9.0.0</option>
+                                <option value="9.0.1">9.0.1</option>
+                                <option value="9.0.2">9.0.2</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- VCF Path Selection (appears after version selected) -->
+            <div class="path-selection hidden" id="vcfPathSelection">
+                <div class="question-section">
+                    <label class="question-label">Destination Options</label>
+                    <div class="path-options" id="vcfPathOptions">
+                        <!-- Paths will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </strong></div><strong>
+
+    <script>
+        function handleStartingPointChange() {
+            const startingPoint = document.getElementById('startingPoint').value;
+            const vsphereQuestions = document.getElementById('vsphereQuestions');
+            const vcfQuestions = document.getElementById('vcfQuestions');
+
+            // Hide both sections first
+            vsphereQuestions.classList.add('hidden');
+            vcfQuestions.classList.add('hidden');
+
+            // Show the appropriate section
+            if (startingPoint === 'vsphere') {
+                vsphereQuestions.classList.remove('hidden');
+            } else if (startingPoint === 'vcf') {
+                vcfQuestions.classList.remove('hidden');
+            }
+        }
+
+        function checkVersionsAndToggleOptions() {
+            // Get vCenter and ESX versions
+            const vcenterVersion = document.getElementById('vcenter').value;
+            const esxVersion = document.getElementById('esx').value;
+
+            const nsxCheckboxGroup = document.getElementById('nsxCheckboxGroup');
+            const automationCheckboxGroup = document.getElementById('automationCheckboxGroup');
+            const vxrailCheckboxGroup = document.getElementById('vxrailCheckboxGroup');
+            const convertOnlyNote = document.getElementById('convertOnlyNote');
+
+            // Trigger when vCenter AND ESX are already on 9.1.x (with or without Operations).
+            // In this state NSX and Automation can only be upgraded via VCF Convert —
+            // selecting them independently is not supported.
+            const infraOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
+
+            if (infraOn91) {
+                // Show the informational note
+                if (convertOnlyNote) convertOnlyNote.style.display = 'block';
+
+                // Disable (but keep visible) NSX and Automation checkboxes
+                const nsxCheck = document.getElementById('nsxCheck');
+                const automationCheck = document.getElementById('automationCheck');
+
+                if (nsxCheck) {
+                    nsxCheck.disabled = true;
+                    if (nsxCheck.checked) {
+                        nsxCheck.checked = false;
+                        document.getElementById('nsxDropdown').classList.add('hidden');
+                        document.getElementById('nsx').value = '';
+                    }
+                }
+                if (nsxCheckboxGroup) {
+                    nsxCheckboxGroup.style.opacity = '0.45';
+                    nsxCheckboxGroup.style.pointerEvents = 'none';
+                }
+
+                if (automationCheck) {
+                    automationCheck.disabled = true;
+                    if (automationCheck.checked) {
+                        automationCheck.checked = false;
+                        document.getElementById('automationDropdown').classList.add('hidden');
+                        document.getElementById('automation').value = '';
+                    }
+                }
+                if (automationCheckboxGroup) {
+                    automationCheckboxGroup.style.opacity = '0.45';
+                    automationCheckboxGroup.style.pointerEvents = 'none';
+                }
+
+                // Also hide VxRail (not relevant for this VCF convert path)
+                const vxrailCheck = document.getElementById('vxrailCheck');
+                if (vxrailCheck && vxrailCheck.checked) {
+                    vxrailCheck.checked = false;
+                    document.getElementById('vxrailDropdown').classList.add('hidden');
+                    document.getElementById('vxrail').value = '';
+                }
+                if (vxrailCheckboxGroup) vxrailCheckboxGroup.style.display = 'none';
+
+            } else {
+                // Restore NSX and Automation to normal
+                if (convertOnlyNote) convertOnlyNote.style.display = 'none';
+
+                const nsxCheck = document.getElementById('nsxCheck');
+                const automationCheck = document.getElementById('automationCheck');
+
+                if (nsxCheck) nsxCheck.disabled = false;
+                if (nsxCheckboxGroup) {
+                    nsxCheckboxGroup.style.display = 'block';
+                    nsxCheckboxGroup.style.opacity = '';
+                    nsxCheckboxGroup.style.pointerEvents = '';
+                }
+
+                if (automationCheck) automationCheck.disabled = false;
+                if (automationCheckboxGroup) {
+                    automationCheckboxGroup.style.display = 'block';
+                    automationCheckboxGroup.style.opacity = '';
+                    automationCheckboxGroup.style.pointerEvents = '';
+                }
+
+                if (vxrailCheckboxGroup) vxrailCheckboxGroup.style.display = 'block';
+            }
+        }
+
+        function toggleDropdown(checkboxId, dropdownId) {
+            const checkbox = document.getElementById(checkboxId);
+            const dropdown = document.getElementById(dropdownId);
+
+            if (checkbox.checked) {
+                dropdown.classList.remove('hidden');
+            } else {
+                dropdown.classList.add('hidden');
+                // Reset the dropdown value when unchecking
+                const select = dropdown.querySelector('select');
+                if (select) {
+                    select.value = '';
+                }
+            }
+            
+            // Check versions and toggle NSX/Automation/VXRail visibility
+            checkVersionsAndToggleOptions();
+            
+            // Update available paths when any checkbox changes
+            updateAvailablePaths();
+        }
+        
+        function handleVersionChange() {
+            checkVersionsAndToggleOptions();
+            updateAvailablePaths();
+        }
+
+        function validateSelections() {
+            const errors = [];
+            
+            // Check that both vCenter and ESX are selected (required)
+            const vcenterChecked = document.getElementById('vcenterCheck').checked;
+            const esxChecked = document.getElementById('esxCheck').checked;
+            const vxrailChecked = document.getElementById('vxrailCheck').checked;
+
+            if (!vcenterChecked) {
+                errors.push('vCenter must be selected to proceed');
+            }
+
+            // Either ESX or VXRail must be selected (mutually exclusive but at least one required)
+            if (!esxChecked && !vxrailChecked) {
+                errors.push('Either ESX or VXRail must be selected to proceed');
+            }
+            
+            // Check vCenter version if checked
+            if (vcenterChecked && !document.getElementById('vcenter').value) {
+                errors.push('vCenter version must be selected');
+            }
+            
+            // Check ESX version if checked
+            if (esxChecked && !document.getElementById('esx').value) {
+                errors.push('ESX version must be selected');
+            }
+            
+            // Check Operations version if checked
+            if (document.getElementById('operationsCheck').checked && !document.getElementById('operations').value) {
+                errors.push('VCF Operations version must be selected');
+            }
+            
+            // Check Automation version if checked
+            if (document.getElementById('automationCheck').checked && !document.getElementById('automation').value) {
+                errors.push('VCF Automation version must be selected');
+            }
+            
+            // Check NSX version if checked
+            if (document.getElementById('nsxCheck').checked && !document.getElementById('nsx').value) {
+                errors.push('NSX version must be selected');
+            }
+            
+            // Check VXRail version if checked
+            if (document.getElementById('vxrailCheck').checked && !document.getElementById('vxrail').value) {
+                errors.push('VXRail version must be selected');
+            }
+            
+            return errors;
+        }
+
+        function updateAvailablePaths() {
+            // Validate selections first
+            const validationErrors = validateSelections();
+            
+            // Get checkbox states
+            const vcenter = document.getElementById('vcenterCheck').checked;
+            const esx = document.getElementById('esxCheck').checked;
+            const operations = document.getElementById('operationsCheck').checked;
+            const automation = document.getElementById('automationCheck').checked;
+            const nsx = document.getElementById('nsxCheck').checked;
+            const vxrail = document.getElementById('vxrailCheck').checked;
+            
+            // Get version selections
+            const vcenterVersion = document.getElementById('vcenter').value || '8';
+            const esxVersion = document.getElementById('esx').value || '8';
+            const operationsVersion = document.getElementById('operations').value || '8.18.x';
+            
+            // Check if already fully on 9.1 (all components at 9.1)
+            const alreadyOn91 = (vcenterVersion === '9.1.x' && esxVersion === '9.1.x' && 
+                (!operations || operationsVersion === '9.1.x'));
+
+            const opsAlreadyOn91 = operations && operationsVersion === '9.1.x' && vcenterVersion !== '9.1.x';
+            const esxAlreadyOn91 = operations && operationsVersion === '9.1.x' && vcenterVersion  == '9.1.x' && esxVersion !== '9.1.x';
+
+            const pathSelection = document.getElementById('pathSelection');
+            const pathOptions = document.getElementById('pathOptions');
+
+            // Clear existing paths
+            pathOptions.innerHTML = '';
+            
+            // Show validation errors if any
+            if (validationErrors.length > 0) {
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                errorDiv.innerHTML = `
+                    <strong style="color: var(--warning-text);">⚠️ Please complete your selections:</strong>
+                    <ul style="margin: 8px 0 0 20px; color: var(--warning-text);">
+                        ${validationErrors.map(err => `<li>${err}</li>`).join('')}
+                    </ul>
+                `;
+                pathOptions.appendChild(errorDiv);
+                pathSelection.classList.remove('hidden');
+                return;
+            }
+
+            // Check for VXRail with Automation or NSX - No path available
+            if (vxrail && (automation || nsx)) {
+                const noPathDiv = document.createElement('div');
+                noPathDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                noPathDiv.innerHTML = `
+                    <h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.2rem; font-weight: 600;">⚠️ No Upgrade Path Available</h3>
+                    <p style="color: var(--warning-text); margin-bottom: 12px; line-height: 1.6;">
+                        There is currently <strong>no supported upgrade path to vSphere 9.1 or VCF 9.1 on VxRail</strong> when combined with:
+                    </p>
+                    <ul style="margin: 8px 0 12px 20px; color: var(--warning-text);">
+                        ${automation ? '<li>VCF Automation</li>' : ''}
+                        ${nsx ? '<li>NSX</li>' : ''}
+                    </ul>
+                    <p style="color: var(--warning-text); font-style: italic; margin-top: 12px;">
+                        Please adjust your selections or consult VMware documentation for VxRail-specific upgrade paths.
+                    </p>
+                `;
+                pathOptions.appendChild(noPathDiv);
+                pathSelection.classList.remove('hidden');
+                return;
+            }
+
+            // Define available paths based on selections
+            let paths = [];
+
+            // Logic for path availability
+            if (vcenter && esx && automation && !nsx && !operations && !vxrail) {
+                // vCenter + ESX + Automation
+                paths = [
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including VCF Automation components', icon: '' }
+                ];
+            } else if (vcenter && esx && nsx  && automation && !vxrail) {
+                // vCenter + ESX + NSX + Automation
+                paths = [
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete migration to VCF 9.1 with all components', icon: '' }
+                ];
+            } 
+            else if (vcenter && esx && operations && automation && !vxrail) {
+                // vCenter + ESX + NSX + Operations + Automation
+                paths = [
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete migration to VCF 9.1 with all components', icon: '' }
+                ];
+            } 
+            else if (vcenter && esx && nsx && operations && automation && !vxrail) {
+                // vCenter + ESX + NSX + Operations + Automation
+                paths = [
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete migration to VCF 9.1 with all components', icon: '' }
+                ];
+            } else if (vcenter && esx && nsx && operations && !automation && !vxrail) {
+                // vCenter + ESX + NSX + Operations
+                paths = [
+                    { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with NSX and Operations, excluding VCF Automation', icon: '' },
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete migration to VCF 9.1 with all components', icon: '' }
+                ];
+            } else if (vcenter && esx && nsx && !operations && !automation && !vxrail) {
+                // vCenter + ESX + NSX
+                paths = [
+                    { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with NSX, excluding VCF Automation', icon: '' },
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including NSX and VCF Automation components', icon: '' }
+                ];
+            } else if (vcenter && esx && operations && !nsx && !automation && !vxrail) {
+                // vCenter + ESX + Operations
+                if (alreadyOn91) {
+                    // Already on 9.1 - only show VCF migration options
+                    paths = [
+                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with Operations, excluding VCF Automation', icon: '' },
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including Operations and VCF Automation', icon: '' }
+                    ];
+                } else {
+                    // Need upgrade - show upgrade path + VCF options
+                    paths = [
+                        { title: 'vSphere and VCF Operations to 9.1', desc: 'Stay on vSphere without transitioning to VCF', icon: '' },
+                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with Operations, excluding VCF Automation', icon: '' },
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including Operations and VCF Automation', icon: '' }
+                    ];
+                }
+            } else if (vcenter && esx && !operations && !automation && !nsx && !vxrail) {
+                // vCenter + ESX only
+                if (alreadyOn91) {
+                    // Already on 9.1 - only show VCF migration options
+                    paths = [
+                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic migration to VCF 9.1 without VCF Automation', icon: '' },
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including VCF Automation components', icon: '' }
+                    ];
+                } else {
+                    // Need upgrade - show upgrade path + VCF options
+                    paths = [
+                        { title: 'vSphere and VCF Operations to 9.1', desc: 'Stay on vSphere without transitioning to VCF', icon: '' },                        
+                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic migration to VCF 9.1 without VCF Automation', icon: '' },
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including VCF Automation components', icon: '' }
+                    ];
+                }
+            } else if (vcenter && !esx && vxrail && !operations && !automation && !nsx){
+                paths = [
+                   { title: 'vSphere and VCF Operations to 9.1', desc: 'Stay on vSphere without transitioning to VCF', icon: '' }
+                ];
+            } else if (vcenter && !esx && vxrail && operations && !automation && !nsx){
+                paths = [
+                   { title: 'vSphere and VCF Operations to 9.1', desc: 'Stay on vSphere without transitioning to VCF', icon: '' }
+                ];
+            }
+
+            // Show path selection if we have any paths
+            if (paths.length > 0) {
+                paths.forEach(path => {
+                    const pathCard = document.createElement('div');
+                    pathCard.className = 'path-card';
+                    
+                    // Only make clickable if validation passes
+                    if (validationErrors.length === 0) {
+                        pathCard.onclick = () => selectPath(path.title);
+                        pathCard.style.cursor = 'pointer';
+                    } else {
+                        pathCard.style.opacity = '0.5';
+                        pathCard.style.cursor = 'not-allowed';
+                        pathCard.onclick = () => {
+                            alert('Please complete all required selections:\n\n' + validationErrors.join('\n'));
+                        };
+                    }
+                    
+                    pathCard.innerHTML = `
+                        <h3><span class="path-icon">${path.icon}</span>${path.title}</h3>
+                        <p>${path.desc}</p>
+                    `;
+                    pathOptions.appendChild(pathCard);
+                });
+                pathSelection.classList.remove('hidden');
+            } else {
+                pathSelection.classList.add('hidden');
+            }
+        }
+
+        function toggleVCFDropdown(checkboxId, dropdownId) {
+            const checkbox = document.getElementById(checkboxId);
+            const dropdown = document.getElementById(dropdownId);
+
+            if (checkbox.checked) {
+                dropdown.classList.remove('hidden');
+                
+                // Uncheck the other VCF checkbox (only one can be selected)
+                if (checkboxId === 'vcf52Check') {
+                    const vcf90Check = document.getElementById('vcf90Check');
+                    if (vcf90Check.checked) {
+                        vcf90Check.checked = false;
+                        document.getElementById('vcf90Dropdown').classList.add('hidden');
+                        document.getElementById('vcf90').value = '';
+                    }
+                } else if (checkboxId === 'vcf90Check') {
+                    const vcf52Check = document.getElementById('vcf52Check');
+                    if (vcf52Check.checked) {
+                        vcf52Check.checked = false;
+                        document.getElementById('vcf52Dropdown').classList.add('hidden');
+                        document.getElementById('vcf52').value = '';
+                    }
+                }
+            } else {
+                dropdown.classList.add('hidden');
+                const select = dropdown.querySelector('select');
+                if (select) {
+                    select.value = '';
+                }
+            }
+            
+            updateVCFPath();
+        }
+
+        function updateVCFPath() {
+            const vcfPathSelection = document.getElementById('vcfPathSelection');
+            const vcfPathOptions = document.getElementById('vcfPathOptions');
+            
+            const vcf52Checked = document.getElementById('vcf52Check').checked;
+            const vcf90Checked = document.getElementById('vcf90Check').checked;
+            const vcf52Version = document.getElementById('vcf52').value;
+            const vcf90Version = document.getElementById('vcf90').value;
+
+            // Clear existing paths
+            vcfPathOptions.innerHTML = '';
+
+            let paths = [];
+            const errors = [];
+
+            // Check which VCF version is selected
+            if (vcf52Checked && !vcf52Version) {
+                errors.push('VCF 5.2 version must be selected');
+            } else if (vcf90Checked && !vcf90Version) {
+                errors.push('VCF 9.0 version must be selected');
+            }
+
+            // Show validation errors if any
+            if (errors.length > 0) {
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                errorDiv.innerHTML = `
+                    <strong style="color: var(--warning-text);">⚠️ Please complete your selections:</strong>
+                    <ul style="margin: 8px 0 0 20px; color: var(--warning-text);">
+                        ${errors.map(err => `<li>${err}</li>`).join('')}
+                    </ul>
+                `;
+                vcfPathOptions.appendChild(errorDiv);
+                vcfPathSelection.classList.remove('hidden');
+                return;
+            }
+
+            if (vcf52Checked && vcf52Version) {
+                // VCF 5.2 upgrade paths - with and without Automation
+                paths = [
+                    { title: 'VCF 5.2 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF from 5.2 to 9.1 without deploying VCF Automation', icon: '' },
+                    { title: 'VCF 5.2 to VCF 9.1 (VCF Automation included)', desc: 'Upgrade VCF from 5.2 to 9.1 and deploy VCF Automation', icon: '' }
+                ];
+            } else if (vcf90Checked && vcf90Version) {
+                // VCF 9.0 upgrade paths - with and without Automation
+                paths = [
+                    { title: 'VCF 9.0 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF from 9.0 to 9.1 without deploying VCF Automation', icon: '' },
+                    { title: 'VCF 9.0 to VCF 9.1 (VCF Automation included)', desc: 'Upgrade VCF from 9.0 to 9.1 and deploy VCF Automation', icon: '' }
+                ];
+            }
+
+            // Show path selection if we have any paths
+            if (paths.length > 0) {
+                paths.forEach(path => {
+                    const pathCard = document.createElement('div');
+                    pathCard.className = 'path-card';
+                    pathCard.onclick = () => selectPath(path.title);
+                    pathCard.innerHTML = `
+                        <h3><span class="path-icon">${path.icon}</span>${path.title}</h3>
+                        <p>${path.desc}</p>
+                    `;
+                    vcfPathOptions.appendChild(pathCard);
+                });
+                vcfPathSelection.classList.remove('hidden');
+            } else {
+                vcfPathSelection.classList.add('hidden');
+            }
+        }
+
+        function selectPath(pathTitle) {
+            // Show sidebar navigation items when path is selected
+            document.getElementById('navDeployment').classList.remove('nav-hidden');
+            document.getElementById('navProducts').classList.remove('nav-hidden');
+            document.getElementById('navPath').classList.remove('nav-hidden');
+            
+            // Handle vSphere no VCF path
+            if (pathTitle === 'vSphere and VCF Operations to 9.1') {
+                // Store vSphere component versions in localStorage
+                const vcenterVersion = document.getElementById('vcenter').value || '8';
+                const esxVersion = document.getElementById('esx').value || '8';
+                const operationsSelected = document.getElementById('operationsCheck').checked;
+                const operationsVersion = document.getElementById('operations').value || '9.0.x';
+                const vxrailSelected = document.getElementById('vxrailCheck').checked;
+                const vxrailVersion = document.getElementById('vxrail').value || '8.0.x';
+                
+                localStorage.setItem('vcenter-version', vcenterVersion);
+                localStorage.setItem('esx-version', esxVersion);
+                localStorage.setItem('operations-selected', operationsSelected.toString());
+                localStorage.setItem('operations-version', operationsVersion);
+                localStorage.setItem('vxrail-selected', vxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vxrailVersion);
+                
+                // Navigate to vSphere no VCF page
+                window.location.href = 'vsphere-no-vcf.html';
+            } else if (pathTitle === 'vSphere to VCF 9.1 (VCF Automation not included)') {
+                // Store all selections including NSX and VXRail
+                const vcenterVersion = document.getElementById('vcenter').value || '8';
+                const esxVersion = document.getElementById('esx').value || '8';
+                const operationsSelected = document.getElementById('operationsCheck').checked;
+                const operationsVersion = document.getElementById('operations').value || '9.0.x';
+                const nsxSelected = document.getElementById('nsxCheck').checked;
+                const nsxVersion = document.getElementById('nsx').value || '4.2.x';
+                const vxrailSelected = document.getElementById('vxrailCheck').checked;
+                const vxrailVersion = document.getElementById('vxrail').value || '8.0.x';
+                
+                localStorage.setItem('vcenter-version', vcenterVersion);
+                localStorage.setItem('esx-version', esxVersion);
+                localStorage.setItem('operations-selected', operationsSelected.toString());
+                localStorage.setItem('operations-version', operationsVersion);
+                localStorage.setItem('nsx-selected', nsxSelected.toString());
+                localStorage.setItem('nsx-version', nsxVersion);
+                localStorage.setItem('vxrail-selected', vxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vxrailVersion);
+                
+                window.location.href = 'vsphere-to-vcf-no-automation.html';
+            } else if (pathTitle === 'vSphere to VCF 9.1 (VCF Automation included)') {
+                // Store all selections including NSX, VXRail, and Automation
+                const vcenterVersion = document.getElementById('vcenter').value || '8';
+                const esxVersion = document.getElementById('esx').value || '8';
+                const operationsSelected = document.getElementById('operationsCheck').checked;
+                const operationsVersion = document.getElementById('operations').value || '9.0.x';
+                const nsxSelected = document.getElementById('nsxCheck').checked;
+                const nsxVersion = document.getElementById('nsx').value || '4.2.x';
+                const vxrailSelected = document.getElementById('vxrailCheck').checked;
+                const vxrailVersion = document.getElementById('vxrail').value || '8.0.x';
+                const automationSelected = document.getElementById('automationCheck').checked;
+                const automationVersion = document.getElementById('automation').value || '8.18.x';
+                
+                localStorage.setItem('vcenter-version', vcenterVersion);
+                localStorage.setItem('esx-version', esxVersion);
+                localStorage.setItem('operations-selected', operationsSelected.toString());
+                localStorage.setItem('operations-version', operationsVersion);
+                localStorage.setItem('nsx-selected', nsxSelected.toString());
+                localStorage.setItem('nsx-version', nsxVersion);
+                localStorage.setItem('vxrail-selected', vxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vxrailVersion);
+                localStorage.setItem('automation-selected', automationSelected.toString());
+                localStorage.setItem('automation-version', automationVersion);
+                
+                window.location.href = 'vsphere-to-vcf-with-automation.html';
+            } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (VCF Automation not included)') {
+                // Store VCF 5.2 version in localStorage
+                const vcf52Version = document.getElementById('vcf52').value;
+                localStorage.setItem('vcf-version', '5.2');
+                localStorage.setItem('vcf-detailed-version', vcf52Version);
+                
+                // Navigate to VCF 5.2 to 9.1 no automation page
+                window.location.href = 'vcf-5.2-to-9.1-no-automation.html';
+            } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (VCF Automation included)') {
+                // Store VCF 5.2 version in localStorage
+                const vcf52Version = document.getElementById('vcf52').value;
+                localStorage.setItem('vcf-version', '5.2');
+                localStorage.setItem('vcf-detailed-version', vcf52Version);
+                
+                // Navigate to VCF 5.2 to 9.1 with automation page
+                window.location.href = 'vcf-5.2-to-9.1-with-automation.html';
+            } else if (pathTitle === 'VCF 9.0 to VCF 9.1 (VCF Automation not included)') {
+                // Store VCF 9.0 version in localStorage
+                const vcf90Version = document.getElementById('vcf90').value;
+                localStorage.setItem('vcf-version', '9.0');
+                localStorage.setItem('vcf-detailed-version', vcf90Version);
+                
+                // Navigate to VCF 9.0 to 9.1 no automation page
+                window.location.href = 'vcf-9.0-to-9.1-no-automation.html';
+            } else if (pathTitle === 'VCF 9.0 to VCF 9.1 (VCF Automation included)') {
+                // Store VCF 9.0 version in localStorage
+                const vcf90Version = document.getElementById('vcf90').value;
+                localStorage.setItem('vcf-version', '9.0');
+                localStorage.setItem('vcf-detailed-version', vcf90Version);
+                
+                // Navigate to VCF 9.0 to 9.1 with automation page
+                window.location.href = 'vcf-9.0-to-9.1-with-automation.html';
+            } else {
+                // For other paths, show alert (placeholder for future pages)
+                alert('Selected path: ' + pathTitle + '\n\nThis will navigate to the next step in the upgrade process.');
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle switch
+            const toggle = document.getElementById('themeToggle');
+            if (newTheme === 'dark') {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+        }
+
+        // Load saved theme on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Update toggle switch if dark mode is active
+            const toggle = document.getElementById('themeToggle');
+            if (savedTheme === 'dark') {
+                toggle.classList.add('active');
+            }
+        });
+
+        // Sidebar navigation functions
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToElement(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Initialize event listeners on page load (one-time setup)
+        document.addEventListener('DOMContentLoaded', function() {
+            const vcenterSelect = document.getElementById('vcenter');
+            const esxSelect = document.getElementById('esx');
+            const operationsSelect = document.getElementById('operations');
+            const nsxSelect = document.getElementById('nsx');
+            const vxrailSelect = document.getElementById('vxrail');
+            const automationSelect = document.getElementById('automation');
+            const vcf52Select = document.getElementById('vcf52');
+            const vcf90Select = document.getElementById('vcf90');
+            
+            if (vcenterSelect) vcenterSelect.addEventListener('change', handleVersionChange);
+            if (esxSelect) esxSelect.addEventListener('change', handleVersionChange);
+            if (operationsSelect) operationsSelect.addEventListener('change', updateAvailablePaths);
+            if (nsxSelect) nsxSelect.addEventListener('change', updateAvailablePaths);
+            if (vxrailSelect) vxrailSelect.addEventListener('change', updateAvailablePaths);
+            if (automationSelect) automationSelect.addEventListener('change', updateAvailablePaths);
+            if (vcf52Select) vcf52Select.addEventListener('change', updateVCFPath);
+            if (vcf90Select) vcf90Select.addEventListener('change', updateVCFPath);
+        });
+    </script>
+            </strong></div><strong>
+        </strong></div><strong>
+    </strong></div><strong>
+
+
+</strong></body></html>

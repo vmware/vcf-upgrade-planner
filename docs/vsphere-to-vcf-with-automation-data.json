@@ -1,0 +1,1046 @@
+{
+  "upgrade_order": [
+    "operations",
+    "replication",
+    "srm",
+    "avi",
+    "hcx",
+    "vcha",
+    "elm_break",
+    "convert",
+    "automation",
+    "nsx_federation",
+    "nsx",
+    "vcenter",
+    "vum_migration",
+    "vks",
+    "vsan_witness",
+    "esx",
+    "logs",
+    "network"
+  ],
+  "upgrade_order_without_nsx": [
+    "operations",
+    "replication",
+    "srm",
+    "avi",
+    "hcx",
+    "vcha",
+    "vcenter",
+    "elm_upgrade_ring",
+    "vum_migration",
+    "convert",
+    "automation",
+    "vks",
+    "vsan_witness",
+    "esx",
+    "logs",
+    "network"
+  ],
+  "optional_products": [
+    {
+      "id": "network",
+      "display_name": "VCF Operations for Networks",
+      "category": "advanced",
+      "upgrade_phase": "post_infrastructure"
+    },
+    {
+      "id": "srm",
+      "display_name": "Site Recovery Manager (SRM)",
+      "category": "advanced",
+      "upgrade_phase": "pre_infrastructure"
+    },
+    {
+      "id": "replication",
+      "display_name": "vSphere Replication",
+      "category": "advanced",
+      "upgrade_phase": "pre_infrastructure"
+    },
+    {
+      "id": "logs",
+      "display_name": "VCF Operations for Logs",
+      "category": "advanced",
+      "upgrade_phase": "post_infrastructure"
+    },
+    {
+      "id": "avi",
+      "display_name": "NSX Advanced Load Balancer (Avi)",
+      "category": "advanced",
+      "upgrade_phase": "pre_infrastructure"
+    },
+    {
+      "id": "hcx",
+      "display_name": "VMware HCX",
+      "category": "advanced",
+      "upgrade_phase": "pre_infrastructure"
+    },
+    {
+      "id": "vks",
+      "display_name": "vSphere with Kubernetes Supervisor Service",
+      "category": "advanced",
+      "upgrade_phase": "mid_infrastructure"
+    },
+    {
+      "id": "nsx_federation",
+      "display_name": "NSX Federation",
+      "category": "advanced"
+    }
+  ],
+  "components": {
+    "vcha": {
+      "name": "vCenter High Availability (vCHA)",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "vCenter High Availability",
+          "bullets": [
+            "vCenter High Availability (vCHA) is not supported for Convert or Import"
+          ]
+        }
+      ],
+      "steps": [
+        "Disable vCenter High Availability(vCHA) - All Guidance is provided in link ((<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-availability/vcenter-server-high-availability/manage-your-vcenter-ha-cluster/remove-a-vcenter-ha-configuration.html' target='_blank'>View Documentation</a>)"
+      ]
+    },
+    "elm_upgrade_ring": {
+      "name": "Enhanced Linked Mode (ELM) - Upgrade All vCenters",
+      "notices": [
+        {
+          "type": "info",
+          "title": "ELM Upgrade Requirements",
+          "bullets": [
+            "ALL vCenter instances in the ELM ring must be upgraded to maintain ELM",
+            "Upgrade vCenters sequentially, one at a time",
+            "Verify replication status after each vCenter upgrade"
+          ]
+        }
+      ],
+      "steps": [
+        "Break ELM After All vCenters are upgrade to 9.1 - All Guidance is provided in link ((<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
+      ]
+    },
+    "elm_break": {
+      "name": "Enhanced Linked Mode (ELM) - Break Configuration",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Breaking Enhanced Linked Mode",
+          "bullets": [
+            "Breaking ELM is REQUIRED for VCF conversion",
+            "Breaking ELM is REQUIRED when using NSX in vSphere 8",
+            "This action cannot be easily reversed",
+            "Document the configuration before breaking"
+          ]
+        }
+      ],
+      "steps": [
+        "Break ELM on 8.0 vCenters that has NSX - All Guidance is provided in link ((<a href='https://knowledge.broadcom.com/external/article/370062/splitting-enhanced-linked-mode-elm.html' target='_blank'>View Documentation</a>)"
+      ]
+    },
+    "vcenter": {
+      "name": "vCenter",
+      "steps": [
+        "Upgrade vCenter to version 9.1 using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Integrated Windows Authentication on vCenter",
+          "bullets": [
+            "Replace Integrated Windows Authentication configured with another IDP configuration"
+          ]
+        },
+        {
+          "type": "warning",
+          "title": "vCenter Location",
+          "bullets": [
+            "Virtual machine of vCenter instance hosted on one of the clusters that is managed by the same instance"
+          ]
+        },
+        {
+          "type": "warning",
+          "title": "VXRAIL",
+          "bullets": [
+            "vCenters or Clusters managed by Dell VxRail are not supported in VCF Upgrade today for vSphere environments"
+          ]
+        }
+      ]
+    },
+    "esx": {
+      "name": "ESX",
+      "steps": [
+        "All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-esxi-for-vmware-cloud-foundation-5-2-1.html' target='_blank'>View Documentation</a>).",
+        "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
+        "(Optional) Upgrade vSAN On-Disk Format Versions - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-on-disk-format-versions.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "ESX bootbank",
+          "bullets": [
+            "Validate ESX bootbank is at least 1gb in size by running command on host df -h /bootbank"
+          ]
+        },
+        {
+          "type": "info",
+          "title": "Check HCL for Hardware support on VCF 9.1",
+          "bullets": [
+            "Intel Skylake (Broadwell, Kabylake & Skylake) Processors no longer supported (deprecated in earlier releases), requires RPQ"
+          ]
+        }
+      ]
+    },
+    "vum_migration": {
+      "name": "VUM-Based Clusters",
+      "steps": [
+        "Migrate from vLCM Baselines to vLCM Images - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/using-images-to-install-and-update-esxi-hosts-and-clusters/switching-from-baselines-to-images.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "vSphere Lifecycle Management with Baselines is no longer supported",
+          "bullets": [
+            "vSphere Lifecycle Management with Baselines is no longer supported, clusters will need to be transition as part of the upgrade which is discussed on the upgrade paths"
+          ]
+        }
+      ]
+    },
+    "operations": {
+      "name": "VCF Operations",
+      "steps": [
+        "Upgrade VCF Operations to version 9.1 compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "Upgrade Options when having multiple VCF Operations",
+          "bullets": [
+            "Multiple VCF Fleets",
+            "Consolidate to one Instance",
+            "Upgrade Operations as a Monitoring Only Instance"
+
+          ]
+        }
+      ]
+    },
+    "convert_with_vsphere_only": {
+      "name": "Convert to VCF 9.1",
+      "tables_simple_small_without_nsx": [
+        {
+          "title": "Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"],
+            ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
+            ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "3", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for all nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+            ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
+            ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
+            ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"],
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
+          ]
+        }
+      ],
+      "tables_ha_medium_without_nsx": [
+        {
+          "title": "Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+            ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+            ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+            ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for all nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+            ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+            ["VCF Operations Nodes", "Medium", "3", "24", "96gb", "822gb"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+          ]
+        }
+      ],
+      "tables_ha_large_without_nsx": [
+        {
+          "title": "Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+            ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+            ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+            ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for all nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+            ["NSX Manager", "Large", "3", "36", "144gb", "900gb"],
+            ["VCF Operations Nodes", "Large", "3", "48", "144gb", "822gb"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
+          ]
+        }
+      ],
+      "tables_simple_small_with_nsx": [
+        {
+          "title": "Required Network Configuration (Simple - Small with NSX)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "3", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (Simple - Small with NSX)",
+          "description": "Size requirements for all nodes including NSX",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+           ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+           ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
+           ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"],
+           ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+           ["VCF Management Services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
+          ]
+        }
+      ],
+      "tables_ha_medium_with_nsx": [
+        {
+          "title": "Required Network Configuration (High Availability - Medium with NSX)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+            ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+            ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (High Availability - Medium with NSX)",
+          "description": "Size requirements for all nodes including NSX",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["SDDC Manager", "Default", "1", "4", "16", "908"],
+            ["VCF Operations Nodes", "Medium", "3", "24", "96gb", "822gb"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+          ]
+        }
+      ],
+      "tables_ha_large_with_nsx": [
+        {
+          "title": "Required Network Configuration (High Availability - Large with NSX)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+            ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+            ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (High Availability - Large with NSX)",
+          "description": "Size requirements for all nodes including NSX",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["SDDC Manager", "Default", "1", "4", "16", "908"],
+            ["VCF Operations Nodes", "Large", "3", "48", "144gb", "822gb"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy of VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/deploy-the-vmware-cloud-foundation-installer-appliance.html' target='_blank'>View Documentation</a>).",
+        "Downloading Binaries to VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/downloading-binaries-to-the-vcf-installer-appliance.html' target='_blank'>View Documentation</a>).",
+        "Start convert to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/deploy-a-new-vcf-fleet-or-a-new-vcf-instance.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "VCF Conversion Process",
+          "bullets": [
+            "This step converts your vSphere environment to VCF 9.1",
+            "SDDC Manager will manage lifecycle operations after conversion",
+            "If VCF Operations was not previously installed, it will be deployed during this step as it is required for VCF"
+          ]
+        },
+        {
+          "type": "info",
+          "title": "Automation Deployment",
+          "bullets": [
+            "VCF Automation will be deployed in a subsequent phase after VCF conversion"
+          ]
+        }
+      ],
+      "automation_install_notices": [
+        {
+          "type": "info",
+          "title": "New VCF Automation Installation",
+          "bullets": [
+            "VCF Automation is being installed fresh as part of this VCF conversion",
+            "Includes Automation Orchestrator for workflow automation",
+            "Configure cloud zones and endpoints post-deployment",
+            "Set up blueprints and catalogs after deployment is complete"
+          ]
+        },
+        {
+          "type": "warning",
+          "title": "Resource Requirements",
+          "bullets": [
+            "Ensure sufficient resources are available for all Automation components",
+            "Review minimum requirements in documentation before proceeding"
+          ]
+        }
+      ],
+      "automation_install_tables_simple_small": [
+        {
+          "title": "VCF Automation  Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  Node(s) IP Pool", "2", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF Automation Node", "Small", "1", "16", "64gb", "600gb"]
+          ]
+        }
+      ],
+      "automation_install_tables_ha_medium": [
+        {
+          "title": "VCF Automation  Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF Automation Nodes", "Medium", "3", "72", "288gb", "2,700gb"]
+          ]
+        }
+      ],
+      "automation_install_tables_ha_large": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF Automation Nodes", "Large", "3", "96", "384gb", "3,600gb"]
+          ]
+        }
+      ]
+    },
+    "convert_with_ops": {
+      "name": "Convert to VCF 9.1",
+      "tables_simple_small_without_nsx": [
+        {
+          "title": "Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["NSX Managers", "2", "2", "nsxvip.rainpole.io, nsxmgr1.rainpole.io,"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "3", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for all nodes (Operations already deployed)",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["NSX Manager", "Medium", "1", "6", "24", "300"],
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Small", "3", "40", "82gb", "3,000gb"],
+            ["VCF Operations Cloud Proxy", "Small", "4", "4", "16gb", "144gb"]
+          ]
+        }
+      ],
+      "tables_ha_medium_without_nsx": [
+        {
+          "title": "Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+
+          ]
+        },
+        {
+          "title": "Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for all nodes (Operations already deployed)",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+          ]
+        }
+      ],
+      "tables_ha_large_without_nsx": [
+        {
+          "title": "Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+
+          ]
+        },
+        {
+          "title": "Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for all nodes (Operations already deployed)",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["NSX Manager", "Large", "3", "36", "144gb", "900gb"],
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+          ]
+        }
+      ],
+      "tables_simple_small_with_nsx": [
+        {
+          "title": "Required Network Configuration (Simple - Small with NSX)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "3", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (Simple - Small with NSX)",
+          "description": "Size requirements for all nodes including NSX (Operations already deployed)",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Medium", "4", "40", "82gb", "3,000gb"],
+            ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"]
+          ]
+        }
+      ],
+      "tables_ha_medium_with_nsx": [
+        {
+          "title": "Required Network Configuration (High Availability - Medium with NSX)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (High Availability - Medium with NSX)",
+          "description": "Size requirements for all nodes including NSX (Operations already deployed)",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+          ]
+        }
+      ],
+      "tables_ha_large_with_nsx": [
+        {
+          "title": "Required Network Configuration (High Availability - Large with NSX)",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+            ["License Server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+          ]
+        },
+        {
+          "title": "Required Component Sizes (High Availability - Large with NSX)",
+          "description": "Size requirements for all nodes including NSX (Operations already deployed)",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+            ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy of VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/deploy-the-vmware-cloud-foundation-installer-appliance.html' target='_blank'>View Documentation</a>).",
+        "Downloading Binaries to VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/downloading-binaries-to-the-vcf-installer-appliance.html' target='_blank'>View Documentation</a>).",
+        "Start convert to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/deploy-a-new-vcf-fleet-or-a-new-vcf-instance.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "VCF Conversion Process",
+          "bullets": [
+            "This step converts your vSphere environment to VCF 9.1",
+            "SDDC Manager will manage lifecycle operations after conversion",
+            "VCF Operations was already upgraded in previous phase"
+          ]
+        },
+        {
+          "type": "info",
+          "title": "Automation Deployment",
+          "bullets": [
+            "VCF Automation will be deployed in a subsequent phase after VCF conversion"
+          ]
+        }
+      ],
+      "automation_install_notices": [
+        {
+          "type": "info",
+          "title": "New VCF Automation Installation",
+          "bullets": [
+            "VCF Automation is being installed fresh as part of this VCF conversion",
+            "Includes Automation Orchestrator for workflow automation",
+            "Configure cloud zones and endpoints post-deployment",
+            "Set up blueprints and catalogs after deployment is complete"
+          ]
+        },
+        {
+          "type": "warning",
+          "title": "Resource Requirements",
+          "bullets": [
+            "Ensure sufficient resources are available for all Automation components",
+            "Review minimum requirements in documentation before proceeding"
+          ]
+        }
+      ],
+      "automation_install_tables_simple_small": [
+        {
+          "title": "VCF Automation Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation Node IP Pool", "2", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Node", "Small", "1", "1", "16gb", "60gb"]
+          ]
+        }
+      ],
+      "automation_install_tables_ha_medium": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation Node(s) IP Pool", "4", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Nodes", "Medium", "3", "24", "96gb", "300gb"]
+          ]
+        }
+      ],
+      "automation_install_tables_ha_large": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Nodes", "Large", "3", "48", "192gb", "600gb"]
+          ]
+        }
+      ]
+    },
+    "automation": {
+      "name": "VCF Automation",
+      "steps": [
+        "Upgrade VCF Automation to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-3-import-and-upgrade-VCF-automation-8-to-vcf-automation-9.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "VCF Automation Components",
+          "bullets": [
+            "Includes Automation Orchestrator for workflow automation",
+            "Configure cloud zones and endpoints",
+            "Set up blueprints and catalogs after deployment"
+          ]
+        },
+        {
+          "type": "warning",
+          "title": "Resource Requirements",
+          "bullets": [
+            "Ensure sufficient resources are available for all Automation components",
+            "Review minimum requirements in documentation"
+          ]
+        }
+      ],
+       "tables_simple_small": [
+        {
+          "title": "VCF Automation Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation Node IP Pool", "2", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Node", "Small", "1", "1", "16gb", "60gb"]
+          ]
+        }
+      ],
+      "tables_ha_medium": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation Node(s) IP Pool", "4", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Nodes", "Medium", "3", "24", "96gb", "300gb"]
+          ]
+        }
+      ],
+      "tables_ha_large": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Nodes", "Large", "3", "48", "192gb", "600gb"]
+          ]
+        }
+      ]
+    },
+    "logs": {
+        "name": "VCF Operations for Logs",
+        "steps": [
+            "Deploy new Log Management 9.1 services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
+        ],
+        "notices": [
+            {
+                "type": "info",
+                "title": "Multiple Logs are not supported",
+                "bullets": ["There is an option to migrate 90 days of logs from VCF Operation for Logs 8.18.x instance"]
+            }
+        ]
+    },
+    "network": {
+      "name": "VCF Operations for Network",
+      "steps": [
+        "Upgrade VCF Operations for Network to version 9.1  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-4-upgrade-additional-management-components-in-vcf-9/perform-upgrade-to-vcf-operations-for-networks-9.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "replication": {
+      "name": "vSphere Replication",
+      "steps": [
+        "Upgrade vSphere Replication to version 9.1 - ll Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "srm": {
+      "name": "Site Recovery Manager",
+      "steps": [
+        "Upgrade Site Recovery Manager to version 9.1 - ll Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "avi": {
+      "name": "AVI (NSX ALB)",
+      "steps": [
+        "Upgrade NSX Advanced Load Balancer to compatible version - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer/32-1/vmware-avi-load-balancer-administration-guide/nsx-advanced-load-balancer-controller-operations/upgrade-and-patches/upgrade-guide.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "hcx": {
+      "name": "HCX",
+      "steps": [
+        "Upgrade HCX to version compatible with vSphere 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/updating-vmware-hcx.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "vks": {
+      "name": "VKS (vSphere Kubernetes Supervisor Service)",
+      "steps": [
+        "Upgrade vSphere with Tanzu to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "VKS deployed on vSphere Lifecycle Baseline Clusters(VUM)",
+          "bullets": [
+            "Customers with VKS clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"
+          ]
+        }
+      ]
+    },
+    "vsan_witness": {
+      "name": "vSAN Witness Host",
+      "steps": [
+        "Upgrade vSAN Witness host to version 9.1 - will happen as part of ESX upgrade after Convert"      
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "vSAN Witness Host Upgrade",
+          "bullets": [
+            "vSAN Witness hosts must be upgraded before ESX hosts in stretched clusters"
+          ]
+        }
+      ]
+    },
+    "nsx": {
+      "name": "NSX",
+      "steps": [
+          "Upgrade NSX Local Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/checklist-for-upgrading-nsx.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "NSX Version Compatibility",
+          "bullets": [
+            "Ensure NSX version is compatible with vSphere 9.1",
+            "Review VMware Product Interoperability Matrix"
+          ]
+        }
+      ]
+    },
+    "nsx_federation": {
+      "name": "NSX Federation",
+      "steps": [
+        "Upgrade NSX Global Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-nsx-in-a-federated-environment.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Federation Prerequisites",
+          "bullets": [
+            "All NSX sites must be on compatible versions",
+            "Network connectivity required between all sites",
+            "Upgrade BEFORE NSX Local Managers"
+          ]
+        }
+      ]
+    },
+    "operations_prereq": {
+      "name": "Pre-Upgrade: Upgrade VCF Operations to 8.18.x",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "Your current VCF Operations version must be upgraded to 8.18.x before upgrading to 9.1"
+          ]
+        }
+      ],
+      "steps": [
+        "Upgrade VCF Operations Standalone - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/getting-started-with-vmware-aria-operations-8-18/upgrade-backup-and-restore/software-updates-admin-ui-only/install-a-software-update.html' target='_blank'>View Documentation</a>).",
+        "Upgrade VCF Operations managed by vRSLCM - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-suite-lifecycle/8-16/vmware-aria-suite-lifecycle-installation-upgrade-and-management-8-16/upgrading-product-versions-in-the-lifecycle-operations-service/upgrade-a-vrealize-suite-product/upgrade-vrealize-operations-manager.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "nsx_prereq": {
+      "name": "Pre-Upgrade: Upgrade NSX to 4.2.x",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "NSX 4.1.x must be upgraded to 4.2.x before proceeding with the VCF upgrade path"
+          ]
+        }
+      ],
+      "steps": [
+        "NSX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/nsx/vmware-nsx/4-2/upgrade-guide/upgrading-nsx-t-checklist.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "automation_prereq": {
+      "name": "Pre-Upgrade: Upgrade VCF Automation to 8.18.x",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "Your current VCF Automation version must be upgraded to 8.18.x before upgrading to 9.1"
+          ]
+        }
+      ],
+      "steps": [
+        "Upgrade VCF Automation - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-suite-lifecycle/8-16/vmware-aria-suite-lifecycle-installation-upgrade-and-management-8-16/upgrading-product-versions-in-the-lifecycle-operations-service/upgrade-vra-and-aria-automation-with-aria-suite-lifecycle.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "vcenter_esx_prereq": {
+      "name": "Pre-Upgrade: Upgrade vCenter and ESX to 8.0u3",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "Your current vCenter and/or ESX version must be upgraded to 8.0u3 before continuing"
+          ]
+        }
+      ],
+      "steps": [
+        "vCenter upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso.html' target='_blank'>View Documentation</a>).",
+        "ESX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/overview-of-the-esxi-host-upgrade-process.html#GUID-FE668788-1F32-4CB2-845C-5547DD59EB48-en' target='_blank'>View Documentation</a>)."
+      ]
+    }
+  }
+}
