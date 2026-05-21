@@ -76,7 +76,7 @@
     },
     {
       "id": "vks",
-      "display_name": "vSphere with Kubernetes Supervisor Service",
+      "display_name": "VMware vSphere Supervisor",
       "category": "advanced",
       "upgrade_phase": "mid_infrastructure"
     },
@@ -918,9 +918,9 @@
       ]
     },
     "vks": {
-      "name": "VKS (vSphere Kubernetes Supervisor Service)",
+      "name": "VMware vSphere Supervisor",
       "steps": [
-        "Upgrade vSphere with Tanzu to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
+        "Upgrade VMware vSphere Supervisor to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {

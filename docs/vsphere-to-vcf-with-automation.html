@@ -1371,8 +1371,8 @@
                 } else if (componentId === 'vks') {
                     // VKS only if checkbox selected
                     shouldInclude = vksSelected;
-                    phaseTitle = componentData ? componentData.name : 'vSphere with Kubernetes';
-                    phaseDescription = 'Upgrade vSphere with Kubernetes';
+                    phaseTitle = componentData ? componentData.name : 'VMware vSphere Supervisor';
+                    phaseDescription = 'Upgrade VMware vSphere Supervisor (VKS)';
                 } else if (componentId === 'esx') {
                     // ESX always included
                     shouldInclude = esxVersion !== '9.1.x';
@@ -1686,8 +1686,8 @@
                 if (vksPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
-                        title: 'VKS Upgrade',
-                        description: 'Upgrade VKS Host',
+                        title: 'VMware vSphere Supervisor',
+                        description: 'VMware vSphere Supervisor (VKS)',
                         phases: vksPhases
                     });
                 }
@@ -1753,8 +1753,8 @@
                 if (vksPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
-                        title: 'VKS Upgrade',
-                        description: 'Update VKS',
+                        title: 'VMware vSphere Supervisor',
+                        description: 'Update VMware vSphere Supervisor (VKS)',
                         phases: vksPhases
                     });
                 }
