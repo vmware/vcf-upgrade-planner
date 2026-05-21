@@ -70,7 +70,7 @@
         },
         {
             "id": "vidb",
-            "display_name": "VMware Identity Broker(vIDB)",
+            "display_name": "Identity Broker(vIDB)",
             "category": "advanced",
             "upgrade_phase": "post_infrastructure"
         },
@@ -156,9 +156,9 @@
             ]
         },
         "vidb": {
-            "name": "VMware Identity Broker (vIDB)",
+            "name": "Identity Broker (vIDB)",
             "steps": [
-                "VMware Identity Broker(vIDB) consolidated into VCF Management Services Cluster - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
+                "Identity Broker(vIDB) Upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "replication": {

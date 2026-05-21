@@ -92,7 +92,7 @@
         },
         {
             "id": "vidb",
-            "display_name": "VMware Identity Broker(vIDB)",
+            "display_name": "Identity Broker(vIDB)",
             "category": "advanced",
             "upgrade_phase": "post_infrastructure"
         },
@@ -158,6 +158,24 @@
         },
         "license": {
             "name": "VCF License Server",
+            "tables": [
+                {
+                    "title": "Required Network Configuration",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["License Server", "1", "1", "vcflic.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes",
+                    "description": "Size requiremets for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+                    "rows": [
+                        ["VCF License Node", "Small", "1", "2", "4gb", "12gb"]
+                    ]
+                }
+            ],
             "steps": [
                 "Deploy VCF License Server - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
             ]
@@ -175,9 +193,9 @@
             ]
         },
         "vidb": {
-            "name": "VMware Identity Broker (vIDB)",
+            "name": "Identity Broker (vIDB)",
             "steps": [
-                "VMware Identity Broker(vIDB) consolidated into VCF Management Services Cluster - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
+                "Identity Broker(vIDB) Upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "replication": {
