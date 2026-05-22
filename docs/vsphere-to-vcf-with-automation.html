@@ -468,20 +468,64 @@
         }
 
         /* Print styles for PDF export */
+        @page {
+            size: A4 portrait;
+            margin: 15mm 12mm 15mm 12mm;
+        }
+
         @media print {
-            .sidebar { display: none !important; }
-            .main-wrapper { margin-left: 0 !important; }
-            body { background: white; padding: 0; display: block; }
-            .container { box-shadow: none; max-width: 100%; }
-            .btn, .btn-export, .export-bar { display: none !important; }
-            .section { opacity: 1 !important; border: 1px solid #ccc; page-break-inside: avoid; }
-            .phase { page-break-inside: avoid; }
+            /* Hide all interactive chrome */
+            .sidebar,
+            .main-wrapper > *:not(.container),
+            .btn, .btn-export, .export-bar,
+            #phaseContainer,
+            #diagram,
+            #diagramContainer,
+            .diagram-container { display: none !important; }
+
+            /* Reset layout */
+            .main-wrapper { margin-left: 0 !important; padding: 0 !important; }
+            body { background: white !important; padding: 0 !important; display: block !important; }
+            .app-container { display: block !important; }
+            .container {
+                box-shadow: none !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                border-radius: 0 !important;
+            }
+
+            /* Show the generated print content */
             #printAllPhases { display: block !important; }
-            #phaseContainer { display: none !important; }
-            #diagramContainer { 
-                display: block !important; 
-                page-break-before: avoid;
+
+            /* Do NOT use page-break-inside: avoid on .section — causes blank pages on tall sections */
+            .section {
+                opacity: 1 !important;
+                border: 1px solid #ccc !important;
+                break-inside: auto;
+                page-break-inside: auto;
+            }
+
+            /* Each phase card in the printed output */
+            #printAllPhases > div > div {
+                break-inside: avoid-column;
                 page-break-inside: avoid;
+                orphans: 3;
+                widows: 3;
+            }
+
+            /* Tables: no overflow scrolling in print */
+            div[style*="overflow-x"] {
+                overflow: visible !important;
+            }
+            table {
+                width: 100% !important;
+                table-layout: fixed !important;
+                word-wrap: break-word !important;
+                font-size: 0.8rem !important;
+            }
+            td, th {
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
             }
         }
 
@@ -505,11 +549,7 @@
             animation: planUpdate 0.4s ease-out;
         }
         
-        @media print {
-            .diagram-container {
-                display: none !important;
-            }
-        }
+
 
         @media (max-width: 768px) {
             .sidebar {
@@ -1978,6 +2018,66 @@
             }
         }
         
+
+        // Opens a clean standalone popup window with the upgrade plan content.
+        // Captures the rendered Mermaid diagram SVG from the main page and
+        // prepends it, so the PDF export includes the visual flow diagram.
+        function _openPrintWindow(contentHtml) {
+            // Capture the rendered Mermaid SVG from the main page
+            var diagramSvg = '';
+            var diagramContainer = document.getElementById('diagramContainer');
+            if (diagramContainer) {
+                var svgEl = diagramContainer.querySelector('svg');
+                if (svgEl) {
+                    // Clone and make it print-safe (remove interactive attributes)
+                    var cloned = svgEl.cloneNode(true);
+                    cloned.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    cloned.style.maxWidth = '100%';
+                    cloned.style.height = 'auto';
+                    cloned.removeAttribute('id');
+                    diagramSvg = '<div style="margin-bottom:24px; padding:16px; background:#f8f9fa; border-radius:8px; border:1px solid #dee2e6; page-break-inside:avoid;">'
+                        + '<h3 style="color:#0077c8; margin:0 0 12px; font-size:1rem;">Upgrade Flow Diagram</h3>'
+                        + cloned.outerHTML
+                        + '</div>';
+                }
+            }
+
+            var win = window.open('', '_blank', 'width=960,height=700');
+            if (!win) {
+                alert('Pop-up blocked — please allow pop-ups for this page and try again.');
+                return;
+            }
+            win.document.write('<!DOCTYPE html>\n'
+                + '<html lang="en"><head><meta charset="utf-8"><title>Upgrade Guide Export</title>'
+                + '<style>'
+                + '*, *::before, *::after { box-sizing: border-box; }'
+                + 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;'
+                + '       font-size: 13px; line-height: 1.55; color: #1a2332; background: #fff; padding: 20px; margin: 0; }'
+                + 'h3 { color: #0077c8; margin: 0 0 8px; font-size: 1.1rem; }'
+                + 'h4 { color: #1a2332; margin: 12px 0 6px; font-size: 0.95rem; }'
+                + 'h5 { color: #0077c8; margin: 0 0 8px; font-size: 0.9rem; }'
+                + 'p  { margin: 0 0 8px; }'
+                + 'ul { padding-left: 22px; margin: 0 0 8px; }'
+                + 'li { margin: 3px 0; }'
+                + 'table { width: 100%; border-collapse: collapse; font-size: 0.82rem;'
+                + '        word-wrap: break-word; table-layout: fixed; margin-bottom: 12px; }'
+                + 'td, th { padding: 7px 9px; border-bottom: 1px solid #dee2e6;'
+                + '         word-break: break-word; vertical-align: top; }'
+                + 'th { font-weight: 600; border-bottom: 2px solid #dee2e6; background: #f8f9fa; }'
+                + '.badge { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 0.78rem; margin-right: 4px; }'
+                + '.badge.included { background: #d4edda; color: #155724; }'
+                + '.badge.version  { background: #cce5ff; color: #004085; }'
+                + 'svg { max-width: 100% !important; height: auto !important; }'
+                + '@page { size: A4 landscape; margin: 12mm 10mm; }'
+                + '@media print { body { padding: 0; } }'
+                + '</style></head><body>'
+                + diagramSvg
+                + contentHtml
+                + '</body></html>');
+            win.document.close();
+            win.focus();
+            setTimeout(function() { win.print(); win.close(); }, 600);
+        }
         function exportStep(stepNumber) {
             const step = allSteps.find(s => s.number === stepNumber);
             if (!step) return alert('Step not found');
@@ -2084,19 +2184,8 @@
             });
             
             html += '</div>';
-            printDiv.innerHTML = html;
-            printDiv.style.display = 'block';
-            document.getElementById('phaseContainer').style.display = 'none';
-            document.getElementById('diagramContainer').style.display = 'none';
-            
-            setTimeout(() => {
-                window.print();
-                setTimeout(() => {
-                    printDiv.style.display = 'none';
-                    document.getElementById('phaseContainer').style.display = '';
-                    document.getElementById('diagramContainer').style.display = '';
-                }, 500);
-            }, 100);
+            // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
+            _openPrintWindow(html);
         }
 
         // Keep old functions for compatibility
@@ -2453,25 +2542,8 @@
             });
             html += '</div>';
             
-            printDiv.innerHTML = html;
-            printDiv.style.display = 'block';
-            
-            // Hide interactive elements
-            document.getElementById('phaseContainer').style.display = 'none';
-            
-            // Wait for Mermaid to render the diagram, then print
-            setTimeout(() => {
-                mermaid.contentLoaded();
-                setTimeout(() => {
-                    window.print();
-                    
-                    // Restore after print
-                    setTimeout(() => {
-                        printDiv.style.display = 'none';
-                        document.getElementById('phaseContainer').style.display = '';
-                    }, 500);
-                }, 500);
-            }, 100);
+            // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
+            _openPrintWindow(html);
         }
 
 

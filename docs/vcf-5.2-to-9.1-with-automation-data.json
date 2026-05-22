@@ -149,7 +149,7 @@
     "vum_migration": {
       "name": "VUM-Based Clusters",
       "steps": [
-        "Migrate from vLCM Baselines to vLCM Images - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/using-images-to-install-and-update-esxi-hosts-and-clusters/switching-from-baselines-to-images.html' target='_blank'>View Documentation</a>)."
+          "Migrate from vLCM Baselines to vLCM Images - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/vlcm-baseline-to-vlcm-image-cluster-transition-.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
