@@ -17,12 +17,6 @@
   ],
   "optional_products": [
     {
-      "id": "network",
-      "display_name": "VCF Operations for Networks",
-      "category": "advanced",
-      "upgrade_phase": "post_infrastructure"
-    },
-    {
       "id": "srm",
       "display_name": "Site Recovery Manager (SRM)",
       "category": "advanced",
@@ -256,12 +250,6 @@
       "name": "Log Management",
       "steps": [
         "There is no upgrade path here - customers can stay on VCF Operations for Logs 8.18 or 9.0"
-      ]
-    },
-    "network": {
-      "name": "VCF Operations for Network",
-      "steps": [
-        "Upgrade VCF Operations for Network to version 9.1 compatible release (standalone) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "replication": {

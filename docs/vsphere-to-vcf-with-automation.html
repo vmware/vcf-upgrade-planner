@@ -857,6 +857,13 @@
                         <span>vCenter Appliance High Availability (vCHA)</span>
                     </label>
                 </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="autodeployCheck" onchange="autoGenerateUpgradePlan()">
+                        <span>Auto Deploy</span>
+                    </label>
+                </div>
             </div>
 
             <!-- Deployment Configuration -->
@@ -938,6 +945,16 @@
                 <div id="diagramContainer">
                     <!-- Mermaid diagram will be generated here -->
                 </div>
+            </div>
+
+            <!-- Auto Deploy deprecation banner -->
+            <div id="autodeployBanner" style="display:none; margin-bottom:20px; background:#fff8e1; border-left:4px solid #ffc107; padding:16px 20px; border-radius:8px;">
+                <strong style="color:#856404; display:block; margin-bottom:6px;">&#9888;&#65039; Auto Deploy is Deprecated in vSphere 9.x and will be removed in a future major release of VCF</strong>
+                <ul style="margin:0 0 0 16px; color:#533f03; font-size:0.92rem; line-height:1.7;">
+                    <li>Auto Deploy is deprecated in vSphere 9.x and not supported for VCF</li>
+                    <li>Customers with local disks in their hosts must transition to Zero Touch Provisioning (ZTP) as part of this upgrade.</li>
+                    <li>Contact GSS for support with this transition: <a href="https://support.broadcom.com" target="_blank">support.broadcom.com</a></li>
+                </ul>
             </div>
 
             <div id="phaseContainer" class="phase-container">
@@ -1152,6 +1169,13 @@
             
             // Store for use in generateUpgradePlan
             window.selectedAdvancedProducts = selectedProducts;
+            
+            // Show/hide Auto Deploy deprecation banner
+            const autodeployBanner = document.getElementById('autodeployBanner');
+            const autodeployCheck = document.getElementById('autodeployCheck');
+            if (autodeployBanner && autodeployCheck) {
+                autodeployBanner.style.display = autodeployCheck.checked ? 'block' : 'none';
+            }
             
             // Auto-generate without requiring button click
             generateUpgradePlan();
