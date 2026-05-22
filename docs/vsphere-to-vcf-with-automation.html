@@ -1361,6 +1361,10 @@
                 } else if (componentId === 'vum_migration') {
                     // vLCM only if checkbox selected
                     shouldInclude = vlcmSelected;
+                    // Use NSX-specific VUM documentation link based on whether NSX is selected
+                    componentData = nsxSelected
+                        ? upgradeData.components['vum_migration']
+                        : (upgradeData.components['vum_migration_without_nsx'] || upgradeData.components['vum_migration']);
                     phaseTitle = componentData ? componentData.name : 'vLCM Migration';
                     phaseDescription = 'Migrate from Baseline to Image-based management';
                 } else if (componentId === 'vsan_witness') {
@@ -2182,7 +2186,11 @@
             phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
 
             if (vlcmSelected) {
-                const vlcmData = upgradeData ? upgradeData.components.vum_migration : null;
+                const vlcmData = upgradeData
+                    ? (nsxSelected
+                        ? upgradeData.components.vum_migration
+                        : (upgradeData.components.vum_migration_without_nsx || upgradeData.components.vum_migration))
+                    : null;
                 phases.push({ number: phases.length + 1, title: 'vLCM Baseline to Image Migration', description: 'Migrate from Baseline to Image-based management', data: vlcmData });
             }
 

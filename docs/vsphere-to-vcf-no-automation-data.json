@@ -191,6 +191,19 @@
                 }
             ]
         },
+        "vum_migration_without_nsx": {
+            "name": "VUM-Based Clusters",
+            "steps": [
+                "Migrate from vLCM Baselines to vLCM Images - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/using-images-to-install-and-update-esxi-hosts-and-clusters/switching-from-baselines-to-images.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "vSphere Lifecycle Management with Baselines is no longer supported",
+                    "bullets": ["vSphere Lifecycle Management with Baselines is no longer supported, clusters will need to be transition as part of the upgrade which is discussed on the upgrade paths"]
+                }
+            ]
+        },
         "operations": {
            "name": "VCF Operations",
             "steps": [
