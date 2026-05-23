@@ -247,7 +247,7 @@
             ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
             ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -280,7 +280,7 @@
             ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
             ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -313,7 +313,7 @@
             ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
             ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -343,7 +343,7 @@
             ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
             ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -374,7 +374,7 @@
             ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
             ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -405,7 +405,7 @@
             ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
             ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -431,23 +431,26 @@
         "Start convert to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/deploy-a-new-vcf-fleet-or-a-new-vcf-instance.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
-        {
-          "type": "warning",
-          "title": "VCF Conversion Process",
-          "bullets": [
-            "This step converts your vSphere environment to VCF 9.1",
-            "SDDC Manager will manage lifecycle operations after conversion",
-            "If VCF Operations was not previously installed, it will be deployed during this step as it is required for VCF"
-          ]
-        },
-        {
-          "type": "info",
-          "title": "Automation Deployment",
-          "bullets": [
-            "VCF Automation will be deployed in a subsequent phase after VCF conversion"
-          ]
+                {
+                    "type": "info",
+                    "title": "VCF Conversion Process",
+                    "bullets": [
+                        "This step converts your vSphere environment to VCF 9.1",
+                        "This path does NOT include VCF Automation deployment",
+                        "Minimum 12 IP addresses required for deployment.",
+                    {
+                    "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
+                        "sub_bullets": [
+                        "New VCF Management Services are added.",
+                        "Scale out of VCF Management services or new nodes as upgrade to future versions take place.",
+                        "A maximum of 30 IP address is required, these can be added as new IP ranges in the Lifecycle section of the VCF Operations UI, these ranges do not need to be continuous.",
+                        "All IP Ranges must be on the VCF Management Network.",
+                        "An internal IP range is used by VCF services runtime, this IP range is 198.18.0.0/15, it is important to ensure this IP range does not overlap with the IP range of your management network, this internal network can be changed to 240.0.0.0/15 or 250.0.0.0/15 by using JSON specification file to deploy."
+                        ]
+                    }
+                ]
         }
-      ],
+            ],
       "automation_install_notices": [
         {
           "type": "info",
@@ -540,7 +543,7 @@
             ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
             ["NSX Managers", "2", "2", "nsxvip.rainpole.io, nsxmgr1.rainpole.io,"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -568,7 +571,7 @@
             ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
             ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -597,7 +600,7 @@
             ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
             ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -625,7 +628,7 @@
           "rows": [
             ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -651,7 +654,7 @@
           "rows": [
             ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -678,7 +681,7 @@
           "rows": [
             ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
             ["License Server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF Management Services", "15-30", "None", "N/A"],
+            ["VCF Management Services", "12-30", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -703,19 +706,10 @@
       ],
       "notices": [
         {
-          "type": "warning",
+          "type": "info",
           "title": "VCF Conversion Process",
           "bullets": [
-            "This step converts your vSphere environment to VCF 9.1",
-            "SDDC Manager will manage lifecycle operations after conversion",
-            "VCF Operations was already upgraded in previous phase"
-          ]
-        },
-        {
-          "type": "info",
-          "title": "Automation Deployment",
-          "bullets": [
-            "VCF Automation will be deployed in a subsequent phase after VCF conversion"
+            "This step converts your vSphere environment to VCF 9.1"
           ]
         }
       ],

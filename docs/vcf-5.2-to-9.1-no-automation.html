@@ -1535,9 +1535,17 @@
                             const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
                             const icon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
                             html += `<div style="background: var(--card-bg); border-left: 4px solid ${color}; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>${icon} ${notice.title}</strong>`;
-                            if (notice.bullets && notice.bullets.length > 0) {
-                                html += `<ul style="margin: 5px 0 0 20px;">`;
-                                notice.bullets.forEach(b => html += `<li>${b}</li>`);
+                           if (notice.bullets && notice.bullets.length > 0) {
+                                html += `<ul style="margin: 8px 0 0 20px;">`;
+                                notice.bullets.forEach(bullet => {
+                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                        html += `</ul></li>`;
+                                    } else {
+                                        html += `<li>${bullet}</li>`;
+                                    }
+                                });
                                 html += `</ul>`;
                             }
                             html += `</div>`;
@@ -1640,9 +1648,17 @@
                             const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
                             html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
                             if (notice.bullets && notice.bullets.length > 0) {
-                                html += '<ul>';
-                                notice.bullets.forEach(b => html += '<li>' + stripHtml(b) + '</li>');
-                                html += '</ul>';
+                                html += `<ul style="margin: 8px 0 0 20px;">`;
+                                notice.bullets.forEach(bullet => {
+                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                        html += `</ul></li>`;
+                                    } else {
+                                        html += `<li>${bullet}</li>`;
+                                    }
+                                });
+                                html += `</ul>`;
                             }
                             html += '</div>';
                         });
@@ -1724,7 +1740,13 @@
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += `<ul style="margin: 8px 0 0 20px;">`;
                                 notice.bullets.forEach(bullet => {
-                                    html += `<li>${bullet}</li>`;
+                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                        html += `</ul></li>`;
+                                    } else {
+                                        html += `<li>${bullet}</li>`;
+                                    }
                                 });
                                 html += `</ul>`;
                             }
@@ -1898,9 +1920,17 @@
                             html += '<div style="background: white; border-left: 4px solid ' + color + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
                             html += '<strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
                             if (notice.bullets && notice.bullets.length > 0) {
-                                html += '<ul style="margin: 8px 0 0 20px;">';
-                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
-                                html += '</ul>';
+                                html += `<ul style="margin: 8px 0 0 20px;">`;
+                                notice.bullets.forEach(bullet => {
+                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                        html += `</ul></li>`;
+                                    } else {
+                                        html += `<li>${bullet}</li>`;
+                                    }
+                                });
+                                html += `</ul>`;
                             }
                             html += '</div>';
                         });

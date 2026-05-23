@@ -146,14 +146,21 @@
             "steps": [
                 "Upgrade Aria Operations to version 9.1 compatible release (standalone) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
             ],
-            "notices": [
+             "notices": [
                 {
                     "type": "info",
-                    "title": "VCF Operations Fleet Manager decomission",
+                    "title": "VCF Operations Information",
                     "bullets": [
-                        "VCF Operations Fleet Manager is decommission as part of VCF Operations upgrade, all configuration is being moved into VCF Operations"
+                        "Decommissioning of the 9.0 Fleet Management Appliance: VCF 9.1 completely replaces the standalone Fleet Management Appliance introduced in version 9.0. It is replaced with two new services—Fleet Lifecycle and SDDC Lifecycle—which run natively within VCF Management Services. The Fleet Management appliance is powered down and ready to be decommissioned.",
+                    {
+                    "text": "Common Known Issues:",
+                        "sub_bullets": [
+                        "When attempting to upgrade to VMware Cloud Foundation (VCF) 9.1, users may find that while the version 9.1 option is available in the SDDC Manager Binary Management dropdown menu, no binaries are displayed for any category (Upgrade, Patch, or Install) - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440282' target='_blank'>View Documentation</a>).",
+                        "Upgrading VCF Operations from 9.0.2 to 9.1 returns sync error when upgrading ESXi host - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440407' target='_blank'>View Documentation</a>)."
+                        ]
+                    }
                     ]
-                }
+                 }
             ]
         },
         "license": {
@@ -178,6 +185,21 @@
             ],
             "steps": [
                 "Deploy VCF License Server - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+            ],
+                "notices": [
+                {
+                "type": "info",
+                "title": "License Information",
+                "bullets": [
+                {
+                "text": "Common Known Issues:",
+                "sub_bullets": [
+                    "License assignment fails upgrading vCenter from 9.0.x to 9.1. - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440471' target='_blank'>View Documentation</a>).",
+                    "Licenses could not be assigned to vCenters during license assignment on VCF 9.1 - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/424533' target='_blank'>View Documentation</a>)."
+                    ]
+                }
+              ]
+              }
             ]
         },
           "logs": {
@@ -190,6 +212,20 @@
             "name": "VCF Operations for Network",
             "steps": [
                 "Upgrade VCF Operations for Network to version 9.1 compatible - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                "type": "info",
+                "title": "VCF Operations for Networks Information",
+                "bullets": [
+                {
+                "text": "Common Known Issues:",
+                "sub_bullets": [
+                    "Upgrading VCF 9.0 environment to 9.1 fails when trying to Import VCF Operations for Networks in Fleet Lifecycle - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440459' target='_blank'>View Documentation</a>)."
+                    ]
+                }
+            ]
+            }            
             ]
         },
         "vidb": {
@@ -245,13 +281,32 @@
             "steps": [
                 "Deploy VCF Mnaagement Services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>.)"
             ],
+            "notices": [
+                {
+                    "type": "info",
+                    "title": "VCF Management Services",
+                    "bullets": [
+                        "Minimum 12 IP addresses required for deployment.",
+                    {
+                    "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
+                        "sub_bullets": [
+                        "New VCF Management Services are added.",
+                        "Scale out of VCF Management services or new nodes as upgrade to future versions take place.",
+                        "A maximum of 30 IP address is required, these can be added as new IP ranges in the Lifecycle section of the VCF Operations UI, these ranges do not need to be continuous.",
+                        "All IP Ranges must be on the VCF Management Network.",
+                        "An internal IP range is used by VCF services runtime, this IP range is 198.18.0.0/15, it is important to ensure this IP range does not overlap with the IP range of your management network, this internal network can be changed to 240.0.0.0/15 or 250.0.0.0/15 by using JSON specification file to deploy."
+                        ]
+                    }
+                ]
+        }
+            ],
             "tables_simple_small": [
                 {
                     "title": "Required Network Configuration",
                     "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
-                    ["VCF Management Services", "/26 (CIDR block)", "None", "N/A"],
+                    ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
                     ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                     ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
                     ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -275,7 +330,7 @@
                     "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
-                        ["VCF Management Services", "/26 (CIDR block)", "None", "N/A"],
+                        ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -298,7 +353,7 @@
                     "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
-                        ["VCF Management Services", "/26 (CIDR block)", "None", "N/A"],
+                        ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -542,9 +597,7 @@
                     "type": "warning",
                     "title": "This step must be completed first",
                     "bullets": [
-                        "vIDB must be on the VCF Management Network before any other component is upgraded.",
-                        "Attempting to upgrade vIDB while it remains on the NSX Overlay network may result in loss of identity services.",
-                        "Do not proceed to the next phase until the network transition is confirmed complete."
+                        "If VMware Identity Broker 9.0.x is on a non-mgmt network (regular vlan or NSX overlay) – please contact support for guidance and there will be downtime during the upgrade for VMware Identity Broker and Single Sign-On."
                     ]
                 }
             ]
