@@ -487,7 +487,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation", "2", "1", "N/A"],
+            ["VCF Automation", "4", "1", "N/A"],
             ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
             ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -550,7 +550,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation", "4", "1", "N/A"],
+            ["VCF Automation", "2", "1", "N/A"],
             ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
             ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
