@@ -851,6 +851,12 @@
                         <span>vSAN Witness Host</span>
                     </label>
                 </div>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="elmCheck" onchange="autoGenerateUpgradePlan()">
+                        <span>Enhanced Linked Mode (ELM)</span>
+                    </label>
+                </div>
             </div>
 
             <!-- Deployment Configuration -->
@@ -984,6 +990,7 @@
         let deploymentType = 'simple';
         let deploymentSize = 'small';
         let vxrailSelected = false;
+        let elmSelected = false;
         let upgradeData = null; // Will hold the loaded JSON data
         let allPhases = []; // Store all phases
         let currentPhaseIndex = 0; // Track which phase we're showing
@@ -1090,6 +1097,7 @@
             vlcmSelected = document.getElementById('vlcmCheck').checked;
             witnessSelected = document.getElementById('witnessCheck').checked;
             vksSelected = document.getElementById('vksCheck') ? document.getElementById('vksCheck').checked : false;
+            elmSelected = document.getElementById('elmCheck').checked;
             
             // Get deployment configuration from DOM (ensures correct values on initial load)
             const simpleRadio = document.getElementById('simpleRadio');
@@ -1234,6 +1242,11 @@
                             console.error('Error selecting vcfms tables:', e);
                         }
                     }
+                } else if (componentId === 'elm') {
+                    // ELM Upgrade Ring - not used in this VCF conversion path
+                    shouldInclude = elmSelected
+                    phaseTitle = componentData ? componentData.name : 'Enhanced Linked Mode (ELM) - Break Configuration';
+                    phaseDescription = 'Break Enhanced Linked Mode before VIDB Configuration on vCenters'; 
                 } else if (coreComponents.includes(componentId)) {
                     // Core components ALWAYS included
                     shouldInclude = true;
@@ -1352,6 +1365,7 @@
             const networkPhases = [];
             const advancedPhases = [];
             const vidmPhases =[];
+            const elmPhases = [];
             const vxrailPhases = [];
             
             phases.forEach(phase => {
@@ -1383,6 +1397,8 @@
                     vksPhases.push(phase);
                 } else if (phase.componentId === 'vxrail') {
                     vxrailPhases.push(phase);
+                } else if (phase.componentId === 'elm') {
+                    elmPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'automation' || phase.componentId === 'automation_install') {
@@ -1411,6 +1427,7 @@
             automationPhases.sort((a, b) => a.number - b.number);
             networkPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
+            elmPhases.sort((a, b) => a.number - b.number);
             vidmPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
             
@@ -1512,6 +1529,11 @@
                     phases: advancedPhases,
                     title: 'Post-Infrastructure Products',
                     description: 'Upgrade additional products (Log Management)'
+                },
+                'elm': {
+                    phases: elmPhases,
+                    title: 'ELM Breakage on SDDC Manager',
+                    description: 'Break ELM on SDDC manager pre step to set up VIDB'
                 }
             };
             
@@ -1535,7 +1557,8 @@
                 'network': 'network',
                 'sddc_manager': 'sddc_manager',
                 'vcfms': 'vcfms',
-                'vidm': 'vidm'
+                'vidm': 'vidm',
+                'elm': 'elm'
             };
             
             // Track which step groups have been added

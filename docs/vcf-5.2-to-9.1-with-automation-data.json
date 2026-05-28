@@ -19,7 +19,8 @@
     "vxrail",
     "esx",
     "vidm",
-    "logs"
+    "logs",
+    "elm"
   ],
   "install_order": [
     "operations",
@@ -41,7 +42,8 @@
     "esx",
     "automation",
     "vidm",
-    "logs"
+    "logs",
+    "elm"
   ],
 
   "optional_products": [
@@ -652,6 +654,21 @@
           ]
         }
       ]
+    },
+    "elm": {
+    "name": "ELM Break",
+    "steps":[ "Breaking ELM in existing VCF Environment for VIDB transition - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/deactivate-enhanced-link-mode--elm--for-upgraded-vmware-cloud-foundation-vcenters.html' target='_blank'>View Documentation</a>)."
+    ],
+    "notices": [
+      {
+        "type": "info",
+        "title": "ELM Prerequisties",
+        "bullets": [
+          "All vCenters in VCF Instances that are ELM ring need to be on 9.1",
+          "Resolve Enhanced Linked Mode (ELM) Drift for Upgraded vCenter Instances - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime/resolve-enhanced-linked-mode--elm--drift-for-upgraded-vmware-cloud-foundation-vcenters.html' target='_blank'>View Documentation</a>)."
+        ]
+      }
+    ]
     }
   }
 }

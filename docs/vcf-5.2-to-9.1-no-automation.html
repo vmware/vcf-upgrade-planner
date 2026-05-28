@@ -852,7 +852,15 @@
                         <span>vSAN Witness Host</span>
                     </label>
                 </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="elmCheck" onchange="autoGenerateUpgradePlan()">
+                        <span>Enhanced Linked Mode (ELM)</span>
+                    </label>
+                </div>
             </div>
+
  <h3 style="color: var(--text-primary); margin-top: 30px; margin-bottom: 16px;">🏗️ Deployment Configuration</h3>
             
             <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
@@ -969,6 +977,7 @@
         let vlcmSelected = false;
         let witnessSelected = false;
         let vxrailSelected = false;
+        let elmSelected = false;
         let upgradeData = null; // Will hold the loaded JSON data
         let allPhases = []; // Store all phases
         let currentPhaseIndex = 0; // Track which phase we're showing
@@ -1058,6 +1067,7 @@
             vlcmSelected = document.getElementById('vlcmCheck').checked;
             witnessSelected = document.getElementById('witnessCheck').checked;
             vksSelected = document.getElementById('vksCheck') ? document.getElementById('vksCheck').checked : false;
+            elmSelected = document.getElementById('elmCheck').checked;
             
             
             // Collect advanced product selections
@@ -1186,6 +1196,11 @@
                             console.error('Error selecting vcfms tables:', e);
                         }
                     }
+                } else if (componentId === 'elm') {
+                    // ELM Upgrade Ring - not used in this VCF conversion path
+                    shouldInclude = elmSelected
+                    phaseTitle = componentData ? componentData.name : 'Enhanced Linked Mode (ELM) - Break Configuration';
+                    phaseDescription = 'Break Enhanced Linked Mode before VIDB Configuration on vCenters'; 
                 } else if (coreComponents.includes(componentId)) {
                     // Core components ALWAYS included
                     shouldInclude = true;
@@ -1293,6 +1308,7 @@
             const automationPhases = [];
             const networkPhases = [];
             const advancedPhases = [];
+            const elmPhases = [];
             const vidmPhases =[];
             const vxrailPhases = [];
 
@@ -1325,6 +1341,8 @@
                     vksPhases.push(phase);
                 } else if (phase.componentId === 'vxrail') {
                     vxrailPhases.push(phase);
+                } else if (phase.componentId === 'elm') {
+                    elmPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'automation') {
@@ -1353,6 +1371,7 @@
             automationPhases.sort((a, b) => a.number - b.number);
             networkPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
+            elmPhases.sort((a, b) => a.number - b.number);
             vidmPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
             
@@ -1440,6 +1459,7 @@
                     title: 'Automation Deployment',
                     description: 'Deploy Aria Automation 9.1'
                 },
+
                  'vidm': {
                     phases: vidmPhases,
                     title: 'VIDM Replacement',
@@ -1455,6 +1475,11 @@
                     phases: advancedPhases,
                     title: 'Post-Infrastructure Products',
                     description: 'Upgrade additional products (Operations for Logs)'
+                },
+                'elm': {
+                    phases: elmPhases,
+                    title: 'ELM Breakage on SDDC Manager',
+                    description: 'Break ELM on SDDC manager pre step to set up VIDB'
                 }
             };
             
@@ -1478,6 +1503,7 @@
                 'network': 'network',
                 'sddc_manager': 'sddc_manager',
                 'vcfms': 'vcfms',
+                'elm': 'elm',
                 'vidm': 'vidm'
             };
             
