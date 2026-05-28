@@ -363,7 +363,7 @@
             ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance component service", "1", "1", "vcfins.rainpole.io"],
             ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]          ]
+            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]          ]
         },
         {
           "title": "Required Component Sizes",
@@ -383,7 +383,9 @@
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
             ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]          ]
+            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]    
+         ]
         },
         {
           "title": "Required Component Sizes",
@@ -403,7 +405,9 @@
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
             ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]          ]
+            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]          
+        ]
         },
         {
           "title": "Required Component Sizes",

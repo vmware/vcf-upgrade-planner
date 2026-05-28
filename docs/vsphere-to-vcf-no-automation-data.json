@@ -238,7 +238,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
+                        ["Identify Broker", "1", "1", "vcfvidb.rainpole.io"]
                     ]
                 },
                 {
@@ -271,7 +271,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
                     ]
                 },
                 {
@@ -304,7 +304,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
                     ]
                 },
                 {
@@ -334,7 +334,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
+                        ["Identify Broker", "1", "1", "vcfvidb.rainpole.io"]
                     ]
                 },
                 {
@@ -366,7 +366,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
                     ]
                 },
                 {
@@ -397,7 +397,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
                     ]
                 },
                 {
@@ -455,7 +455,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF Services Runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"],
+                        ["Identify Broker", "1", "1", "vcfvidb.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
 
                     ]
@@ -487,7 +487,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identity Broker", "5", "1", "vcfidb.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]
                 },
@@ -516,7 +516,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identity Broker", "5", "1", "vcfidb.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]
                 },
@@ -544,7 +544,7 @@
                         ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
+                        ["Identify Broker", "1", "1", "vcfvidb.rainpole.io"]
                     ]
                 },
                 {
@@ -571,7 +571,7 @@
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-                        ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
 
                     ]
                 },
@@ -599,7 +599,7 @@
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-                        ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
 
                     ]
                 },
