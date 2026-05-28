@@ -8,41 +8,63 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <script src="docs_inline.js"></script>
     <script>
-        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+        (function() {
+            var savedTheme = localStorage.getItem('theme') || 'light';
+            var mermaidTheme = savedTheme === 'dark' ? 'dark' : 'neutral';
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: mermaidTheme,
+                themeVariables: savedTheme === 'dark' ? {
+                    edgeLabelBackground: '#1e2730',
+                    lineColor: '#7aa8c0',
+                    mainBkg: '#1e2730',
+                    nodeBorder: '#38424e',
+                    clusterBkg: '#1e2730',
+                    titleColor: '#c8d0d8',
+                    arrowheadColor: '#7aa8c0'
+                } : {}
+            });
+        })();
     </script>
     <style>
         :root {
-            --vmw-blue: #0098C7;
-            --vmw-dark: #092138;
-            --vmw-gray: #53565A;
-            --bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --border-color: #D1D2D5;
-            --pulse-red: #CC092F;
-            --lime: #61A60E;
-            --jade: #007B8C;
-            --sapphire: #092138;
-            --gray-100: #E8E8E8;
-            --gray-400: #A4A5AF;
-            --text-primary: #092138;
-            --text-secondary: #53565A;
+            --vmw-blue: #0088b5;
+            --vmw-dark: #1a2d40;
+            --vmw-gray: #535c65;
+            --bg: #f0f3f6;
+            --card-bg: #f8f9fb;
+            --border-color: #cdd2d8;
+            --pulse-red: #b8082a;
+            --lime: #4e8f0a;
+            --jade: #006b7a;
+            --sapphire: #1a2d40;
+            --gray-100: #e4e8ec;
+            --gray-400: #9ba0a8;
+            --text-primary: #1a2d40;
+            --text-secondary: #4a5260;
+            --warning-bg: #fdf3d8;
+            --warning-border: #e6aa00;
+            --warning-text: #7a5900;
         }
 
         [data-theme="dark"] {
-            --vmw-blue: #40B4E5;
-            --vmw-dark: #FFFFFF;
-            --vmw-gray: #9CA3AF;
-            --bg: #0d1117;
-            --card-bg: #1c2128;
-            --border-color: #3d444d;
-            --text-primary: #FFFFFF;
-            --text-secondary: #C9D1D9;
-            --pulse-red: #FF6B6B;
-            --lime: #7CFC00;
+            --vmw-blue: #4e90aa;
+            --vmw-dark: #d4dbe3;
+            --vmw-gray: #8a96a2;
+            --bg: #151c24;
+            --card-bg: #1e2730;
+            --border-color: #38424e;
+            --text-primary: #c8d0d8;
+            --text-secondary: #8e9aaa;
+            --pulse-red: #cc5555;
+            --lime: #4db800;
+            --warning-bg: #2e2200;
+            --warning-border: #b88800;
+            --warning-text: #d4aa30;
         }
 
         a {
-            color: #0098C7;
+            color: #0088b5;
             text-decoration: none;
             font-weight: 500;
         }
@@ -104,7 +126,7 @@
 
         .toggle-switch.active,
         [data-theme="dark"] .toggle-switch {
-            background: #0098C7;
+            background: var(--vmw-blue);
         }
 
         .toggle-slider {
@@ -148,7 +170,7 @@
 
         .sidebar {
             width: 280px;
-            background: #092138;
+            background: #1e2d3d;
             color: white;
             display: flex;
             flex-direction: column;
@@ -235,7 +257,7 @@
         }
 
         .nav-item.active {
-            background: #0098C7;
+            background: var(--vmw-blue);
             font-weight: 600;
             color: white;
         }
@@ -552,7 +574,7 @@
         .diagram-container {
             margin: 30px 0;
             padding: 20px;
-            background: #f8f9fa;
+            background: var(--card-bg);
             border-radius: 8px;
             overflow-x: auto;
         }
@@ -560,6 +582,32 @@
         [data-theme="dark"] .diagram-container {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
+        }
+
+        /* Mermaid arrow/edge visibility in dark mode */
+        [data-theme="dark"] .mermaid svg .edge-pattern-basic,
+        [data-theme="dark"] .mermaid svg .flowchart-link,
+        [data-theme="dark"] .mermaid svg path.path,
+        [data-theme="dark"] .mermaid svg .edgePath path,
+        [data-theme="dark"] .mermaid svg .edgePath .path {
+            stroke: #7aa8c0 !important;
+            stroke-width: 2px !important;
+        }
+
+        [data-theme="dark"] .mermaid svg marker path,
+        [data-theme="dark"] .mermaid svg marker polygon,
+        [data-theme="dark"] .mermaid svg defs marker path {
+            fill: #7aa8c0 !important;
+            stroke: #7aa8c0 !important;
+        }
+
+        [data-theme="dark"] .mermaid svg .label {
+            color: #c8d0d8 !important;
+        }
+
+        [data-theme="dark"] .mermaid svg .edgeLabel {
+            background: #1e2730 !important;
+            color: #c8d0d8 !important;
         }
 
         #diagramContainer {
@@ -1970,7 +2018,7 @@
             
             // Current step display
             html += `<div style="margin-bottom: 30px;">`;
-            html += `<div style="background: var(--vmw-blue); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">`;
+            html += `<div style="background: var(--vmw-blue); color: #dde8f0; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">`;
             html += `<span style="font-size: 1.2rem; font-weight: bold;">Step ${step.number} of ${allSteps.length}: ${step.title}</span>`;
             html += `<button onclick="exportStep(${step.number})" style="background: white; color: var(--vmw-blue); border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">📄 Export Current Step</button>`;
             html += `</div>`;
@@ -1983,12 +2031,12 @@
             // Phases
             sortedPhases.forEach(phase => {
                 html += `<div style="background: var(--card-bg); border: 2px solid var(--vmw-blue); padding: 20px 25px; margin: 15px 0; border-radius: 6px;">`;
-                html += `<h3 style="margin: 0 0 15px 0; color: #0098C7; font-size: 1.5rem; font-weight: 600;">Phase ${phase.number}: ${phase.title}</h3>`;
+                html += `<h3 style="margin: 0 0 15px 0; color: #0088b5; font-size: 1.5rem; font-weight: 600;">Phase ${phase.number}: ${phase.title}</h3>`;
                 html += `<p style="margin-bottom: 15px; color: var(--text-primary); line-height: 1.6; font-size: 1rem;">${phase.description}</p>`;
                 
                 if (phase.data) {
                     if (phase.data.prereqs && phase.data.prereqs.length > 0) {
-                        html += `<h4 style="font-size: 1.1rem; color: #0098C7; margin: 20px 0 10px 0; font-weight: 600;">Prerequisites</h4><ul style="margin: 0 0 15px 20px; font-size: 1rem; color: var(--text-primary); line-height: 1.8;">`;
+                        html += `<h4 style="font-size: 1.1rem; color: #0088b5; margin: 20px 0 10px 0; font-weight: 600;">Prerequisites</h4><ul style="margin: 0 0 15px 20px; font-size: 1rem; color: var(--text-primary); line-height: 1.8;">`;
                         phase.data.prereqs.forEach(p => html += `<li>${p}</li>`);
                         html += `</ul>`;
                     }
@@ -1996,7 +2044,7 @@
                     if (phase.data.tables && phase.data.tables.length > 0) {
                         phase.data.tables.forEach(table => {
                             html += `<div style="margin-top: 15px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;">`;
-                            html += `<div style="background: var(--vmw-blue); color: white; padding: 10px; font-weight: 600;">${table.title}</div>`;
+                            html += `<div style="background: var(--vmw-blue); color: #dde8f0; padding: 10px; font-weight: 600;">${table.title}</div>`;
                             if (table.description) {
                                 html += `<div style="padding: 10px; background: var(--bg); font-size: 0.85rem; color: var(--text-secondary);">${table.description}</div>`;
                             }
@@ -2042,7 +2090,7 @@
                     }
 
                     if (phase.data.steps && phase.data.steps.length > 0) {
-                        html +=`<h4 style="font-size: 1.1rem; color: #0098C7; margin: 20px 0 10px 0; font-weight: 600;">Steps</h4><ol style="margin: 0 0 15px 25px; padding-left: 5px; font-size: 1rem; color: var(--text-primary); line-height: 1.8;">`;
+                        html +=`<h4 style="font-size: 1.1rem; color: #0088b5; margin: 20px 0 10px 0; font-weight: 600;">Steps</h4><ol style="margin: 0 0 15px 25px; padding-left: 5px; font-size: 1rem; color: var(--text-primary); line-height: 1.8;">`;
                         phase.data.steps.forEach(s => html += `<li>${s}</li>`);
                         html += `</ul>`;
                     }
@@ -2123,8 +2171,51 @@
                     cloned.style.maxWidth = '100%';
                     cloned.style.height = 'auto';
                     cloned.removeAttribute('id');
-                    diagramSvg = '<div style="margin-bottom:24px; padding:16px; background:#f8f9fa; border-radius:8px; border:1px solid #dee2e6; page-break-inside:avoid;">'
-                        + '<h3 style="color:#0077c8; margin:0 0 12px; font-size:1rem;">Upgrade Flow Diagram</h3>'
+                    // Normalize arrow/edge stroke colors for white export background
+                    // 1. Inject override CSS into SVG's internal <style> block
+                    //    (Mermaid's internal CSS beats attribute-level changes)
+                    var svgStyle = cloned.querySelector('style');
+                    var arrowOverride = [
+                        '.edgePath path, .flowchart-link, path.path { stroke: #2c4a5e !important; stroke-width: 2px !important; }',
+                        '.edgePath .path { stroke: #2c4a5e !important; }',
+                        'marker path, marker polygon, marker polyline { fill: #2c4a5e !important; stroke: #2c4a5e !important; }',
+                        'text, tspan, .label { fill: #1a2332 !important; color: #1a2332 !important; }',
+                        '.nodeLabel, .edgeLabel { color: #1a2332 !important; background: #f0f2f5 !important; }',
+                        'rect, polygon { stroke: #2c4a5e !important; }'
+                    ].join('\n');
+                    if (svgStyle) {
+                        svgStyle.textContent += '\n' + arrowOverride;
+                    } else {
+                        var newStyle = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+                        newStyle.textContent = arrowOverride;
+                        cloned.insertBefore(newStyle, cloned.firstChild);
+                    }
+                    // 2. Also fix attributes and inline styles as a belt-and-suspenders backup
+                    cloned.querySelectorAll('path, polyline, line').forEach(function(el) {
+                        var s = el.getAttribute('stroke');
+                        var inlineS = el.style.stroke;
+                        if ((s && s !== 'none') || (inlineS && inlineS !== 'none' && inlineS !== '')) {
+                            el.setAttribute('stroke', '#2c4a5e');
+                            el.style.stroke = '#2c4a5e';
+                        }
+                    });
+                    cloned.querySelectorAll('marker path, marker polygon, marker polyline').forEach(function(el) {
+                        el.setAttribute('fill', '#2c4a5e');
+                        el.setAttribute('stroke', '#2c4a5e');
+                        el.style.fill = '#2c4a5e';
+                        el.style.stroke = '#2c4a5e';
+                    });
+                    cloned.querySelectorAll('[style]').forEach(function(el) {
+                        if (el.style.stroke && el.style.stroke !== 'none' && el.style.stroke !== '') {
+                            el.style.stroke = '#2c4a5e';
+                        }
+                    });
+                    cloned.querySelectorAll('text, tspan').forEach(function(el) {
+                        el.setAttribute('fill', '#1a2332');
+                        el.style.fill = '#1a2332';
+                    });
+                    diagramSvg = '<div style="margin-bottom:24px; padding:16px; background:#f0f2f5; border-radius:8px; border:1px solid #dee2e6; page-break-inside:avoid;">'
+                        + '<h3 style="color:#3d6680; margin:0 0 12px; font-size:1rem;">Upgrade Flow Diagram</h3>'
                         + cloned.outerHTML
                         + '</div>';
                 }
@@ -2141,9 +2232,9 @@
                 + '*, *::before, *::after { box-sizing: border-box; }'
                 + 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;'
                 + '       font-size: 13px; line-height: 1.55; color: #1a2332; background: #fff; padding: 20px; margin: 0; }'
-                + 'h3 { color: #0077c8; margin: 0 0 8px; font-size: 1.1rem; }'
+                + 'h3 { color: #3d6680; margin: 0 0 8px; font-size: 1.1rem; }'
                 + 'h4 { color: #1a2332; margin: 12px 0 6px; font-size: 0.95rem; }'
-                + 'h5 { color: #0077c8; margin: 0 0 8px; font-size: 0.9rem; }'
+                + 'h5 { color: #3d6680; margin: 0 0 8px; font-size: 0.9rem; }'
                 + 'p  { margin: 0 0 8px; }'
                 + 'ul { padding-left: 22px; margin: 0 0 8px; }'
                 + 'li { margin: 3px 0; }'
@@ -2151,7 +2242,7 @@
                 + '        word-wrap: break-word; table-layout: fixed; margin-bottom: 12px; }'
                 + 'td, th { padding: 7px 9px; border-bottom: 1px solid #dee2e6;'
                 + '         word-break: break-word; vertical-align: top; }'
-                + 'th { font-weight: 600; border-bottom: 2px solid #dee2e6; background: #f8f9fa; }'
+                + 'th { font-weight: 600; border-bottom: 2px solid #dee2e6; background: #f0f2f5; }'
                 + '.badge { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 0.78rem; margin-right: 4px; }'
                 + '.badge.included { background: #d4edda; color: #155724; }'
                 + '.badge.version  { background: #cce5ff; color: #004085; }'
@@ -2172,11 +2263,11 @@
             
             const printDiv = document.getElementById('printAllPhases');
             let html = '<div style="padding: 20px;">';
-            html += `<h2 style="color: #0077c8; margin-bottom: 20px;">Step ${step.number}: ${step.title}</h2>`;
+            html += `<h2 style="color: #3d6680; margin-bottom: 20px;">Step ${step.number}: ${step.title}</h2>`;
             
             step.phases.forEach(phase => {
-                html += '<div style="background: #f8f9fa; border-left: 4px solid #0077c8; padding: 20px; margin-bottom: 20px; border-radius: 8px;">';
-                html += '<h3 style="color: #0077c8;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
+                html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px;">';
+                html += '<h3 style="color: #3d6680;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
                 html += '<p>' + phase.description + '</p>';
                 
                 if (phase.data) {
@@ -2214,24 +2305,24 @@
                             if (docUrl) {
                                 const inlineDoc = getInlineDocForUrl(docUrl);
                                 if (inlineDoc) {
-                                    html += '<div style="background: white; border: 2px solid #0077c8; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px;">';
-                                    html += '<h5 style="color: #0077c8; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
+                                    html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px;">';
+                                    html += '<h5 style="color: #3d6680; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
                                     html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
                                     html += '<p style="margin-top: 12px; font-size: 0.85rem; color: #6c757d;"><strong>Source:</strong> ' + docUrl + '</p>';
 
                                     // Embed sub-pages if available in INLINE_DOCS
                                     if (inlineDoc.subpages && inlineDoc.subpages.length > 0) {
                                         html += '<div style="margin-top:16px;border-top:2px solid #e8edf3;padding-top:14px;">';
-                                        html += '<h6 style="color:#0077c8;margin:0 0 10px 0;font-size:0.8rem;text-transform:uppercase;">Related Pages:</h6>';
+                                        html += '<h6 style="color:#3d6680;margin:0 0 10px 0;font-size:0.8rem;text-transform:uppercase;">Related Pages:</h6>';
                                         inlineDoc.subpages.forEach(function(sp) {
                                             var spDoc = window.INLINE_DOCS && window.INLINE_DOCS[sp.url] ? window.INLINE_DOCS[sp.url] : null;
                                             if (spDoc) {
-                                                html += '<div style="background:#f8f9fa;border-left:3px solid #0077c8;padding:12px 14px;margin:8px 0;border-radius:4px;">';
-                                                html += '<strong style="color:#0077c8;font-size:0.88rem;">' + sp.label + '</strong>';
+                                                html += '<div style="background:#f0f2f5;border-left:3px solid #3d6680;padding:12px 14px;margin:8px 0;border-radius:4px;">';
+                                                html += '<strong style="color:#3d6680;font-size:0.88rem;">' + sp.label + '</strong>';
                                                 html += '<div style="font-size:0.83rem;line-height:1.55;margin-top:8px;">' + spDoc.content + '</div>';
                                                 html += '</div>';
                                             } else {
-                                                html += '<div style="font-size:0.85rem;padding:4px 0;">\u2022 <a href="' + sp.url + '" style="color:#0077c8;">' + sp.label + '</a></div>';
+                                                html += '<div style="font-size:0.85rem;padding:4px 0;">\u2022 <a href="' + sp.url + '" style="color:#3d6680;">' + sp.label + '</a></div>';
                                             }
                                         });
                                         html += '</div>';
@@ -2245,18 +2336,18 @@
                      if (phase.data.tables && phase.data.tables.length > 0) {
                         phase.data.tables.forEach(table => {
                             html += '<div style="margin-top: 15px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">';
-                            html += '<div style="background: #0077c8; color: white; padding: 10px; font-weight: 600;">' + table.title + '</div>';
+                            html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
                             if (table.description) {
-                                html += '<div style="padding: 10px; background: #f8f9fa; font-size: 0.85rem;">' + table.description + '</div>';
+                                html += '<div style="padding: 10px; background: #f0f2f5; font-size: 0.85rem;">' + table.description + '</div>';
                             }
                             html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
-                            html += '<thead><tr style="background: #f8f9fa;">';
+                            html += '<thead><tr style="background: #f0f2f5;">';
                             table.headers.forEach(header => {
                                 html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600;">' + header + '</th>';
                             });
                             html += '</tr></thead><tbody>';
                             table.rows.forEach((row, idx) => {
-                                const bgColor = idx % 2 === 0 ? '#ffffff' : '#f8f9fa';
+                                const bgColor = idx % 2 === 0 ? '#ffffff' : '#f0f2f5';
                                 html += '<tr style="background: ' + bgColor + ';">';
                                 row.forEach(cell => {
                                     html += '<td style="padding: 10px; border-bottom: 1px solid #ddd;">' + cell + '</td>';
@@ -2309,7 +2400,7 @@
                         phase.data.notices.forEach(notice => {
                             const noticeColor = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
                             const noticeIcon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
-                            html += `<div style="background: #f8f9fa; border-left: 4px solid ${noticeColor}; padding: 12px; margin-top: 16px; border-radius: 4px;">`;
+                            html += `<div style="background: #f0f2f5; border-left: 4px solid ${noticeColor}; padding: 12px; margin-top: 16px; border-radius: 4px;">`;
                             html += `<strong>${noticeIcon} ${notice.title}</strong>`;
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += `<ul style="margin: 8px 0 0 20px;">`;
@@ -2463,7 +2554,7 @@
             let html = '<div style="padding: 20px;">';
             
             // Core Components Summary
-            html += '<div style="background: #f0f7ff; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #0077c8;">';
+            html += '<div style="background: #f0f7ff; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #3d6680;">';
             html += '<h3 style="margin-bottom: 8px;">Selected Components:</h3>';
             html += '<ul style="margin-left: 20px;">';
             html += '<li>vCenter Server v' + vcenterVersion + '</li>';
@@ -2499,8 +2590,8 @@
 
             // All phases
             phases.forEach(phase => {
-                html += '<div style="background: #f8f9fa; border-left: 4px solid #0077c8; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
-                html += '<h3 style="color: #0077c8; margin-bottom: 8px;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
+                html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
+                html += '<h3 style="color: #3d6680; margin-bottom: 8px;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
                 html += '<p style="color: #5a6778; margin-bottom: 12px;">' + phase.description + '</p>';
                 
                 if (phase.data) {
@@ -2536,18 +2627,18 @@
                      if (phase.data.tables && phase.data.tables.length > 0) {
                         phase.data.tables.forEach(table => {
                             html += '<div style="margin-top: 15px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">';
-                            html += '<div style="background: #0077c8; color: white; padding: 10px; font-weight: 600;">' + table.title + '</div>';
+                            html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
                             if (table.description) {
-                                html += '<div style="padding: 10px; background: #f8f9fa; font-size: 0.85rem;">' + table.description + '</div>';
+                                html += '<div style="padding: 10px; background: #f0f2f5; font-size: 0.85rem;">' + table.description + '</div>';
                             }
                             html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
-                            html += '<thead><tr style="background: #f8f9fa;">';
+                            html += '<thead><tr style="background: #f0f2f5;">';
                             table.headers.forEach(header => {
                                 html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600;">' + header + '</th>';
                             });
                             html += '</tr></thead><tbody>';
                             table.rows.forEach((row, idx) => {
-                                const bgColor = idx % 2 === 0 ? '#ffffff' : '#f8f9fa';
+                                const bgColor = idx % 2 === 0 ? '#ffffff' : '#f0f2f5';
                                 html += '<tr style="background: ' + bgColor + ';">';
                                 row.forEach(cell => {
                                     html += '<td style="padding: 10px; border-bottom: 1px solid #ddd;">' + cell + '</td>';
@@ -2566,24 +2657,24 @@
                             if (docUrl) {
                                 const inlineDoc = getInlineDocForUrl(docUrl);
                                 if (inlineDoc) {
-                                    html += '<div style="background: white; border: 2px solid #0077c8; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px; page-break-inside: avoid;">';
-                                    html += '<h5 style="color: #0077c8; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
+                                    html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px; page-break-inside: avoid;">';
+                                    html += '<h5 style="color: #3d6680; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
                                     html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
                                     html += '<p style="margin-top: 12px; font-size: 0.85rem; color: #6c757d;"><strong>Source:</strong> ' + docUrl + '</p>';
 
                                     // Embed sub-pages if available in INLINE_DOCS
                                     if (inlineDoc.subpages && inlineDoc.subpages.length > 0) {
                                         html += '<div style="margin-top:16px;border-top:2px solid #e8edf3;padding-top:14px;">';
-                                        html += '<h6 style="color:#0077c8;margin:0 0 10px 0;font-size:0.8rem;text-transform:uppercase;">Related Pages:</h6>';
+                                        html += '<h6 style="color:#3d6680;margin:0 0 10px 0;font-size:0.8rem;text-transform:uppercase;">Related Pages:</h6>';
                                         inlineDoc.subpages.forEach(function(sp) {
                                             var spDoc = window.INLINE_DOCS && window.INLINE_DOCS[sp.url] ? window.INLINE_DOCS[sp.url] : null;
                                             if (spDoc) {
-                                                html += '<div style="background:#f8f9fa;border-left:3px solid #0077c8;padding:12px 14px;margin:8px 0;border-radius:4px;">';
-                                                html += '<strong style="color:#0077c8;font-size:0.88rem;">' + sp.label + '</strong>';
+                                                html += '<div style="background:#f0f2f5;border-left:3px solid #3d6680;padding:12px 14px;margin:8px 0;border-radius:4px;">';
+                                                html += '<strong style="color:#3d6680;font-size:0.88rem;">' + sp.label + '</strong>';
                                                 html += '<div style="font-size:0.83rem;line-height:1.55;margin-top:8px;">' + spDoc.content + '</div>';
                                                 html += '</div>';
                                             } else {
-                                                html += '<div style="font-size:0.85rem;padding:4px 0;">\u2022 <a href="' + sp.url + '" style="color:#0077c8;">' + sp.label + '</a></div>';
+                                                html += '<div style="font-size:0.85rem;padding:4px 0;">\u2022 <a href="' + sp.url + '" style="color:#3d6680;">' + sp.label + '</a></div>';
                                             }
                                         });
                                         html += '</div>';
@@ -2671,7 +2762,7 @@
             diagram += '\n    ';
             
             // Add styles
-            diagram += 'style Start fill:#e9ecef,stroke:#495057,stroke-width:3px,color:#000\n    ';
+            diagram += 'style Start fill:#dde2e8,stroke:#6c757d,stroke-width:3px,color:#3a4450\n    ';
             
             // Style phases based on status
             allSteps.forEach((step, index) => {
@@ -2681,16 +2772,16 @@
                 
                 if (isCurrentPhase && hasSafeStop) {
                     // Current phase at safe stop - purple/violet
-                    diagram += `style ${phaseId} fill:#E1D5E7,stroke:#7C3AED,stroke-width:4px\n    `;
+                    diagram += `style ${phaseId} fill:#d4c8e0,stroke:#6b3999,stroke-width:4px,color:#1a0a2e\n    `;
                 } else if (index === currentStepIndex) {
                     // Current phase (no safe stop) - blue background
-                    diagram += `style ${phaseId} fill:#cce5ff,stroke:#0077c8,stroke-width:4px\n    `;
+                    diagram += `style ${phaseId} fill:#3d6680,stroke:#2c4f66,stroke-width:4px,color:#e8f0f6\n    `;
                 } else if (index < currentStepIndex) {
                     // Completed phase - green background
-                    diagram += `style ${phaseId} fill:#d4edda,stroke:#28a745,stroke-width:3px\n    `;
+                    diagram += `style ${phaseId} fill:#2e7d4f,stroke:#1d5c38,stroke-width:3px,color:#d8f0e4\n    `;
                 } else {
                     // Future phase - light gray background
-                    diagram += `style ${phaseId} fill:#f8f9fa,stroke:#adb5bd,stroke-width:2px\n    `;
+                    diagram += `style ${phaseId} fill:#dde2e8,stroke:#9aa0a8,stroke-width:2px,color:#3a4450\n    `;
                 }
                 
                 // Style individual steps within phases
@@ -2699,18 +2790,18 @@
                     
                     if (index === currentStepIndex) {
                         // Steps in current phase - darker blue
-                        diagram += `style ${stepNodeId} fill:#0077c8,stroke:#005fa3,stroke-width:2px,color:#fff\n    `;
+                        diagram += `style ${stepNodeId} fill:#6a9db5,stroke:#3d6680,stroke-width:2px,color:#0d1e28\n    `;
                     } else if (index < currentStepIndex) {
                         // Steps in completed phase - darker green
-                        diagram += `style ${stepNodeId} fill:#28a745,stroke:#1e7e34,stroke-width:2px,color:#fff\n    `;
+                        diagram += `style ${stepNodeId} fill:#3a9e60,stroke:#2e7d4f,stroke-width:2px,color:#d8f0e4\n    `;
                     } else {
                         // Steps in future phase - white
-                        diagram += `style ${stepNodeId} fill:#ffffff,stroke:#6c757d,stroke-width:1px,color:#000\n    `;
+                        diagram += `style ${stepNodeId} fill:#eaecf0,stroke:#8a9099,stroke-width:1px,color:#3a4450\n    `;
                     }
                 });
             });
             
-            diagram += 'style End fill:#d4edda,stroke:#28a745,stroke-width:3px,color:#000';
+            diagram += 'style End fill:#2e7d4f,stroke:#1d5c38,stroke-width:3px,color:#d8f0e4,color:#000';
             
             const container = document.getElementById('diagramContainer');
             container.innerHTML = `<pre class="mermaid">${diagram}</pre>`;
@@ -2923,7 +3014,7 @@
             var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             var textColor = isDark ? '#E6EDF3' : '#111111';
             var secondaryColor = isDark ? '#C9D1D9' : '#444444';
-            var linkColor = isDark ? '#58D3FF' : '#0098C7';
+            var linkColor = isDark ? '#58D3FF' : '#0088b5';
             body.querySelectorAll('*').forEach(function(el) {
                 el.style.removeProperty('color');
                 el.style.removeProperty('-webkit-text-fill-color');

@@ -5,49 +5,49 @@
     <title>VCF Upgrade Planner</title>
     <style>
         :root {
-            --vmw-blue: #0098C7;
-            --vmw-dark: #092138;
-            --vmw-gray: #53565A;
-            --bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --border-color: #D1D2D5;
-            --pulse-red: #CC092F;
-            --lime: #61A60E;
-            --jade: #007B8C;
-            --sapphire: #092138;
-            --gray-100: #E8E8E8;
-            --gray-400: #A4A5AF;
-            --text-primary: #092138;
-            --text-secondary: #53565A;
-            --warning-bg: #fff3cd;
-            --warning-border: #ffc107;
-            --warning-text: #856404;
+            --vmw-blue: #0088b5;
+            --vmw-dark: #1a2d40;
+            --vmw-gray: #535c65;
+            --bg: #f0f3f6;
+            --card-bg: #f8f9fb;
+            --border-color: #cdd2d8;
+            --pulse-red: #b8082a;
+            --lime: #4e8f0a;
+            --jade: #006b7a;
+            --sapphire: #1a2d40;
+            --gray-100: #e4e8ec;
+            --gray-400: #9ba0a8;
+            --text-primary: #1a2d40;
+            --text-secondary: #4a5260;
+            --warning-bg: #fdf3d8;
+            --warning-border: #e6aa00;
+            --warning-text: #7a5900;
         }
 
         [data-theme="dark"] {
-            --vmw-blue: #40B4E5;
-            --vmw-dark: #FFFFFF;
-            --vmw-gray: #9CA3AF;
-            --bg: #0d1117;
-            --card-bg: #1c2128;
-            --border-color: #3d444d;
-            --text-primary: #FFFFFF;
-            --text-secondary: #C9D1D9;
-            --pulse-red: #FF6B6B;
-            --lime: #7CFC00;
-            --warning-bg: #332701;
-            --warning-border: #ffc107;
-            --warning-text: #ffd43b;
+            --vmw-blue: #4e90aa;
+            --vmw-dark: #d4dbe3;
+            --vmw-gray: #8a96a2;
+            --bg: #151c24;
+            --card-bg: #1e2730;
+            --border-color: #38424e;
+            --text-primary: #c8d0d8;
+            --text-secondary: #8e9aaa;
+            --pulse-red: #cc5555;
+            --lime: #4db800;
+            --warning-bg: #2e2200;
+            --warning-border: #b88800;
+            --warning-text: #d4aa30;
         }
 
         a {
-            color: #0098C7;
+            color: #0088b5;
             text-decoration: none;
             transition: color 0.2s;
         }
 
         a:hover {
-            color: #007BA3;
+            color: var(--vmw-dark);
             text-decoration: underline;
         }
 
@@ -89,7 +89,7 @@
 
         .toggle-switch.active,
         [data-theme="dark"] .toggle-switch {
-            background: #0098C7;
+            background: var(--vmw-blue);
         }
 
         .toggle-slider {
@@ -134,7 +134,7 @@
 
         .sidebar {
             width: 280px;
-            background: #092138;
+            background: #1e2d3d;
             color: white;
             display: flex;
             flex-direction: column;
@@ -198,7 +198,7 @@
         }
 
         .nav-item.active {
-            background: #0098C7;
+            background: var(--vmw-blue);
             font-weight: 600;
             color: white;
         }
