@@ -106,7 +106,7 @@
             ]
         },
         "operations": {
-            "name": "VCF Operations (Aria Operations) Upgrade",
+            "name": "VCF Operations Upgrade",
             "steps": [
                 "Upgrade VCF Operations to version 9.1 compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
             ],
@@ -272,8 +272,8 @@
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
                     ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-                    ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                    ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                    ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                    ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                     ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                     ["Identity Broker", "5", "1", "vcfidb.rainpole.io"],
                     ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
@@ -296,8 +296,8 @@
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
                         ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]
@@ -319,8 +319,8 @@
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
                         ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]

@@ -256,7 +256,7 @@
         "vidm": {
             "name": "VMware Identity Manager (vIDM)",
             "steps": [
-                "Move from VMware Identity Manager(VIDM) to VMware Identity Broker(VIDB) - Deployed of Identity Broker is part of the Management Service deployment"
+                "Move from VMware Identity Manager(VIDM) to VMware Identity Broker - Deployed of Identity Broker is part of the Management Service deployment"
             ],
             "notices": [
                 {
@@ -360,8 +360,8 @@
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
             ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
             ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]          ]
         },
@@ -381,8 +381,8 @@
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
             ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]          ]
         },
         {
@@ -401,8 +401,8 @@
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
             ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]          ]
         },
         {
@@ -465,7 +465,7 @@
         },
         "elm": {
             "name": "ELM Break",
-            "steps":[ "Breaking ELM in existing VCF Environment for VIDB transition - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/deactivate-enhanced-link-mode--elm--for-upgraded-vmware-cloud-foundation-vcenters.html' target='_blank'>View Documentation</a>)."
+            "steps":[ "Breaking ELM in existing VCF Environment for Identity Broker transition - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/deactivate-enhanced-link-mode--elm--for-upgraded-vmware-cloud-foundation-vcenters.html' target='_blank'>View Documentation</a>)."
         ],
         "notices": [
             {

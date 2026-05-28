@@ -947,7 +947,7 @@
                 <div class="checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="vchaCheck" onchange="autoGenerateUpgradePlan()">
-                        <span>vCenter Appliance High Availability (vCHA)</span>
+                        <span>vCenter High Availability (vCHA)</span>
                     </label>
                 </div>
 
@@ -1362,11 +1362,11 @@
                         shouldInclude = true;
                         // Customer HAS Operations - UPGRADE it
                         if (operationsVersion === '8.18.x') {
-                            phaseTitle = 'Upgrade Aria Operations';
-                            phaseDescription = 'Upgrade Aria Operations from 8.18.x to 9.1';
+                            phaseTitle = 'Upgrade VCF Operations';
+                            phaseDescription = 'Upgrade VCF Operations from 8.18.x to 9.1';
                         } else {
-                            phaseTitle = 'Upgrade Aria Operations';
-                            phaseDescription = 'Upgrade Aria Operations from 9.0.x to 9.1';
+                            phaseTitle = 'Upgrade VCF Operations';
+                            phaseDescription = 'Upgrade VCF Operations from 9.0.x to 9.1';
                         }
                         // Use operations component (upgrade steps)
                         componentData = upgradeData.components['operations'];
@@ -1476,7 +1476,7 @@
                         }
                     }
 
-                    phaseDescription = 'Deploy SDDC Manager and converge vSphere to VCF platform' + (!automationSelected ? ' + Install Aria Automation' : '');
+                    phaseDescription = 'Deploy SDDC Manager and converge vSphere to VCF platform' + (!automationSelected ? ' + Install VCF Automation' : '');
                 } else if (componentId === 'nsx') {
                     // NSX only if checkbox selected
                     shouldInclude = nsxSelected;
@@ -1510,8 +1510,8 @@
                     // Only a separate phase when Automation was ALREADY INSTALLED (upgrade)
                     // New installs are merged into the Convert phase above
                     shouldInclude = automationSelected;
-                    phaseTitle = automationSelected ? 'Upgrade Aria Automation' : 'Aria Automation';
-                    phaseDescription = automationSelected ? 'Upgrade Aria Automation to 9.1' : 'Install Aria Automation 9.1 (handled in Convert step)';
+                    phaseTitle = automationSelected ? 'Upgrade VCF Automation' : 'VCF Automation';
+                    phaseDescription = automationSelected ? 'Upgrade VCF Automation to 9.1' : 'Install VCF Automation 9.1 (handled in converge step)';
 
                     // Select the right size-based table for the upgrade path
                     if (automationSelected && componentData) {
@@ -1699,7 +1699,7 @@
                 steps.push({
                     number: steps.length + 1,
                     title: 'Operations Upgrade',
-                    description: 'Upgrade Aria Operations',
+                    description: 'Upgrade VCF Operations',
                     phases: operationsPhases
                 });
             }
@@ -1759,8 +1759,8 @@
                 if (convertPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
-                        title: 'Convert to VCF 9.1' + (!automationSelected ? ' + Install Aria Automation' : ''),
-                        description: !automationSelected ? 'Deploy SDDC Manager, converge vSphere to VCF 9.1, and install Aria Automation' : 'Deploy SDDC Manager and converge vSphere to VCF 9.1',
+                        title: 'Convert to VCF 9.1' + (!automationSelected ? ' + Install VCF Automation' : ''),
+                        description: !automationSelected ? 'Deploy SDDC Manager, converge vSphere to VCF 9.1, and install VCF Automation' : 'Deploy SDDC Manager and converge vSphere to VCF 9.1',
                         phases: convertPhases
                     });
                 }
@@ -1862,8 +1862,8 @@
                 if (convertPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
-                        title: 'Convert to VCF 9.1' + (!automationSelected ? ' + Install Aria Automation' : ''),
-                        description: !automationSelected ? 'Deploy SDDC Manager, converge vSphere to VCF 9.1, and install Aria Automation' : 'Deploy SDDC Manager and converge vSphere to VCF 9.1',
+                        title: 'Convert to VCF 9.1' + (!automationSelected ? ' + Install VCF Automation' : ''),
+                        description: !automationSelected ? 'Deploy SDDC Manager, converge vSphere to VCF 9.1, and install VCF Automation' : 'Deploy SDDC Manager and converge vSphere to VCF 9.1',
                         phases: convertPhases
                     });
                 }
@@ -1902,7 +1902,7 @@
                 steps.push({
                     number: steps.length + 1,
                     title: 'Automation Upgrade',
-                    description: 'Upgrade Aria Automation to 9.1',
+                    description: 'Upgrade VCF Automation to 9.1',
                     phases: automationPhases
                 });
             }
@@ -2369,10 +2369,10 @@
             const opsData = upgradeData ? upgradeData.components.operations : null;
             if (operationsSelected) {
                 const effOpsVersion = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
-                const opsDesc = effOpsVersion === '8.18.x' ? 'Upgrade Aria Operations from 8.18.x to 9.1' : 'Upgrade Aria Operations from 9.0.x to 9.1';
-                phases.push({ number: phases.length + 1, title: 'Upgrade Aria Operations', description: opsDesc, data: opsData, componentId: 'operations' });
+                const opsDesc = effOpsVersion === '8.18.x' ? 'Upgrade VCF Operations from 8.18.x to 9.1' : 'Upgrade VCF Operations from 9.0.x to 9.1';
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: opsDesc, data: opsData, componentId: 'operations' });
             } else {
-                phases.push({ number: phases.length + 1, title: 'Install Aria Operations', description: 'Install Aria Operations 9.1 (new installation)', data: opsData, componentId: 'operations' });
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.1 (new installation)', data: opsData, componentId: 'operations' });
             }
 
             const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
@@ -2417,7 +2417,7 @@
                         console.error('Error selecting automation upgrade table for export:', e);
                     }
                 }
-                phases.push({ number: phases.length + 1, title: 'Upgrade Aria Automation', description: 'Upgrade Aria Automation to 9.1', data: autoData, componentId: 'automation' });
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Automation', description: 'Upgrade VCF Automation to 9.1', data: autoData, componentId: 'automation' });
             }
 
             return phases;

@@ -235,8 +235,8 @@
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
                     ]
@@ -268,8 +268,8 @@
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
                     ]
@@ -301,8 +301,8 @@
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
                     ]
@@ -331,8 +331,8 @@
                         ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
                     ]
@@ -363,8 +363,8 @@
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
                     ]
@@ -394,8 +394,8 @@
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
                     ]
@@ -452,8 +452,8 @@
                         ["NSX Managers", "2", "2", "nsxvip.rainpole.io, nsxmgr1.rainpole.io,"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF Services Runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
@@ -484,8 +484,8 @@
                         ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
@@ -513,8 +513,8 @@
                         ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
@@ -541,8 +541,8 @@
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
                     ]
@@ -567,8 +567,8 @@
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
@@ -595,8 +595,8 @@
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["License server", "1", "1", "vcflic.rainpole.io"],
                         ["VCF management services", "12-30", "None", "N/A"],
-                        ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-                        ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]

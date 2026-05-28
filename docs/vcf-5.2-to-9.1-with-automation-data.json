@@ -250,7 +250,7 @@
                     "description": "Prepare the following IP addresses and DNS entries before deployment:",
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
-                        ["License Server", "1", "1", "vcflic.rainpole.io"]
+                        ["License server", "1", "1", "vcflic.rainpole.io"]
                     ]
                 },
                 {
@@ -258,7 +258,7 @@
                     "description": "Size requirements for all nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
-                        ["License Server", "Small", "1", "2", "4gb", "12gb"]
+                        ["License server", "Small", "1", "2", "4gb", "12gb"]
                     ]
                 }
             ],
@@ -384,9 +384,9 @@
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management service", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
             ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]          ]
         },
         {
@@ -405,9 +405,9 @@
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management service", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]          ]
+            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]          ]
         },
         {
           "title": "Required Component Sizes",
@@ -425,9 +425,9 @@
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management service", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]          ]
+            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]          ]
         },
         {
           "title": "Required Component Sizes",

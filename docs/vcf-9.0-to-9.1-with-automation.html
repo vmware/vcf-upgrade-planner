@@ -932,7 +932,7 @@
                 <div class="checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="automationCheck" onchange="autoGenerateUpgradePlan()" checked>
-                        <span>VCF Automation (Aria Automation)</span>
+                        <span>VCF Automation</span>
                     </label>
                 </div>
                 <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
@@ -1248,7 +1248,7 @@
                     // VCF Management Services always included — select size-variant tables
                     shouldInclude = true;
                     phaseTitle = componentData ? componentData.name : 'VCF Management Service Deployment';
-                    phaseDescription = 'Deploy VCF Management Services';
+                    phaseDescription = 'Deploy VCF management services';
                     if (componentData) {
                         try {
                             const tableKey = 'tables_' + deploymentType + '_' + deploymentSize;
@@ -1271,7 +1271,7 @@
                     shouldInclude = true;
                     const automationComponentId = window.automationIsUpgrade ? 'automation' : 'automation_install';
                     componentData = upgradeData.components[automationComponentId] || upgradeData.components['automation'];
-                    phaseTitle = componentData ? componentData.name : 'Aria Automation';
+                    phaseTitle = componentData ? componentData.name : 'VCF Automation';
                     phaseDescription = window.automationIsUpgrade ? 'Upgrade VCF Automation to 9.1' : 'Install VCF Automation 9.1';
 
                     // Select size-variant tables based on upgrade vs install path
@@ -1551,7 +1551,7 @@
                 'vcfms':{
                     phases: vcfmsPhases,
                     title: 'VCF Management Service Deployment 9.1',
-                    description: 'Deploy VCF Management Services on first SDDC Instance'
+                    description: 'Deploy VCF management services on first SDDC Instance'
                 },
                 'nsx_federation': {
                     phases: nsxfedPhases,

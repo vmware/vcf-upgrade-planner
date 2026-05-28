@@ -1238,7 +1238,7 @@
                     // VCF Management Services always included — select size-variant tables
                     shouldInclude = true;
                     phaseTitle = componentData ? componentData.name : 'VCF Management Service Deployment';
-                    phaseDescription = 'Deploy VCF Management Services';
+                    phaseDescription = 'Deploy VCF management services';
                     if (componentData) {
                         try {
                             const tableKey = 'tables_' + deploymentType + '_' + deploymentSize;
@@ -1260,7 +1260,7 @@
                     // ELM Upgrade Ring - not used in this VCF conversion path
                     shouldInclude = elmSelected
                     phaseTitle = componentData ? componentData.name : 'Enhanced Linked Mode (ELM) - Break Configuration';
-                    phaseDescription = 'Break Enhanced Linked Mode before VIDB Configuration on vCenters'; 
+                    phaseDescription = 'Break Enhanced Linked Mode before Identity Broker Configuration on vCenters'; 
                 } else if (coreComponents.includes(componentId)) {
                     // Core components ALWAYS included
                     shouldInclude = true;
@@ -1470,7 +1470,7 @@
                 'vcfms':{
                     phases: vcfmsPhases,
                     title: 'VCF Management Service Deployment 9.1',
-                    description: 'Deploy VCF Management Services on first SDDC Instance'
+                    description: 'Deploy VCF management services on first SDDC Instance'
                 },
                 'nsx_federation': {
                     phases: nsxfedPhases,
@@ -1517,13 +1517,13 @@
                 'automation': {
                     phases: automationPhases,
                     title: 'Automation Deployment',
-                    description: 'Deploy Aria Automation 9.1'
+                    description: 'Deploy VCF Automation 9.1'
                 },
 
                  'vidm': {
                     phases: vidmPhases,
                     title: 'VIDM Replacement',
-                    description: 'Migration from VMware Identity Manager(vIDM) to VMware Identity Broker(vIDB)'
+                    description: 'Migration from VMware Identity Manager(vIDM) to VMware Identity Broker'
 
                 },
                 'network': {
@@ -1539,7 +1539,7 @@
                 'elm': {
                     phases: elmPhases,
                     title: 'ELM Breakage on SDDC Manager',
-                    description: 'Break ELM on SDDC manager pre step to set up VIDB'
+                    description: 'Break ELM on SDDC manager pre step to set up Identity Broker'
                 }
             };
             
@@ -1967,11 +1967,11 @@
             const opsData = upgradeData ? upgradeData.components.operations : null;
             
             if (operationsSelected && operationsVersion === '8.18.x') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade Aria Operations', description: 'Upgrade Aria Operations from 8.18.x to 9.0', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations from 8.18.x to 9.0', data: opsData });
             } else if (operationsSelected && operationsVersion === '9.0.x') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade Aria Operations', description: 'Upgrade Aria Operations from 9.0.x to 9.1', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations from 9.0.x to 9.1', data: opsData });
             } else if (!operationsSelected) {
-                phases.push({ number: phases.length + 1, title: 'Install Aria Operations', description: 'Install Aria Operations 9.0 (new installation)', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.0 (new installation)', data: opsData });
             }
 
             const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
