@@ -101,20 +101,20 @@
             ]
         },
         "elm_upgrade_ring": {
-            "name": "Enhanced Linked Mode (ELM) - Upgrade All vCenters",
+            "name": "Enhanced Linked Mode (ELM) - Upgrade All vCenter Instances",
             "notices": [
                 {
                     "type": "info",
                     "title": "ELM Upgrade Requirements",
                     "bullets": [
                         "ALL vCenter instances in the ELM ring must be upgraded to maintain ELM",
-                        "Upgrade vCenters sequentially, one at a time",
+                        "Upgrade vCenter Instances sequentially, one at a time",
                         "Verify replication status after each vCenter upgrade"
                     ]
                 }
             ],
             "steps": [
-                "Break ELM After All vCenters are upgraded to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
+                "Break ELM After All vCenter Instances are upgraded to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
             ]
         },
         "elm_break": {
@@ -132,7 +132,7 @@
                 }
             ],
             "steps": [
-                "Break ELM on 8.0 vCenters that has NSX - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/370062/splitting-enhanced-linked-mode-elm.html' target='_blank'>View Documentation</a>)"
+                "Break ELM on 8.0 vCenter Instances that has NSX - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/370062/splitting-enhanced-linked-mode-elm.html' target='_blank'>View Documentation</a>)"
             ]
         },
         "vcenter": {
@@ -154,7 +154,7 @@
                 {
                     "type": "warning",
                     "title": "VXRAIL",
-                    "bullets": ["vCenters or Clusters managed by Dell VxRail are not supported in VCF Upgrade today for vSphere environments"]
+                    "bullets": ["vCenter Instances or Clusters managed by Dell VxRail are not supported in VCF Upgrade today for vSphere environments"]
                 }
             ]
         },
@@ -250,7 +250,7 @@
                         ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
                         ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
                         ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
                     ]
                 }
@@ -283,7 +283,7 @@
                         ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
                         ["VCF Operations Nodes", "Medium", "3", "72", "288gb", "822gb"],
                         ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
                     ]
                 }
@@ -316,7 +316,7 @@
                         ["NSX Manager", "Large", "3", "36", "144", "900"],
                         ["VCF Operations Nodes", "Large", "3", "48", "144gb", "822gb"],
                         ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
                     ]
                 }
@@ -346,7 +346,7 @@
                         ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
                         ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
                         ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
                     ]
                 }
@@ -377,7 +377,7 @@
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["VCF Operations Nodes", "Medium", "3", "24", "96gb", "822gb"],
                         ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
                     ]
                 }
@@ -408,7 +408,7 @@
                         ["SDDC Manager", "Default", "1", "4", "16", "908"],
                         ["VCF Operations Nodes", "Large", "3", "48", "144gb", "822gb"],
                         ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
                     ]
                 }
@@ -469,7 +469,7 @@
                         ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
                         ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
                         ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
                     ]
                 }
@@ -497,7 +497,7 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
                         ["NSX Manager", "Medium", "3", "6", "24", "300"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
                         ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
@@ -526,7 +526,7 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
                         ["NSX Manager", "Large", "3", "36", "144", "900"],
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
                         ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
@@ -552,7 +552,7 @@
                     "description": "Size requirements for all nodes including NSX (Operations already deployed)",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Small", "4", "12", "24gb", "3,000gb"],
                         ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"]
                     ]
@@ -580,7 +580,7 @@
                     "description": "Size requirements for all nodes including NSX (Operations already deployed)",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
                         ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
@@ -608,7 +608,7 @@
                     "description": "Size requirements for all nodes including NSX (Operations already deployed)",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
-                        ["VCF License Node", "Default", "1", "2", "4gb", "12gb"],
+                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
                         ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]

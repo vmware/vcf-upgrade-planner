@@ -238,7 +238,7 @@
           "description": "Size requirements for all nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF License Node", "Small", "1", "2", "4gb", "12gb"]
+            ["License Server", "Small", "1", "2", "4gb", "12gb"]
           ]
         }
       ],
@@ -389,7 +389,7 @@
               "274gb"
             ],
             [
-              "VCF License Node",
+              "License Server",
               "Small",
               "1",
               "2",
@@ -481,7 +481,7 @@
           ],
           "rows": [
             [
-              "VCF License Node",
+              "License Server",
               "Small",
               "1",
               "2",
@@ -573,7 +573,7 @@
           ],
           "rows": [
             [
-              "VCF License Node",
+              "License Server",
               "Small",
               "1",
               "2",
@@ -689,7 +689,7 @@
               "274gb"
             ],
             [
-              "VCF License Node",
+              "License Server",
               "Small",
               "1",
               "2",
