@@ -153,7 +153,7 @@
                 {
                     "title": "Required Component Sizes Cloud Proxy",
                     "description": "Size requirements for all nodes",
-                    "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+                    "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster (Object and Metrics)"],
                     "rows": [
                         ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
                         ["Unified Standard", "8", "48gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"]
@@ -182,7 +182,7 @@
         {
           "title": "Required Component Sizes Simple/HA",
           "description": "Size requirements for all nodes",
-          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster (Object and Metrics)"],
           "rows": [
             ["Extra Small", "2", "8gb", "274gb", "1", "700, 140,000", "N/A", "700, 140,000"],
             ["Small", "4", "16gb", "274gb", "2", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
@@ -194,7 +194,7 @@
         {
           "title": "Required Component Sizes CA",
           "description": "Size requirements for all nodes",
-          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster (Object and Metrics)"],
           "rows": [
             ["Small", "4", "16gb", "274gb", "1", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
             ["Medium", "8", "32gb", "274gb", "4", "30,000, 5,000,000", "17,000, 4,000,000", "136,000, 32,000,000"],
@@ -206,7 +206,7 @@
         {
           "title": "Required Component Sizes Cloud Proxy",
           "description": "Size requirements for all nodes",
-          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
+          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster (Object and Metrics)"],
           "rows": [
             ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
             ["Unified Standard", "8", "48gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"]
@@ -325,13 +325,13 @@
         "sddc_manager": {
             "name": "SDDC Manager",
             "steps": [
-                "Upgrade SDDC Manager to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>."
+                "Upgrade SDDC Manager to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "vcfms": {
             "name": "VCF Management Service Deployment",
             "steps": [
-                "Deploy VCF Mnaagement Services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>."
+                "Deploy VCF Mnaagement Services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {

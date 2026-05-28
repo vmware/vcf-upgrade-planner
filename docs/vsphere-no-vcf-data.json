@@ -136,7 +136,7 @@
         }
       ],
       "steps": [
-        "Upgrade VVCF Operations to version 9.1 compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+        "Upgrade VCF Operations to version 9.1 compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "operations_install": {
@@ -408,7 +408,7 @@
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server and VCF Operations deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server and VCF Operations deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -500,7 +500,7 @@
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -592,7 +592,7 @@
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {

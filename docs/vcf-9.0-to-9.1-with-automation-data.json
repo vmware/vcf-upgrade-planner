@@ -273,13 +273,13 @@
         "sddc_manager": {
             "name": "SDDC Manager",
             "steps": [
-                "Upgrade SDDC Manager to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>.)"
+                "Upgrade SDDC Manager to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>)."
             ]
         },      
         "vcfms": {
             "name": "VCF Management Service Deployment",
             "steps": [
-                "Deploy VCF Mnaagement Services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>.)"
+                "Deploy VCF Mnaagement Services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {

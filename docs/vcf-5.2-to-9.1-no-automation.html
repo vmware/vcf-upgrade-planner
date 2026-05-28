@@ -2319,6 +2319,7 @@
             document.addEventListener('click', function(e) {
                 const link = e.target.closest('a[href*="techdocs.broadcom.com"], a[href*="knowledge.broadcom.com"]');
                 if (!link) return;
+                if (link.id === 'docModalExternalLink') return;
                 e.preventDefault();
                 e.stopPropagation();
                 const fullUrl = link.href;
