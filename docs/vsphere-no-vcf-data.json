@@ -61,7 +61,7 @@
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Component", "Size"],
           "rows": [
             ["vCenter", "Existing Size"]
@@ -125,7 +125,7 @@
       "tables": [
         {
           "title": "Required Component Sizes Cloud Proxy",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
             ["Classic Small",   "2", "8gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
@@ -157,7 +157,7 @@
         },
         {
           "title": "Required Component Sizes Simple/HA",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
             ["Extra Small", "2", "8gb", "274gb", "1", "700, 140,000", "N/A", "700, 140,000"],
@@ -169,7 +169,7 @@
         },
         {
           "title": "Required Component Sizes CA",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
             ["Small", "4", "16gb", "274gb", "1", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
@@ -181,7 +181,7 @@
         },
         {
           "title": "Required Component Sizes Cloud Proxy",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
             ["Classic Small",   "2", "8gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
@@ -235,7 +235,7 @@
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
             ["VCF License Node", "Small", "1", "2", "4gb", "12gb"]
@@ -312,7 +312,7 @@
           "type": "info",
           "title": "VxRail Upgrades",
           "bullets": [
-            "All upgrades for VxRail Appliances will be validated thru DELL-EMC support team or Dell-EMC Field/Partner(s).There are different pre-check and Solve Desktop Procedure based on the VxRail Hardware and VxRail versions. It is recommended not to attempt online upgrade thru VxRail Manager UI/VxL Manager vCenter Plugin."
+            "All upgrades for VxRail Appliances will be validated through DELL-EMC support team or Dell-EMC Field/Partner(s). There are different pre-check and Solve Desktop Procedure based on the VxRail Hardware and VxRail versions. It is recommended not to attempt online upgrade through VxRail Manager UI/VxL Manager vCenter Plugin."
           ]
         }
       ]
@@ -370,7 +370,7 @@
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": [
             "Component",
             "Size",
@@ -470,7 +470,7 @@
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requiremets for all nodes (All nodes are ",
+          "description": "Size requirements for all nodes (All nodes are ",
           "headers": [
             "Component",
             "Size",
@@ -562,7 +562,7 @@
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requiremets for all nodes (All nodes are ",
+          "description": "Size requirements for all nodes (All nodes are ",
           "headers": [
             "Component",
             "Size",
@@ -670,7 +670,7 @@
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": [
             "Component",
             "Size",

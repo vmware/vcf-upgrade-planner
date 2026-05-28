@@ -144,7 +144,7 @@
         "operations": {
             "name": "VCF Operations (Aria Operations) Upgrade",
             "steps": [
-                "Upgrade Aria Operations to version 9.1 compatible release (standalone) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+                "Upgrade VCF Operations to version 9.1 compatible release (standalone) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
             ],
              "notices": [
                 {
@@ -176,7 +176,7 @@
                 },
                 {
                     "title": "Required Component Sizes",
-                    "description": "Size requiremets for all nodes",
+                    "description": "Size requirements for all nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
                         ["VCF License Node", "Small", "1", "2", "4gb", "12gb"]
@@ -397,62 +397,62 @@
             ],
             "tables_simple_small": [
         {
-          "title": "Aria Automation Required Network Configuration (Simple - Small)",
-          "description": "Prepare the following IP addresses and DNS entries for Aria Automation:",
+          "title": "VCF Automation Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["Aria Automation", "2", "1", "N/A"],
-            ["Aria Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["Aria Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation", "2", "1", "N/A"],
+            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
-          "title": "Aria Automation Required Component Sizes (Simple - Small)",
-          "description": "Size requirements for Aria Automation nodes",
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["Aria Automation Node", "Small", "1", "16", "64gb","600gb"]
+            ["VCF Automation Node", "Small", "1", "16", "64gb","600gb"]
           ]
         }
       ],
       "tables_ha_medium": [
         {
-          "title": "Aria Automation Required Network Configuration (High Availability - Medium)",
-          "description": "Prepare the following IP addresses and DNS entries for Aria Automation:",
+          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["Aria Automation", "4", "1", "N/A"],
-            ["Aria Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["Aria Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation", "4", "1", "N/A"],
+            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
-          "title": "Aria Automation Required Component Sizes (High Availability - Medium)",
-          "description": "Size requirements for Aria Automation nodes",
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["Aria Automation Node", "Medium", "3", "72", "288gb","2,700gb"]
+            ["VCF Automation Node", "Medium", "3", "72", "288gb","2,700gb"]
           ]
         }
       ],
       "tables_ha_large": [
         {
-          "title": "Aria Automation Required Network Configuration (High Availability - Large)",
-          "description": "Prepare the following IP addresses and DNS entries for Aria Automation:",
+          "title": "VCF Automation Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["Aria Automation", "4", "1", "N/A"],
-            ["Aria Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["Aria Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation", "4", "1", "N/A"],
+            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
-          "title": "Aria Automation Required Component Sizes (High Availability - Large)",
-          "description": "Size requirements for Aria Automation nodes",
+          "title": "VCF Automation Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
 
           "rows": [
-            ["Aria Automation Node", "Large", "3", "96", "384gb","3,600gb"]
+            ["VCF Automation Node", "Large", "3", "96", "384gb","3,600gb"]
           ]
         }
       ]
@@ -462,7 +462,7 @@
       "notices": [
         {
           "type": "info",
-          "title": "Aria Automation Components",
+          "title": "VCF Automation Components",
           "bullets": [
             "Includes Automation Orchestrator for workflow automation",
             "Configure cloud zones and endpoints",
@@ -480,61 +480,61 @@
       ],
       "automation_install_tables_simple_small": [
         {
-          "title": "Aria Automation  Required Network Configuration (Simple - Small)",
-          "description": "Prepare the following IP addresses and DNS entries for Aria Automation:",
+          "title": "VCF Automation  Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["Aria Automation", "2", "1", "N/A"],
-            ["Aria Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["Aria Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation", "2", "1", "N/A"],
+            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
-          "title": "Aria Automation Required Component Sizes (Simple - Small)",
-          "description": "Size requirements for Aria Automation nodes",
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["Aria Automation Node", "Small", "1", "16", "64gb","600gb"]
+            ["VCF Automation Node", "Small", "1", "16", "64gb","600gb"]
           ]
         }
       ],
       "automation_install_tables_ha_medium": [
         {
-          "title": "Aria Automation  Required Network Configuration (High Availability - Medium)",
-          "description": "Prepare the following IP addresses and DNS entries for Aria Automation:",
+          "title": "VCF Automation  Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
            "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
            "rows": [
-            ["Aria Automation", "4", "1", "N/A"],
-            ["Aria Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["Aria Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation", "4", "1", "N/A"],
+            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
-          "title": "Aria Automation Required Component Sizes (High Availability - Medium)",
-          "description": "Size requirements for Aria Automation nodes",
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["Aria Automation Node", "Medium", "3", "72", "288gb","2,700gb"]
+            ["VCF Automation Node", "Medium", "3", "72", "288gb","2,700gb"]
           ]
         }
       ],
       "automation_install_tables_ha_large": [
         {
-          "title": "Aria Automation Required Network Configuration (High Availability - Large)",
-          "description": "Prepare the following IP addresses and DNS entries for Aria Automation:",
+          "title": "VCF Automation Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["Aria Automation", "4", "1", "N/A"],
-            ["Aria Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["Aria Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation", "4", "1", "N/A"],
+            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
-          "title": "Aria Automation Required Component Sizes (High Availability - Large)",
-          "description": "Size requirements for Aria Automation nodes",
+          "title": "VCF Automation Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["Aria Automation Node", "Large", "3", "96", "384gb","3,600gb"]
+            ["VCF Automation Node", "Large", "3", "96", "384gb","3,600gb"]
           ]
         }
       ]
@@ -582,7 +582,7 @@
                     "type": "info",
                     "title": "VxRail Upgrades",
                     "bullets": [
-                        "All upgrades for VxRail Appliances will be validated thru Dell support team or Dell Field/Partner(s).There are different pre-check and Solve Desktop Procedure based on the VxRail Hardware and VxRail versions. It is recommended not to attempt online upgrade thru VxRail Manager UI/VxL Manager vCenter Plugin."
+                        "All upgrades for VxRail Appliances will be validated through Dell support team or Dell Field/Partner(s).There are different pre-check and Solve Desktop Procedure based on the VxRail Hardware and VxRail versions. It is recommended not to attempt online upgrade through VxRail Manager UI/VxL Manager vCenter Plugin."
                     ]
                 }
             ]

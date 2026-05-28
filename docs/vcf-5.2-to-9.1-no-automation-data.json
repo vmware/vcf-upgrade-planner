@@ -151,7 +151,7 @@
                 },
                 {
                     "title": "Required Component Sizes Cloud Proxy",
-                    "description": "Size requiremets for all nodes",
+                    "description": "Size requirements for all nodes",
                     "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
                     "rows": [
                         ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
@@ -180,7 +180,7 @@
         },
         {
           "title": "Required Component Sizes Simple/HA",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
             ["Extra Small", "2", "8gb", "274gb", "1", "700, 140,000", "N/A", "700, 140,000"],
@@ -192,7 +192,7 @@
         },
         {
           "title": "Required Component Sizes CA",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
             ["Small", "4", "16gb", "274gb", "1", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
@@ -204,7 +204,7 @@
         },
         {
           "title": "Required Component Sizes Cloud Proxy",
-          "description": "Size requiremets for all nodes",
+          "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
             ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
@@ -229,7 +229,7 @@
                 },
                 {
                     "title": "Required Component Sizes",
-                    "description": "Size requiremets for all nodes",
+                    "description": "Size requirements for all nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
                         ["VCF License Node", "Small", "1", "2", "4gb", "12gb"]

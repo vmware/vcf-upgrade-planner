@@ -139,7 +139,7 @@
                 },
                 {
                     "title": "Required Component Sizes",
-                    "description": "Size requiremets for all nodes",
+                    "description": "Size requirements for all nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
                         ["VCF License Node", "Small", "1", "2", "4gb", "12gb"]
