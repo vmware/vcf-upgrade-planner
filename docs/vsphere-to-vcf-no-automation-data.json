@@ -232,12 +232,12 @@
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"],
                         ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
                     ]
                 },
@@ -249,9 +249,9 @@
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
                         ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
-                        ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
                     ]
                 }
             ],
@@ -265,12 +265,12 @@
                         ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
                         ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
                         ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
                     ]
                 },
@@ -282,9 +282,9 @@
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
                         ["VCF Operations Nodes", "Medium", "3", "72", "288gb", "822gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
                     ]
                 }
             ],
@@ -298,12 +298,12 @@
                         ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
                         ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
                         ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
                     ]
                 },
@@ -315,9 +315,9 @@
                         ["SDDC Manager", "Default", "1", "4", "16", "908"],
                         ["NSX Manager", "Large", "3", "36", "144", "900"],
                         ["VCF Operations Nodes", "Large", "3", "48", "144gb", "822gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
                     ]
                 }
             ],
@@ -329,11 +329,11 @@
                     "rows": [
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
                     ]
                 },
@@ -345,9 +345,9 @@
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
                         ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
-                        ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
                     ]
                 }
             ],
@@ -360,12 +360,12 @@
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
                         ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
                     ]
                 },
@@ -376,9 +376,9 @@
                     "rows": [
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["VCF Operations Nodes", "Medium", "3", "24", "96gb", "822gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
                     ]
                 }
             ],
@@ -391,12 +391,12 @@
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
                         ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
                     ]
                 },
@@ -407,9 +407,9 @@
                     "rows": [
                         ["SDDC Manager", "Default", "1", "4", "16", "908"],
                         ["VCF Operations Nodes", "Large", "3", "48", "144gb", "822gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
                     ]
                 }
             ],
@@ -429,7 +429,7 @@
                     {
                     "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
                         "sub_bullets": [
-                        "New VCF Management Services are added.",
+                        "New VCF management services are added.",
                         "Scale out of VCF Management services or new nodes as upgrade to future versions take place.",
                         "A maximum of 30 IP address is required, these can be added as new IP ranges in the Lifecycle section of the VCF Operations UI, these ranges do not need to be continuous.",
                         "All IP Ranges must be on the VCF Management Network.",
@@ -450,13 +450,13 @@
                     "rows": [
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["NSX Managers", "2", "2", "nsxvip.rainpole.io, nsxmgr1.rainpole.io,"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF Services Runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
 
                     ]
                 },
@@ -468,9 +468,9 @@
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
                         ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
-                        ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
                     ]
                 }
             ],
@@ -482,13 +482,13 @@
                     "rows": [
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]
                 },
                 {
@@ -497,9 +497,9 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
                         ["NSX Manager", "Medium", "3", "6", "24", "300"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
                 }
             ],
@@ -511,13 +511,13 @@
                     "rows": [
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
                         ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]
                 },
                 {
@@ -526,9 +526,9 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
                         ["NSX Manager", "Large", "3", "36", "144", "900"],
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
                 }
             ],
@@ -539,11 +539,11 @@
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identify Broker", "3", "1", "vcfvidb.rainpole.io"]
                     ]
                 },
@@ -552,9 +552,9 @@
                     "description": "Size requirements for all nodes including NSX (Operations already deployed)",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Small", "4", "12", "24gb", "3,000gb"],
-                        ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"]
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Small", "4", "12", "24gb", "3,000gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"]
                     ]
                 }
             ],
@@ -565,12 +565,12 @@
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
 
                     ]
@@ -580,9 +580,9 @@
                     "description": "Size requirements for all nodes including NSX (Operations already deployed)",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
                 }
             ],
@@ -593,12 +593,12 @@
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
                         ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-                        ["License Server", "1", "1", "vcflic.rainpole.io"],
-                        ["VCF Management Services", "12-30", "None", "N/A"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "12-30", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["Identity Broker", "5", "1", "vcfidb.rainpole.io"]
 
                     ]
@@ -608,9 +608,9 @@
                     "description": "Size requirements for all nodes including NSX (Operations already deployed)",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
-                        ["License Server", "Default", "1", "2", "4gb", "12gb"],
-                        ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
                 }
             ],
@@ -630,7 +630,7 @@
                     {
                     "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
                         "sub_bullets": [
-                        "New VCF Management Services are added.",
+                        "New VCF management services are added.",
                         "Scale out of VCF Management services or new nodes as upgrade to future versions take place.",
                         "A maximum of 30 IP address is required, these can be added as new IP ranges in the Lifecycle section of the VCF Operations UI, these ranges do not need to be continuous.",
                         "All IP Ranges must be on the VCF Management Network.",

@@ -151,7 +151,7 @@
                     "type": "info",
                     "title": "VCF Operations Information",
                     "bullets": [
-                        "Decommissioning of the 9.0 Fleet Management Appliance: VCF 9.1 completely replaces the standalone Fleet Management Appliance introduced in version 9.0. It is replaced with two new services—Fleet Lifecycle and SDDC Lifecycle—which run natively within VCF Management Services. The Fleet Management appliance is powered down and ready to be decommissioned.",
+                        "Decommissioning of the 9.0 Fleet Management Appliance: VCF 9.1 completely replaces the standalone Fleet Management Appliance introduced in version 9.0. It is replaced with two new services—Fleet Lifecycle and SDDC Lifecycle—which run natively within VCF management services. The Fleet Management appliance is powered down and ready to be decommissioned.",
                     {
                     "text": "Common Known Issues:",
                         "sub_bullets": [
@@ -290,7 +290,7 @@
                     {
                     "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
                         "sub_bullets": [
-                        "New VCF Management Services are added.",
+                        "New VCF management services are added.",
                         "Scale out of VCF Management services or new nodes as upgrade to future versions take place.",
                         "A maximum of 30 IP address is required, these can be added as new IP ranges in the Lifecycle section of the VCF Operations UI, these ranges do not need to be continuous.",
                         "All IP Ranges must be on the VCF Management Network.",
@@ -306,21 +306,21 @@
                     "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
-                    ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
+                    ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
                     ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                     ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                    ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
+                    ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                     ["Identity Broker", "5", "1", "vcfidb.rainpole.io"],
-                    ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                    ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]
                 },
                 {
                     "title": "Required Component Sizes",
-                    "description": "Size requirements for VCF Management Services nodes",
+                    "description": "Size requirements for VCF management services nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
-                        ["VCF Management Services Nodes", "Small", "4", "12", "24gb", "3,000gb"],
-                        ["VCF Operations Cloud Proxy", "Small", "1", "4", "16gb", "144gb"]
+                        ["VCF management services Nodes", "Small", "4", "12", "24gb", "3,000gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"]
                     ]
                 }
             ],
@@ -330,20 +330,20 @@
                     "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
-                        ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
+                        ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]
                 },
                 {
                     "title": "Required Component Sizes",
-                    "description": "Size requirements for VCF Management Services nodes",
+                    "description": "Size requirements for VCF management services nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
-                        ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+                        ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
                 }
             ],
@@ -353,20 +353,20 @@
                     "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
                     "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
-                        ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
+                        ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
                         ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
                         ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
-                        ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
-                        ["VCF Operations Cloud Proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
                     ]
                 },
         {
                     "title": "Required Component Sizes",
-                    "description": "Size requirements for VCF Management Services nodes",
+                    "description": "Size requirements for VCF management services nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
-                        ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
-                        ["VCF Operations Cloud Proxy", "Standard", "1", "8", "48gb", "144gb"]
+                        ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
                     ]
         }
             ]

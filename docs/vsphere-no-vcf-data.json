@@ -124,7 +124,7 @@
       "name": "VCF Operations",
       "tables": [
         {
-          "title": "Required Component Sizes Cloud Proxy",
+          "title": "Required Component Sizes Cloud proxy",
           "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
@@ -152,7 +152,7 @@
             ["High Availability VIP(HA)", "0", "1", "1","vipops.sfo.rainpole.io"],
             ["Continuous Availability(CA)", "5", "5", "5", "opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io,opsd01.sfo.rainpole.io,opswit01.sfo.rainpole.io"],
             ["Continuous Availability VIP(CA)", "0", "1", "1", "(optional) vipops.sfo.rainpole.io"],
-            ["VCF Operations Cloud Proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
+            ["Cloud proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
           ]
         },
         {
@@ -180,7 +180,7 @@
           ]
         },
         {
-          "title": "Required Component Sizes Cloud Proxy",
+          "title": "Required Component Sizes Cloud proxy",
           "description": "Size requirements for all nodes",
           "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster ((Object and Metrics)"],
           "rows": [
@@ -223,14 +223,14 @@
       ]
     },
     "license": {
-      "name": "VCF License Server",
+      "name": "License Server",
       "tables": [
         {
           "title": "Required Network Configuration",
           "description": "Prepare the following IP addresses and DNS entries before deployment:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["License Server", "1", "1", "vcflic.rainpole.io"]
+            ["License server", "1", "1", "vcflic.rainpole.io"]
           ]
         },
         {
@@ -238,7 +238,7 @@
           "description": "Size requirements for all nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["License Server", "Small", "1", "2", "4gb", "12gb"]
+            ["License server", "Small", "1", "2", "4gb", "12gb"]
           ]
         }
       ],
@@ -337,7 +337,7 @@
               "vcfops.rainpole.io"
             ],
             [
-              "License Server",
+              "License server",
               "1",
               "1",
               "vcflic.rainpole.io"
@@ -389,7 +389,7 @@
               "274gb"
             ],
             [
-              "License Server",
+              "License server",
               "Small",
               "1",
               "2",
@@ -408,14 +408,14 @@
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server and VCF Operations deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server and VCF Operations deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
           "type": "info",
           "title": "VCF Installer Deployment",
           "bullets": [
-            "The VCF Installer automatically deploys and configures the License Server",
+            "The VCF Installer automatically deploys and configures the license server",
             "VCF Operations will be deployed as part of this process",
             "Management Services will be deployed",
             "Configure cluster settings after deployment"
@@ -437,7 +437,7 @@
           ],
           "rows": [
             [
-              "License Server",
+              "License server",
               "1",
               "1",
               "vcflic.rainpole.io"
@@ -481,7 +481,7 @@
           ],
           "rows": [
             [
-              "License Server",
+              "License server",
               "Small",
               "1",
               "2",
@@ -500,14 +500,14 @@
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
           "type": "info",
           "title": "VCF Installer Deployment",
           "bullets": [
-            "The VCF Installer automatically deploys and configures the License Server",
+            "The VCF Installer automatically deploys and configures the license server",
             "Management Services will be deployed",
             "VCF Operations was already upgraded in a previous step",
             "Configure cluster settings after deployment"
@@ -529,7 +529,7 @@
           ],
           "rows": [
             [
-              "License Server",
+              "License server",
               "1",
               "1",
               "vcflic.rainpole.io"
@@ -573,7 +573,7 @@
           ],
           "rows": [
             [
-              "License Server",
+              "License server",
               "Small",
               "1",
               "2",
@@ -592,7 +592,7 @@
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -609,7 +609,7 @@
           "type": "info",
           "title": "VCF Installer Deployment",
           "bullets": [
-            "The VCF Installer automatically deploys and configures the License Server",
+            "The VCF Installer automatically deploys and configures the license server",
             "Management Services will be deployed",
             "VCF Operations was already upgraded in a previous step",
             "Configure cluster settings after deployment"
@@ -637,7 +637,7 @@
               "vcfops.rainpole.io"
             ],
             [
-              "License Server",
+              "License server",
               "1",
               "1",
               "vcflic.rainpole.io"
@@ -689,7 +689,7 @@
               "274gb"
             ],
             [
-              "License Server",
+              "License server",
               "Small",
               "1",
               "2",
@@ -708,7 +708,7 @@
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic License Server and VCF Operations deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server and VCF Operations deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -725,7 +725,7 @@
           "type": "info",
           "title": "VCF Installer Deployment",
           "bullets": [
-            "The VCF Installer automatically deploys and configures the License Server",
+            "The VCF Installer automatically deploys and configures the license server",
             "VCF Operations will be deployed as part of this process",
             "Management Services will be deployed",
             "Configure cluster settings after deployment"

@@ -171,7 +171,7 @@
                     "description": "Prepare the following IP addresses and DNS entries before deployment:",
                     "headers": ["Deployment Type", "Number Node", "Number of Address(es)", "FQDN", "Example"],
                     "rows": [
-                        ["VCF Operations Cloud Proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                        ["Cloud proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
 
                     ]
                 },
@@ -200,7 +200,7 @@
             ["Simple", "1", "1", "1", "vcfops.rainpole.io"],
             ["High Availability(HA)", "4", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io)"],
             ["Continuous Availability(CA)", "4", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io,opsd01.sfo.rainpole.io"],
-            ["VCF Operations Cloud Proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
+            ["Cloud proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
 
           ]
         },
@@ -354,9 +354,9 @@
       ]
     },
     "vcfms": {
-      "name": "VCF Management Service Deployment",
+      "name": "VCF Management Services Deployment",
       "steps": [
-        "Deploy VCF Mnaagement Services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
+        "Deploy VCF management services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
       ],
      "notices": [
                 {
@@ -367,7 +367,7 @@
                     {
                     "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
                         "sub_bullets": [
-                        "New VCF Management Services are added.",
+                        "New VCF management services are added.",
                         "Scale out of VCF Management services or new nodes as upgrade to future versions take place.",
                         "A maximum of 30 IP address is required, these can be added as new IP ranges in the Lifecycle section of the VCF Operations UI, these ranges do not need to be continuous.",
                         "All IP Ranges must be on the VCF Management Network.",
@@ -383,7 +383,7 @@
           "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
+            ["VCF management service", "Minimum of /28 (CIDR block)", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"],
@@ -391,10 +391,10 @@
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requirements for VCF Management Services nodes",
+          "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Management Services Nodes", "Small", "4", "12", "24gb", "3,000gb"]
+            ["VCF management service Nodes", "Small", "4", "12", "24gb", "3,000gb"]
           ]
         }
       ],
@@ -404,17 +404,17 @@
           "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
+            ["VCF management service", "Minimum of /28 (CIDR block)", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]          ]
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requirements for VCF Management Services nodes",
+          "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Management Services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]          
+            ["VCF management service Nodes", "Medium", "6", "84", "174gb", "3,600gb"]          
           ]
         }
       ],
@@ -424,17 +424,17 @@
           "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Management Services", "Minimum of /28 (CIDR block)", "None", "N/A"],
+            ["VCF management service", "Minimum of /28 (CIDR block)", "None", "N/A"],
             ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance Component Service", "1", "1", "vcfins.rainpole.io"],
             ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]          ]
         },
         {
           "title": "Required Component Sizes",
-          "description": "Size requirements for VCF Management Services nodes",
+          "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Management Services Nodes", "Large", "7", "120", "234gb", "4,402gb"]          
+            ["VCF management service Nodes", "Large", "7", "120", "234gb", "4,402gb"]          
           ]
         }
       ]
