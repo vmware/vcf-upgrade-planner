@@ -863,6 +863,76 @@
         }
         [data-theme="dark"] .doc-modal-body code { background: rgba(255,255,255,0.1); }
         .doc-modal-body .p, .doc-modal-body p { display: block !important; margin: 8px 0; line-height: 1.7; }
+
+        /* ── Dark mode overrides for inline TechDocs content ── */
+        /* TechDocs HTML carries hardcoded inline colors; !important overrides them */
+        [data-theme="dark"] .doc-modal-content {
+            background: var(--card-bg);
+        }
+        [data-theme="dark"] .doc-modal-body {
+            color: var(--text-primary) !important;
+            background: var(--card-bg) !important;
+        }
+        [data-theme="dark"] .doc-modal-body * {
+            color: inherit !important;
+            border-color: var(--border-color) !important;
+            background-color: transparent !important;
+        }
+        [data-theme="dark"] .doc-modal-body h1,
+        [data-theme="dark"] .doc-modal-body h2,
+        [data-theme="dark"] .doc-modal-body h3,
+        [data-theme="dark"] .doc-modal-body h4,
+        [data-theme="dark"] .doc-modal-body h5,
+        [data-theme="dark"] .doc-modal-body h6 {
+            color: var(--vmw-blue) !important;
+        }
+        [data-theme="dark"] .doc-modal-body a {
+            color: #58D3FF !important;
+        }
+        [data-theme="dark"] .doc-modal-body a:hover {
+            color: #8FE3FF !important;
+        }
+        [data-theme="dark"] .doc-modal-body table th {
+            background: #1c2128 !important;
+            color: var(--text-primary) !important;
+        }
+        [data-theme="dark"] .doc-modal-body table td {
+            color: var(--text-primary) !important;
+        }
+        [data-theme="dark"] .doc-modal-body .note {
+            background: rgba(0, 152, 199, 0.15) !important;
+            color: var(--text-primary) !important;
+        }
+        [data-theme="dark"] .doc-modal-body code,
+        [data-theme="dark"] .doc-modal-body .ph.codeph,
+        [data-theme="dark"] .doc-modal-body .ph.filepath,
+        [data-theme="dark"] .doc-modal-body pre,
+        [data-theme="dark"] .doc-modal-body .codeblock {
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #C9D1D9 !important;
+        }
+        [data-theme="dark"] .doc-modal-body .itemgroup,
+        [data-theme="dark"] .doc-modal-body .stepresult,
+        [data-theme="dark"] .doc-modal-body .info {
+            border-left-color: var(--border-color) !important;
+            color: var(--text-secondary) !important;
+        }
+        [data-theme="dark"] .doc-modal-footer {
+            background: #161b22 !important;
+            border-top-color: var(--border-color) !important;
+        }
+        [data-theme="dark"] .doc-subpages-sidebar {
+            background: #161b22 !important;
+            border-right-color: var(--border-color) !important;
+        }
+        [data-theme="dark"] .doc-subpages-list li a {
+            color: var(--text-primary) !important;
+        }
+        [data-theme="dark"] .doc-subpages-list li a:hover,
+        [data-theme="dark"] .doc-subpages-list li a.sp-active {
+            background: rgba(64, 180, 229, 0.12) !important;
+            color: var(--vmw-blue) !important;
+        }
     </style>
 </head>
 
@@ -1277,8 +1347,8 @@
                 } else if (componentId === 'vcha') {
                     // vcha Witness only if checkbox selected
                     shouldInclude = vchaSelected;
-                    phaseTitle = componentData ? componentData.name : 'vCenter Appliance High Availability (VCHA)';
-                    phaseDescription = 'Remove vCenter Appliance High Avialability';
+                    phaseTitle = componentData ? componentData.name : 'vCenter High Availability (VCHA)';
+                    phaseDescription = 'Remove vCenter High Avialability';
                 } else if (componentId === 'vsan_witness') {
                     // vcha Witness only if checkbox selected
                     shouldInclude = witnessSelected;
@@ -2423,18 +2493,22 @@
                 }
             });
 
-            // Normalise injected TechDocs colour/opacity styles
+            // Normalise injected TechDocs colour/opacity styles — theme-aware
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            var textColor = isDark ? '#E6EDF3' : '#111111';
+            var secondaryColor = isDark ? '#C9D1D9' : '#444444';
+            var linkColor = isDark ? '#58D3FF' : '#0098C7';
             body.querySelectorAll('*').forEach(function(el) {
                 el.style.removeProperty('color');
                 el.style.removeProperty('-webkit-text-fill-color');
                 el.style.removeProperty('opacity');
-                el.style.setProperty('color', '#111111', 'important');
-                el.style.setProperty('-webkit-text-fill-color', '#111111', 'important');
+                el.style.setProperty('color', textColor, 'important');
+                el.style.setProperty('-webkit-text-fill-color', textColor, 'important');
                 el.style.setProperty('opacity', '1', 'important');
             });
             body.querySelectorAll('a').forEach(function(el) {
-                el.style.setProperty('color', '#0098C7', 'important');
-                el.style.setProperty('-webkit-text-fill-color', '#0098C7', 'important');
+                el.style.setProperty('color', linkColor, 'important');
+                el.style.setProperty('-webkit-text-fill-color', linkColor, 'important');
             });
 
             // Intercept link clicks — load inline if available
