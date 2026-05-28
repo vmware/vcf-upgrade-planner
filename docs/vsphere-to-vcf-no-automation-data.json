@@ -114,7 +114,7 @@
                 }
             ],
             "steps": [
-                "Break ELM After All vCenters are upgrade to 9.1 - All Guidance is provided in link ((<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
+                "Break ELM After All vCenters are upgraded to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
             ]
         },
         "elm_break": {
@@ -132,7 +132,7 @@
                 }
             ],
             "steps": [
-                "Break ELM on 8.0 vCenters that has NSX - All Guidance is provided in link ((<a href='https://knowledge.broadcom.com/external/article/370062/splitting-enhanced-linked-mode-elm.html' target='_blank'>View Documentation</a>)"
+                "Break ELM on 8.0 vCenters that has NSX - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/370062/splitting-enhanced-linked-mode-elm.html' target='_blank'>View Documentation</a>)"
             ]
         },
         "vcenter": {
