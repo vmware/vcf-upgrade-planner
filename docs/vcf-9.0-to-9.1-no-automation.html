@@ -537,6 +537,59 @@
             padding: 20px;
             background: #f8f9fa;
             border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        [data-theme="dark"] .diagram-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        #diagramContainer {
+            display: inline-block;
+            min-width: 100%;
+            transform-origin: top left;
+        }
+
+        .diagram-zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            justify-content: flex-end;
+        }
+
+        .diagram-zoom-btn {
+            background: var(--vmw-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 3px 13px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: 700;
+            line-height: 1.5;
+            transition: opacity 0.2s;
+        }
+
+        .diagram-zoom-btn:hover { opacity: 0.8; }
+
+        .diagram-zoom-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            min-width: 44px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .diagram-zoom-reset {
+            font-size: 0.78rem;
+            color: var(--vmw-blue);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0 4px;
+            text-decoration: underline;
         }
         
         @keyframes planUpdate {
@@ -771,17 +824,6 @@
         }
         [data-theme="dark"] .doc-modal-body .note { background: rgba(0,152,199,0.1); }
 
-        /* Theme-aware text colours inside the inline-docs panel */
-        .doc-modal-body * {
-            color: var(--text-primary) !important;
-            -webkit-text-fill-color: var(--text-primary) !important;
-            opacity: 1 !important;
-        }
-        .doc-modal-body a, .doc-modal-body a * {
-            color: var(--vmw-blue) !important;
-            -webkit-text-fill-color: var(--vmw-blue) !important;
-        }
-
         .doc-modal-body code, .doc-modal-body .ph.codeph, .doc-modal-body .ph.filepath {
             font-family: 'SFMono-Regular', Consolas, monospace;
             background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-size: 0.88em;
@@ -914,14 +956,14 @@
                 <div class="checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="vidbCheck" onchange="(function(el){ document.getElementById('vidbOverlayQuestion').style.display = el.checked ? 'block' : 'none'; if (!el.checked) { window.vidbOnOverlay = null; document.querySelectorAll('input[name=vidbOverlay]').forEach(function(r){ r.checked = false; }); } autoGenerateUpgradePlan(); })(this)">
-                        <span>Identity Broker</span>
+                        <span>Identity Broker (vIDB)</span>
                     </label>
                 </div>
                 <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
-                    &#x2139;&#xFE0F; <strong>Unchecked</strong> = Identity Broker not yet deployed &mdash; a fresh install apart of VCF Management Service Deployment | <strong>Checked + Overlay Used</strong> = Transition Identity Broker to VCF Management Network first | <strong>Checked + No Overlay</strong> = Identity Broker already on VCF Management Network, upgrade step added
+                    &#x2139;&#xFE0F; <strong>Unchecked</strong> = vIDB not yet deployed &mdash; a fresh install apart of VCF Management Service Deployment | <strong>Checked + Overlay Used</strong> = Transition vIDB to VCF Management Network first | <strong>Checked + No Overlay</strong> = vIDB already on VCF Management Network, consolidation step added
                 </p>
                 <div id="vidbOverlayQuestion" style="display:none; margin-top:10px; padding:12px 14px; background:var(--bg); border-left:4px solid var(--vmw-blue); border-radius:6px; font-size:0.88rem;">
-                    <p style="margin:0 0 8px 0; font-weight:600; color:var(--text-primary);">Is Identity Broker is deployed on an NSX Overlay network?</p>
+                    <p style="margin:0 0 8px 0; font-weight:600; color:var(--text-primary);">Is vIDB deployed on an NSX Overlay network?</p>
                     <div style="display:flex; gap:16px;">
                         <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
                             <input type="radio" name="vidbOverlay" value="yes" onchange="window.vidbOnOverlay=true; autoGenerateUpgradePlan();"> Yes
@@ -961,6 +1003,13 @@
             </div>
             
             <div class="diagram-container" id="diagram">
+                <div class="diagram-zoom-controls">
+                    <span style="font-size:0.82rem;color:var(--text-secondary);margin-right:4px;">Zoom:</span>
+                    <button class="diagram-zoom-btn" onclick="diagramZoom(-0.15)" title="Zoom out">&#x2212;</button>
+                    <span class="diagram-zoom-label" id="diagramZoomLabel">100%</span>
+                    <button class="diagram-zoom-btn" onclick="diagramZoom(+0.15)" title="Zoom in">&#x2B;</button>
+                    <button class="diagram-zoom-reset" onclick="diagramZoomReset()">Reset</button>
+                </div>
                 <div id="diagramContainer">
                     <!-- Mermaid diagram will be generated here -->
                 </div>
@@ -1185,7 +1234,7 @@
                     // VCF Management Services always included — select size-variant tables
                     shouldInclude = true;
                     phaseTitle = componentData ? componentData.name : 'VCF Management Service Deployment';
-                    phaseDescription = 'Deploy VCF management services';
+                    phaseDescription = 'Deploy VCF Management Services';
                     if (componentData) {
                         try {
                             const tableKey = 'tables_' + deploymentType + '_' + deploymentSize;
@@ -1261,7 +1310,7 @@
                         phases: [{
                             number: 1,
                             title: _overlayComponentData.name,
-                            description: 'Move Identity Broker off the NSX Overlay to the VCF Management Network.',
+                            description: 'Move vIDB off the NSX Overlay to the VCF Management Network.',
                             data: _overlayComponentData,
                             componentId: 'vidb_overlay_transition'
                         }]
@@ -1303,10 +1352,10 @@
                         <div style="font-size: 2rem; margin-bottom: 12px;">&#x26A0;&#xFE0F;</div>
                         <h3 style="color: #856404; margin-bottom: 12px;">Answer Required Before Plan Can Be Generated</h3>
                         <p style="color: #5a4a00; margin-bottom: 8px; font-size: 0.95rem;">
-                            <strong>Identity Broker</strong> is selected as an existing deployment.
+                            <strong>Identity Broker (vIDB)</strong> is selected as an existing deployment.
                         </p>
                         <p style="color: #5a4a00; margin: 0; font-size: 0.95rem;">
-                            Please answer the <strong>"Is Identity Broker deployed on an NSX Overlay network?"</strong> question above to generate your upgrade plan.
+                            Please answer the <strong>"Is vIDB deployed on an NSX Overlay network?"</strong> question above to generate your upgrade plan.
                         </p>
                     </div>
                 `;
@@ -1445,7 +1494,7 @@
                 'vcfms':{
                     phases: vcfmsPhases,
                     title: 'VCF Management Service Deployment 9.1',
-                    description: 'Deploy VCF management services on first SDDC Instance'
+                    description: 'Deploy VCF Management Services on first SDDC Instance'
                 },
                 'hcx': {
                     phases: hcxPhases,
@@ -1494,8 +1543,8 @@
                 },
                  'vidb': {
                     phases: vidbPhases,
-                    title: 'Identity Broker',
-                    description: 'Upgrade Identity Broker'
+                    title: 'VIDB',
+                    description: 'Upgrade VIDB'
                 },
                 'network': {
                     phases: networkPhases,
@@ -2113,8 +2162,36 @@
         }
 
 
+        // Zoom controls for the upgrade flow diagram
+        var _dZoom = 1.0;
+        function diagramZoom(delta) {
+            _dZoom = Math.min(5.0, Math.max(0.3, _dZoom + delta));
+            var svg = document.querySelector('#diagramContainer svg');
+            if (svg) {
+                var nw = parseFloat(svg.dataset.nw) || svg.getBoundingClientRect().width;
+                var nh = parseFloat(svg.dataset.nh) || svg.getBoundingClientRect().height;
+                if (!svg.dataset.nw) { svg.dataset.nw = nw; svg.dataset.nh = nh; }
+                svg.style.width  = (nw * _dZoom) + 'px';
+                svg.style.height = (nh * _dZoom) + 'px';
+                svg.style.maxWidth = 'none';
+            }
+            var label = document.getElementById('diagramZoomLabel');
+            if (label) label.textContent = Math.round(_dZoom * 100) + '%';
+        }
+        function diagramZoomReset() {
+            _dZoom = 1.0;
+            var svg = document.querySelector('#diagramContainer svg');
+            if (svg) {
+                svg.style.width  = (parseFloat(svg.dataset.nw) || 'auto') + 'px';
+                svg.style.height = (parseFloat(svg.dataset.nh) || 'auto') + 'px';
+                svg.style.maxWidth = 'none';
+            }
+            var label = document.getElementById('diagramZoomLabel');
+            if (label) label.textContent = '100%';
+        }
+
         function generateDiagram() {
-            let diagram = '%%{init: {"flowchart": {"nodeSpacing": 40, "rankSpacing": 50}} }%%\ngraph LR\n    Start["Start<br/>Upgrade"]';
+            let diagram = '%%{init: {"flowchart": {"nodeSpacing": 60, "rankSpacing": 90}} }%%\ngraph LR\n    Start["Start<br/>Upgrade"]';
             
             // Build diagram with phases as subgraphs containing steps
             allSteps.forEach((step, stepIndex) => {
@@ -2196,6 +2273,20 @@
             container.innerHTML = `<pre class="mermaid">${diagram}</pre>`;
             
             mermaid.contentLoaded();
+            // Strip Mermaid's forced max-width:100% so the diagram renders at its
+            // natural size and the container can scroll horizontally.
+            setTimeout(function() {
+                var svg = container.querySelector('svg');
+                if (svg) {
+                    svg.style.maxWidth = 'none';
+                    svg.style.width = 'auto';
+                    svg.style.minWidth = '700px';
+                    // Store natural dimensions for zoom calculations
+                    var r = svg.getBoundingClientRect();
+                    svg.dataset.nw = r.width;
+                    svg.dataset.nh = r.height;
+                }
+            }, 700);
         }
 
         // Dark Mode Toggle
@@ -2336,6 +2427,8 @@
             document.addEventListener('click', function(e) {
                 const link = e.target.closest('a[href*="techdocs.broadcom.com"], a[href*="knowledge.broadcom.com"]');
                 if (!link) return;
+                // Never intercept the footer "Open on Broadcom TechDocs" link —
+                // let its target="_blank" fire naturally
                 if (link.id === 'docModalExternalLink') return;
                 e.preventDefault();
                 e.stopPropagation();
@@ -2409,12 +2502,17 @@
             });
 
             // Normalise injected TechDocs colour/opacity styles
-            // Strip hardcoded inline colours so CSS variables handle theming
-            // correctly in both light and dark mode.
             body.querySelectorAll('*').forEach(function(el) {
                 el.style.removeProperty('color');
                 el.style.removeProperty('-webkit-text-fill-color');
                 el.style.removeProperty('opacity');
+                el.style.setProperty('color', '#111111', 'important');
+                el.style.setProperty('-webkit-text-fill-color', '#111111', 'important');
+                el.style.setProperty('opacity', '1', 'important');
+            });
+            body.querySelectorAll('a').forEach(function(el) {
+                el.style.setProperty('color', '#0098C7', 'important');
+                el.style.setProperty('-webkit-text-fill-color', '#0098C7', 'important');
             });
 
             // Intercept link clicks — load inline if available
@@ -2520,7 +2618,7 @@
             </div>
             <div class="doc-modal-footer">
                 <span style="color: var(--text-secondary); font-size: 0.9rem;">Inline documentation from Broadcom TechDocs</span>
-                <a id="docModalExternalLink" href="#" class="external-link" target="_blank" rel="noopener noreferrer">
+                <a id="docModalExternalLink" href="#" class="external-link" onclick="openExternalLink(); return false;">
                     Open on Broadcom TechDocs &#8599;
                 </a>
             </div>
