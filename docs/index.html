@@ -937,7 +937,7 @@
 
             // Either ESX or VXRail must be selected (mutually exclusive but at least one required)
             if (!esxChecked && !vxrailChecked) {
-                errors.push('Either ESX or VXRail must be selected to proceed');
+                errors.push('Either ESX or VxRail must be selected to proceed');
             }
             
             // Check vCenter version if checked
@@ -967,7 +967,7 @@
             
             // Check VXRail version if checked
             if (document.getElementById('vxrailCheck').checked && !document.getElementById('vxrail').value) {
-                errors.push('VXRail version must be selected');
+                errors.push('VxRail version must be selected');
             }
             
             return errors;
