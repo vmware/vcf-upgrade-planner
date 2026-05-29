@@ -13,7 +13,7 @@
     "nsx",
     "vcenter",
     "vum_migration",
-    "vks",
+    "supervisor",
     "vsan_witness",
     "esx",
     "logs",
@@ -31,7 +31,7 @@
     "vum_migration",
     "convert",
     "automation",
-    "vks",
+    "supervisor",
     "vsan_witness",
     "esx",
     "logs",
@@ -75,7 +75,7 @@
       "upgrade_phase": "pre_infrastructure"
     },
     {
-      "id": "vks",
+      "id": "supervisor",
       "display_name": "VMware vSphere Supervisor",
       "category": "advanced",
       "upgrade_phase": "mid_infrastructure"
@@ -923,7 +923,7 @@
         "Upgrade HCX to version compatible with vSphere 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/updating-vmware-hcx.html' target='_blank'>View Documentation</a>)."
       ]
     },
-    "vks": {
+    "supervisor": {
       "name": "VMware vSphere Supervisor",
       "steps": [
         "Upgrade VMware vSphere Supervisor to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
@@ -931,9 +931,9 @@
       "notices": [
         {
           "type": "warning",
-          "title": "VKS deployed on vSphere Lifecycle Baseline Clusters(VUM)",
+          "title": "VMware vSphere Supervisor deployed on vSphere Lifecycle Baseline Clusters(VUM)",
           "bullets": [
-            "Customers with VKS clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"
+            "Customers with VMware vSphere Supervisor clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"
           ]
         }
       ]

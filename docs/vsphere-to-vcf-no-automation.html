@@ -1365,7 +1365,7 @@
         function autoGenerateUpgradePlan() {
             vlcmSelected = document.getElementById('vlcmCheck').checked;
             witnessSelected = document.getElementById('witnessCheck').checked;
-            vksSelected = document.getElementById('vksCheck') ? document.getElementById('vksCheck').checked : false;
+            supervisorSelected = document.getElementById('supervisorCheck') ? document.getElementById('supervisorCheck').checked : false;
             vchaSelected = document.getElementById('vchaCheck').checked;
             elmSelected = document.getElementById('elmCheck').checked;
             
@@ -1580,11 +1580,11 @@
                     shouldInclude = witnessSelected;
                     phaseTitle = componentData ? componentData.name : 'vSAN Witness';
                     phaseDescription = 'Upgrade vSAN Witness Host';
-                } else if (componentId === 'vks') {
-                    // VKS only if checkbox selected
-                    shouldInclude = vksSelected;
+                } else if (componentId === 'supervisor') {
+                    // supervisor only if checkbox selected
+                    shouldInclude = supervisorSelected;
                     phaseTitle = componentData ? componentData.name : 'VMware vSphere Supervisor';
-                    phaseDescription = 'Upgrade VMware vSphere Supervisor (VKS)';
+                    phaseDescription = 'Upgrade VMware vSphere Supervisor';
                 } else if (componentId === 'esx') {
                     // ESX always included
                     shouldInclude = esxVersion !== '9.1.x';
@@ -1662,7 +1662,7 @@
             // 3. Convert to VCF (includes Ops install if not installed)
             // 4. NSX Federation and NSX
             // 5. vCenter
-            // 6. Pre-ESX Infrastructure (vLCM, vSAN Witness, VKS)
+            // 6. Pre-ESX Infrastructure (vLCM, vSAN Witness, supervisor)
             // 7. ESX Hosts
             // 9. Post-Infrastructure (Logs, Network)
 
@@ -1678,7 +1678,7 @@
             const vcenterPhases = [];
             const elmPhases = [];
             const vlcmPhases = [];
-            const vksPhases = [];
+            const supervisorPhases = [];
             const witnessPhases = [];
             const esxPhases = [];
             const advancedPhases = [];
@@ -1716,8 +1716,8 @@
                     vlcmPhases.push(phase);
                 } else if (phase.componentId === 'vsan_witness') {
                     witnessPhases.push(phase);
-                } else if (phase.componentId === 'vks') {
-                    vksPhases.push(phase);
+                } else if (phase.componentId === 'supervisor') {
+                    supervisorPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
                 } else if (isPostInfraOptional) {
@@ -1738,7 +1738,7 @@
             vcenterPhases.sort((a, b) => a.number - b.number);
             elmPhases.sort((a, b) => a.number - b.number);
             vlcmPhases.sort((a, b) => a.number - b.number);
-            vksPhases.sort((a, b) => a.number - b.number);
+            supervisorPhases.sort((a, b) => a.number - b.number);
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
@@ -1795,7 +1795,7 @@
                         const nsxSelected = nsxPhases.length > 0;
             
             if (nsxSelected) {
-                // If NSX is selected: vCHA → vCenter → ELM → vLCM → Convert → NSX Federation → NSX → Witness/VKS
+                // If NSX is selected: vCHA → vCenter → ELM → vLCM → Convert → NSX Federation → NSX → Witness/supervisor
 
                  if (hasPrereqs && operationsPhases.length > 0) {
                 steps.push({
@@ -1879,18 +1879,18 @@
                     });
                 }
 
-                if (vksPhases.length > 0) {
+                if (supervisorPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
                         title: 'VMware vSphere Supervisor',
-                        description: 'Upgrade VMware vSphere Supervisor (VKS)',
-                        phases: vksPhases
+                        description: 'Upgrade VMware vSphere Supervisor',
+                        phases: supervisorPhases
                     });
                 }
 
     
             } else {
-                // If NSX is NOT selected: vCHA → vCenter → ELM → vLCM → Convert → Witness/VKS
+                // If NSX is NOT selected: vCHA → vCenter → ELM → vLCM → Convert → Witness/supervisor
                  if (hasPrereqs && operationsPhases.length > 0) {
                 steps.push({
                     number: steps.length + 1,
@@ -1954,12 +1954,12 @@
                     });
                 }
 
-                if (vksPhases.length > 0) {
+                if (supervisorPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
                         title: 'VMware vSphere Supervisor',
-                        description: 'Update VMware vSphere Supervisor (VKS)',
-                        phases: vksPhases
+                        description: 'Update VMware vSphere Supervisor',
+                        phases: supervisorPhases
                     });
                 }
                 

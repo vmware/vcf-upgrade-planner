@@ -1274,7 +1274,7 @@
         function autoGenerateUpgradePlan() {
             vlcmSelected = document.getElementById('vlcmCheck').checked;
             witnessSelected = document.getElementById('witnessCheck').checked;
-            vksSelected = document.getElementById('vksCheck') ? document.getElementById('vksCheck').checked : false;
+            supervisorSelected = document.getElementById('supervisorCheck') ? document.getElementById('supervisorCheck').checked : false;
             elmSelected = document.getElementById('elmCheck').checked;
             
             // Get deployment configuration from DOM (ensures correct values on initial load)
@@ -1289,7 +1289,7 @@
             // Add Optional Features checkboxes (VUM and vSAN Witness)
             selectedProducts['vum_migration'] = vlcmSelected;
             selectedProducts['vsan_witness'] = witnessSelected;
-            selectedProducts['vks'] = vksSelected;
+            selectedProducts['supervisor'] = supervisorSelected;
             selectedProducts['vxrail'] = vxrailSelected;
             
             if (upgradeData && upgradeData.optional_products) {
@@ -1523,7 +1523,7 @@
             // 3. sddc to VCF (includes Ops install if not installed)
             // 4. NSX
             // 5. vCenter
-            // 6. Pre-ESX Infrastructure (vLCM, vSAN Witness, VKS)
+            // 6. Pre-ESX Infrastructure (vLCM, vSAN Witness, supervisor)
             // 7. ESX Hosts
             // 8. Automation Deployment
             // 9. Post-Infrastructure (Logs, Network)
@@ -1536,7 +1536,7 @@
             const nsxPhases = [];
             const vcenterPhases = [];
             const vlcmPhases = [];
-            const vksPhases = [];
+            const supervisorPhases = [];
             const witnessPhases = [];
             const esxPhases = [];
             const automationPhases = [];
@@ -1571,8 +1571,8 @@
                     vlcmPhases.push(phase);
                 } else if (phase.componentId === 'vsan_witness') {
                     witnessPhases.push(phase);
-                } else if (phase.componentId === 'vks') {
-                    vksPhases.push(phase);
+                } else if (phase.componentId === 'supervisor') {
+                    supervisorPhases.push(phase);
                 } else if (phase.componentId === 'vxrail') {
                     vxrailPhases.push(phase);
                 } else if (phase.componentId === 'elm') {
@@ -1599,7 +1599,7 @@
             nsxPhases.sort((a, b) => a.number - b.number);
             vcenterPhases.sort((a, b) => a.number - b.number);
             vlcmPhases.sort((a, b) => a.number - b.number);
-            vksPhases.sort((a, b) => a.number - b.number);
+            supervisorPhases.sort((a, b) => a.number - b.number);
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
             automationPhases.sort((a, b) => a.number - b.number);
@@ -1667,10 +1667,10 @@
                     title: 'Migrate to vLCM',
                     description: 'Migrate from VUM to vSphere Lifecycle Manager'
                 },
-                'vks': {
-                    phases: vksPhases,
+                'supervisor': {
+                    phases: supervisorPhases,
                     title: 'VMware vSphere Supervisor',
-                    description: 'Upgrade VMware vSphere Supervisor (VKS)'
+                    description: 'Upgrade VMware vSphere Supervisor'
                 },
                 'witness': {
                     phases: witnessPhases,
@@ -1727,7 +1727,7 @@
                 'vcenter': 'vcenter',
                 'vum_migration': 'vlcm',
                 'vsan_witness': 'witness',
-                'vks': 'vks',
+                'supervisor': 'supervisor',
                 'vxrail': 'vxrail',
                 'esx': 'esx',
                 'automation': 'automation',

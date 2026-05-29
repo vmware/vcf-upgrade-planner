@@ -1276,7 +1276,7 @@
 
         function autoGenerateUpgradePlan() {
             witnessSelected = document.getElementById('witnessCheck').checked;
-            vksSelected = document.getElementById('vksCheck') ? document.getElementById('vksCheck').checked : false;
+            supervisorSelected = document.getElementById('supervisorCheck') ? document.getElementById('supervisorCheck').checked : false;
 
             // Get deployment configuration from DOM
             const simpleRadio = document.getElementById('simpleRadio');
@@ -1289,7 +1289,7 @@
             
             // Add Optional Features checkboxes (vSAN Witness)
             selectedProducts['vsan_witness'] = witnessSelected;
-            selectedProducts['vks'] = vksSelected;
+            selectedProducts['supervisor'] = supervisorSelected;
             selectedProducts['vxrail'] = vxrailSelected;
             
             if (upgradeData && upgradeData.optional_products) {
@@ -1555,7 +1555,7 @@
             // 3. sddc to VCF (includes Ops install if not installed)
             // 4. NSX
             // 5. vCenter
-            // 6. Pre-ESX Infrastructure (vSAN Witness, VKS)
+            // 6. Pre-ESX Infrastructure (vSAN Witness, supervisor)
             // 7. ESX Hosts
             // 8. Automation Deployment
             // 9. Post-Infrastructure (Logs, Network)
@@ -1567,7 +1567,7 @@
             const nsxfedPhases = [];
             const nsxPhases = [];
             const vcenterPhases = [];
-            const vksPhases = [];
+            const supervisorPhases = [];
             const witnessPhases = [];
             const esxPhases = [];
             const automationPhases = [];
@@ -1599,8 +1599,8 @@
                     vcenterPhases.push(phase);
                 } else if (phase.componentId === 'vsan_witness') {
                     witnessPhases.push(phase);
-                } else if (phase.componentId === 'vks') {
-                    vksPhases.push(phase);
+                } else if (phase.componentId === 'supervisor') {
+                    supervisorPhases.push(phase);
                 } else if (phase.componentId === 'vxrail') {
                     vxrailPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
@@ -1624,7 +1624,7 @@
             nsxfedPhases.sort((a, b) => a.number - b.number);
             nsxPhases.sort((a, b) => a.number - b.number);
             vcenterPhases.sort((a, b) => a.number - b.number);
-            vksPhases.sort((a, b) => a.number - b.number);
+            supervisorPhases.sort((a, b) => a.number - b.number);
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
             automationPhases.sort((a, b) => a.number - b.number);
@@ -1686,10 +1686,10 @@
                     title: 'vCenter Upgrade',
                     description: 'Upgrade vCenter Server'
                 },
-                'vks': {
-                    phases: vksPhases,
+                'supervisor': {
+                    phases: supervisorPhases,
                     title: 'VMware vSphere Supervisor',
-                    description: 'Upgrade VMware vSphere Supervisor (VKS)'
+                    description: 'Upgrade VMware vSphere Supervisor'
                 },
                 'witness': {
                     phases: witnessPhases,
@@ -1739,7 +1739,7 @@
                 'nsx_federation': 'nsx_federation',
                 'vcenter': 'vcenter',
                 'vsan_witness': 'witness',
-                'vks': 'vks',
+                'supervisor': 'supervisor',
                 'vxrail': 'vxrail',
                 'esx': 'esx',
                 'automation': 'automation',
