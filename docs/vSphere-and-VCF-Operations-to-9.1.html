@@ -1561,8 +1561,8 @@
                 if (licenseData) {
                     combinedOperationsPhases.push({
                         number: combinedOperationsPhases.length + 1,
-                        title: 'VCF License Server',
-                        description: 'Deploy VCF License Server',
+                        title: 'License Server',
+                        description: 'Deploy License Server',
                         data: licenseData,
                         componentId: 'license'
                     });
@@ -1572,8 +1572,8 @@
                     number: steps.length + 1,
                     title: opsIsInstall ? 'Install VCF Operations & Deploy License Server' : 'Upgrade VCF Operations & Deploy License Server',
                     description: opsIsInstall
-                        ? 'Install VCF Operations 9.1 and Deploy VCF License Server'
-                        : 'Upgrade VCF Operations and Deploy VCF License Server',
+                        ? 'Install VCF Operations 9.1 and Deploy License Server'
+                        : 'Upgrade VCF Operations and Deploy License Server',
                     phases: combinedOperationsPhases
                 });
             }
@@ -2119,7 +2119,7 @@
 
             // License Server — always included alongside Operations
             const licenseData = upgradeData ? upgradeData.components.license : null;
-            phases.push({ number: phases.length + 1, title: 'VCF License Server', description: 'Deploy VCF License Server', data: licenseData, componentId: 'license' });
+            phases.push({ number: phases.length + 1, title: 'License Server', description: 'Deploy License Server', data: licenseData, componentId: 'license' });
 
             // vCenter — included unless already on 9.1.x (no upgrade needed)
             if (vcenterVersion !== '9.1.x') {

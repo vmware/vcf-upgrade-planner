@@ -1415,8 +1415,8 @@
                             if (window.automationIsUpgrade) {
                                 // Upgrade: tables_simple_small / tables_ha_medium / tables_ha_large
                                 const upgradeTableKey = deploymentType === 'simple'
-                                    ? 'tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'tables_ha_large' : 'tables_ha_medium');
+                                    ? 'upgrade_tables_simple_small'
+                                    : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
                                 const cloned = JSON.parse(JSON.stringify(componentData));
                                 if (cloned[upgradeTableKey]) {
                                     console.log('automation upgrade: using table key:', upgradeTableKey);
@@ -1426,8 +1426,8 @@
                             } else {
                                 // Install: automation_install_tableKey
                                 const automation_install_tableKey = deploymentType === 'simple'
-                                    ? 'automation_install_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'automation_install_tables_ha_large' : 'automation_install_tables_ha_medium');
+                                    ? 'install_tables_simple_small'
+                                    : (deploymentSize === 'large' ? 'install_tables_ha_large' : 'install_tables_ha_medium');
                                 const cloned = JSON.parse(JSON.stringify(componentData));
                                 if (cloned[automation_install_tableKey]) {
                                     console.log('automation install: using table key:', automation_install_tableKey);

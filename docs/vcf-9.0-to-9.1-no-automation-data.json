@@ -128,7 +128,7 @@
             ]
         },
         "license": {
-            "name": "VCF License Server",
+            "name": "License Server",
             "tables": [
                 {
                     "title": "Required Network Configuration",

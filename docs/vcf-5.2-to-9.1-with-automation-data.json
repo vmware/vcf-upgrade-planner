@@ -243,7 +243,7 @@
       ]
     },
     "license": {
-      "name": "VCF License Server",
+      "name": "License Server",
                   "tables": [
                 {
                     "title": "Required Network Configuration",
@@ -454,9 +454,9 @@
           "type": "info",
           "title": "VCF Automation Components",
           "bullets": [
-            "Includes Automation Orchestrator for workflow automation",
-            "Configure cloud zones and endpoints",
-            "Set up blueprints and catalogs after deployment"
+            "The FQDN from the existing Automation instance is automatically transferred as VCF Automation FQDN of the 9.1 instance.",
+            "If your existing Automation instance uses an external load balancer, no changes in its configuration are required.",
+            "VCF Automation 8.18.x IP addresses of the existing nodes are automatically assigned as VIPs for the 9.1 instance."
           ]
         },
         {
@@ -468,15 +468,15 @@
           ]
         }
       ],
-      "tables_simple_small": [
+      "upgrade_tables_simple_small": [
         {
           "title": "VCF Automation Required Network Configuration (Simple - Small)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation", "2", "1", "N/A"],
-            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
@@ -488,15 +488,15 @@
           ]
         }
       ],
-      "tables_ha_medium": [
+      "upgrade_tables_ha_medium": [
         {
           "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation", "4", "1", "N/A"],
-            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
@@ -508,15 +508,15 @@
           ]
         }
       ],
-      "tables_ha_large": [
+      "upgrade_tables_ha_large": [
         {
           "title": "VCF Automation Required Network Configuration (High Availability - Large)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation", "4", "1", "N/A"],
-            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
@@ -551,15 +551,15 @@
           ]
         }
       ],
-      "automation_install_tables_simple_small": [
+      "install_tables_simple_small": [
         {
           "title": "VCF Automation  Required Network Configuration (Simple - Small)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation", "2", "1", "N/A"],
-            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
@@ -571,15 +571,15 @@
           ]
         }
       ],
-      "automation_install_tables_ha_medium": [
+      "install_tables_ha_medium": [
         {
           "title": "VCF Automation  Required Network Configuration (High Availability - Medium)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
            "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
            "rows": [
-            ["VCF Automation", "4", "1", "N/A"],
-            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
@@ -591,15 +591,15 @@
           ]
         }
       ],
-      "automation_install_tables_ha_large": [
+      "install_tables_ha_large": [
         {
           "title": "VCF Automation Required Network Configuration (High Availability - Large)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation", "4", "1", "N/A"],
-            ["VCF Automation", "1", "1", "vcfauto.sfo.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {

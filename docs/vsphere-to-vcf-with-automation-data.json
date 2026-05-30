@@ -437,7 +437,6 @@
                     "title": "VCF Conversion Process",
                     "bullets": [
                         "This step converts your vSphere environment to VCF 9.1",
-                        "This path does NOT include VCF Automation deployment",
                         "Minimum 12 IP addresses required for deployment.",
                     {
                     "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
@@ -478,7 +477,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation  Node(s) IP Pool", "2", "0", "N/A"],
+            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
             ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -498,7 +497,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
+            ["VCF Automation  Node(s) IP Pool", "5", "0", "N/A"],
             ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -518,7 +517,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
+            ["VCF Automation  Node(s) IP Pool", "5", "0", "N/A"],
             ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -733,66 +732,6 @@
             "Review minimum requirements in documentation before proceeding"
           ]
         }
-      ],
-      "automation_install_tables_simple_small": [
-        {
-          "title": "VCF Automation Required Network Configuration (Simple - Small)",
-          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["VCF Automation Node IP Pool", "2", "0", "N/A"],
-            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
-          ]
-        },
-        {
-          "title": "VCF Automation Required Component Sizes (Simple - Small)",
-          "description": "Size requirements for VCF Automation nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
-          "rows": [
-            ["VCF Automation Node", "Small", "1", "1", "16gb", "60gb"]
-          ]
-        }
-      ],
-      "automation_install_tables_ha_medium": [
-        {
-          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
-          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["VCF Automation Node(s) IP Pool", "4", "0", "N/A"],
-            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
-          ]
-        },
-        {
-          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
-          "description": "Size requirements for VCF Automation nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
-          "rows": [
-            ["VCF Automation Nodes", "Medium", "3", "24", "96gb", "300gb"]
-          ]
-        }
-      ],
-      "automation_install_tables_ha_large": [
-        {
-          "title": "VCF Automation Required Network Configuration (High Availability - Large)",
-          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
-            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
-          ]
-        },
-        {
-          "title": "VCF Automation Required Component Sizes (High Availability - Large)",
-          "description": "Size requirements for VCF Automation nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
-          "rows": [
-            ["VCF Automation Nodes", "Large", "3", "48", "192gb", "600gb"]
-          ]
-        }
       ]
     },
     "automation": {
@@ -805,9 +744,9 @@
           "type": "info",
           "title": "VCF Automation Components",
           "bullets": [
-            "Includes Automation Orchestrator for workflow automation",
-            "Configure cloud zones and endpoints",
-            "Set up blueprints and catalogs after deployment"
+            "The FQDN from the existing Automation instance is automatically transferred as VCF Automation FQDN of the 9.1 instance.",
+            "If your existing Automation instance uses an external load balancer, no changes in its configuration are required.",
+            "VCF Automation 8.18.x IP addresses of the existing nodes are automatically assigned as VIPs for the 9.1 instance."
           ]
         },
         {
@@ -819,15 +758,15 @@
           ]
         }
       ],
-       "tables_simple_small": [
+      "upgrade_tables_simple_small": [
         {
           "title": "VCF Automation Required Network Configuration (Simple - Small)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node IP Pool", "2", "0", "N/A"],
-            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
@@ -839,15 +778,15 @@
           ]
         }
       ],
-      "tables_ha_medium": [
-        {
+      "upgrade_tables_ha_medium": [
+         {
           "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool", "4", "0", "N/A"],
-            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {
@@ -859,15 +798,75 @@
           ]
         }
       ],
-      "tables_ha_large": [
+      "upgrade_tables_ha_large": [
+         {
+          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Nodes", "Large", "3", "48", "192gb", "600gb"]
+          ]
+        }
+      ],
+      "install_tables_simple_small": [
+        {
+          "title": "VCF Automation Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Node", "Small", "1", "1", "16gb", "60gb"]
+          ]
+        }
+      ],
+      "install_tables_ha_medium": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation Nodes", "Medium", "3", "24", "96gb", "300gb"]
+          ]
+        }
+      ],
+      "install_tables_ha_large": [
         {
           "title": "VCF Automation Required Network Configuration (High Availability - Large)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation  Node(s) IP Pool", "4", "0", "N/A"],
-            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
-            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+            ["VCF Automation  Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
         },
         {

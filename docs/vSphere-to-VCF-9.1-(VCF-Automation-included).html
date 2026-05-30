@@ -1592,17 +1592,16 @@
                             if (cd.automation_install_notices) {
                                 cd.notices = (cd.notices || []).concat(cd.automation_install_notices);
                             }
-                            // Pick the right automation install tables based on deployment size
-                            // Merge automation rows INTO the matching convert table by index so they appear in one unified table
-                            const autoTableKey = deploymentType === 'simple'
-                                ? 'automation_install_tables_simple_small'
-                                : (deploymentSize === 'large' ? 'automation_install_tables_ha_large' : 'automation_install_tables_ha_medium');
-                            if (cd[autoTableKey] && cd.tables) {
-                                cd[autoTableKey].forEach((autoTable, idx) => {
-                                    if (cd.tables[idx]) {
-                                        cd.tables[idx].rows = (cd.tables[idx].rows || []).concat(autoTable.rows || []);
-                                        console.log('Convert new install: merged automation rows into table', idx, '(' + cd.tables[idx].title + ')');
-                                    }
+                            // Read automation install tables from automation component (install_tables_*)
+                            // These are separate tables so IP addresses stay distinct from VCF deployment tables
+                            const autoInstallKey = deploymentType === 'simple'
+                                ? 'install_tables_simple_small'
+                                : (deploymentSize === 'large' ? 'install_tables_ha_large' : 'install_tables_ha_medium');
+                            const autoComponentForInstall = upgradeData.components['automation'];
+                            if (autoComponentForInstall && autoComponentForInstall[autoInstallKey] && cd.tables) {
+                                autoComponentForInstall[autoInstallKey].forEach((autoTable) => {
+                                    cd.tables.push(autoTable);
+                                    console.log('Convert new install: added separate automation install table:', autoTable.title);
                                 });
                             }
                             componentData = cd;
@@ -1648,12 +1647,12 @@
                     phaseTitle = automationSelected ? 'Upgrade VCF Automation' : 'VCF Automation';
                     phaseDescription = automationSelected ? 'Upgrade VCF Automation to 9.1' : 'Install VCF Automation 9.1 (handled in converge step)';
 
-                    // Select the right size-based table for the upgrade path
+                    // Select the right size-based table for the upgrade path (upgrade_tables_*)
                     if (automationSelected && componentData) {
                         try {
                             const upgradeTableKey = deploymentType === 'simple'
-                                ? 'tables_simple_small'
-                                : (deploymentSize === 'large' ? 'tables_ha_large' : 'tables_ha_medium');
+                                ? 'upgrade_tables_simple_small'
+                                : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
                             const cloned = JSON.parse(JSON.stringify(componentData));
                             if (cloned[upgradeTableKey]) {
                                 cloned.tables = cloned[upgradeTableKey];
@@ -2583,8 +2582,8 @@
                 if (autoData) {
                     try {
                         const upgradeTableKey = deploymentType === 'simple'
-                            ? 'tables_simple_small'
-                            : (deploymentSize === 'large' ? 'tables_ha_large' : 'tables_ha_medium');
+                            ? 'upgrade_tables_simple_small'
+                            : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
                         const cloned = JSON.parse(JSON.stringify(autoData));
                         if (cloned[upgradeTableKey]) {
                             console.log('export automation upgrade: using table key:', upgradeTableKey);
