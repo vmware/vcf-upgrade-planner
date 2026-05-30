@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 
 # Configuration
-JSON_FILE = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json' ]
+JSON_FILE = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html']
 OUTPUT_FILE = 'docs_inline.js'
 MAX_CONTENT_SIZE = 100000  # 100KB per doc
 MAX_DEEP_URLS = 1000 # Max sub-pages to deep-scrape per run
@@ -272,7 +272,7 @@ def main():
     
     # Step 1: Extract URLs from both JSON files
     all_urls = set()
-    json_files = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json' ]
+    json_files = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html' ]
     
     for json_file in json_files:
         if Path(json_file).exists():

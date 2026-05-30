@@ -1047,67 +1047,67 @@
             if (vcenter && esx && automation && !nsx && !operations && !vxrail) {
                 // vCenter + ESX + Automation
                 paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including VCF Automation components', icon: '' }
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
             } else if (vcenter && esx && nsx  && automation && !vxrail) {
                 // vCenter + ESX + NSX + Automation
                 paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete migration to VCF 9.1 with all components', icon: '' }
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete upgrade to VCF 9.1 with all components', icon: '' }
                 ];
             } 
             else if (vcenter && esx && operations && automation && !vxrail) {
                 // vCenter + ESX + NSX + Operations + Automation
                 paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete migration to VCF 9.1 with all components', icon: '' }
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete upgrade to VCF 9.1 with all components', icon: '' }
                 ];
             } 
             else if (vcenter && esx && nsx && operations && automation && !vxrail) {
                 // vCenter + ESX + NSX + Operations + Automation
                 paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete migration to VCF 9.1 with all components', icon: '' }
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete upgrade to VCF 9.1 with all components', icon: '' }
                 ];
             } else if (vcenter && esx && nsx && operations && !automation && !vxrail) {
                 // vCenter + ESX + NSX + Operations
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with NSX and Operations, excluding VCF Automation', icon: '' },
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete migration to VCF 9.1 with all components', icon: '' }
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Complete upgrade to VCF 9.1 with all components', icon: '' }
                 ];
             } else if (vcenter && esx && nsx && !operations && !automation && !vxrail) {
                 // vCenter + ESX + NSX
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with NSX, excluding VCF Automation', icon: '' },
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including NSX and VCF Automation components', icon: '' }
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including NSX and VCF Automation components', icon: '' }
                 ];
             } else if (vcenter && esx && operations && !nsx && !automation && !vxrail) {
                 // vCenter + ESX + Operations
                 if (alreadyOn91) {
-                    // Already on 9.1 - only show VCF migration options
+                    // Already on 9.1 - only show VCF upgrade options
                     paths = [
                         { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with Operations, excluding VCF Automation', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including Operations and VCF Automation', icon: '' }
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including Operations and VCF Automation', icon: '' }
                     ];
                 } else {
                     // Need upgrade - show upgrade path + VCF options
                     paths = [
                         { title: 'vSphere and VCF Operations to 9.1', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with Operations, excluding VCF Automation', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including Operations and VCF Automation', icon: '' }
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including Operations and VCF Automation', icon: '' }
                     ];
                 }
             } else if (vcenter && esx && !operations && !automation && !nsx && !vxrail) {
                 // vCenter + ESX only
                 if (alreadyOn91) {
-                    // Already on 9.1 - only show VCF migration options
+                    // Already on 9.1 - only show VCF upgrade options
                     paths = [
-                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic migration to VCF 9.1 without VCF Automation', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including VCF Automation components', icon: '' }
+                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                     ];
                 } else {
                     // Need upgrade - show upgrade path + VCF options
                     paths = [
                         { title: 'vSphere and VCF Operations to 9.1', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },                        
-                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic migration to VCF 9.1 without VCF Automation', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full migration to VCF 9.1 including VCF Automation components', icon: '' }
+                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                     ];
                 }
             } else if (vcenter && !esx && vxrail && !operations && !automation && !nsx){

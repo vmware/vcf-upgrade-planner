@@ -232,6 +232,36 @@
             "name": "Identity Broker",
             "steps": [
                 "Identity Broker Upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
+            ],
+            "upgrade_tables_simple_small": [
+                {
+                    "title": "Identity Broker Required Network Configuration",
+                    "description": "Verify the following network configuration for the existing Identity Broker instance:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["Identity Broker(re-use)", "0", "1", "vcfidb.rainpole.io"]
+                    ]
+                }
+            ],
+            "upgrade_tables_ha_medium": [
+                {
+                    "title": "Identity Broker Required Network Configuration",
+                    "description": "Verify the following network configuration for the existing Identity Broker instance:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["Identity Broker(re-use)", "0", "1", "vcfidb.rainpole.io"]
+                    ]
+                }
+            ],
+            "upgrade_tables_ha_large": [
+                {
+                    "title": "Identity Broker Required Network Configuration",
+                    "description": "Verify the following network configuration for the existing Identity Broker instance:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["Identity Broker(re-use)", "0", "1", "vcfidb.rainpole.io"]
+                    ]
+                }
             ]
         },
         "replication": {
@@ -599,7 +629,20 @@
                     "type": "warning",
                     "title": "This step must be completed first",
                     "bullets": [
-                        "If Identity Broker 9.0.x is on a non-mgmt network (regular vlan or NSX overlay) – please contact support for guidance and there will be downtime during the upgrade for VMware Identity Broker and Single Sign-On."
+                        "The VCF upgrade to 9.1 has not yet been initiated. Once VCF Ops is upgraded to 9.1, this option is no longer available.",
+                        "If Identity Broker 9.0.x is on a non-mgmt network (regular vlan or NSX overlay) – please contact support for guidance and there will be downtime during the upgrade for VMware Identity Broker and Single Sign-On.",
+                        "A new IP address on the management network allocated for the VIDB.",
+                        "The original VIDB's FQDN and certificates."
+                    ]
+                }
+            ],
+             "tables": [
+                {
+                    "title": "Identity Broker Required Network Configuration",
+                    "description": "Verify the following network configuration for the existing Identity Broker instance:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["Identity Broker", "1", "0", "re-use existing FQDN"]
                     ]
                 }
             ]
