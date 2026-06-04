@@ -1571,7 +1571,6 @@
             const vidmPhases =[];
             const elmPhases = [];
             const vxrailPhases = [];
-            const vcdPhases = [];
             const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
             const nsx_edgePhases = [];
@@ -1620,8 +1619,6 @@
                     networkPhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
-                } else if (phase.componentId === 'vcd') {
-                    vcdPhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
                     vsan_file_servicePhases.push(phase);
                 }
@@ -1645,7 +1642,6 @@
             elmPhases.sort((a, b) => a.number - b.number);
             vidmPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
-            vcdPhases.sort((a, b) => a.number - b.number);
             operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             vsan_file_servicePhases.sort((a, b) => a.number - b.number);
             
@@ -1779,11 +1775,6 @@
                     title: 'ELM Breakage on SDDC Manager',
                     description: 'Break ELM on SDDC manager pre step to set up VIDB'
                 },
-                'vcd': {
-                    phases: vcdPhases,
-                    title: 'VMware Cloud Director Migration to VCF Automation',
-                    description: 'VMware Cloud Director Migration to VCF Automation'
-                },
                 'vsan_file_service': {
                     phases: vsan_file_servicePhases,
                     title: 'vSAN File Service',
@@ -1815,7 +1806,6 @@
                 'vcfms': 'vcfms',
                 'vidm': 'vidm',
                 'elm': 'elm',
-                'vcd': 'vcd',
                 'operations_orchestrator': 'operations_orchestrator',
                 'vsan_file_service': 'vsan_file_service',
                 'nsx_edge': 'nsx_edge'

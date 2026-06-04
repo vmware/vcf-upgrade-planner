@@ -736,19 +736,8 @@
                  <!--VCD -->
                 <div class="checkbox-group" id="vcdCheckboxGroup">
                     <label class="checkbox-label">
-                        <input id="vcdCheck" onchange="toggleDropdown('vcdCheck', 'vcdDropdown')" type="checkbox"/>
+                        <input id="vcdCheck" onchange="updateAvailablePaths()" type="checkbox"/>
                         <span>VMware Cloud Director</span>
-                        <div class="version-dropdown hidden" id="vcdDropdown">
-                            <select id="vcd">
-                                <option value="">-- Select Version --</option>
-                                <option value="10.4.1">10.4.1</option>
-                                <option value="10.4.2">10.4.2</option>
-                                <option value="10.4.3">10.4.3</option>
-                                <option value="10.5.1">10.5.1</option>
-                                <option value="10.6">10.6</option>
-                                <option value="10.6.1">10.6.1</option>
-                            </select>
-                        </div>
                     </label>
                 </div>
             </strong></div><strong>
@@ -993,9 +982,7 @@
                 errors.push('VxRail version must be selected');
             }
 
-             if (document.getElementById('vcdCheck').checked && !document.getElementById('vcd').value) {
-                errors.push('VMware Cloud Director version must be selected');
-            }
+             // VCD version check removed — no version dropdown for VMware Cloud Director
             
             return errors;
         }
@@ -1046,8 +1033,18 @@
                 return;
             }
 
+            // VMware Cloud Director selected — block all paths regardless of version
+            if (vcd) {
+                const vcdMessageDiv = document.createElement('div');
+                vcdMessageDiv.style.cssText = 'background: #e8f4f8; border-left: 4px solid #0088b5; padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #b3d9ea;';
+                vcdMessageDiv.innerHTML = '<p style="color: #1a2d40; font-size: 1rem; line-height: 1.6; margin: 0;">In VCF Automation 9.1, you can use the Migration Tool to perform an in-place migration from VMware Cloud Director to VCF Automation. For more information, contact your Broadcom representative.</p>';
+                pathOptions.appendChild(vcdMessageDiv);
+                pathSelection.classList.remove('hidden');
+                return;
+            }
+
             // Check for VXRail with Automation or NSX - No path available
-            if (vxrail && (automation || nsx || vcd)) {
+            if (vxrail && (automation || nsx)) {
                 const noPathDiv = document.createElement('div');
                 noPathDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
                 noPathDiv.innerHTML = `
@@ -1058,7 +1055,6 @@
                     <ul style="margin: 8px 0 12px 20px; color: var(--warning-text);">
                         ${automation ? '<li>VCF Automation</li>' : ''}
                         ${nsx ? '<li>NSX</li>' : ''}
-                        ${vcd ? '<li>VMware Cloud Director</li>' : ''}
                     </ul>
                     <p style="color: var(--warning-text); font-style: italic; margin-top: 12px;">
                         Please adjust your selections or consult VMware documentation for VxRail-specific upgrade paths.
@@ -1074,64 +1070,60 @@
 
             // Logic for path availability
             // VxRail + VCD is blocked by the guard above; these branches handle clean VxRail selections.
-            // VCD alone does not alter ESX-based paths — no !vcd guard needed below.
             if (vcenter && !esx && vxrail) {
                 // VxRail: same result with or without Operations
                 paths = [
                     { title: 'vSphere and VCF Operations to 9.1', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF based on Dell support', icon: '' }
                 ];
-            } else if (vcenter && esx && automation && !nsx && !operations && !vxrail && vcd) {
+            } else if (vcenter && esx && automation && !nsx && !operations && !vxrail) {
                 // vCenter + ESX + Automation
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && nsx && automation && !vxrail && vcd) {
+            } else if (vcenter && esx && nsx && automation && !vxrail) {
                 // vCenter + ESX + NSX + Automation
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && operations && automation && !nsx && !vxrail && vcd) {
+            } else if (vcenter && esx && operations && automation && !nsx && !vxrail) {
                 // vCenter + ESX + Operations + Automation
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && !operations && automation && !nsx && !vxrail && !vcd) {
+            } else if (vcenter && esx && !operations && automation && !nsx && !vxrail) {
                 // vCenter + ESX + Operations + Automation
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && !operations && automation && nsx && !vxrail && !vcd) {
+            } else if (vcenter && esx && !operations && automation && nsx && !vxrail) {
                 // vCenter + ESX + Operations + Automation
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && operations && automation && nsx && !vxrail && !vcd) {
+            } else if (vcenter && esx && operations && automation && nsx && !vxrail) {
                 // vCenter + ESX + Operations + Automation
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && operations && automation && !nsx && !vxrail && !vcd) {
+            } else if (vcenter && esx && operations && automation && !nsx && !vxrail) {
                 // vCenter + ESX + Operations + Automation
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && nsx && operations && !automation && !vxrail && !vcd) {
+            } else if (vcenter && esx && nsx && operations && !automation && !vxrail) {
                 // vCenter + ESX + NSX + Operations
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && nsx && !operations && !automation && !vxrail && !vcd) {
+            } else if (vcenter && esx && nsx && !operations && !automation && !vxrail) {
                 // vCenter + ESX + NSX only
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including NSX and VCF Automation components', icon: '' }
                 ];
             } else if (vcenter && esx && operations && !nsx && !automation && !vxrail) {
-                // vCenter + ESX + Operations (VCD permitted, does not alter path)
-              if (vcd) {
-                    paths = [{ title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }];
-            } else if (alreadyOn91) {
+              if (alreadyOn91) {
                     paths = [
                         { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with Operations, excluding VCF Automation', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including Operations and VCF Automation', icon: '' }
@@ -1143,20 +1135,16 @@
                         { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including Operations and VCF Automation', icon: '' }
                     ];
                 }
-            } else if (vcenter && esx && nsx && !operations && !automation && !vxrail && vcd) {
+            } else if (vcenter && esx && nsx && !operations && !automation && !vxrail) {
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including NSX and VCF Automation components', icon: '' }
                 ];
-            } else if (vcenter && esx && nsx && operations && !automation && !vxrail && vcd) {
+            } else if (vcenter && esx && nsx && operations && !automation && !vxrail) {
                 paths = [
                     { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including NSX and VCF Automation components', icon: '' }
                 ];
             } else if (vcenter && esx && !operations && !automation && !nsx) {
-                // vCenter + ESX only (VCD permitted, does not alter path)
-                if (vcd) {
-                    // VCD requires VCF Automation — show only the automation-included path
-                    paths = [{ title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }];
-                } else if (alreadyOn91) {
+                if (alreadyOn91) {
                     paths = [
                         { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
@@ -1361,9 +1349,6 @@
                 const vxrailVersion = document.getElementById('vxrail').value || '8.0.x';
                 const automationSelected = document.getElementById('automationCheck').checked;
                 const automationVersion = document.getElementById('automation').value || '8.18.x';
-                const vcdSelected = document.getElementById('vcdCheck').checked;
-                const vcdVersion = document.getElementById('vcd').value || '10.6.1';
-                
                 localStorage.setItem('vcenter-version', vcenterVersion);
                 localStorage.setItem('esx-version', esxVersion);
                 localStorage.setItem('operations-selected', operationsSelected.toString());
@@ -1374,8 +1359,6 @@
                 localStorage.setItem('vxrail-version', vxrailVersion);
                 localStorage.setItem('automation-selected', automationSelected.toString());
                 localStorage.setItem('automation-version', automationVersion);
-                localStorage.setItem('vcd-selected', vcdSelected.toString());
-                localStorage.setItem('vcd-version', vcdVersion);
                 
                 window.location.href = 'vSphere-to-VCF-9.1-(VCF-Automation-included).html';
             } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (VCF Automation not included)') {
@@ -1467,8 +1450,6 @@
             const automationSelect = document.getElementById('automation');
             const vcf52Select = document.getElementById('vcf52');
             const vcf90Select = document.getElementById('vcf90');
-            const vcdSelect = document.getElementById('vcd');
-            
             if (vcenterSelect) vcenterSelect.addEventListener('change', handleVersionChange);
             if (esxSelect) esxSelect.addEventListener('change', handleVersionChange);
             if (operationsSelect) operationsSelect.addEventListener('change', updateAvailablePaths);
@@ -1477,7 +1458,6 @@
             if (automationSelect) automationSelect.addEventListener('change', updateAvailablePaths);
             if (vcf52Select) vcf52Select.addEventListener('change', updateVCFPath);
             if (vcf90Select) vcf90Select.addEventListener('change', updateVCFPath);
-            if (vcdSelect) vcdSelect.addEventListener('change', updateAvailablePaths);
 
         });
     </script>

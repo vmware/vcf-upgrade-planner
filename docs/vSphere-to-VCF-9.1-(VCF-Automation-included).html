@@ -1215,8 +1215,6 @@
         let esxVersion = null;
         let operationsSelected = false;
         let operationsVersion = null;
-        let vcdVersion = null;
-        let vcdSelected = false;
         let vlcmSelected = false;
         let witnessSelected = false;
         let vchaSelected = false;
@@ -1323,8 +1321,7 @@
             operationsVersion = localStorage.getItem('operations-version') || '8.18.x';
             nsxSelected = localStorage.getItem('nsx-selected') === 'true';
             nsxVersion = localStorage.getItem('nsx-version') || '4.2.x';
-            vcdVersion = localStorage.getItem('vcd-version') || '10.6.1';
-            vcdSelected = localStorage.getItem('vcd-selected') === 'true';
+
             
             // automationSelected = true  → already installed, will upgrade as a separate phase
             // automationSelected = false → new install, will be deployed inside the Convert step
@@ -1359,9 +1356,6 @@
                 html += `<li><span class="badge included">✓ VCF Automation</span><span class="badge version">v${automationVersion}</span><span class="badge" style="background:#e8f4f8; color:#0088b5;`;
             }
 
-            if (vcdSelected) {
-                html += `<li><span class="badge included">✓ VMware Cloud Director</span><span class="badge version">v${vcdVersion}</span></li>`;
-            }
             
             html += '</ul>';
             summary.innerHTML = html;
@@ -1685,11 +1679,6 @@
                             console.error('Error selecting automation upgrade table:', e);
                         }
                     }
-                } else if (componentId === 'vcd') {
-                    // VMware Cloud Director — only shown when selected on the index page
-                    shouldInclude = vcdSelected;
-                    phaseTitle = componentData ? componentData.name : 'VMware Cloud Director';
-                    phaseDescription = 'Migrate VMware Cloud Director to VCF Automation';
                 } else {
                     // All other components (advanced products) - check if selected
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1785,7 +1774,6 @@
             const esxPhases = [];
             const automationPhases = [];
             const nsxEdgePhases = [];
-            const vcdPhases = [];
             const advancedPhases = [];
             const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
@@ -1832,8 +1820,6 @@
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'automation') {
                     automationPhases.push(phase);
-                } else if (phase.componentId === 'vcd') {
-                    vcdPhases.push(phase)
                 } else if (phase.componentId === 'nsx_edge') {
                     nsxEdgePhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
@@ -1860,7 +1846,6 @@
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
             automationPhases.sort((a, b) => a.number - b.number);
-            vcdPhases.sort((a, b) => a.number - b.number);
             nsxEdgePhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
             operations_orchestratorPhases.sort((a, b) => a.number - b.number);
@@ -2102,15 +2087,6 @@
                 });
             }
 
-            
-            if (vcdPhases.length > 0) {
-                steps.push({
-                    number: steps.length + 1,
-                    title: 'VMware Cloud Director Upgrade',
-                    description: 'Migration from VMware Cloud Director to VCF Automation to 9.1',
-                    phases: vcdPhases
-                });
-            }
 
              if (nsxEdgePhases.length > 0) {
                 const _nsxEdgeSelected = selectedProducts['nsx_edge'] === true;

@@ -8,7 +8,6 @@
     "sddc_manager",
     "vcfms",
     "automation",
-    "vcd",
     "operations_orchestrator",
     "network",
     "hcx",
@@ -46,7 +45,6 @@
     "esx",
     "nsx_edge",
     "automation",
-    "vcd",
     "operations_orchestrator",
     "vidm",
     "logs",
@@ -118,11 +116,6 @@
     {
       "id": "vdefend",
       "display_name": "VMware vDefend Distributed Firewall",
-      "category": "advanced"
-    },
-    {
-      "id": "vcd",
-      "display_name": "VMware Cloud Director",
       "category": "advanced"
     },
     {
@@ -739,21 +732,6 @@
         ]
       }
     ]
-    },
-    "vcd": {
-      "name": "VMware Cloud Director",
-      "notices": [
-        {
-          "type": "info",
-          "title": "Required Before Proceeding",
-          "bullets": [
-            "Specific VMware Cloud Director patch is required to support the use of the VCF Automation 9.1 Migration Tool to perform an  in-place migration from VMware Cloud Director to VCF Automation. For more information, contact your Broadcom representative."
-          ]
-        }
-      ],
-      "steps": [
-        "VMware Cloud Director Migration Tool - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/provider-management.html#GUID-714947d5-a2c4-45f0-9c4d-1b6c447e74fe-en_id-275f2d1d-24c7-4717-af26-c5fa9b6b8ac6' target='_blank'>View Documentation</a>)."
-      ]
     },
     "license_hub": {
       "name": "VMware vDefend Distributed Firewall/Avi Load Balancer License Hub",

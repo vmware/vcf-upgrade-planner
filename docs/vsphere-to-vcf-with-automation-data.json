@@ -11,7 +11,6 @@
     "convert",
     "automation",
     "operations_orchestrator",
-    "vcd",
     "nsx_federation",
     "nsx",
     "vcenter",
@@ -38,7 +37,6 @@
     "convert",
     "automation",
     "operations_orchestrator",
-    "vcd",
     "supervisor",
     "vsan_witness",
     "esx",
@@ -1086,21 +1084,6 @@
       "steps": [
         "vCenter upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso.html' target='_blank'>View Documentation</a>).",
         "ESX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/overview-of-the-esxi-host-upgrade-process.html#GUID-FE668788-1F32-4CB2-845C-5547DD59EB48-en' target='_blank'>View Documentation</a>)."
-      ]
-    },
-    "vcd": {
-      "name": "VMware Cloud Director",
-      "notices": [
-        {
-          "type": "info",
-          "title": "Required Before Proceeding",
-          "bullets": [
-            "Specific VMware Cloud Director patch is required to support the use of the VCF Automation 9.1 Migration Tool to perform an  in-place migration from VMware Cloud Director to VCF Automation. For more information, contact your Broadcom representative."
-          ]
-        }
-      ],
-      "steps": [
-        "VMware Cloud Director Migration Tool - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/provider-management.html#GUID-714947d5-a2c4-45f0-9c4d-1b6c447e74fe-en_id-275f2d1d-24c7-4717-af26-c5fa9b6b8ac6' target='_blank'>View Documentation</a>)."
       ]
     },
       "license_hub": {
