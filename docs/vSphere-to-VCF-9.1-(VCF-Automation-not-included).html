@@ -1705,6 +1705,7 @@
             const witnessPhases = [];
             const esxPhases = [];
             const advancedPhases = [];
+            const operations_orchestratorPhases = [];
             
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1723,6 +1724,8 @@
                     hcxPhases.push(phase);
                 } else if (phase.componentId === 'operations') {
                     operationsPhases.push(phase);
+                } else if (phase.componentId === 'operations_orchestrator') {
+                    operations_orchestratorPhases.push(phase);
                 } else if (phase.componentId === 'vcha') {
                     vchaPhases.push(phase);
                 } else if (phase.componentId === 'vcenter') {
@@ -1765,6 +1768,7 @@
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
+            operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             
             // Build steps in correct order
             // Determine if any pre-req upgrades are present
@@ -1833,6 +1837,16 @@
                     phases: operationsPhases
                 });
             }   
+
+            if (operations_orchestratorPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'VCF Operations Orchestrator',
+                    description: 'Upgrade VCF Operations Orchestrator',
+                    phases: operations_orchestratorPhases
+                });
+            }
+
                 if (vchaPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
@@ -1937,6 +1951,8 @@
                     phases: operationsPhases
                 });
             }
+
+            
                 if (vchaPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
@@ -2012,6 +2028,14 @@
                 });
             }
 
+            if (operations_orchestratorPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'VCF Operations Orchestrator',
+                    description: 'Upgrade VCF Operations Orchestrator',
+                    phases: operations_orchestratorPhases
+                });
+            }
             
             if (advancedPhases.length > 0) {
                 steps.push({

@@ -1394,7 +1394,7 @@
                     shouldInclude = vcenterVersion !== '9.1.x';
                     phaseTitle = componentData ? componentData.name : 'vCenter Server';
                     phaseDescription = 'Upgrade ' + phaseTitle;
-                } else if (componentId === 'vxrail') {
+                }  else if (componentId === 'vxrail') {
                     // VxRail only if selected - replaces ESX
                     shouldInclude = vxrailSelected;
                     phaseTitle = componentData ? componentData.name : 'VxRail';
@@ -1489,6 +1489,7 @@
             const esxPhases = [];
             const vxrailPhases = [];
             const advancedPhases = [];
+            const operations_orchestratorPhases = [];
 
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1502,6 +1503,8 @@
                     aviPhases.push(phase);
                 } else if (phase.componentId === 'operations' || phase.componentId === 'operations_install') {
                     operationsPhases.push(phase);
+                } else if (phase.componentId === 'operations_orchestrator') {
+                    operations_orchestratorPhases.push(phase);
                 } else if (phase.componentId === 'vcha') {
                     vchaPhases.push(phase);
                 } else if (phase.componentId === 'vcenter') {
@@ -1587,6 +1590,15 @@
                         ? 'Install VCF Operations 9.1 and Deploy License Server'
                         : 'Upgrade VCF Operations and Deploy License Server',
                     phases: combinedOperationsPhases
+                });
+            }
+
+            if (operations_orchestratorPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'VCF Operations Orchestrator',
+                    description: 'Upgrade VCF Operations Orchestrator',
+                    phases: operations_orchestratorPhases
                 });
             }
 

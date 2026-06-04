@@ -1,6 +1,7 @@
 {
   "upgrade_order": [
     "operations",
+    "operations_orchestrator",
     "license",
     "replication",
     "srm",
@@ -45,6 +46,11 @@
       "display_name": "VMware vSphere Supervisor",
       "category": "advanced",
       "upgrade_phase": "mid_infrastructure"
+    },
+    {
+      "id": "operations_orchestrator",
+      "display_name": "VMware Aria Automation Orchestrator (VMware Orchestrator)",
+      "category":"advanced"
     }
   ],
   "components": {
@@ -805,7 +811,21 @@
         "Deploy license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/security-services-platform/5-1/licensing-overview/deploying-license-hub.html' target='_blank'>View Documentation</a>).",
         "Details of license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/security-modernization/vdefend-lateral-security/security-services-platform-for-vmware-cloud-foundation/license-hub-for-vdefend-and-avi/license-hub-for-vmware-vdefend-and-vmware-avi-load-balancer.html' target='_blank'>View Documentation</a>)."
       ]
-
+    },
+    "operations_orchestrator": {
+      "name": "VCF Operations Orchestrator",
+      "notices": [
+        {
+          "type": "info",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "Verify that you are upgrading from VMware Aria Automation Orchestrator 8.18.1 or later"
+          ]
+        }
+      ],
+      "steps": [
+        "Upgrade VCF Operations Orchestrator - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
+      ]
     }
   }
 }

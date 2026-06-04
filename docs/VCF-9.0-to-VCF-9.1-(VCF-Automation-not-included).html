@@ -1109,7 +1109,7 @@
                     </label>
                 </div>
                 <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
-                    &#x2139;&#xFE0F; <strong>Unchecked</strong> = vIDB not yet deployed &mdash; install is covered as part of VCF Management Services deployment | <strong>Checked + Embedded</strong> = no separate upgrade step; notice added to vCenter phase | <strong>Checked + Not Embedded</strong> = standalone vIDB upgrade step added
+                    &#x2139;&#xFE0F; <strong>Unchecked</strong> = vIDB not yet deployed &mdash; install is covered as part of VCF Management Services deployment | <strong>Checked + Embedded</strong> = no separate upgrade step; notice added to vCenter phase | <strong>Checked + Not Embedded</strong> =  Appliance Identity Broker upgrade step added
                 </p>
                 <!-- Question 1: Is Identity Broker Embedded? -->
                 <div id="vidbEmbeddedQuestion" style="display:none; margin-top:10px; padding:12px 14px; background:var(--bg); border-left:4px solid var(--vmw-blue); border-radius:6px; font-size:0.88rem;">
@@ -1119,7 +1119,7 @@
                             <input type="radio" name="vidbEmbedded" value="yes" onchange="window.vidbIsEmbedded=true; window.vidbOnOverlay=null; document.getElementById('vidbOverlayQuestion').style.display='none'; document.querySelectorAll('input[name=vidbOverlay]').forEach(function(r){ r.checked=false; }); autoGenerateUpgradePlan();"> Yes (Embedded)
                         </label>
                         <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                            <input type="radio" name="vidbEmbedded" value="no" onchange="window.vidbIsEmbedded=false; document.getElementById('vidbOverlayQuestion').style.display='block'; autoGenerateUpgradePlan();"> No (Standalone)
+                            <input type="radio" name="vidbEmbedded" value="no" onchange="window.vidbIsEmbedded=false; document.getElementById('vidbOverlayQuestion').style.display='block'; autoGenerateUpgradePlan();"> No (Appliance)
                         </label>
                     </div>
                 </div>
@@ -1649,6 +1649,7 @@
             const advancedPhases = [];
             const vidbPhases =[];
             const vxrailPhases = [];
+            const operations_orchestratorPhases = [];
 
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1679,6 +1680,8 @@
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'automation') {
                     automationPhases.push(phase);
+                } else if (phase.componentId === 'operations_orchestrator') {
+                    operations_orchestratorPhases.push(phase);
                 } else if (phase.componentId === 'vidb') {
                     vidbPhases.push(phase);
                 } else if (phase.componentId === 'network') {
@@ -1704,6 +1707,7 @@
             advancedPhases.sort((a, b) => a.number - b.number);
             vidbPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
+            operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             
             // Build steps in the order defined by currentOrder (dynamic based on NSX selection)
             // Group Replication + SRM together, keep AVI and HCX separate
@@ -1795,6 +1799,11 @@
                     title: 'Automation Deployment',
                     description: 'Deploy VCF Automation'
                 },
+                'operations_orchestrator': {
+                    phases: operations_orchestratorPhases,
+                    title: 'VCF Operations Orchestrator',
+                    description: "Upgrade VCF Operations Orchestrator "
+                },
                  'vidb': {
                     phases: vidbPhases,
                     title: 'VIDB',
@@ -1831,7 +1840,8 @@
                 'network': 'network',
                 'sddc_manager': 'sddc_manager',
                 'vcfms': 'vcfms',
-                'vidb': 'vidb'
+                'vidb': 'vidb',
+                'operations_orchestrator': 'operations_orchestrator'
             };
             
             // Track which step groups have been added

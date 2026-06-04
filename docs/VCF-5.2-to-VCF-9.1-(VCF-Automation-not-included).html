@@ -1506,6 +1506,7 @@
             const elmPhases = [];
             const vidmPhases =[];
             const vxrailPhases = [];
+            const operations_orchestratorPhases = [];
 
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1540,6 +1541,8 @@
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'automation') {
                     automationPhases.push(phase);
+                } else if (phase.componentId === 'operations_orchestrator') {
+                    operations_orchestratorPhases.push(phase);
                 } else if (phase.componentId === 'vidm') {
                     vidmPhases.push(phase);
                 } else if (phase.componentId === 'network') {
@@ -1567,7 +1570,8 @@
             elmPhases.sort((a, b) => a.number - b.number);
             vidmPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
-            
+            operations_orchestratorPhases.sort((a, b) => a.number - b.number);
+
             // Build steps in the order defined by currentOrder (dynamic based on NSX selection)
             // Group Replication + SRM together, keep AVI and HCX separate
             const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'replication' || p.componentId === 'srm');
@@ -1671,7 +1675,11 @@
                     title: 'Automation Deployment',
                     description: 'Deploy VCF Automation 9.1'
                 },
-
+                'operations_orchestrator': {
+                    phases: operations_orchestratorPhases,
+                    title: 'VCF Operations Orchestrator',
+                    description: "Upgrade VCF Operations Orchestrator "
+                },
                  'vidm': {
                     phases: vidmPhases,
                     title: 'VIDM Replacement',
@@ -1716,7 +1724,8 @@
                 'sddc_manager': 'sddc_manager',
                 'vcfms': 'vcfms',
                 'elm': 'elm',
-                'vidm': 'vidm'
+                'vidm': 'vidm',
+                'operations_orchestrator': 'operations_orchestrator'
             };
             
             // Track which step groups have been added

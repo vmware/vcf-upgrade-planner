@@ -1215,6 +1215,8 @@
         let esxVersion = null;
         let operationsSelected = false;
         let operationsVersion = null;
+        let vcdVersion = null;
+        let vcdSelected = false;
         let vlcmSelected = false;
         let witnessSelected = false;
         let vchaSelected = false;
@@ -1321,6 +1323,8 @@
             operationsVersion = localStorage.getItem('operations-version') || '8.18.x';
             nsxSelected = localStorage.getItem('nsx-selected') === 'true';
             nsxVersion = localStorage.getItem('nsx-version') || '4.2.x';
+            vcdVersion = localStorage.getItem('vcd-version') || '10.6.1';
+            vcdSelected = localStorage.getItem('vcd-selected') === 'true';
             
             // automationSelected = true  → already installed, will upgrade as a separate phase
             // automationSelected = false → new install, will be deployed inside the Convert step
@@ -1353,6 +1357,10 @@
 
             if (automationSelected) {
                 html += `<li><span class="badge included">✓ VCF Automation</span><span class="badge version">v${automationVersion}</span><span class="badge" style="background:#e8f4f8; color:#0088b5;`;
+            }
+
+            if (vcdSelected) {
+                html += `<li><span class="badge included">✓ VMware Cloud Director</span><span class="badge version">v${vcdVersion}</span></li>`;
             }
             
             html += '</ul>';
@@ -1667,6 +1675,11 @@
                             console.error('Error selecting automation upgrade table:', e);
                         }
                     }
+                } else if (componentId === 'vcd') {
+                    // VMware Cloud Director — only shown when selected on the index page
+                    shouldInclude = vcdSelected;
+                    phaseTitle = componentData ? componentData.name : 'VMware Cloud Director';
+                    phaseDescription = 'Migrate VMware Cloud Director to VCF Automation';
                 } else {
                     // All other components (advanced products) - check if selected
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1761,7 +1774,10 @@
             const witnessPhases = [];
             const esxPhases = [];
             const automationPhases = [];
+            const vcdPhases = [];
             const advancedPhases = [];
+            const operations_orchestratorPhases = [];
+
             
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1780,6 +1796,8 @@
                     hcxPhases.push(phase);
                 } else if (phase.componentId === 'operations') {
                     operationsPhases.push(phase);
+                } else if (phase.componentId === 'operations_orchestrator') {
+                    operations_orchestratorPhases.push(phase);
                 } else if (phase.componentId === 'vcha') {
                     vchaPhases.push(phase);
                 } else if (phase.componentId === 'vcenter') {
@@ -1802,7 +1820,9 @@
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'automation') {
                     automationPhases.push(phase);
-                } else if (isPostInfraOptional) {
+                } else if (phase.componentId === 'vcd') {
+                    vcdPhases.push(phase)
+                } if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 }
             });
@@ -1824,7 +1844,9 @@
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
             automationPhases.sort((a, b) => a.number - b.number);
+            vcdPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
+            operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             
             // Build steps in correct order
             const hasPrereqs = prereqPhases.length > 0;
@@ -2059,6 +2081,25 @@
                     title: 'Automation Upgrade',
                     description: 'Upgrade VCF Automation to 9.1',
                     phases: automationPhases
+                });
+            }
+
+            
+            if (vcdPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'VMware Cloud Director Upgrade',
+                    description: 'Migration from VMware Cloud Director to VCF Automation to 9.1',
+                    phases: vcdPhases
+                });
+            }
+
+             if (operations_orchestratorPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'VCF Operations Orchestrator',
+                    description: 'Upgrade VCF Operations Orchestrator',
+                    phases: operations_orchestratorPhases
                 });
             }
             

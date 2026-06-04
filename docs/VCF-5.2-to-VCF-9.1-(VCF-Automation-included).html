@@ -1562,6 +1562,9 @@
             const vidmPhases =[];
             const elmPhases = [];
             const vxrailPhases = [];
+            const vcdPhases = [];
+            const operations_orchestratorPhases = [];
+
             
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1596,12 +1599,16 @@
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'automation' || phase.componentId === 'automation_install') {
                     automationPhases.push(phase);
+                } else if (phase.componentId === 'operations_orchestrator') {
+                    operations_orchestratorPhases.push(phase);
                 } else if (phase.componentId === 'vidm') {
                     vidmPhases.push(phase);
                 } else if (phase.componentId === 'network') {
                     networkPhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
+                } else if (phase.componentId === 'vcd') {
+                    vcdPhases.push(phase);
                 }
             });
             
@@ -1623,6 +1630,8 @@
             elmPhases.sort((a, b) => a.number - b.number);
             vidmPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
+            vcdPhases.sort((a, b) => a.number - b.number);
+            operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             
             // Build steps in the order defined by currentOrder (dynamic based on NSX selection)
             // Group Replication + SRM together, keep AVI and HCX separate
@@ -1719,6 +1728,11 @@
                     phases: automationPhases,
                     title: window.automationIsUpgrade ? 'VCF Automation Upgrade' : 'VCF Automation Install'
                 },
+                'operations_orchestrator': {
+                    phases: operations_orchestratorPhases,
+                    title: 'VCF Operations Orchestrator',
+                    description: "Upgrade VCF Operations Orchestrator "
+                },
                 'vidm': {
                     phases: vidmPhases,
                     title: 'VIDM Replacement',
@@ -1739,7 +1753,13 @@
                     phases: elmPhases,
                     title: 'ELM Breakage on SDDC Manager',
                     description: 'Break ELM on SDDC manager pre step to set up VIDB'
+                },
+                'vcd': {
+                    phases: vcdPhases,
+                    title: 'VMware Cloud Director Migration to VCF Automation',
+                    description: 'VMware Cloud Director Migration to VCF Automation'
                 }
+
             };
             
             // Map component IDs to their step groups
@@ -1763,7 +1783,9 @@
                 'sddc_manager': 'sddc_manager',
                 'vcfms': 'vcfms',
                 'vidm': 'vidm',
-                'elm': 'elm'
+                'elm': 'elm',
+                'vcd': 'vcd',
+                'operations_orchestrator': 'operations_orchestrator'
             };
             
             // Track which step groups have been added
