@@ -34,7 +34,7 @@
         },
         {
             "id": "avi",
-            "display_name": "NSX Advanced Load Balancer (Avi)",
+            "display_name": "Avi Load Balancer",
             "category": "advanced",
             "upgrade_phase": "pre_infrastructure"
         },
@@ -79,6 +79,11 @@
             "display_name": "Dell VxRail",
             "category": "advanced",
             "upgrade_phase": "mid_infrastructure"
+        },
+        {
+            "id": "vdefend",
+            "display_name": "VMware vDefend Distributed Firewall",
+            "category": "advanced"
         }
     ],
     "components": {
@@ -241,9 +246,9 @@
             ]
         },
         "avi": {
-            "name": "AVI (NSX ALB)",
+            "name": "Avi Load Balancer",
             "steps": [
-                "Upgrade NSX Advanced Load Balancer to compatible version - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer/32-1/vmware-avi-load-balancer-administration-guide/nsx-advanced-load-balancer-controller-operations/upgrade-and-patches/upgrade-guide.html' target='_blank'>View Documentation</a>)."
+                "Upgrade Avi Load Balancer to compatible version - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer/32-1/vmware-avi-load-balancer-administration-guide/nsx-advanced-load-balancer-controller-operations/upgrade-and-patches/upgrade-guide.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "hcx": {
@@ -369,7 +374,7 @@
             ]
         },
         "nsx": {
-            "name": "NSX",
+            "name": "NSX Local Managers",
             "steps": [
                 "Upgrade NSX Local Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/checklist-for-upgrading-nsx.html' target='_blank'>View Documentation</a>)."
             ],
@@ -443,6 +448,47 @@
                     ]
                 }
             ]
+        },
+        "license_hub": {
+        "name": "VMware vDefend Distributed Firewall/Avi Load Balancer License Hub",
+        "tables": [
+            {
+            "title": "Required Network Configuration license hub",
+            "description": "Prepare the following IP addresses and DNS entries before deployment:",
+            "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+            "rows": [
+                ["Controller", "4", "0", "N/A"],
+                ["Worker", "4", "0", "N/A"]
+                ]
+            },
+            {
+            "title": "Required Component Sizes license hub",
+            "description": "Size requirements for all nodes license hub",
+            "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+            "rows": [
+                ["Installer", "Default", "1", "4", "6gb", "400gb"],
+                ["License Hub Controller", "Default", "1", "2", "8gb", "155gb"],
+                ["License Hub Worker", "Default", "1", "4", "16gb", "255gb"],
+                ["Content library", "Default", "N/A", "N/A", "N/A", "50gb"],
+                ["Persistent Volume Claim (PVC)", "Default", "N/A", "N/A", "N/A", "50gb"]
+                ]
+            }
+        ],
+        "notices": [
+            {
+            "type": "info",
+            "title": "IP Requirements",
+            "bullets": [
+                "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
+                "Node IP pool: 4 contiguous IP addresses",
+                "Service IP pool: 4 contiguous IP addresses"
+            ]
+            }
+        ],
+        "steps": [
+            "Deploy license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/security-services-platform/5-1/licensing-overview/deploying-license-hub.html' target='_blank'>View Documentation</a>).",
+            "Details of license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/security-modernization/vdefend-lateral-security/security-services-platform-for-vmware-cloud-foundation/license-hub-for-vdefend-and-avi/license-hub-for-vmware-vdefend-and-vmware-avi-load-balancer.html' target='_blank'>View Documentation</a>)."
+        ]
         }
     }
 }

@@ -1291,6 +1291,11 @@
                     return;
                 }
 
+                // Hide vDefend if NSX was not selected on the index page
+                if (product.id === 'vdefend' && localStorage.getItem('nsx-selected') !== 'true') {
+                    return;
+                }
+
                 // Hide pre_infrastructure products when all components are already on 9.1.x
                 // (SRM, vSphere Replication, Avi, HCX must be upgraded before vCenter/ESX — already done)
                 if (allOn91 && product.upgrade_phase === 'pre_infrastructure') {
@@ -1636,7 +1641,7 @@
             allPhases = phases;
             
             // Group phases into steps
-            const steps = groupPhasesIntoSteps(phases);
+            const steps = groupPhasesIntoSteps(phases, selectedProducts);
             console.log('Steps created:', steps.length);
             console.log('Steps array:', steps.map(s => s.title));
             allSteps = steps;
@@ -1670,7 +1675,8 @@
             }
         }
         
-        function groupPhasesIntoSteps(phases) {
+        function groupPhasesIntoSteps(phases, selectedProducts) {
+            selectedProducts = selectedProducts || window.selectedAdvancedProducts || {};
             const steps = [];
             
             // Categorize phases based on new order:
@@ -1784,10 +1790,15 @@
             }
             
             if (aviPhases.length > 0) {
+                // Always attach License Hub to AVI step when AVI is selected
+                const _lhDataAvi = upgradeData.components['license_hub'];
+                if (_lhDataAvi) {
+                    aviPhases.push({ number: aviPhases.length + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataAvi, componentId: 'license_hub' });
+                }
                 steps.push({
                     number: steps.length + 1,
-                    title: 'AVI (NSX ALB)',
-                    description: 'Upgrade AVI (NSX Advanced Load Balancer)',
+                    title: 'Upgrade Avi Load Balancer & Deploy License Hub',
+                    description: 'Upgrade Avi Load Balancer and Deploy License Hub',
                     phases: aviPhases
                 });
             }
@@ -1860,11 +1871,21 @@
                 }
                 
                 if (nsxPhases.length > 0) {
+                    // Inject License Hub into NSX step only when vDefend selected AND AVI not selected
+                    // (if AVI selected, License Hub already appears under the AVI step)
+                    const _vdefendOnly = selectedProducts['vdefend'] === true && aviPhases.length === 0;
+                    const _nsxPhasesCombined = [...nsxPhases];
+                    if (_vdefendOnly) {
+                        const _lhDataNsx = upgradeData.components['license_hub'];
+                        if (_lhDataNsx) {
+                            _nsxPhasesCombined.push({ number: _nsxPhasesCombined.length + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataNsx, componentId: 'license_hub' });
+                        }
+                    }
                     steps.push({
                         number: steps.length + 1,
-                        title: 'NSX Upgrade',
-                        description: 'Upgrade NSX networking components',
-                        phases: nsxPhases
+                        title: _vdefendOnly ? 'Upgrade NSX Local Managers & Deploy License Hub' : 'Upgrade NSX Local Managers',
+                        description: _vdefendOnly ? 'Deploy License Hub' : 'Upgrade NSX Local Managers',
+                        phases: _nsxPhasesCombined
                     });
                 }
 

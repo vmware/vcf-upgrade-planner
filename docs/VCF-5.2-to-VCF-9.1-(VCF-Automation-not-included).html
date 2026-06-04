@@ -1574,7 +1574,26 @@
             // Group Replication + SRM together, keep AVI and HCX separate
             const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'replication' || p.componentId === 'srm');
             const aviPhases = optionalPreInfraPhases.filter(p => p.componentId === 'avi');
+            // Inject License Hub as last sub-step of AVI when AVI is selected
+            if (aviPhases.length > 0) {
+                const _lhData = upgradeData.components['license_hub'];
+                if (_lhData) aviPhases.push({ number: 9999, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhData, componentId: 'license_hub' });
+                // Renumber sequentially so Step labels display correctly
+                aviPhases.forEach((p, i) => { p.number = i + 1; });
+            }
             const hcxPhases = optionalPreInfraPhases.filter(p => p.componentId === 'hcx');
+            
+            // Inject License Hub into NSX only when vDefend selected AND AVI not selected
+            const _selProds = window.selectedAdvancedProducts || {};
+            const _aviWasSelected = optionalPreInfraPhases.some(p => p.componentId === 'avi');
+            if (nsxPhases.length > 0 && _selProds['vdefend'] === true && !_aviWasSelected) {
+                const _lhData = upgradeData.components['license_hub'];
+                if (_lhData) {
+                    nsxPhases.push({ number: 9999, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhData, componentId: 'license_hub' });
+                    // Renumber sequentially so Step labels display correctly
+                    nsxPhases.forEach((p, i) => { p.number = i + 1; });
+                }
+            }
             
             // Create a map of component groups to their step definitions
             const stepDefinitions = {
@@ -1585,8 +1604,8 @@
                 },
                 'avi': {
                     phases: aviPhases,
-                    title: aviPhases.length > 0 ? aviPhases[0].title : 'NSX Advanced Load Balancer',
-                    description: aviPhases.length > 0 ? aviPhases[0].description : 'Upgrade NSX ALB (AVI)'
+                    title: aviPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade Avi Load Balancer & Deploy License Hub' : (aviPhases.length > 0 ? aviPhases[0].title : 'Upgrade Avi Load Balancer'),
+                    description: aviPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade Avi Load Balancer and Deploy License Hub' : (aviPhases.length > 0 ? aviPhases[0].description : 'Upgrade Avi Load Balancer')
                 },
                 'hcx': {
                     phases: hcxPhases,
@@ -1615,8 +1634,8 @@
 
                 'nsx': {
                     phases: nsxPhases,
-                    title: 'NSX Local Manager Upgrade',
-                    description: 'Upgrade NSX'
+                    title: nsxPhases.some(p => p.componentId === 'license_hub') ? 'NSX Local Manager Upgrade & Deploy License Hub' : 'NSX Local Manager Upgrade',
+                    description: nsxPhases.some(p => p.componentId === 'license_hub') ? 'NSX Local Manager Upgrade and Deploy License Hub' : 'NSX Local Manager Upgrade'
                 },
                 'vcenter': {
                     phases: vcenterPhases,

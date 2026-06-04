@@ -1545,14 +1545,26 @@
                 });
             }
 
-            if (aviPhases.length > 0) {
+             if (aviPhases.length > 0) {
+                const combinedAviPhases = [...aviPhases];
+                const licenseHubData = upgradeData.components['license_hub'];
+                if (licenseHubData) {
+                    combinedAviPhases.push({
+                        number: Math.max(0, ...combinedAviPhases.map(p => p.number)) + 1,
+                        title: 'Deploy License Hub',
+                        description: 'Deploy License Hub',
+                        data: licenseHubData,
+                        componentId: 'license_hub'
+                    });
+                }
                 steps.push({
                     number: steps.length + 1,
-                    title: 'AVI (NSX ALB)',
-                    description: 'Upgrade AVI (NSX Advanced Load Balancer)',
-                    phases: aviPhases
+                    title: combinedAviPhases.some(p => p.componentId === 'license_hub') ? 'AVI (NSX ALB) & Deploy License Hub' : 'Upgrade Avi Load Balancer',
+                    description: combinedAviPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade AVI (NSX Advanced Load Balancer) and Deploy License Hub' : 'Upgrade Avi Load Balancer',
+                    phases: combinedAviPhases
                 });
             }
+
 
             if (operationsPhases.length > 0) {
                 // Always attach License Server to the Operations step
