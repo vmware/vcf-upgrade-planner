@@ -17,6 +17,7 @@
         "supervisor",
         "vsan_witness",
         "esx",
+        "nsx_edge",
         "operations_orchestrator",
         "logs",
         "network",
@@ -109,6 +110,11 @@
         {
             "id": "vsan_data_protection",
             "display_name": "vSAN Data Protection",
+            "category":"advanced"
+        },
+        {
+            "id": "nsx_edge",
+            "display_name": "NSX Edge Node(s)",
             "category":"advanced"
         }
     ],
@@ -458,6 +464,8 @@
                         "This step converts your vSphere environment to VCF 9.1",
                         "This path does NOT include VCF Automation deployment",
                         "Minimum 12 IP addresses required for deployment.",
+                        "Appliance Sizes can be adjusted using API call to do Convert - All Guidance is provided in link (<a href='https://developer.broadcom.com/xapis/vcf-installer-api/latest/v1/sddcs/post/' target='_blank'>View Documentation</a>).",
+                        "VCF Management Service IP Address Options - All Guidance is provided in link (<a href='https://williamlam.com/2026/05/vcf-9-1-additional-ip-allocation-options-for-vcf-management-services-vcfms-in-vcf-installer-and-sddc-manager.html' target='_blank'>View Documentation</a>).",
                     {
                     "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
                         "sub_bullets": [
@@ -659,6 +667,9 @@
                         "This step converts your vSphere environment to VCF 9.1",
                         "This path does NOT include VCF Automation deployment",
                         "Minimum 12 IP addresses required for deployment.",
+                        "Appliance Sizes can be adjusted using API call to do Convert - All Guidance is provided in link (<a href='https://developer.broadcom.com/xapis/vcf-installer-api/latest/v1/sddcs/post/' target='_blank'>View Documentation</a>).",
+                        "VCF Management Service IP Address Options - All Guidance is provided in link (<a href='https://williamlam.com/2026/05/vcf-9-1-additional-ip-allocation-options-for-vcf-management-services-vcfms-in-vcf-installer-and-sddc-manager.html' target='_blank'>View Documentation</a>).",
+
                     {
                     "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
                         "sub_bullets": [
@@ -889,6 +900,12 @@
       "steps": [
         "Upgrade vSAN File Service to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
       ]
+    },
+    "nsx_edge": {
+        "name": "NSX Edge/NSX Finalize",
+        "steps":[
+            "Finalize NSX to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
+        ]
     }
     }
 }

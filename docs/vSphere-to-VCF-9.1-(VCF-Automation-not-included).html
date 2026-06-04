@@ -1287,7 +1287,7 @@
             upgradeData.optional_products.forEach(product => {
 
                 // Hide NSX Federation if NSX was not selected on the index page
-                if (product.id === 'nsx_federation' && localStorage.getItem('nsx-selected') !== 'true') {
+                if (product.id === 'nsx_federation' || product.id === 'nsx_edge' && localStorage.getItem('nsx-selected') !== 'true') {
                     return;
                 }
 
@@ -1612,6 +1612,16 @@
                     shouldInclude = esxVersion !== '9.1.x';
                     phaseTitle = componentData ? componentData.name : 'ESX Hosts';
                     phaseDescription = 'Upgrade ' + phaseTitle;
+                } else if (componentId === 'nsx_edge') {
+                    // NSX Edge/Finalize always included after ESX
+                    // Title and description depend on whether NSX Edge Nodes checkbox is selected
+                    shouldInclude = nsxSelected;
+                    phaseTitle = selectedProducts['nsx_edge'] === true
+                        ? 'NSX Edge & NSX Finalize'
+                        : 'NSX Finalize';
+                    phaseDescription = selectedProducts['nsx_edge'] === true
+                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
+                        : 'Finalize NSX upgrade';
                 } else {
                     // All other components (advanced products) - check if selected
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1704,6 +1714,7 @@
             const supervisorPhases = [];
             const witnessPhases = [];
             const esxPhases = [];
+            const nsxEdgePhases = [];
             const advancedPhases = [];
             const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
@@ -1747,6 +1758,8 @@
                     supervisorPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
+                } else if (phase.componentId === 'nsx_edge') {
+                    nsxEdgePhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
                     vsan_file_servicePhases.push(phase);
                 } else if (isPostInfraOptional) {
@@ -1770,6 +1783,7 @@
             supervisorPhases.sort((a, b) => a.number - b.number);
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
+            nsxEdgePhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
             operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             vsan_file_servicePhases.sort((a, b) => a.number - b.number);
@@ -2029,6 +2043,18 @@
                     title: 'ESX Hosts',
                     description: 'Upgrade ESX host infrastructure',
                     phases: esxPhases
+                });
+            }
+
+            if (nsxEdgePhases.length > 0) {
+                const _nsxEdgeSelected = selectedProducts['nsx_edge'] === true;
+                steps.push({
+                    number: steps.length + 1,
+                    title: _nsxEdgeSelected ? 'NSX Edge & NSX Finalize' : 'NSX Finalize',
+                    description: _nsxEdgeSelected
+                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
+                        : 'Finalize NSX upgrade',
+                    phases: nsxEdgePhases
                 });
             }
 

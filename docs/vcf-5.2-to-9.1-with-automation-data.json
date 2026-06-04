@@ -20,6 +20,7 @@
     "vsan_witness",
     "vxrail",
     "esx",
+    "nsx_edge",
     "vidm",
     "logs",
     "elm",
@@ -43,6 +44,7 @@
     "vsan_witness",
     "vxrail",
     "esx",
+    "nsx_edge",
     "automation",
     "vcd",
     "operations_orchestrator",
@@ -138,7 +140,12 @@
       "display_name": "vSAN Data Protection",
       "category":"advanced",
       "upgrade_phase": "pre_infrastructure"
-    }   
+    },
+    {
+      "id": "nsx_edge",
+      "display_name": "NSX Edge Node(s)",
+      "category":"advanced"
+    }     
   ],
   "components": {
     "vcenter": {
@@ -815,6 +822,12 @@
       "steps": [
         "Upgrade vSAN File Service to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
       ]
+    },
+    "nsx_edge": {
+      "name": "NSX Edge/NSX Finalize",
+      "steps":[
+            "Finalize NSX to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
+        ]
     }
   }
 }

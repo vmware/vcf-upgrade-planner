@@ -17,6 +17,11 @@ OUTPUT_FILE = 'docs_inline.js'
 MAX_CONTENT_SIZE = 100000  # 100KB per doc
 MAX_DEEP_URLS = 1000 # Max sub-pages to deep-scrape per run
 
+# Manual URLs — add any external links here that are not referenced in the JSON files
+MANUAL_URLS = [
+    'https://williamlam.com/2026/05/vcf-9-1-additional-ip-allocation-options-for-vcf-management-services-vcfms-in-vcf-installer-and-sddc-manager.html',
+]
+
 def extract_urls_from_json(json_path):
     """Extract all documentation URLs from the JSON data file"""
     print(f"📖 Reading {json_path}...")
@@ -70,6 +75,14 @@ def scrape_documentation(url):
             main_content = (
                 soup.find('div', class_=re.compile(r'wolken-content-container')) or
                 soup.find('div', class_=re.compile(r'article-container')) or
+                soup.find('main')
+            )
+        elif 'williamlam.com' in url:
+            # William Lam's blog: post body is in .post or .entry-content
+            main_content = (
+                soup.find('div', class_=re.compile(r'entry-content|post-body|post-content')) or
+                soup.find('article') or
+                soup.find('div', class_=re.compile(r'post')) or
                 soup.find('main')
             )
         else:
@@ -283,6 +296,13 @@ def main():
         else:
             print(f"\n⚠️  {json_file} not found, skipping...")
     
+    # Merge manually specified URLs
+    if MANUAL_URLS:
+        before = len(all_urls)
+        all_urls.update(MANUAL_URLS)
+        added = len(all_urls) - before
+        print(f"\n📌 Added {added} manual URL(s) from MANUAL_URLS list")
+
     urls = sorted(all_urls)
     print(f"\n📊 Total unique URLs from all files: {len(urls)}")
     

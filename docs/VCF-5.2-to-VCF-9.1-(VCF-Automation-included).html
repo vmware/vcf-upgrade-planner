@@ -1448,6 +1448,15 @@
                     phaseTitle = componentData ? componentData.name : componentId;
                     //phaseDescription = componentData ? componentData.description : 'Upgrade ' + phaseTitle;
                     phaseDescription = 'Upgrade ' + phaseTitle;
+                } else if (componentId === 'nsx_edge') {
+                    // Always included — title depends on whether NSX Edge Nodes checkbox is selected
+                    shouldInclude = true;
+                    phaseTitle = selectedProducts['nsx_edge'] === true
+                        ? 'NSX Edge & NSX Finalize'
+                        : 'NSX Finalize';
+                    phaseDescription = selectedProducts['nsx_edge'] === true
+                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
+                        : 'Finalize NSX upgrade';
                 } else if (componentId === 'logs') {
                     // Logs is a fresh install, not an upgrade
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1565,6 +1574,7 @@
             const vcdPhases = [];
             const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
+            const nsx_edgePhases = [];
 
             
             phases.forEach(phase => {
@@ -1598,6 +1608,8 @@
                     elmPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
+                } else if (phase.componentId === 'nsx_edge') {
+                    nsx_edgePhases.push(phase);
                 } else if (phase.componentId === 'automation' || phase.componentId === 'automation_install') {
                     automationPhases.push(phase);
                 } else if (phase.componentId === 'operations_orchestrator') {
@@ -1728,6 +1740,15 @@
                     title: 'ESX Hosts',
                     description: 'Upgrade ESX host infrastructure'
                 },
+                'nsx_edge': {
+                    phases: nsx_edgePhases,
+                    title: (window.selectedAdvancedProducts || {})['nsx_edge'] === true
+                        ? 'NSX Edge & NSX Finalize'
+                        : 'NSX Finalize',
+                    description: (window.selectedAdvancedProducts || {})['nsx_edge'] === true
+                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
+                        : 'Finalize NSX upgrade'
+                },
                 'automation': {
                     phases: automationPhases,
                     title: window.automationIsUpgrade ? 'VCF Automation Upgrade' : 'VCF Automation Install'
@@ -1796,7 +1817,8 @@
                 'elm': 'elm',
                 'vcd': 'vcd',
                 'operations_orchestrator': 'operations_orchestrator',
-                'vsan_file_service': 'vsan_file_service'
+                'vsan_file_service': 'vsan_file_service',
+                'nsx_edge': 'nsx_edge'
             };
             
             // Track which step groups have been added

@@ -1486,7 +1486,16 @@
                     phaseTitle = componentData ? componentData.name : componentId;
                     //phaseDescription = componentData ? componentData.description : 'Upgrade ' + phaseTitle;
                     phaseDescription = 'Upgrade ' + phaseTitle;
-                }  else if (componentId === 'logs') {
+                } else if (componentId === 'nsx_edge') {
+                    // Always included — title depends on whether NSX Edge Nodes checkbox is selected
+                    shouldInclude = true;
+                    phaseTitle = selectedProducts['nsx_edge'] === true
+                        ? 'NSX Edge & NSX Finalize'
+                        : 'NSX Finalize';
+                    phaseDescription = selectedProducts['nsx_edge'] === true
+                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
+                        : 'Finalize NSX upgrade';
+                } else if (componentId === 'logs') {
                     // Logs is a fresh install, not an upgrade
                     shouldInclude = selectedProducts[componentId] === true;
                     phaseTitle = componentData ? componentData.name : componentId;
@@ -1644,6 +1653,7 @@
             const supervisorPhases = [];
             const witnessPhases = [];
             const esxPhases = [];
+            const nsx_edgePhases = [];
             const automationPhases = [];
             const networkPhases = [];
             const advancedPhases = [];
@@ -1680,6 +1690,8 @@
                     vxrailPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
+                } else if (phase.componentId === 'nsx_edge') {
+                    nsx_edgePhases.push(phase);
                 } else if (phase.componentId === 'automation') {
                     automationPhases.push(phase);
                 } else if (phase.componentId === 'operations_orchestrator') {
@@ -1706,6 +1718,7 @@
             supervisorPhases.sort((a, b) => a.number - b.number);
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
+            nsx_edgePhases.sort((a, b) => a.number - b.number);
             automationPhases.sort((a, b) => a.number - b.number);
             networkPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
@@ -1800,6 +1813,15 @@
                     title: 'ESX Hosts',
                     description: 'Upgrade ESX host infrastructure'
                 },
+                'nsx_edge': {
+                    phases: nsx_edgePhases,
+                    title: (window.selectedAdvancedProducts || {})['nsx_edge'] === true
+                        ? 'NSX Edge & NSX Finalize'
+                        : 'NSX Finalize',
+                    description: (window.selectedAdvancedProducts || {})['nsx_edge'] === true
+                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
+                        : 'Finalize NSX upgrade'
+                },
                 'automation': {
                     phases: automationPhases,
                     title: 'Automation Deployment',
@@ -1854,7 +1876,9 @@
                 'vcfms': 'vcfms',
                 'vidb': 'vidb',
                 'operations_orchestrator': 'operations_orchestrator',
-                'vsan_file_service': 'vsan_file_service'
+                'vsan_file_service': 'vsan_file_service',
+                'nsx_edge': 'nsx_edge'
+
             };
             
             // Track which step groups have been added
