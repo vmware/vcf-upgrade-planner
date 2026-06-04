@@ -3,6 +3,7 @@
         "operations",
         "replication",
         "srm",
+        "vsan_data_protection",
         "avi",
         "sddc_manager",
         "vcfms",
@@ -17,7 +18,8 @@
         "vsan_witness",
         "esx",
         "vxrail",
-        "logs"
+        "logs",
+        "vsan_file_service"
     ],
     "optional_products": [
         {
@@ -89,7 +91,18 @@
             "id": "operations_orchestrator",
             "display_name": "VMware Aria Automation Orchestrator (VMware Orchestrator)",
             "category":"advanced"
-        } 
+        },
+        {
+            "id": "vsan_file_service",
+            "display_name": "vSAN File Service",
+            "category":"advanced"
+        },
+        {
+            "id": "vsan_data_protection",
+            "display_name": "vSAN Data Protection",
+            "category":"advanced",
+            "upgrade_phase": "pre_infrastructure"
+         }  
     ],
     "components": {
         "vcenter": {
@@ -101,9 +114,11 @@
         "esx": {
             "name": "ESX",
             "steps": [
-              "All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-esxi-for-vmware-cloud-foundation-5-2-1.html' target='_blank'>View Documentation</a>).",
-              "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
-             "(Optional) Upgrade vSAN On-Disk Format Versions - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-on-disk-format-versions.html' target='_blank'>View Documentation</a>)."            
+             "Upgrade ESX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/esx-upgrade.html' target='_blank'>View Documentation</a>).",
+             "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
+             "Upgrade VMware Tools - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vmtools_001&appid=vmtools-13-1&language=&format=rendered' target='_blank'>View Documentation</a>).",
+             "Virtual machines compatibility - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vsphclient_076&appid=vsphere-9-1&language=&format=rendered' target='_blank'>View Documentation</a>).",
+             "(Optional) Upgrade vSAN On-Disk Format Versions - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-on-disk-format-versions.html' target='_blank'>View Documentation</a>)."
              ],
             "notices": [
                 {
@@ -514,8 +529,20 @@
             }
         ],
         "steps": [
-            "Upgrade VCF Operations Orchestrator - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
+            "Upgrade VCF Operations Orchestrator to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
         ]
-       }
+    },
+    "vsan_data_protection": {
+    "name": "vSAN Data Protection",
+    "steps": [
+        "Upgrade vSAN Data Protection to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade/upgrading-srm.html' target='_blank'>View Documentation</a>)."      
+      ]
+    },
+    "vsan_file_service": {
+    "name": "vSAN File Service",
+    "steps": [
+        "Upgrade vSAN File Service to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
+      ]
+    }
     }
 }

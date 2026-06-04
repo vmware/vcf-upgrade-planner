@@ -1490,6 +1490,7 @@
             const vxrailPhases = [];
             const advancedPhases = [];
             const operations_orchestratorPhases = [];
+            const vsan_file_servicePhases = [];
 
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1497,7 +1498,7 @@
 
                 if (phase.componentId === 'vcenter_esx_prereq' || phase.componentId === 'operations_prereq') {
                     prereqPhases.push(phase);
-                } else if (phase.componentId === 'replication' || phase.componentId === 'srm') {
+                } else if (phase.componentId === 'replication' || phase.componentId === 'srm' || phase.componentId === 'vsan_data_protection') {
                     drPhases.push(phase);
                 } else if (phase.componentId === 'avi') {
                     aviPhases.push(phase);
@@ -1519,6 +1520,8 @@
                     vxrailPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
+                } else if (phase.componentId === 'vsan_file_service') {
+                    vsan_file_servicePhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 }
@@ -1671,6 +1674,15 @@
                     title: 'Post-Infrastructure Products',
                     description: 'Upgrade additional products (Operations for Logs, Operations for Networks)',
                     phases: advancedPhases
+                });
+            }
+
+            if (vsan_file_servicePhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'vSAN File Service',
+                    description: 'Upgrade vSAN File Service',
+                    phases: vsan_file_servicePhases
                 });
             }
 

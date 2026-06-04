@@ -1706,6 +1706,7 @@
             const esxPhases = [];
             const advancedPhases = [];
             const operations_orchestratorPhases = [];
+            const vsan_file_servicePhases = [];
             
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1716,7 +1717,7 @@
                     prereqPhases.push(phase);
                 } else if (phase.componentId === 'operations') {
                     operationsPhases.push(phase);
-                } else if(phase.componentId === 'replication' || phase.componentId === 'srm') {
+                } else if(phase.componentId === 'replication' || phase.componentId === 'srm' || phase.componentId === 'vsan_data_protection') {
                     drPhases.push(phase);
                 } else if (phase.componentId === 'avi') {
                     aviPhases.push(phase);
@@ -1746,6 +1747,8 @@
                     supervisorPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
+                } else if (phase.componentId === 'vsan_file_service') {
+                    vsan_file_servicePhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 }
@@ -1769,7 +1772,8 @@
             esxPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
             operations_orchestratorPhases.sort((a, b) => a.number - b.number);
-            
+            vsan_file_servicePhases.sort((a, b) => a.number - b.number);
+
             // Build steps in correct order
             // Determine if any pre-req upgrades are present
             const hasPrereqs = prereqPhases.length > 0;
@@ -2037,6 +2041,15 @@
                 });
             }
             
+            if (vsan_file_servicePhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'vSAN File Service',
+                    description: 'Upgrade vSAN File Service',
+                    phases: vsan_file_servicePhases
+                });
+            }
+
             if (advancedPhases.length > 0) {
                 steps.push({
                     number: steps.length + 1,

@@ -1507,6 +1507,7 @@
             const vidmPhases =[];
             const vxrailPhases = [];
             const operations_orchestratorPhases = [];
+            const vsan_file_servicePhases = [];
 
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1549,6 +1550,8 @@
                     networkPhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
+                } else if (phase.componentId === 'vsan_file_service') {
+                    vsan_file_servicePhases.push(phase);
                 }
             });
             
@@ -1571,10 +1574,11 @@
             vidmPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
             operations_orchestratorPhases.sort((a, b) => a.number - b.number);
+            vsan_file_servicePhases.sort((a, b) => a.number - b.number);
 
             // Build steps in the order defined by currentOrder (dynamic based on NSX selection)
             // Group Replication + SRM together, keep AVI and HCX separate
-            const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'replication' || p.componentId === 'srm');
+            const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'replication' || p.componentId === 'srm' || p.componentId == 'vsan_data_protection');
             const aviPhases = optionalPreInfraPhases.filter(p => p.componentId === 'avi');
             // Inject License Hub as last sub-step of AVI when AVI is selected
             if (aviPhases.length > 0) {
@@ -1602,7 +1606,7 @@
                 'drProducts': {
                     phases: replicationPhases,
                     title: 'Disaster Recovery Products',
-                    description: 'Upgrade vSphere Replication and Site Recovery Manager'
+                    description: 'Upgrade vSphere Replication, Site Recovery Manager or vSAN Data Protection'
                 },
                 'avi': {
                     phases: aviPhases,
@@ -1700,6 +1704,11 @@
                     phases: elmPhases,
                     title: 'ELM Breakage on SDDC Manager',
                     description: 'Break ELM on SDDC manager pre step to set up Identity Broker'
+                },
+                'vsan_file_service': {
+                    phases: vsan_file_servicePhases,
+                    title: 'vSAN File Service',
+                    description: 'Upgrade vSAN File Services'
                 }
             };
             
@@ -1707,6 +1716,7 @@
             const componentToStepGroup = {
                 'replication': 'drProducts',
                 'srm': 'drProducts',
+                'vsan_data_protection': 'drProducts',
                 'avi': 'avi',
                 'hcx': 'hcx',
                 'operations': 'operations',
@@ -1725,7 +1735,8 @@
                 'vcfms': 'vcfms',
                 'elm': 'elm',
                 'vidm': 'vidm',
-                'operations_orchestrator': 'operations_orchestrator'
+                'operations_orchestrator': 'operations_orchestrator',
+                'vsan_file_service': 'vsan_file_service'
             };
             
             // Track which step groups have been added
