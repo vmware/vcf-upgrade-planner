@@ -1,7 +1,6 @@
 {
   "upgrade_order": [
     "operations",
-    "license",
     "replication",
     "srm",
     "avi",
@@ -24,7 +23,6 @@
   ],
   "install_order": [
     "operations",
-    "license",
     "replication",
     "srm",
     "avi",
@@ -170,6 +168,15 @@
     },
     "operations": {
       "name": "VCF Operations Upgrade",
+      "notices": [
+                {
+                    "type": "info",
+                    "title": "VCF Operations Licensing",
+                    "bullets": [
+                        "VCF Operations need to be licensed within 90 days of upgrade. License Server is deployed during the VCF Management Services deployment."
+                    ]
+                }
+      ],
       "tables": [
                 {
                     "title": "Required Network Configuration",
@@ -196,6 +203,15 @@
     },
     "operations_install": {
       "name": "VCF Operations Installation",
+      "notices": [
+                {
+                    "type": "info",
+                    "title": "VCF Operations Licensing",
+                    "bullets": [
+                        "VCF Operations need to be licensed within 90 days of upgrade. License Server is deployed during the VCF Management Services deployment."
+                    ]
+                }
+      ],
       "tables": [
       {
           "title": "Required Network Configuration",
@@ -392,7 +408,8 @@
             ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance component service", "1", "1", "vcfins.rainpole.io"],
             ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]          
+            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
+            ["License server", "1", "1", "vcflic.rainpole.io"]          
           ]
         },
         {
@@ -400,7 +417,8 @@
           "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management service Nodes", "Small", "4", "12", "24gb", "3,000gb"]
+            ["VCF management service Nodes", "Small", "4", "12", "24gb", "3,000gb"],
+            ["License server", "Small", "1", "2", "4gb", "12gb"]
           ]
         }
       ],
@@ -414,7 +432,8 @@
             ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance component service", "1", "1", "vcfins.rainpole.io"],
             ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]   
+            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
+            ["License server", "1", "1", "vcflic.rainpole.io"]       
           ]
         },
         {
@@ -422,7 +441,8 @@
           "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management service Nodes", "Medium", "6", "84", "174gb", "3,600gb"]          
+            ["VCF management service Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+            ["License server", "Small", "1", "2", "4gb", "12gb"]         
           ]
         }
       ],
@@ -436,7 +456,8 @@
             ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
             ["Instance component service", "1", "1", "vcfins.rainpole.io"],
             ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
+            ["License server", "1", "1", "vcflic.rainpole.io"]
           ]
         },
         {
@@ -444,7 +465,8 @@
           "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management service Nodes", "Large", "7", "120", "234gb", "4,402gb"]          
+            ["VCF management service Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+            ["License server", "Small", "1", "2", "4gb", "12gb"]          
           ]
         }
       ]

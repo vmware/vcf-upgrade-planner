@@ -219,11 +219,13 @@
             "notices": [
                 {
                     "type": "info",
-                    "title": "Upgrade Options when having multiple VCFOperations",
+                    "title": "Upgrade Options when having multiple VCF Operations",
                     "bullets": [
                         "Multiple VCF Fleets",
                         "Consolidate to one Instance",
-                        "Upgrade Operations as a Monitoring Only Instance"
+                        "Upgrade Operations as a Monitoring Only Instance",
+                        "VCF Operations need to be licensed within 90 days of upgrade. License Server is deployed during the converge step."
+
                     ]
                 }
             ]

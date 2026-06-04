@@ -1,7 +1,6 @@
 {
     "upgrade_order": [
         "operations",
-        "license",
         "replication",
         "srm",
         "avi",
@@ -22,7 +21,6 @@
     ],
     "install_order": [
     "operations",
-    "license",
     "replication",
     "srm",
     "avi",
@@ -157,7 +155,8 @@
                     "title": "VCF Operations Information",
                     "bullets": [
                         "Decommissioning of the 9.0 Fleet Management Appliance: VCF 9.1 completely replaces the standalone Fleet Management Appliance introduced in version 9.0. It is replaced with two new services—Fleet Lifecycle and SDDC Lifecycle—which run natively within VCF management services. The Fleet Management appliance is powered down and ready to be decommissioned.",
-                    {
+                        "VCF Operations need to be licensed within 90 days of upgrade. License Server is deployed during the VCF Management Services deployment."
+                    ,{
                     "text": "Common Known Issues:",
                         "sub_bullets": [
                         "When attempting to upgrade to VMware Cloud Foundation (VCF) 9.1, users may find that while the version 9.1 option is available in the SDDC Manager Binary Management dropdown menu, no binaries are displayed for any category (Upgrade, Patch, or Install) - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440282' target='_blank'>View Documentation</a>).",
@@ -346,7 +345,9 @@
                     ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                     ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                     ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-                    ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                    ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                    ["License Server", "1", "1", "vcflic.rainpole.io"]
+
                     ]
                 },
                 {
@@ -355,7 +356,8 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
                         ["VCF management services Nodes", "Small", "4", "12", "24gb", "3,000gb"],
-                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"]
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License Server", "Small", "1", "2", "4gb", "12gb"]
                     ]
                 }
             ],
@@ -370,7 +372,8 @@
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License Server", "1", "1", "vcflic.rainpole.io"]
                     ]
                 },
                 {
@@ -379,7 +382,8 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
                         ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
-                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License Server", "Small", "1", "2", "4gb", "12gb"]
                     ]
                 }
             ],
@@ -394,7 +398,8 @@
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"]
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License Server", "1", "1", "vcflic.rainpole.io"]
                     ]
                 },
         {
@@ -403,7 +408,8 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
                         ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
-                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License Server", "Small", "1", "2", "4gb", "12gb"]
                     ]
         }
             ]

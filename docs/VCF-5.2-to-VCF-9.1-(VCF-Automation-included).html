@@ -1368,7 +1368,7 @@
                 let phaseDescription = '';
                 
                 // Define CORE components that are ALWAYS included
-                const coreComponents = ['vcenter', 'sddc_manager', 'nsx', 'operations', 'operations_install', 'automation', 'automation_install', 'license', 'vcfms'];
+                const coreComponents = ['vcenter', 'sddc_manager', 'nsx', 'operations', 'operations_install', 'automation', 'automation_install', 'vcfms'];
                 
                 // Determine if this component should be included based on component type
                 if (componentId === 'operations' || componentId === 'operations_install') {
@@ -1572,9 +1572,7 @@
                     optionalPreInfraPhases.push(phase);
                 } else if (phase.componentId === 'operations') {
                     operationsPhases.push(phase);
-                }else if (phase.componentId === 'license'){
-                    operationsPhases.push(phase);
-                }else if (phase.componentId === 'sddc_manager') {
+                } else if (phase.componentId === 'sddc_manager') {
                     sddcPhases.push(phase);
                 }else if (phase.componentId === 'vcfms') {
                     vcfmsPhases.push(phase);
