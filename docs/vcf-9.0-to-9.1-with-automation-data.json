@@ -451,6 +451,7 @@
                     "type": "info",
                     "title": "VCF Automation Components",
                     "bullets": [
+                        "All 8 IP addresses must reside on the same network where your current Automation nodes are deployed.",
                         "The FQDN from the existing Automation instance is automatically transferred as VCF Automation FQDN of the 9.1 instance.",
                         "If your existing Automation instance uses an external load balancer, no changes in its configuration are required.",
                         "VCF Automation 9.0.x IP addresses of the existing nodes are freed after the upgrade."
@@ -471,7 +472,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation Node(s) IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
             ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -491,7 +492,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation Node(s) IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
             ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -511,7 +512,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation Node(s) IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
             ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
