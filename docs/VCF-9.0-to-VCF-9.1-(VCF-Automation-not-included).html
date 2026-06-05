@@ -1105,11 +1105,11 @@
                             }
                             autoGenerateUpgradePlan();
                         })(this)">
-                        <span>Identity Broker (vIDB)</span>
+                        <span>Identity Broker</span>
                     </label>
                 </div>
                 <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
-                    &#x2139;&#xFE0F; <strong>Unchecked</strong> = vIDB not yet deployed &mdash; install is covered as part of VCF Management Services deployment | <strong>Checked + Embedded</strong> = no separate upgrade step; notice added to vCenter phase | <strong>Checked + Not Embedded</strong> =  Appliance Identity Broker upgrade step added
+                    &#x2139;&#xFE0F; <strong>Unchecked</strong> = Identity Broker not yet deployed &mdash; install is covered as part of VCF Management Services deployment | <strong>Checked + Embedded</strong> = no separate upgrade step; notice added to vCenter phase | <strong>Checked + Not Embedded</strong> =  Appliance Identity Broker upgrade step added
                 </p>
                 <!-- Question 1: Is Identity Broker Embedded? -->
                 <div id="vidbEmbeddedQuestion" style="display:none; margin-top:10px; padding:12px 14px; background:var(--bg); border-left:4px solid var(--vmw-blue); border-radius:6px; font-size:0.88rem;">
@@ -1125,7 +1125,7 @@
                 </div>
                 <!-- Question 2: Overlay? (only shown when Not Embedded) -->
                 <div id="vidbOverlayQuestion" style="display:none; margin-top:10px; padding:12px 14px; background:var(--bg); border-left:4px solid var(--vmw-blue); border-radius:6px; font-size:0.88rem;">
-                    <p style="margin:0 0 8px 0; font-weight:600; color:var(--text-primary);">Is vIDB deployed on an NSX Overlay network?</p>
+                    <p style="margin:0 0 8px 0; font-weight:600; color:var(--text-primary);">Is Identity Broker deployed on an NSX Overlay network?</p>
                     <div style="display:flex; gap:16px;">
                         <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
                             <input type="radio" name="vidbOverlay" value="yes" onchange="window.vidbOnOverlay=true; autoGenerateUpgradePlan();"> Yes
@@ -1410,9 +1410,12 @@
                                 console.log('vcfms: key not found, falling back to:', fallback);
                                 if (cloned[fallback]) cloned.tables = cloned[fallback];
                             }
-                            // If vIDB already exists (upgrade path), remove Identity Broker row from VCFMS network table
+                            // Identity Broker FQDN in VCFMS table — three use cases:
+                            // UC1: Not deployed (vidbCheck unchecked) → keep FQDN row; user must supply a new FQDN
+                            // UC2: Deployed Embedded (vidbCheck checked + vidbIsEmbedded true) → keep FQDN row; new FQDN required
+                            // UC3: Deployed Appliance (vidbCheck checked + vidbIsEmbedded false) → remove row; existing FQDN is re-used
                             const _vidbExisting = document.getElementById('vidbCheck') && document.getElementById('vidbCheck').checked;
-                            if (_vidbExisting && cloned.tables) {
+                            if (_vidbExisting && window.vidbIsEmbedded === false && cloned.tables) {
                                 cloned.tables = cloned.tables.map(function(table) {
                                     if (table.rows) {
                                         return Object.assign({}, table, {
@@ -1543,11 +1546,11 @@
                     const _overlayTransitionStep = {
                         number: 1,
                         title: _overlayComponentData.name,
-                        description: 'Move VMware Identity Broker off the NSX Overlay Network to the VCF Management Network before proceeding with any other upgrade steps.',
+                        description: 'Move Identity Broker off the NSX Overlay Network to the VCF Management Network before proceeding with any other upgrade steps.',
                         phases: [{
                             number: 1,
                             title: _overlayComponentData.name,
-                            description: 'Move vIDB off the NSX Overlay to the VCF Management Network.',
+                            description: 'Move Identity Broker off the NSX Overlay to the VCF Management Network.',
                             data: _overlayComponentData,
                             componentId: 'vidb_overlay_transition'
                         }]
@@ -1589,7 +1592,7 @@
                         <div style="font-size: 2rem; margin-bottom: 12px;">&#x26A0;&#xFE0F;</div>
                         <h3 style="color: #856404; margin-bottom: 12px;">Answer Required Before Plan Can Be Generated</h3>
                         <p style="color: #5a4a00; margin-bottom: 8px; font-size: 0.95rem;">
-                            <strong>Identity Broker (vIDB)</strong> is selected as an existing deployment.
+                            <strong>Identity Broker</strong> is selected as an existing deployment.
                         </p>
                         <p style="color: #5a4a00; margin: 0; font-size: 0.95rem;">
                             Please answer the <strong>"Is Identity Broker deployed as Embedded (part of vCenter)?"</strong> question above to generate your upgrade plan.
@@ -1605,10 +1608,10 @@
                         <div style="font-size: 2rem; margin-bottom: 12px;">&#x26A0;&#xFE0F;</div>
                         <h3 style="color: #856404; margin-bottom: 12px;">Answer Required Before Plan Can Be Generated</h3>
                         <p style="color: #5a4a00; margin-bottom: 8px; font-size: 0.95rem;">
-                            <strong>Identity Broker (vIDB)</strong> is configured as a standalone deployment.
+                            <strong>Identity Broker</strong> is configured as a standalone deployment.
                         </p>
                         <p style="color: #5a4a00; margin: 0; font-size: 0.95rem;">
-                            Please answer the <strong>"Is vIDB deployed on an NSX Overlay network?"</strong> question above to generate your upgrade plan.
+                            Please answer the <strong>"Is Identity Broker deployed on an NSX Overlay network?"</strong> question above to generate your upgrade plan.
                         </p>
                     </div>
                 `;
@@ -1834,8 +1837,8 @@
                 },
                  'vidb': {
                     phases: vidbPhases,
-                    title: 'VIDB',
-                    description: 'Upgrade VIDB'
+                    title: 'Identity Broker',
+                    description: 'Upgrade Identity Broker'
                 },
                 'network': {
                     phases: networkPhases,

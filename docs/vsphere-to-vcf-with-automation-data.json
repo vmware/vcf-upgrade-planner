@@ -335,7 +335,7 @@
             ["VCF Operations Nodes", "Medium", "3", "24", "96gb", "822gb"],
             ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
             ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+            ["VCF management services Nodes", "Medium", "9", "84", "174gb", "3,600gb"]
           ]
         }
       ],
@@ -368,7 +368,7 @@
             ["VCF Operations Nodes", "Large", "3", "48", "144gb", "822gb"],
             ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
             ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
+            ["VCF management services Nodes", "Large", "10", "120", "234gb", "4,402gb"]
           ]
         }
       ],
@@ -428,7 +428,7 @@
             ["VCF Operations Nodes", "Medium", "3", "24", "96gb", "822gb"],
             ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
             ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+            ["VCF management services Nodes", "Medium", "9", "84", "174gb", "3,600gb"]
           ]
         }
       ],
@@ -459,7 +459,7 @@
             ["VCF Operations Nodes", "Large", "3", "48", "144gb", "822gb"],
             ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
             ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"]
+            ["VCF management services Nodes", "Large", "10", "120", "234gb", "4,402gb"]
           ]
         }
       ],
@@ -625,7 +625,7 @@
           "rows": [
             ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
             ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+            ["VCF management services Nodes", "Medium", "9", "84", "174gb", "3,600gb"],
             ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
           ]
         }
@@ -654,7 +654,7 @@
           "rows": [
             ["NSX Manager", "Large", "3", "36", "144gb", "900gb"],
             ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+            ["VCF management services Nodes", "Large", "10", "120", "234gb", "4,402gb"],
             ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
           ]
         }
@@ -707,7 +707,7 @@
           "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
           "rows": [
             ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+            ["VCF management services Nodes", "Medium", "9", "84", "174gb", "3,600gb"],
             ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
           ]
         }
@@ -733,7 +733,7 @@
           "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
           "rows": [
             ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+            ["VCF management services Nodes", "Large", "10", "120", "234gb", "4,402gb"],
             ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
           ]
         }

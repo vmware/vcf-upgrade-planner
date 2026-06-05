@@ -378,7 +378,6 @@
                     ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                     ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                     ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-                    ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                     ["License Server", "1", "1", "vcflic.rainpole.io"]
 
                     ]
@@ -389,7 +388,6 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
                         ["VCF management services Nodes", "Small", "4", "12", "24gb", "3,000gb"],
-                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
                         ["License Server", "Small", "1", "2", "4gb", "12gb"]
                     ]
                 }
@@ -405,7 +403,6 @@
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["License Server", "1", "1", "vcflic.rainpole.io"]
                     ]
                 },
@@ -414,8 +411,7 @@
                     "description": "Size requirements for VCF management services nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
-                        ["VCF management services Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
-                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["VCF management services Nodes", "Medium", "9", "84", "174gb", "3,600gb"],
                         ["License Server", "Small", "1", "2", "4gb", "12gb"]
                     ]
                 }
@@ -431,7 +427,6 @@
                         ["Instance component service", "1", "1", "vcfins.rainpole.io"],
                         ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
                         ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
                         ["License Server", "1", "1", "vcflic.rainpole.io"]
                     ]
                 },
@@ -440,8 +435,7 @@
                     "description": "Size requirements for VCF management services nodes",
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
                     "rows": [
-                        ["VCF management services Nodes", "Large", "7", "120", "234gb", "4,402gb"],
-                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["VCF management services Nodes", "Large", "10", "120", "234gb", "4,402gb"],
                         ["License Server", "Small", "1", "2", "4gb", "12gb"]
                     ]
         }
@@ -675,8 +669,8 @@
                     "bullets": [
                         "The VCF upgrade to 9.1 has not yet been initiated. Once VCF Ops is upgraded to 9.1, this option is no longer available.",
                         "If Identity Broker 9.0.x is on a non-mgmt network (regular vlan or NSX overlay) – please contact support for guidance and there will be downtime during the upgrade for VMware Identity Broker and Single Sign-On.",
-                        "A new IP address on the management network allocated for the VIDB.",
-                        "The original VIDB's FQDN and certificates."
+                        "A new IP address on the management network allocated for the Identity Broker.",
+                        "The original Identity Broker FQDN and certificates."
                     ]
                 }
             ],

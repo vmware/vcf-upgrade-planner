@@ -472,7 +472,7 @@
           "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management service Nodes", "Medium", "6", "84", "174gb", "3,600gb"],
+            ["VCF management service Nodes", "Medium", "9", "84", "174gb", "3,600gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"]         
           ]
         }
@@ -496,7 +496,7 @@
           "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management service Nodes", "Large", "7", "120", "234gb", "4,402gb"],
+            ["VCF management service Nodes", "Large", "10", "120", "234gb", "4,402gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"]          
           ]
         }
