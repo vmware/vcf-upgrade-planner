@@ -2058,12 +2058,10 @@
                 }
             }
 
-            var win = window.open('', '_blank', 'width=960,height=700');
-            if (!win) {
-                alert('Pop-up blocked — please allow pop-ups for this page and try again.');
-                return;
-            }
-            win.document.write('<!DOCTYPE html>\n'
+            // Build the print document as a string first, then load it via a
+            // Blob URL — this avoids document.write() and the associated
+            // "DOM text reinterpreted as HTML" security warning.
+            var printHtml = '<!DOCTYPE html>\n'
                 + '<html lang="en"><head><meta charset="utf-8"><title>Upgrade Guide Export</title>'
                 + '<style>'
                 + '*, *::before, *::after { box-sizing: border-box; }'
@@ -2089,10 +2087,18 @@
                 + '</style></head><body>'
                 + diagramSvg
                 + contentHtml
-                + '</body></html>');
-            win.document.close();
+                + '</body></html>';
+
+            var blob = new Blob([printHtml], { type: 'text/html; charset=utf-8' });
+            var blobUrl = URL.createObjectURL(blob);
+            var win = window.open(blobUrl, '_blank', 'width=960,height=700');
+            if (!win) {
+                alert('Pop-up blocked — please allow pop-ups for this page and try again.');
+                URL.revokeObjectURL(blobUrl);
+                return;
+            }
             win.focus();
-            setTimeout(function() { win.print(); win.close(); }, 600);
+            setTimeout(function() { win.print(); win.close(); URL.revokeObjectURL(blobUrl); }, 600);
         }
         function exportStep(stepNumber) {
             const step = allSteps.find(s => s.number === stepNumber);
