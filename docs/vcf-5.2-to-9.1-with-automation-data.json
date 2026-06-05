@@ -103,7 +103,7 @@
     },
     {
       "id": "vidm",
-      "display_name": "VMware Identity Manager(vIDM)",
+      "display_name": "VMware Identity Manager",
       "category": "advanced",
       "upgrade_phase": "post_infrastructure"
     },
@@ -331,9 +331,10 @@
       ]
     },
     "vidm": {
-      "name": "VMware Identity Manager (vIDM)",
+      "name": "VMware Identity Manager",
       "steps": [
-        "Move from VMware Identity Manager(VIDM) to VMware Identity Broker(VIDB) - All Guidance is provided in link (<a href='' target='_blank'>View Documentation</a>)."
+        "Move from VMware Identity Manager to VMware Identity Broker - Deployed of Identity Broker is part of the Management Service deployment",
+        "Migrate from VMware Identity Manager to Identity Broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {

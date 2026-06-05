@@ -21,7 +21,8 @@
         "operations_orchestrator",
         "logs",
         "network",
-        "vsan_file_service"
+        "vsan_file_service",
+        "vidm"
     ],
     "upgrade_order_without_nsx": [
         "operations",
@@ -42,7 +43,8 @@
         "operations_orchestrator",
         "logs",
         "network",
-        "vsan_file_service"
+        "vsan_file_service",
+        "vidm"
     ],
     "optional_products": [
         {
@@ -116,6 +118,12 @@
             "id": "nsx_edge",
             "display_name": "NSX Edge Node(s)",
             "category":"advanced"
+        },
+        {
+            "id": "vidm",
+            "display_name": "VMware Identity Manager",
+            "category": "advanced",
+            "upgrade_phase": "post_infrastructure"
         }
     ],
     "components": {
@@ -906,6 +914,22 @@
         "steps":[
             "Finalize NSX to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
         ]
+    },
+    "vidm": {
+      "name": "VMware Identity Manager",
+      "steps": [
+        "Move from VMware Identity Manager to VMware Identity Broker - Deployed of Identity Broker is part of the Management Service deployment",
+        "Migrate from VMware Identity Manager to Identity Broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "VMware Identity Management",
+          "bullets": [
+            "Will Continue to work and function after products are upgrade to 9.1, there is just no upgrade path"
+          ]
+        }
+      ]
     }
     }
 }

@@ -1718,6 +1718,7 @@
             const advancedPhases = [];
             const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
+            const vidmPhases =[];
             
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1762,6 +1763,8 @@
                     nsxEdgePhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
                     vsan_file_servicePhases.push(phase);
+                } else if (phase.componentId === 'vidm') {
+                    vidmPhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 }
@@ -1787,6 +1790,7 @@
             advancedPhases.sort((a, b) => a.number - b.number);
             operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             vsan_file_servicePhases.sort((a, b) => a.number - b.number);
+            vidmPhases.sort((a, b) => a.number - b.number);
 
             // Build steps in correct order
             // Determine if any pre-req upgrades are present
@@ -2076,6 +2080,15 @@
                 });
             }
 
+            if (vidmPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'VMware Identity Manager Migration',
+                    description: 'Migration from VMware Identity Manager to VMware Identity Broker',
+                    phases: vidmPhases
+                });
+            }
+            
             if (advancedPhases.length > 0) {
                 steps.push({
                     number: steps.length + 1,
