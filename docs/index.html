@@ -634,7 +634,7 @@
                         <input id="vcenterCheck" onchange="toggleDropdown('vcenterCheck', 'vcenterDropdown')" type="checkbox"/>
                         <span>vCenter</span>
                         <div class="version-dropdown hidden" id="vcenterDropdown">
-                            <select id="vcenter">
+                            <select id="vcenter" onchange="handleVersionChange()">
                                 <option value="">-- Select Version --</option>
                                 <option value="8.0u1">8.0u1</option>
                                 <option value="8.0u2">8.0u2</option>
@@ -652,7 +652,7 @@
                         <input id="esxCheck" onchange="toggleDropdown('esxCheck', 'esxDropdown')" type="checkbox"/>
                         <span>ESX</span>
                         <div class="version-dropdown hidden" id="esxDropdown">
-                            <select id="esx">
+                            <select id="esx" onchange="handleVersionChange()">
                                 <option value="">-- Select Version --</option>
                                 <option value="8.0u1">8.0u1</option>
                                 <option value="8.0u2">8.0u2</option>
@@ -708,7 +708,7 @@
                         <input id="nsxCheck" onchange="toggleDropdown('nsxCheck', 'nsxDropdown')" type="checkbox"/>
                         <span>NSX</span>
                         <div class="version-dropdown hidden" id="nsxDropdown">
-                            <select id="nsx">
+                            <select id="nsx" onchange="handleVersionChange()">
                                 <option value="">-- Select Version --</option>
                                 <option value="4.1.x">4.1.x</option>
                                 <option value="4.2.x">4.2.x</option>

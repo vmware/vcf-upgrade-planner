@@ -46,6 +46,28 @@
         "vsan_file_service",
         "vidm"
     ],
+    "upgrade_order_nsx91": [
+    "operations",
+    "replication",
+    "srm",
+    "vsan_data_protection",
+    "avi",
+    "license_hub",
+    "hcx",
+    "vcha",
+    "elm_break",
+    "convert",
+    "vcenter",
+    "vum_migration",
+    "supervisor",
+    "vsan_witness",
+    "esx",
+    "operations_orchestrator",
+    "logs",
+    "network",
+    "vsan_file_service",
+    "vidm"
+    ],
     "optional_products": [
         {
             "id": "network",

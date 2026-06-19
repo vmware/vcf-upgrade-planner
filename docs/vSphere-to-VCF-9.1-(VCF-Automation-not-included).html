@@ -1990,6 +1990,32 @@
                 }
 
     
+            } else if (nsxVersion === '9.1.x') {
+                // NSX already at 9.1.x: ELM → Convert first, then vCenter → vLCM → Witness → Supervisor
+                if (hasPrereqs && operationsPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'Operations Upgrade', description: 'Upgrade VCF Operations', phases: operationsPhases });
+                }
+                if (vchaPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'Remove vCenter High Availability', description: 'Remove vCHA configuration before conversion', phases: vchaPhases });
+                }
+                if (elmPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'Break Enhanced Linked Mode', description: 'Break ELM configuration before VCF conversion', phases: elmPhases });
+                }
+                if (convertPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'Converge to VCF 9.1', description: 'Converge to VCF', phases: convertPhases });
+                }
+                if (vcenterPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'vCenter Upgrade', description: 'Upgrade vCenter Server', phases: vcenterPhases });
+                }
+                if (vlcmPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'vLCM Migration', description: 'Migrate from VUM to vLCM', phases: vlcmPhases });
+                }
+                if (witnessPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'Witness Upgrade', description: 'Upgrade Witness Host', phases: witnessPhases });
+                }
+                if (supervisorPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'VMware vSphere Supervisor', description: 'Upgrade VMware vSphere Supervisor', phases: supervisorPhases });
+                }
             } else {
                 // If NSX is NOT selected: vCHA → vCenter → ELM → vLCM → Convert → Witness/supervisor
                  if (hasPrereqs && operationsPhases.length > 0) {
