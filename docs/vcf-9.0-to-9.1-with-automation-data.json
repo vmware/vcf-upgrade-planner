@@ -697,8 +697,8 @@
             "description": "Prepare the following IP addresses and DNS entries before deployment:",
             "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
             "rows": [
-                ["Controller", "4", "0", "N/A"],
-                ["Worker", "4", "0", "N/A"]
+                ["Node IP pool", "4", "0", "N/A"],
+                ["Service IP pool", "4", "0", "N/A"]
                 ]
             },
             {
