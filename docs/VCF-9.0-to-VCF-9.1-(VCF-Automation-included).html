@@ -2862,7 +2862,10 @@
             if (window.INLINE_DOCS && window.INLINE_DOCS[url]) { return window.INLINE_DOCS[url]; }
             return null;
         }        // INLINE DOCUMENTATION MODAL SYSTEM
+        var _inlineDocsInitialized = false;
         function initInlineDocumentation() {
+            if (_inlineDocsInitialized) return;
+            _inlineDocsInitialized = true;
             if (typeof window.INLINE_DOCS === 'undefined') {
                 console.warn('INLINE_DOCS not loaded');
                 return;
@@ -2901,9 +2904,12 @@
 
             // Push current state onto the nav stack so we can go back
             if (pushToStack !== false) {
+                const modal = document.getElementById('docModal');
                 const currentExternalLink = document.getElementById('docModalExternalLink');
                 const currentTitle = document.getElementById('docModalTitle');
-                if (currentTitle && currentTitle.textContent && currentTitle.textContent !== 'Documentation') {
+                if (modal && modal.classList.contains('active') &&
+                    currentTitle && currentTitle.textContent &&
+                    currentTitle.textContent !== 'Documentation') {
                     docNavStack.push({
                         url: currentExternalLink ? currentExternalLink.href : '',
                         originalUrl: currentExternalLink ? currentExternalLink.href : ''

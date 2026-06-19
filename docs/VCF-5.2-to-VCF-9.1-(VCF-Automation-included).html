@@ -2746,7 +2746,10 @@
             if (window.INLINE_DOCS && window.INLINE_DOCS[url]) { return window.INLINE_DOCS[url]; }
             return null;
         }        // INLINE DOCUMENTATION MODAL SYSTEM
+        var _inlineDocsInitialized = false;
         function initInlineDocumentation() {
+            if (_inlineDocsInitialized) return;
+            _inlineDocsInitialized = true;
             if (typeof window.INLINE_DOCS === 'undefined') {
                 console.warn('INLINE_DOCS not loaded');
                 return;
@@ -2785,9 +2788,12 @@
 
             // Push current state onto the nav stack so we can go back
             if (pushToStack !== false) {
+                const modal = document.getElementById('docModal');
                 const currentExternalLink = document.getElementById('docModalExternalLink');
                 const currentTitle = document.getElementById('docModalTitle');
-                if (currentTitle && currentTitle.textContent && currentTitle.textContent !== 'Documentation') {
+                if (modal && modal.classList.contains('active') &&
+                    currentTitle && currentTitle.textContent &&
+                    currentTitle.textContent !== 'Documentation') {
                     docNavStack.push({
                         url: currentExternalLink ? currentExternalLink.href : '',
                         originalUrl: currentExternalLink ? currentExternalLink.href : ''
@@ -2935,7 +2941,8 @@
     </div>
     <!-- Documentation Modal -->
     <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
-                        <div class="doc-modal-header">
+        <div class="doc-modal-content">
+            <div class="doc-modal-header">
                 <div style="display:flex; align-items:center; gap:12px; min-width:0;">
                     <button id="docModalBackBtn" class="doc-modal-back" onclick="docModalGoBack()" style="display:none;" title="Go back">&#8592; Back</button>
                     <h2 id="docModalTitle" style="margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Documentation</h2>
@@ -2956,7 +2963,6 @@
                 </a>
             </div>
         </div>
-    </div>
 </body>
 
 </html>
