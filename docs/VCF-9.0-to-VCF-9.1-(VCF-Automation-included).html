@@ -1219,6 +1219,26 @@
         window.vidbIsEmbedded = null; // null = not yet answered, true = embedded in vCenter, false = standalone
 
         // Initialize page
+
+        function applyTargetVersion(html) {
+            if (!window.targetVcf91Version) return html;
+            return html.replace(/9\.1(?!\.[0-9])/g, window.targetVcf91Version);
+        }
+
+        function updatePageTitlesForTargetVersion() {
+            if (!window.targetVcf91Version) return;
+            var ver = window.targetVcf91Version;
+            // Update all h1 elements containing 9.1
+            document.querySelectorAll('h1').forEach(function(el) {
+                if (el.textContent.indexOf('9.1') !== -1) {
+                    el.textContent = el.textContent.replace(/9\.1(?!\.[0-9])/g, ver);
+                }
+            });
+            // Update browser tab title
+            if (document.title.indexOf('9.1') !== -1) {
+                document.title = document.title.replace(/9\.1(?!\.[0-9])/g, ver);
+            }
+        }
         window.addEventListener('DOMContentLoaded', async function() {
             await loadUpgradeData();
             loadSelectionsFromStorage();
@@ -1226,6 +1246,7 @@
             generateAdvancedProductsFromJSON();
             // Auto-generate the initial upgrade plan
             autoGenerateUpgradePlan();
+            updatePageTitlesForTargetVersion();
         });
 
         async function loadUpgradeData() {
@@ -1285,6 +1306,7 @@
         function loadSelectionsFromStorage() {
            vcfVersion =  localStorage.getItem('vcf-version') || '9.0';
            vcfdetailVersion = localStorage.getItem('vcf-detailed-version');
+           window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
     
             console.log('=== LOAD SELECTIONS DEBUG ===');
      
@@ -2107,7 +2129,7 @@
             
             html += `</div></div>`;
             
-            container.innerHTML = html;
+            container.innerHTML = applyTargetVersion(html);
             generateDiagram();
         }
         
@@ -2398,7 +2420,7 @@
                 html += `</div>`;
             });
             
-            container.innerHTML = html;
+            container.innerHTML = applyTargetVersion(html);
         }
 
         // ==========================================

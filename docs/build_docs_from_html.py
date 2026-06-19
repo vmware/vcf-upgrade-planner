@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 
 # Configuration
-JSON_FILE = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html']
+JSON_FILE = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.1-to-9.1.0100-no-automation-data.json', 'vcf-9.1-to-9.1.0100-with-automation-data.json']
 OUTPUT_FILE = 'docs_inline.js'
 MAX_CONTENT_SIZE = 100000  # 100KB per doc
 MAX_DEEP_URLS = 1000 # Max sub-pages to deep-scrape per run
@@ -36,7 +36,7 @@ def extract_urls_from_json(json_path):
     # Filter to only documentation URLs
     doc_urls = set()
     for url in all_urls:
-        if any(domain in url for domain in ['techdocs.broadcom.com', 'knowledge.broadcom.com', 'dell.com/support']):
+        if any(domain in url for domain in ['techdocs.broadcom.com', 'knowledge.broadcom.com', 'dell.com/support', 'interopmatrix.broadcom.com']):
             # Clean URL (remove fragments for cleaner scraping)
             clean_url = url.split('#')[0] if '#' in url else url
             doc_urls.add(clean_url)
@@ -70,6 +70,34 @@ def scrape_documentation(url):
         title = title_tag.text.strip() if title_tag else 'Documentation'
         title = re.sub(r'\s*\|\s*VMware.*$', '', title).strip()
         
+        # Interop Matrix is a JavaScript SPA — serve it in an iframe so the user
+        # can interact with the live page directly inside the inline docs modal.
+        if 'interopmatrix.broadcom.com' in url:
+            from urllib.parse import urlparse as _up, parse_qs as _pqs
+            _p = _up(url)
+            _params = _pqs(_p.query)
+            _product_id = _params.get('productId', [''])[0]
+            _endpoint = _p.path.strip('/').replace('-', ' ').title() or 'Interoperability Matrix'
+            _label = f'{_endpoint} — Product ID {_product_id}' if _product_id else _endpoint
+
+            stub_html = (
+                f'<div style="display:flex; flex-direction:column; height:100%;">'
+                f'<p style="margin:0 0 8px 0; font-size:0.85rem; color:#666;">'
+                f'Can\'t see the matrix below? '
+                f'<a href="{url}" target="_blank" rel="noopener noreferrer">Open in a new tab ↗</a>'
+                f'</p>'
+                f'<iframe src="{url}" style="width:100%; height:700px; border:1px solid #ddd; border-radius:4px; flex:1;" '
+                f'title="VMware Interoperability Matrix" loading="lazy"></iframe>'
+                f'</div>'
+            )
+            print(f'    ✅ Stub created for interop matrix page ({_label})')
+            return {
+                'title': f'VMware Interoperability Matrix — {_label}',
+                'content': stub_html,
+                'url': url,
+                'subpages': []
+            }
+
         # Extract main content — KB articles use a different structure to TechDocs
         if 'knowledge.broadcom.com' in url:
             main_content = (
@@ -285,7 +313,7 @@ def main():
     
     # Step 1: Extract URLs from both JSON files
     all_urls = set()
-    json_files = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html' ]
+    json_files = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.1-to-9.1.0100-no-automation-data.json', 'vcf-9.1-to-9.1.0100-with-automation-data.json' ]
     
     for json_file in json_files:
         if Path(json_file).exists():

@@ -1225,11 +1225,32 @@
         let automationVersion = null;
         let upgradeData = null; // Will hold the loaded JSON data
         let allPhases = []; // Store all phases
+        let nsxInEnvironment = false; // True when NSX exists (any version) — for badge + convert table selection
         let currentPhaseIndex = 0; // Track which phase we're showing
         let allSteps = []; // Store all steps (groups of phases)
         let currentStepIndex = 0; // Track which step we're showing
 
         // Initialize page
+
+        function applyTargetVersion(html) {
+            if (!window.targetVcf91Version) return html;
+            return html.replace(/9\.1(?!\.[0-9])/g, window.targetVcf91Version);
+        }
+
+        function updatePageTitlesForTargetVersion() {
+            if (!window.targetVcf91Version) return;
+            var ver = window.targetVcf91Version;
+            // Update all h1 elements containing 9.1
+            document.querySelectorAll('h1').forEach(function(el) {
+                if (el.textContent.indexOf('9.1') !== -1) {
+                    el.textContent = el.textContent.replace(/9\.1(?!\.[0-9])/g, ver);
+                }
+            });
+            // Update browser tab title
+            if (document.title.indexOf('9.1') !== -1) {
+                document.title = document.title.replace(/9\.1(?!\.[0-9])/g, ver);
+            }
+        }
         window.addEventListener('DOMContentLoaded', async function() {
             await loadUpgradeData();
             loadSelectionsFromStorage();
@@ -1237,6 +1258,7 @@
             generateAdvancedProductsFromJSON();
             // Auto-generate the initial upgrade plan
             autoGenerateUpgradePlan();
+            updatePageTitlesForTargetVersion();
         });
 
         async function loadUpgradeData() {
@@ -1315,12 +1337,17 @@
         function loadSelectionsFromStorage() {
             vcenterVersion = localStorage.getItem('vcenter-version') || '8.0u3';
             esxVersion = localStorage.getItem('esx-version') || '8.0u3';
+            window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
             // Default to true if not set (so page works standalone)
             const opsStorageValue = localStorage.getItem('operations-selected');
             operationsSelected = opsStorageValue === null ? true : opsStorageValue === 'true';
             operationsVersion = localStorage.getItem('operations-version') || '8.18.x';
             nsxSelected = localStorage.getItem('nsx-selected') === 'true';
             nsxVersion = localStorage.getItem('nsx-version') || '4.2.x';
+            // nsxInEnvironment: true when NSX is present (any version) — for badge display and convert table selection
+            nsxInEnvironment = nsxSelected;
+            // NSX 9.1 is bundled within VCF — suppress standalone NSX upgrade phases but keep badge + _with_nsx tables
+            if (nsxVersion === '9.1.x') nsxSelected = false;
 
             
             // automationSelected = true  → already installed, will upgrade as a separate phase
@@ -1348,7 +1375,7 @@
                 html += `<li><span class="badge included">✓ VCF Operations</span><span class="badge version">v${operationsVersion}</span></li>`;
             }
 
-            if (nsxSelected){
+            if (nsxInEnvironment){
                 html += `<li><span class="badge included">✓ NSX</span><span class="badge version">v${nsxVersion}</span></li>`;
             }
 
@@ -1562,7 +1589,7 @@
                     if (componentData) {
                         try {
                             // Build table key: tables_{type}_{size}_{nsx_status}
-                            const nsxSuffix = nsxSelected ? '_with_nsx' : '_without_nsx';
+                            const nsxSuffix = nsxInEnvironment ? '_with_nsx' : '_without_nsx';
                             const tableKey = `tables_${deploymentType}_${deploymentSize}${nsxSuffix}`;
                             
                             console.log('Looking for table key:', tableKey);
@@ -2284,7 +2311,7 @@
             
             html += `</div></div>`;
             
-            container.innerHTML = html;
+            container.innerHTML = applyTargetVersion(html);
             generateDiagram();
             
             // Initialize inline documentation after content is loaded
@@ -2597,7 +2624,7 @@
                 html += `</div>`;
             });
             
-            container.innerHTML = html;
+            container.innerHTML = applyTargetVersion(html);
         }
 
         // ==========================================

@@ -1193,6 +1193,26 @@
         let currentStepIndex = 0; // Track which phase we're showing (called stepIndex for code consistency)
 
         // Initialize page
+
+        function applyTargetVersion(html) {
+            if (!window.targetVcf91Version) return html;
+            return html.replace(/9\.1(?!\.[0-9])/g, window.targetVcf91Version);
+        }
+
+        function updatePageTitlesForTargetVersion() {
+            if (!window.targetVcf91Version) return;
+            var ver = window.targetVcf91Version;
+            // Update all h1 elements containing 9.1
+            document.querySelectorAll('h1').forEach(function(el) {
+                if (el.textContent.indexOf('9.1') !== -1) {
+                    el.textContent = el.textContent.replace(/9\.1(?!\.[0-9])/g, ver);
+                }
+            });
+            // Update browser tab title
+            if (document.title.indexOf('9.1') !== -1) {
+                document.title = document.title.replace(/9\.1(?!\.[0-9])/g, ver);
+            }
+        }
         window.addEventListener('DOMContentLoaded', async function() {
             await loadUpgradeData();
             loadSelectionsFromStorage();
@@ -1200,6 +1220,7 @@
             generateAdvancedProductsFromJSON();
             // Auto-generate the initial upgrade plan
             autoGenerateUpgradePlan();
+            updatePageTitlesForTargetVersion();
         });
 
         async function loadUpgradeData() {
@@ -1255,6 +1276,7 @@
         function loadSelectionsFromStorage() {
            vcfVersion =  localStorage.getItem('vcf-version') || '5.2';
            vcfdetailVersion = localStorage.getItem('vcf-detailed-version');
+           window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
     
             console.log('=== LOAD SELECTIONS DEBUG ===');
      
@@ -1359,6 +1381,19 @@
             const orderArray = (!window.automationIsUpgrade && upgradeData.install_order)
                 ? upgradeData.install_order
                 : upgradeData.upgrade_order;
+
+            // Inject pre-req step for VCF 5.2.0 / 5.2.1 upgrading to 9.1.0100
+            const needsPrereq = (vcfdetailVersion === '5.2.0' || vcfdetailVersion === '5.2.1')
+                && window.targetVcf91Version === '9.1.0100';
+            if (needsPrereq && upgradeData.components['vcf_prereq']) {
+                phases.push({
+                    number: 1,
+                    title: upgradeData.components['vcf_prereq'].name,
+                    description: 'Required pre-upgrade step before proceeding to VCF 9.1.0100',
+                    data: upgradeData.components['vcf_prereq'],
+                    componentId: 'vcf_prereq'
+                });
+            }
 
             // Iterate through the selected upgrade order array to maintain strict sequence
             orderArray.forEach(componentId => {
@@ -1554,6 +1589,7 @@
             // 8. Automation Deployment
             // 9. Post-Infrastructure (Logs, Network)
             
+            const prereqPhases = [];
             const optionalPreInfraPhases = [];
             const operationsPhases = [];
             const sddcPhases = [];
@@ -1581,7 +1617,9 @@
                 const isPreInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'pre_infrastructure';
                 const isPostInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'post_infrastructure';
                 
-                if (isPreInfraOptional) {
+                if (phase.componentId === 'vcf_prereq') {
+                    prereqPhases.push(phase);
+                } else if (isPreInfraOptional) {
                     optionalPreInfraPhases.push(phase);
                 } else if (phase.componentId === 'operations') {
                     operationsPhases.push(phase);
@@ -1625,6 +1663,7 @@
             });
             
             // Sort groups
+            prereqPhases.sort((a, b) => a.number - b.number);
             optionalPreInfraPhases.sort((a, b) => a.number - b.number);
             operationsPhases.sort((a, b) => a.number - b.number);
             sddcPhases.sort((a, b) => a.number - b.number);
@@ -1665,6 +1704,11 @@
             
             // Create a map of component groups to their step definitions
             const stepDefinitions = {
+                'vcf_prereq': {
+                    phases: prereqPhases,
+                    title: 'Pre-Upgrade: Upgrade VCF to 5.2.2 or 5.2.3',
+                    description: 'Required pre-upgrade step before proceeding to VCF 9.1.0100'
+                },
                 'drProducts': {
                     phases: replicationPhases,
                     title: 'Disaster Recovery Products',
@@ -1687,7 +1731,7 @@
                 'sddc_manager': {
                     phases: sddcPhases,
                     title: 'SDDC Manager Upgrade',
-                    description: 'Deploy SDDC Manager and sddc to VCF (includes Operations install if not already installed)'
+                    description: 'Upgrade SDDC Manager'
                 },
                 'vcfms':{
                     phases: vcfmsPhases,
@@ -1785,6 +1829,7 @@
             
             // Map component IDs to their step groups
             const componentToStepGroup = {
+                'vcf_prereq': 'vcf_prereq',
                 'replication': 'drProducts',
                 'srm': 'drProducts',
                 'vsan_data_protection': "drProducts",
@@ -1811,6 +1856,16 @@
                 'nsx_edge': 'nsx_edge'
             };
             
+            // Insert vcf_prereq as the very first step if present
+            if (prereqPhases.length > 0) {
+                steps.push({
+                    number: 1,
+                    title: stepDefinitions['vcf_prereq'].title,
+                    description: stepDefinitions['vcf_prereq'].description,
+                    phases: prereqPhases
+                });
+            }
+
             // Track which step groups have been added
             const addedStepGroups = new Set();
             
@@ -1971,7 +2026,7 @@
             
             html += `</div></div>`;
             
-            container.innerHTML = html;
+            container.innerHTML = applyTargetVersion(html);
             generateDiagram();
             } catch(err) {
                 console.error('displayStepsView CRASH at stepIndex', currentStepIndex, ':', err);
@@ -2251,7 +2306,7 @@
                 html += `</div>`;
             });
             
-            container.innerHTML = html;
+            container.innerHTML = applyTargetVersion(html);
         }
 
         // ==========================================
@@ -2880,7 +2935,6 @@
     </div>
     <!-- Documentation Modal -->
     <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
-        <div class="doc-modal-content">
                         <div class="doc-modal-header">
                 <div style="display:flex; align-items:center; gap:12px; min-width:0;">
                     <button id="docModalBackBtn" class="doc-modal-back" onclick="docModalGoBack()" style="display:none;" title="Go back">&#8592; Back</button>

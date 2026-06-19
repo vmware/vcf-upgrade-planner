@@ -665,7 +665,7 @@
                 </div>
 
                 <!-- VCF Operations -->
-                <div class="checkbox-group">
+                <div class="checkbox-group" id="operationsCheckboxGroup">
                     <label class="checkbox-label">
                         <input id="operationsCheck" onchange="toggleDropdown('operationsCheck', 'operationsDropdown')" type="checkbox"/>
                         <span>VCF Operations (Aria Operations)</span>
@@ -684,8 +684,7 @@
 
                 <!-- Convert-only info note (shown when vCenter+ESX are already on 9.1.x) -->
                 <div id="convertOnlyNote" style="display: none; margin: 8px 0 12px 0; padding: 12px 16px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px; font-size: 0.88rem; color: #856404;">
-                    <strong>⚠️ Convert to VCF is the only option at this stage.</strong><br/>
-                    NSX and VCF Automation can only be upgraded as part of the VCF Conversion process. Because vCenter and ESX are already on 9.1.x, that upgrade window has passed — these components cannot be selected independently.
+                    <strong>⚠️ Converge to VCF is the only option at this stage.</strong><br/>
                 </div>
 
                 <!-- VCF Automation -->
@@ -713,6 +712,7 @@
                                 <option value="">-- Select Version --</option>
                                 <option value="4.1.x">4.1.x</option>
                                 <option value="4.2.x">4.2.x</option>
+                                <option value="9.1.x">9.1.x</option>
                             </select>
                         </div>
                     </label>
@@ -746,6 +746,15 @@
             <div class="path-selection hidden" id="pathSelection">
                 <div class="question-section">
                     <label class="question-label">Destination Options</label>
+                    <div class="form-group hidden" id="targetVcf91VersionGroup" style="margin-bottom:24px;">
+                        <label for="targetVcf91Version" style="font-size:1rem;font-weight:600;color:var(--vmw-gray);margin-bottom:8px;display:block;">Select Target VCF 9.1 Version:</label>
+                        <select id="targetVcf91Version" onchange="updateAvailablePaths()" style="max-width:280px;">
+                            <option value="">-- Select Version --</option>
+                            <option value="9.1.0">9.1.0</option>
+                            <option value="9.1.0100">9.1.0100</option>
+
+                        </select>
+                    </div>
                     <div class="path-options" id="pathOptions">
                         <!-- Paths will be dynamically added here -->
                     </div>
@@ -789,12 +798,33 @@
                         </div>
                     </label>
                 </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input id="vcf91Check" onchange="toggleVCFDropdown('vcf91Check', 'vcf91Dropdown')" type="checkbox"/>
+                        <span>VCF 9.1</span>
+                        <div class="version-dropdown hidden" id="vcf91Dropdown">
+                            <select id="vcf91">
+                                <option value="">-- Select Version --</option>
+                                <option value="9.1.0100">9.1.0100</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
             </div>
 
             <!-- VCF Path Selection (appears after version selected) -->
             <div class="path-selection hidden" id="vcfPathSelection">
                 <div class="question-section">
                     <label class="question-label">Destination Options</label>
+                    <div class="form-group hidden" id="vcfTargetVcf91VersionGroup" style="margin-bottom:24px;">
+                        <label for="vcfTargetVcf91Version" style="font-size:1rem;font-weight:600;color:var(--vmw-gray);margin-bottom:8px;display:block;">Select Target VCF 9.1 Version:</label>
+                        <select id="vcfTargetVcf91Version" onchange="updateVCFPath()" style="max-width:280px;">
+                            <option value="">-- Select Version --</option>
+                            <option value="9.1.0">9.1.0</option>
+                            <option value="9.1.0100">9.1.0100</option>
+                        </select>
+                    </div>
                     <div class="path-options" id="vcfPathOptions">
                         <!-- Paths will be dynamically added here -->
                     </div>
@@ -830,6 +860,7 @@
             const automationCheckboxGroup = document.getElementById('automationCheckboxGroup');
             const vxrailCheckboxGroup = document.getElementById('vxrailCheckboxGroup');
             const convertOnlyNote = document.getElementById('convertOnlyNote');
+            const vcdCheckboxGroup = document.getElementById('vcdCheckboxGroup');
 
             // Trigger when vCenter AND ESX are already on 9.1.x (with or without Operations).
             // In this state NSX and Automation can only be upgraded via VCF Convert —
@@ -843,19 +874,8 @@
                 // Disable (but keep visible) NSX and Automation checkboxes
                 const nsxCheck = document.getElementById('nsxCheck');
                 const automationCheck = document.getElementById('automationCheck');
+                const vcdCheck = document.getElementById('vcdCheck');
 
-                if (nsxCheck) {
-                    nsxCheck.disabled = true;
-                    if (nsxCheck.checked) {
-                        nsxCheck.checked = false;
-                        document.getElementById('nsxDropdown').classList.add('hidden');
-                        document.getElementById('nsx').value = '';
-                    }
-                }
-                if (nsxCheckboxGroup) {
-                    nsxCheckboxGroup.style.opacity = '0.45';
-                    nsxCheckboxGroup.style.pointerEvents = 'none';
-                }
 
                 if (automationCheck) {
                     automationCheck.disabled = true;
@@ -870,6 +890,19 @@
                     automationCheckboxGroup.style.pointerEvents = 'none';
                 }
 
+                if (vcdCheck) {
+                    vcdCheck.disabled = true;
+                    if (vcdCheck.checked) {
+                        vcdCheck.checked = false;
+                        document.getElementById('vcdDropdown').classList.add('hidden');
+                        document.getElementById('vcd').value = '';
+                    }
+                }
+                if (vcdCheckboxGroup) {
+                    vcdCheckboxGroup.style.opacity = '0.45';
+                    vcdCheckboxGroup.style.pointerEvents = 'none';
+                }
+
                 // Also hide VxRail (not relevant for this VCF convert path)
                 const vxrailCheck = document.getElementById('vxrailCheck');
                 if (vxrailCheck && vxrailCheck.checked) {
@@ -878,6 +911,8 @@
                     document.getElementById('vxrail').value = '';
                 }
                 if (vxrailCheckboxGroup) vxrailCheckboxGroup.style.display = 'none';
+
+
 
             } else {
                 // Restore NSX and Automation to normal
@@ -900,8 +935,13 @@
                     automationCheckboxGroup.style.pointerEvents = '';
                 }
 
+
                 if (vxrailCheckboxGroup) vxrailCheckboxGroup.style.display = 'block';
+                    // Disable VMware Cloud Director
+
             }
+
+            
         }
 
         function toggleDropdown(checkboxId, dropdownId) {
@@ -1014,6 +1054,9 @@
 
             const pathSelection = document.getElementById('pathSelection');
             const pathOptions = document.getElementById('pathOptions');
+            const targetVersionGroup = document.getElementById('targetVcf91VersionGroup');
+            const targetVersionSelect = document.getElementById('targetVcf91Version');
+            const savedTargetVer = targetVersionSelect ? targetVersionSelect.value : '';
 
             // Clear existing paths
             pathOptions.innerHTML = '';
@@ -1160,30 +1203,35 @@
 
             // Show path selection if we have any paths
             if (paths.length > 0) {
-                paths.forEach(path => {
+                if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+
+                paths.forEach(function(path) {
                     const pathCard = document.createElement('div');
                     pathCard.className = 'path-card';
-                    
-                    // Only make clickable if validation passes
-                    if (validationErrors.length === 0) {
-                        pathCard.onclick = () => selectPath(path.title);
-                        pathCard.style.cursor = 'pointer';
-                    } else {
+                    var displayTitle = savedTargetVer
+                        ? path.title.replace('VCF 9.1', 'VCF ' + savedTargetVer).replace('to 9.1', 'to ' + savedTargetVer)
+                        : path.title;
+
+                    if (validationErrors.length > 0) {
                         pathCard.style.opacity = '0.5';
                         pathCard.style.cursor = 'not-allowed';
-                        pathCard.onclick = () => {
-                            alert('Please complete all required selections:\n\n' + validationErrors.join('\n'));
-                        };
+                        pathCard.onclick = function() { alert('Please complete all required selections:\n\n' + validationErrors.join('\n')); };
+                    } else if (!savedTargetVer) {
+                        pathCard.style.opacity = '0.5';
+                        pathCard.style.cursor = 'not-allowed';
+                        pathCard.onclick = function() { alert('Please select a Target VCF 9.1 Version before proceeding.'); };
+                    } else {
+                        pathCard.style.opacity = '';
+                        pathCard.style.cursor = 'pointer';
+                        pathCard.onclick = (function(t){ return function(){ selectPath(t); }; })(path.title);
                     }
-                    
-                    pathCard.innerHTML = `
-                        <h3><span class="path-icon">${path.icon}</span>${path.title}</h3>
-                        <p>${path.desc}</p>
-                    `;
+
+                    pathCard.innerHTML = '<h3><span class="path-icon">' + path.icon + '</span>' + displayTitle + '</h3><p>' + path.desc + '</p>';
                     pathOptions.appendChild(pathCard);
                 });
                 pathSelection.classList.remove('hidden');
             } else {
+                if (targetVersionGroup) targetVersionGroup.classList.add('hidden');
                 pathSelection.classList.add('hidden');
             }
         }
@@ -1194,42 +1242,49 @@
 
             if (checkbox.checked) {
                 dropdown.classList.remove('hidden');
-                
-                // Uncheck the other VCF checkbox (only one can be selected)
-                if (checkboxId === 'vcf52Check') {
-                    const vcf90Check = document.getElementById('vcf90Check');
-                    if (vcf90Check.checked) {
-                        vcf90Check.checked = false;
-                        document.getElementById('vcf90Dropdown').classList.add('hidden');
-                        document.getElementById('vcf90').value = '';
+                // Uncheck all other VCF checkboxes (only one at a time)
+                var allVCF = [
+                    { id: 'vcf52Check', did: 'vcf52Dropdown', sid: 'vcf52' },
+                    { id: 'vcf90Check', did: 'vcf90Dropdown', sid: 'vcf90' },
+                    { id: 'vcf91Check', did: 'vcf91Dropdown', sid: 'vcf91' }
+                ];
+                allVCF.forEach(function(item) {
+                    if (item.id !== checkboxId) {
+                        var other = document.getElementById(item.id);
+                        if (other && other.checked) {
+                            other.checked = false;
+                            document.getElementById(item.did).classList.add('hidden');
+                            document.getElementById(item.sid).value = '';
+                        }
                     }
-                } else if (checkboxId === 'vcf90Check') {
-                    const vcf52Check = document.getElementById('vcf52Check');
-                    if (vcf52Check.checked) {
-                        vcf52Check.checked = false;
-                        document.getElementById('vcf52Dropdown').classList.add('hidden');
-                        document.getElementById('vcf52').value = '';
-                    }
-                }
+                });
+                // Reset VCF target version when switching VCF version
+                var vcfTgt = document.getElementById('vcfTargetVcf91Version');
+                if (vcfTgt) vcfTgt.value = '';
+                var vcfTgtGrp = document.getElementById('vcfTargetVcf91VersionGroup');
+                if (vcfTgtGrp) vcfTgtGrp.classList.add('hidden');
             } else {
                 dropdown.classList.add('hidden');
                 const select = dropdown.querySelector('select');
-                if (select) {
-                    select.value = '';
-                }
+                if (select) select.value = '';
             }
-            
+
             updateVCFPath();
         }
 
         function updateVCFPath() {
             const vcfPathSelection = document.getElementById('vcfPathSelection');
             const vcfPathOptions = document.getElementById('vcfPathOptions');
-            
+            const vcfTargetVersionGroup = document.getElementById('vcfTargetVcf91VersionGroup');
+            const vcfTargetVersionSelect = document.getElementById('vcfTargetVcf91Version');
+            const savedVcfTargetVer = vcfTargetVersionSelect ? vcfTargetVersionSelect.value : '';
+
             const vcf52Checked = document.getElementById('vcf52Check').checked;
             const vcf90Checked = document.getElementById('vcf90Check').checked;
+            const vcf91Checked = document.getElementById('vcf91Check') ? document.getElementById('vcf91Check').checked : false;
             const vcf52Version = document.getElementById('vcf52').value;
             const vcf90Version = document.getElementById('vcf90').value;
+            const vcf91Version = document.getElementById('vcf91') ? document.getElementById('vcf91').value : '';
 
             // Clear existing paths
             vcfPathOptions.innerHTML = '';
@@ -1237,61 +1292,86 @@
             let paths = [];
             const errors = [];
 
-            // Check which VCF version is selected
             if (vcf52Checked && !vcf52Version) {
                 errors.push('VCF 5.2 version must be selected');
             } else if (vcf90Checked && !vcf90Version) {
                 errors.push('VCF 9.0 version must be selected');
+            } else if (vcf91Checked && !vcf91Version) {
+                errors.push('VCF 9.1 version must be selected');
             }
 
-            // Show validation errors if any
             if (errors.length > 0) {
                 const errorDiv = document.createElement('div');
                 errorDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
-                errorDiv.innerHTML = `
-                    <strong style="color: var(--warning-text);">⚠️ Please complete your selections:</strong>
-                    <ul style="margin: 8px 0 0 20px; color: var(--warning-text);">
-                        ${errors.map(err => `<li>${err}</li>`).join('')}
-                    </ul>
-                `;
+                errorDiv.innerHTML = '<strong style="color: var(--warning-text);">\u26a0\ufe0f Please complete your selections:</strong><ul style="margin: 8px 0 0 20px; color: var(--warning-text);">' + errors.map(function(e){ return '<li>'+e+'</li>'; }).join('') + '</ul>';
                 vcfPathOptions.appendChild(errorDiv);
                 vcfPathSelection.classList.remove('hidden');
                 return;
             }
 
+            // ── VCF 9.1 selected ──────────────────────────────────────────────
+            if (vcf91Checked && vcf91Version) {
+                // No patching order required for VCF 9.1 — show informational message only, no path cards
+                if (vcfTargetVersionGroup) vcfTargetVersionGroup.classList.add('hidden');
+                const vcf91NoteDiv = document.createElement('div');
+                vcf91NoteDiv.style.cssText = 'background: #e8f4f8; border-left: 4px solid #0088b5; padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #b3d9ea;';
+                vcf91NoteDiv.innerHTML = '<p style="color: #1a2d40; font-size: 1rem; line-height: 1.6; margin: 0;"><strong>ℹ️ There is no specified order, apply per the requirements and specifics of your organization. Plan for possible downtime of a certain functionality and consider the other services that might be impacted.</strong></p>';
+                vcfPathOptions.appendChild(vcf91NoteDiv);
+                vcfPathSelection.classList.remove('hidden');
+                return;
+            }
+
+            // ── VCF 5.2 selected ──────────────────────────────────────────────
             if (vcf52Checked && vcf52Version) {
-                // VCF 5.2 upgrade paths - with and without Automation
+                const tgt = savedVcfTargetVer || '9.1.x';
                 paths = [
-                    { title: 'VCF 5.2 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF from 5.2 to 9.1 without deploying VCF Automation', icon: '' },
-                    { title: 'VCF 5.2 to VCF 9.1 (VCF Automation included)', desc: 'Upgrade VCF from 5.2 to 9.1 and deploy VCF Automation', icon: '' }
+                    { title: 'VCF 5.2 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF from 5.2 to ' + tgt + ' without deploying VCF Automation', icon: '' },
+                    { title: 'VCF 5.2 to VCF 9.1 (VCF Automation included)',     desc: 'Upgrade VCF from 5.2 to ' + tgt + ' and deploy VCF Automation',        icon: '' }
                 ];
+            // ── VCF 9.0 selected ──────────────────────────────────────────────
             } else if (vcf90Checked && vcf90Version) {
-                // VCF 9.0 upgrade paths - with and without Automation
+                const tgt90 = savedVcfTargetVer || '9.1.x';
                 paths = [
-                    { title: 'VCF 9.0 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF from 9.0 to 9.1 without deploying VCF Automation', icon: '' },
-                    { title: 'VCF 9.0 to VCF 9.1 (VCF Automation included)', desc: 'Upgrade VCF from 9.0 to 9.1 and deploy VCF Automation', icon: '' }
+                    { title: 'VCF 9.0 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF from 9.0 to ' + tgt90 + ' without deploying VCF Automation', icon: '' },
+                    { title: 'VCF 9.0 to VCF 9.1 (VCF Automation included)',     desc: 'Upgrade VCF from 9.0 to ' + tgt90 + ' and deploy VCF Automation',        icon: '' }
                 ];
             }
 
-            // Show path selection if we have any paths
             if (paths.length > 0) {
-                paths.forEach(path => {
+                if (vcfTargetVersionGroup) vcfTargetVersionGroup.classList.remove('hidden');
+
+                paths.forEach(function(path) {
                     const pathCard = document.createElement('div');
                     pathCard.className = 'path-card';
-                    pathCard.onclick = () => selectPath(path.title);
-                    pathCard.innerHTML = `
-                        <h3><span class="path-icon">${path.icon}</span>${path.title}</h3>
-                        <p>${path.desc}</p>
-                    `;
+                    var vcfDisplayTitle = savedVcfTargetVer
+                        ? path.title.replace('VCF 9.1', 'VCF ' + savedVcfTargetVer).replace('to 9.1', 'to ' + savedVcfTargetVer)
+                        : path.title;
+                    if (!savedVcfTargetVer) {
+                        pathCard.style.opacity = '0.5';
+                        pathCard.style.cursor = 'not-allowed';
+                        pathCard.onclick = function() { alert('Please select a Target VCF 9.1 Version before proceeding.'); };
+                    } else {
+                        pathCard.style.opacity = '';
+                        pathCard.style.cursor = 'pointer';
+                        pathCard.onclick = (function(t){ return function(){ selectPath(t); }; })(path.title);
+                    }
+                    pathCard.innerHTML = '<h3><span class="path-icon">' + path.icon + '</span>' + vcfDisplayTitle + '</h3><p>' + path.desc + '</p>';
                     vcfPathOptions.appendChild(pathCard);
                 });
                 vcfPathSelection.classList.remove('hidden');
             } else {
+                if (vcfTargetVersionGroup) vcfTargetVersionGroup.classList.add('hidden');
                 vcfPathSelection.classList.add('hidden');
             }
         }
 
         function selectPath(pathTitle) {
+            // Persist chosen target version
+            var _vsVer  = document.getElementById('targetVcf91Version')    ? document.getElementById('targetVcf91Version').value    : '';
+            var _vcfVer = document.getElementById('vcfTargetVcf91Version') ? document.getElementById('vcfTargetVcf91Version').value : '';
+            var _resolvedVer = _vsVer || _vcfVer;
+            if (_resolvedVer) localStorage.setItem('target-vcf91-version', _resolvedVer);
+
             // Show sidebar navigation items when path is selected
             document.getElementById('navDeployment').classList.remove('nav-hidden');
             document.getElementById('navProducts').classList.remove('nav-hidden');
@@ -1326,10 +1406,15 @@
                 const nsxVersion = document.getElementById('nsx').value || '4.2.x';
                 const vxrailSelected = document.getElementById('vxrailCheck').checked;
                 const vxrailVersion = document.getElementById('vxrail').value || '8.0.x';
-                
+
+                // If vCenter + ESX are already on 9.1.x, Operations is already deployed —
+                // force operations-selected=true so sub-pages use the correct convert_with_ops tables
+                const infraAlreadyOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
+                const effectiveOperationsSelected = infraAlreadyOn91 ? true : operationsSelected;
+
                 localStorage.setItem('vcenter-version', vcenterVersion);
                 localStorage.setItem('esx-version', esxVersion);
-                localStorage.setItem('operations-selected', operationsSelected.toString());
+                localStorage.setItem('operations-selected', effectiveOperationsSelected.toString());
                 localStorage.setItem('operations-version', operationsVersion);
                 localStorage.setItem('nsx-selected', nsxSelected.toString());
                 localStorage.setItem('nsx-version', nsxVersion);
@@ -1349,9 +1434,15 @@
                 const vxrailVersion = document.getElementById('vxrail').value || '8.0.x';
                 const automationSelected = document.getElementById('automationCheck').checked;
                 const automationVersion = document.getElementById('automation').value || '8.18.x';
+
+                // If vCenter + ESX are already on 9.1.x, Operations is already deployed —
+                // force operations-selected=true so sub-pages use the correct convert_with_ops tables
+                const infraAlreadyOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
+                const effectiveOperationsSelected = infraAlreadyOn91 ? true : operationsSelected;
+
                 localStorage.setItem('vcenter-version', vcenterVersion);
                 localStorage.setItem('esx-version', esxVersion);
-                localStorage.setItem('operations-selected', operationsSelected.toString());
+                localStorage.setItem('operations-selected', effectiveOperationsSelected.toString());
                 localStorage.setItem('operations-version', operationsVersion);
                 localStorage.setItem('nsx-selected', nsxSelected.toString());
                 localStorage.setItem('nsx-version', nsxVersion);
@@ -1393,6 +1484,16 @@
                 
                 // Navigate to VCF 9.0 to 9.1 with automation page
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html';
+            } else if (pathTitle === 'VCF 9.1.0 to VCF 9.1.0100 (VCF Automation not included)') {
+                localStorage.setItem('vcf-version', '9.1.0');
+                localStorage.setItem('vcf-detailed-version', '9.1.0');
+                localStorage.setItem('target-vcf91-version', '9.1.0100');
+                window.location.href = 'VCF-9.1-to-VCF-9.1.0100-(VCF-Automation-not-included).html';
+            } else if (pathTitle === 'VCF 9.1.0 to VCF 9.1.0100 (VCF Automation included)') {
+                localStorage.setItem('vcf-version', '9.1.0');
+                localStorage.setItem('vcf-detailed-version', '9.1.0');
+                localStorage.setItem('target-vcf91-version', '9.1.0100');
+                window.location.href = 'VCF-9.1-to-VCF-9.1.0100-(VCF-Automation-included).html';
             } else {
                 // For other paths, show alert (placeholder for future pages)
                 alert('Selected path: ' + pathTitle + '\n\nThis will navigate to the next step in the upgrade process.');
@@ -1458,6 +1559,8 @@
             if (automationSelect) automationSelect.addEventListener('change', updateAvailablePaths);
             if (vcf52Select) vcf52Select.addEventListener('change', updateVCFPath);
             if (vcf90Select) vcf90Select.addEventListener('change', updateVCFPath);
+            const vcf91Select = document.getElementById('vcf91');
+            if (vcf91Select) vcf91Select.addEventListener('change', updateVCFPath);
 
         });
     </script>
