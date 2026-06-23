@@ -784,6 +784,23 @@
                     </label>
                 </div>
 
+                <!-- VxRail for VCF 5.2 (HCI deployments) -->
+                <div class="checkbox-group" id="vcf52VxrailCheckboxGroup" style="display:none;">
+                    <label class="checkbox-label" style="padding-left:28px;">
+                        <input id="vcf52VxrailCheck" onchange="toggleDropdown('vcf52VxrailCheck', 'vcf52VxrailDropdown'); updateVCFPath();" type="checkbox"/>
+                        <span>Dell VxRail (HCI deployment)</span>
+                        <div class="version-dropdown hidden" id="vcf52VxrailDropdown">
+                            <select id="vcf52Vxrail">
+                                <option value="">-- Select VxRail Version --</option>
+                                <option value="8.0.300">8.0.300</option>
+                                <option value="8.0.310">8.0.310</option>
+                                <option value="8.0.361">8.0.361</option>  
+                                <option value="8.0.380">8.0.380</option>   
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
                 <div class="checkbox-group">
                     <label class="checkbox-label">
                         <input id="vcf90Check" onchange="toggleVCFDropdown('vcf90Check', 'vcf90Dropdown')" type="checkbox"/>
@@ -794,6 +811,22 @@
                                 <option value="9.0.0">9.0.0</option>
                                 <option value="9.0.1">9.0.1</option>
                                 <option value="9.0.2">9.0.2</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- VxRail for VCF 9.0 (HCI deployments) -->
+                <div class="checkbox-group" id="vcf90VxrailCheckboxGroup" style="display:none;">
+                    <label class="checkbox-label" style="padding-left:28px;">
+                        <input id="vcf90VxrailCheck" onchange="toggleDropdown('vcf90VxrailCheck', 'vcf90VxrailDropdown'); updateVCFPath();" type="checkbox"/>
+                        <span>Dell VxRail (HCI deployment)</span>
+                        <div class="version-dropdown hidden" id="vcf90VxrailDropdown">
+                            <select id="vcf90Vxrail">
+                                <option value="">-- Select VxRail Version --</option>
+                                <option value="9.0.000">9.0.000</option>
+                                <option value="9.0.100">9.0.100</option>
+                                <option value="9.0.200">9.0.200</option>
                             </select>
                         </div>
                     </label>
@@ -1240,6 +1273,18 @@
             const checkbox = document.getElementById(checkboxId);
             const dropdown = document.getElementById(dropdownId);
 
+            // Helper: reset a VxRail sub-checkbox group
+            function resetVxRailGroup(groupId, checkId, ddId, selId) {
+                var grp = document.getElementById(groupId);
+                var chk = document.getElementById(checkId);
+                var dd  = document.getElementById(ddId);
+                var sel = document.getElementById(selId);
+                if (grp) grp.style.display = 'none';
+                if (chk) chk.checked = false;
+                if (dd)  dd.classList.add('hidden');
+                if (sel) sel.value = '';
+            }
+
             if (checkbox.checked) {
                 dropdown.classList.remove('hidden');
                 // Uncheck all other VCF checkboxes (only one at a time)
@@ -1258,6 +1303,16 @@
                         }
                     }
                 });
+                // Hide both VxRail groups first, then show the relevant one
+                resetVxRailGroup('vcf52VxrailCheckboxGroup', 'vcf52VxrailCheck', 'vcf52VxrailDropdown', 'vcf52Vxrail');
+                resetVxRailGroup('vcf90VxrailCheckboxGroup', 'vcf90VxrailCheck', 'vcf90VxrailDropdown', 'vcf90Vxrail');
+                if (checkboxId === 'vcf52Check') {
+                    var g52 = document.getElementById('vcf52VxrailCheckboxGroup');
+                    if (g52) g52.style.display = 'block';
+                } else if (checkboxId === 'vcf90Check') {
+                    var g90 = document.getElementById('vcf90VxrailCheckboxGroup');
+                    if (g90) g90.style.display = 'block';
+                }
                 // Reset VCF target version when switching VCF version
                 var vcfTgt = document.getElementById('vcfTargetVcf91Version');
                 if (vcfTgt) vcfTgt.value = '';
@@ -1267,6 +1322,12 @@
                 dropdown.classList.add('hidden');
                 const select = dropdown.querySelector('select');
                 if (select) select.value = '';
+                // Hide VxRail group for this VCF version
+                if (checkboxId === 'vcf52Check') {
+                    resetVxRailGroup('vcf52VxrailCheckboxGroup', 'vcf52VxrailCheck', 'vcf52VxrailDropdown', 'vcf52Vxrail');
+                } else if (checkboxId === 'vcf90Check') {
+                    resetVxRailGroup('vcf90VxrailCheckboxGroup', 'vcf90VxrailCheck', 'vcf90VxrailDropdown', 'vcf90Vxrail');
+                }
             }
 
             updateVCFPath();
@@ -1453,34 +1514,50 @@
                 
                 window.location.href = 'vSphere-to-VCF-9.1-(VCF-Automation-included).html';
             } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (VCF Automation not included)') {
-                // Store VCF 5.2 version in localStorage
+                // Store VCF 5.2 version and VxRail selection in localStorage
                 const vcf52Version = document.getElementById('vcf52').value;
+                const vcf52VxrailSelected = document.getElementById('vcf52VxrailCheck').checked;
+                const vcf52VxrailVersion = document.getElementById('vcf52Vxrail').value || '';
                 localStorage.setItem('vcf-version', '5.2');
                 localStorage.setItem('vcf-detailed-version', vcf52Version);
+                localStorage.setItem('vxrail-selected', vcf52VxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vcf52VxrailVersion);
                 
                 // Navigate to VCF 5.2 to 9.1 no automation page
                 window.location.href = 'VCF-5.2-to-VCF-9.1-(VCF-Automation-not-included).html';
             } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (VCF Automation included)') {
-                // Store VCF 5.2 version in localStorage
+                // Store VCF 5.2 version and VxRail selection in localStorage
                 const vcf52Version = document.getElementById('vcf52').value;
+                const vcf52VxrailSelected = document.getElementById('vcf52VxrailCheck').checked;
+                const vcf52VxrailVersion = document.getElementById('vcf52Vxrail').value || '';
                 localStorage.setItem('vcf-version', '5.2');
                 localStorage.setItem('vcf-detailed-version', vcf52Version);
+                localStorage.setItem('vxrail-selected', vcf52VxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vcf52VxrailVersion);
                 
                 // Navigate to VCF 5.2 to 9.1 with automation page
                 window.location.href = 'VCF-5.2-to-VCF-9.1-(VCF-Automation-included).html';
             } else if (pathTitle === 'VCF 9.0 to VCF 9.1 (VCF Automation not included)') {
-                // Store VCF 9.0 version in localStorage
+                // Store VCF 9.0 version and VxRail selection in localStorage
                 const vcf90Version = document.getElementById('vcf90').value;
+                const vcf90VxrailSelected = document.getElementById('vcf90VxrailCheck').checked;
+                const vcf90VxrailVersion = document.getElementById('vcf90Vxrail').value || '';
                 localStorage.setItem('vcf-version', '9.0');
                 localStorage.setItem('vcf-detailed-version', vcf90Version);
+                localStorage.setItem('vxrail-selected', vcf90VxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vcf90VxrailVersion);
                 
                 // Navigate to VCF 9.0 to 9.1 no automation page
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-not-included).html';
             } else if (pathTitle === 'VCF 9.0 to VCF 9.1 (VCF Automation included)') {
-                // Store VCF 9.0 version in localStorage
+                // Store VCF 9.0 version and VxRail selection in localStorage
                 const vcf90Version = document.getElementById('vcf90').value;
+                const vcf90VxrailSelected = document.getElementById('vcf90VxrailCheck').checked;
+                const vcf90VxrailVersion = document.getElementById('vcf90Vxrail').value || '';
                 localStorage.setItem('vcf-version', '9.0');
                 localStorage.setItem('vcf-detailed-version', vcf90Version);
+                localStorage.setItem('vxrail-selected', vcf90VxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vcf90VxrailVersion);
                 
                 // Navigate to VCF 9.0 to 9.1 with automation page
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html';

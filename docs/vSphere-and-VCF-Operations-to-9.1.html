@@ -995,6 +995,32 @@
             background: rgba(64, 180, 229, 0.12) !important;
             color: var(--vmw-blue) !important;
         }
+    
+        /* ---- Option G Smart Tag Search styles ---- */
+ /* ---- Option G Smart Tag Search styles ---- */
+       .g-group-title {
+             font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--vmw-blue); margin: 16px 0 8px;
+            padding: 4px 0 4px 10px; border-left: 3px solid var(--vmw-blue);
+            background: var(--bg); border-radius: 0 4px 4px 0;
+        }        .g-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .g-chip {
+            padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--border-color);
+            background: var(--card-bg); cursor: pointer; font-size: 0.84rem; font-weight: 500;
+            color: var(--text-secondary); transition: all 0.15s; user-select: none;
+        }
+        .g-chip:hover { border-color: var(--vmw-blue); color: var(--vmw-blue); }
+        .g-chip.g-selected { background: var(--vmw-blue); border-color: var(--vmw-blue); color: white; font-weight: 600; }
+        .g-chip mark { background: rgba(255,230,0,0.45); border-radius: 2px; font-weight: 700; color: inherit; }
+        .g-empty { font-size: 0.84rem; color: var(--vmw-gray); font-style: italic; padding: 6px 0; }
+        .g-sel-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: var(--vmw-blue); color: white;
+            padding: 3px 10px; border-radius: 14px; font-size: 0.78rem; margin: 2px; font-weight: 500;
+        }
+        .g-sel-tag .g-rm { cursor: pointer; opacity: 0.8; margin-left: 2px; font-size: 0.75rem; }
+        .g-sel-tag .g-rm:hover { opacity: 1; }
+
     </style>
 </head>
 
@@ -1054,57 +1080,39 @@
                 </div>
             </div>
 
-            <!-- Part 2: Additional Components -->
-            <h3 style="color: var(--text-primary); margin-bottom: 16px;">🔧 Optional Features</h3>
-            <p style="margin-bottom: 16px; color: var(--text-secondary);">Optional Features (plan updates automatically):</p>
-            
+                     <!-- Part 2: Additional Components &mdash; Option G Smart Tag Search -->
+            <div style="margin-bottom:20px; padding:20px; background:var(--card-bg); border-radius:12px; border:1px solid var(--border-color); border-left:4px solid var(--vmw-blue);">
+            <h3 style="color: var(--text-primary); margin-bottom: 12px;">&#x1F9E9; Optional Features & Components</h3>
+            <p style="margin-bottom: 14px; color: var(--text-secondary); font-size: 0.9rem;">
+                Select any additional components or features &mdash; your plan updates automatically.
+            </p>
+
+            <!-- Hidden checkboxes kept for backward-compatibility with existing JS -->
+            <input type="checkbox" id="vlcmCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
+            <input type="checkbox" id="witnessCheck"    style="display:none" onchange="autoGenerateUpgradePlan()">
+            <input type="checkbox" id="vchaCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
+            <input type="checkbox" id="autodeployCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
+
             <div style="margin-bottom: 20px;">
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="vlcmCheck" onchange="autoGenerateUpgradePlan()">
-                        <span>VUM-Cluster Based</span>
-                    </label>
+        
+
+                <!-- Results area -->
+                <div id="gResults" style="margin-bottom:10px;"></div>
+
+
+
+                <!-- Reset button -->
+                <div style="margin-top:12px;">
+                    <button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">
+                        &#x21BA; Reset Selections
+                    </button>
                 </div>
-
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="witnessCheck" onchange="autoGenerateUpgradePlan()">
-                        <span>vSAN Witness Host</span>
-                    </label>
-                </div>
-
-                 <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="vchaCheck" onchange="autoGenerateUpgradePlan()">
-                        <span>vCenter High Availability (vCHA)</span>
-                    </label>
-                </div>
-
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="autodeployCheck" onchange="autoGenerateUpgradePlan()">
-                        <span>Auto Deploy</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Advanced Mode Toggle -->
-            <button class="btn" onclick="toggleAdvancedMode()" style="background: var(--vmw-gray); margin-bottom: 20px; color: white;">
-                <span id="advancedToggleText" style="color: white;">➕ Additional VMware Products</span>
-            </button>
-
-            <!-- Advanced Products Section (Hidden by default) -->
-            <div id="advancedProducts" style="display: none; margin-bottom: 20px; padding: 24px; background: var(--card-bg); border-radius: 12px; border-left: 4px solid var(--vmw-blue); border: 1px solid var(--border-color);">
-                <h3 style="color: var(--text-primary); margin-bottom: 16px; font-size: 18px;">📦 Additional VMware Products</h3>
-                
-                <div id="advancedProductsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
-                    <!-- Products will be dynamically generated from JSON -->
-                </div>
-
-                <p style="margin-top: 16px; font-size: 14px; color: #6c757d; font-style: italic;">
+                  <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary); font-style: italic;">
                     Note: These products will add additional upgrade phases to your plan based on dependency and compatibility requirements.
                 </p>
             </div>
+            </div>
+
         </div>
 
         <!-- Upgrade Phases Section -->
@@ -1128,7 +1136,7 @@
                         <div>
                             <strong style="color: #7C3AED; font-size: 16px;">Safe Stopping Points</strong>
                             <p style="margin: 4px 0 0 0; color: #5a6778; font-size: 14px;">
-                                Each Phase is a safe stopping point where you can pause for validation and testing before proceeding with the next phase.
+                                Each Phases is safe stopping points where you can pause for validation and testing before proceeding with the next phase.
                             </p>
                         </div>
                     </div>
@@ -1217,6 +1225,9 @@
             loadSelectionsFromStorage();
             displaySelectedSummary();
             generateAdvancedProductsFromJSON();
+            // Build Option G index from loaded data then render chips
+            gBuildIndex();
+            gRender('');
             // Auto-generate the initial upgrade plan
             autoGenerateUpgradePlan();
             updatePageTitlesForTargetVersion();
@@ -1308,17 +1319,14 @@
             witnessSelected = document.getElementById('witnessCheck').checked;
             vchaSelected = document.getElementById('vchaCheck').checked;
             
-            // Collect advanced product selections
-            const selectedProducts = {};
-            if (upgradeData && upgradeData.optional_products) {
-                upgradeData.optional_products.forEach(product => {
-                    const checkbox = document.getElementById(product.id + 'Check');
-                    if (checkbox) {
-                        selectedProducts[product.id] = checkbox.checked;
-                    }
-                });
-            }
-            
+            // Use selections already set by gSyncCheckboxes() (Option G).
+            // Merge in the 4 legacy checkbox states on top so they stay in sync.
+            const selectedProducts = Object.assign({}, window.selectedAdvancedProducts || {});
+            selectedProducts['vum_migration'] = document.getElementById('vlcmCheck').checked;
+            selectedProducts['vsan_witness']  = document.getElementById('witnessCheck').checked;
+            selectedProducts['vcha']          = document.getElementById('vchaCheck').checked;
+            selectedProducts['auto_deploy']   = document.getElementById('autodeployCheck').checked;
+
             // Store for use in generateUpgradePlan
             window.selectedAdvancedProducts = selectedProducts;
 
@@ -1621,7 +1629,7 @@
             if (operations_orchestratorPhases.length > 0) {
                 steps.push({
                     number: steps.length + 1,
-                    title: 'VCF Operations Orchestrator',
+                    title: 'Standalone VCF Operations Orchestrator',
                     description: 'Upgrade VCF Operations Orchestrator',
                     phases: operations_orchestratorPhases
                 });
@@ -1666,8 +1674,8 @@
             if (supervisorPhases.length > 0) {
                 steps.push({
                     number: steps.length + 1,
-                    title: 'VMware vSphere Supervisor',
-                    description: 'Upgrade VMware vSphere Supervisor',
+                    title: 'vSphere Supervisor',
+                    description: 'Upgrade vSphere Supervisor',
                     phases: supervisorPhases
                 });
             }
@@ -1694,7 +1702,7 @@
                 steps.push({
                     number: steps.length + 1,
                     title: 'Post-Infrastructure Products',
-                    description: 'Upgrade additional products (Operations for Logs, Operations for Networks)',
+                    description: 'Upgrade additional products (Operations for Logs)',
                     phases: advancedPhases
                 });
             }
@@ -2258,23 +2266,50 @@
             
             // Core Components Summary
             html += '<div style="background: #f0f7ff; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #3d6680;">';
-            html += '<h3 style="margin-bottom: 8px;">Selected Components:</h3>';
+            html += '<h3 style="margin-bottom: 8px; font-size:1rem;">Selected Components:</h3>';
             html += '<ul style="margin-left: 20px;">';
-            html += '<li>vCenter Server v' + vcenterVersion + '</li>';
-            html += '<li>ESX Hosts v' + esxVersion + '</li>';
-            if (operationsSelected) html += '<li>VCF Operations v' + operationsVersion + '</li>';
+            html += `<li><span class="badge included">✓ vCenter Server</span><span class="badge version">v${vcenterVersion}</span></li>`;
+            html += `<li><span class="badge included">✓ ESX Hosts</span><span class="badge version">v${esxVersion}</span></li>`;
+            if (operationsSelected) html += `<li><span class="badge included">✓ VCF Operations</span><span class="badge version">v${operationsVersion}</span></li>`;
             html += '</ul>';
             
             // Additional Products Section (only show if any selected)
             const selectedProducts = window.selectedAdvancedProducts || {};
-            const hasAdditionalProducts = vlcmSelected || witnessSelected || 
+            const hasAdditionalProducts = Object.values(selectedProducts).some(val => val === true);
                 Object.values(selectedProducts).some(val => val === true);
             
-            if (hasAdditionalProducts) {
-                html += '<h3 style="margin-top: 16px; margin-bottom: 8px;">Additional Products:</h3>';
+           if (hasAdditionalProducts && typeof G_INDEX !== 'undefined' && G_INDEX.length) {
+                // Bucket selected items by group, preserving group order
+                const groupOrder = [];
+                const groupItems = {};
+                G_INDEX.forEach(item => {
+                    if (selectedProducts[item.id]) {
+                        if (!groupItems[item.group]) {
+                            groupOrder.push(item.group);
+                            groupItems[item.group] = [];
+                        }
+                        groupItems[item.group].push(item.name);
+                    }
+                });
+
+                if (groupOrder.length) {
+                    html += '<div style="margin-top:16px;">';
+                    html += '<h3 style="margin-bottom:10px;font-size:1rem;">Selected Optional Components:</h3>';
+                    groupOrder.forEach(grp => {
+                        html += '<div style="margin-bottom:10px;">';
+                        html += '<div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#1674b1;border-left:3px solid #1674b1;padding-left:7px;margin-bottom:5px;">' + grp + '</div>';
+                        html += '<ul style="margin-left:18px;margin-top:0;">';
+                        groupItems[grp].forEach(name => {
+                            html += '<li style="font-size:0.92rem;">' + name + '</li>';
+                        });
+                        html += '</ul></div>';
+                    });
+                    html += '</div>';
+                }
+            } else if (hasAdditionalProducts) {
+                // Fallback: flat list if G_INDEX not available
+                html += '<h3 style="margin-top: 16px; margin-bottom: 8px;">Selected Optional Components:</h3>';
                 html += '<ul style="margin-left: 20px;">';
-                if (vlcmSelected) html += '<li>vLCM Baseline to Image Migration</li>';
-                if (witnessSelected) html += '<li>vSAN Witness Host</li>';
                 
                 // Add selected advanced products
                 if (upgradeData && upgradeData.optional_products) {
@@ -2504,7 +2539,6 @@
             // Add zoom controls wrapper
             container.innerHTML = `
                 <div style="position: relative;">
-                    <h3 style="color: var(--vmw-blue); margin-bottom: 16px; font-size: 1.3rem; border-bottom: 2px solid var(--vmw-blue); padding-bottom: 8px;">Upgrade Workflow</h3>
                     <pre class="mermaid">${diagram}</pre>
                 </div>
             `;
@@ -2766,6 +2800,214 @@
         window.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => initInlineDocumentation(), 1000);
         });
+    
+        // ============================================================
+        // Option G — Smart Tag Search
+        // ============================================================
+
+        // Category map: component id → display group
+        // ── GROUP CONFIGURATION ────────────────────────────────────────────────
+        // Currently 3 groups are defined. To add a 4th group:
+        //
+        //   STEP 1 — Add a new group name string (pick an emoji + label):
+        //            const G_GROUP_4 = '&#x1F310; My New Group';
+        //
+        //   STEP 2 — Map any component id(s) to it in G_GROUP_MAP, e.g.:
+        //            my_new_component: G_GROUP_4,
+        //
+        //   STEP 3 — Add keywords for it in G_KEYWORD_MAP, e.g.:
+        //            my_new_component: 'my new component keywords',
+        //
+        //   STEP 4 — If the component has a legacy hidden checkbox, add it
+        //            to G_CHECKBOX_MAP too, e.g.:
+        //            my_new_component: 'myNewCheck',
+        //
+        //   STEP 5 — Add the component to optional_products in the JSON file.
+        //
+        // ── GROUP NAMES (single source of truth — change the label here only) ─
+        const G_GROUP_FEATURES   = 'Features';
+       //const G_GROUP_VSAN       = 'vSAN';
+        const G_GROUP_COMPONENTS = 'Components';
+        // const G_GROUP_4       = 'My New Group';   // <-- uncomment & rename to add a 4th group
+
+        const G_GROUP_MAP = {
+            // ── Features ──────────────────────────────────────────────────────
+            vcha:                    G_GROUP_FEATURES,
+            auto_deploy:             G_GROUP_FEATURES,
+            supervisor:              G_GROUP_FEATURES,
+            vum_migration:           G_GROUP_FEATURES,
+            vsan_data_protection:    G_GROUP_FEATURES,
+            vsan_file_service:       G_GROUP_FEATURES,
+
+            // ── Components ────────────────────────────────────────────────────
+            srm:                     G_GROUP_COMPONENTS,
+            replication:             G_GROUP_COMPONENTS,
+            avi:                     G_GROUP_COMPONENTS,
+            logs:                    G_GROUP_COMPONENTS,
+            operations_orchestrator: G_GROUP_COMPONENTS,
+            vsan_witness:            G_GROUP_COMPONENTS,
+
+            // ── 4th Group (placeholder — uncomment and map ids here) ──────────
+            // my_new_component:     G_GROUP_4,
+        };
+
+        // Keyword map: component id → search keywords
+        const G_KEYWORD_MAP = {
+            vsan_data_protection:    'vsan san storage protection data dp',
+            vsan_file_service:       'vsan san file service nfs smb shares',
+            vsan_witness:            'vsan witness stretched host cluster',
+            srm:                     'srm site recovery manager dr disaster failover',
+            replication:             'replication replicate vsphere async vm dr',
+            vcha:                    'vcha ha high availability vcenter',
+            auto_deploy:             'auto deploy stateless esx provision',
+            supervisor:              'supervisor kubernetes k8s tanzu workload',
+            avi:                     'avi load balancer nsx alb network lb',
+            logs:                    'logs log vcf operations observability syslog',
+            operations_orchestrator: 'aria automation orchestrator workflow',
+            vum_migration:           'vum cluster upgrade manager legacy vlcm',
+        };
+
+        // Map component ids to the legacy hidden checkbox ids
+        const G_CHECKBOX_MAP = {
+            vum_migration: 'vlcmCheck',
+            vsan_witness:  'witnessCheck',
+            vcha:          'vchaCheck',
+            auto_deploy:   'autodeployCheck',
+        };
+
+        let G_INDEX = [];
+        const gSelected = new Set();
+
+        function gBuildIndex() {
+            G_INDEX = [];
+            if (!upgradeData) return;
+
+            const seen = new Set();
+
+            // Add all optional_products entries
+            (upgradeData.optional_products || []).forEach(p => {
+                seen.add(p.id);
+                G_INDEX.push({
+                    id:       p.id,
+                    name:     p.display_name,
+                    keywords: G_KEYWORD_MAP[p.id] || p.display_name.toLowerCase(),
+                    group:    G_GROUP_MAP[p.id]   || '&#x1F4E6; Other',
+                });
+            });
+
+            // Add legacy items (vcha, vsan_witness, auto_deploy, vum_migration)
+            // that may not be in optional_products but are in components
+            ['vsan_witness', 'vcha', 'auto_deploy', 'vum_migration'].forEach(id => {
+                if (!seen.has(id) && upgradeData.components && upgradeData.components[id]) {
+                    G_INDEX.push({
+                        id:       id,
+                        name:     upgradeData.components[id].name || id,
+                        keywords: G_KEYWORD_MAP[id] || id,
+                        group:    G_GROUP_MAP[id]   || '&#x1F4E6; Other',
+                    });
+                }
+            });
+
+            // Sort by group then name
+            G_INDEX.sort((a, b) => a.group.localeCompare(b.group) || a.name.localeCompare(b.name));
+        }
+
+        function gRender(query) {
+            const q = (query || '').trim().toLowerCase();
+            const matches = q === '' ? G_INDEX : G_INDEX.filter(i =>
+                i.name.toLowerCase().includes(q) || i.keywords.includes(q)
+            );
+
+            const groups = {};
+            matches.forEach(item => {
+                if (!groups[item.group]) groups[item.group] = [];
+                groups[item.group].push(item);
+            });
+
+            const el = document.getElementById('gResults');
+            if (!el) return;
+
+            if (Object.keys(groups).length === 0) {
+                el.innerHTML = '<div class="g-empty">No matches for “' + query + '”.</div>';
+                return;
+            }
+
+            let html = '';
+            for (const [grp, items] of Object.entries(groups)) {
+                html += '<div class="g-group-title">' + grp + '</div><div class="g-chips">';
+                items.forEach(item => {
+                    const sel = gSelected.has(item.id);
+                    const escaped = q
+                        ? item.name.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>')
+                        : item.name;
+                    html += '<span class="g-chip' + (sel ? ' g-selected' : '') + '" data-id="' + item.id + '" onclick="gToggle(this)">' + escaped + '</span>';
+                });
+                html += '</div>';
+            }
+            el.innerHTML = html;
+        }
+
+        function gToggle(chip) {
+            const id = chip.dataset.id;
+            if (gSelected.has(id)) {
+                gSelected.delete(id);
+                chip.classList.remove('g-selected');
+            } else {
+                gSelected.add(id);
+                chip.classList.add('g-selected');
+            }
+            gSyncCheckboxes();
+            gUpdateSummary();
+            autoGenerateUpgradePlan();
+        }
+
+        function gSyncCheckboxes() {
+            for (const [id, cbId] of Object.entries(G_CHECKBOX_MAP)) {
+                const cb = document.getElementById(cbId);
+                if (cb) cb.checked = gSelected.has(id);
+            }
+            const prod = {};
+            gSelected.forEach(id => { prod[id] = true; });
+            window.selectedAdvancedProducts = prod;
+        }
+
+        function gUpdateSummary() {
+            const el = document.getElementById('gSummary');
+            if (!el) return;
+            if (gSelected.size === 0) {
+                el.innerHTML = 'No optional components selected — your plan will include core components only.';
+                el.style.color = 'var(--text-secondary)';
+                return;
+            }
+            const names = G_INDEX.filter(i => gSelected.has(i.id)).map(i => i.name);
+            el.style.color = 'var(--text-primary)';
+            el.innerHTML = '<strong>Selected: </strong>' + names.map(n => {
+                const item = G_INDEX.find(i => i.name === n);
+                const id = item ? item.id : n;
+                return '<span class="g-sel-tag">' + n + ' <span class="g-rm" onclick="gRemove(\'' + id + '\')">&#x2715;</span></span>';
+            }).join('');
+        }
+
+        function gRemove(id) {
+            gSelected.delete(id);
+            const chip = document.querySelector('.g-chip[data-id="' + id + '"]');
+            if (chip) chip.classList.remove('g-selected');
+            gSyncCheckboxes();
+            gUpdateSummary();
+            autoGenerateUpgradePlan();
+        }
+
+        function gReset() {
+            gSelected.clear();
+            const inp = document.getElementById('gSearchInput');
+            gRender(inp ? inp.value : '');
+            gSyncCheckboxes();
+            gUpdateSummary();
+            autoGenerateUpgradePlan();
+        }
+
+        function resetDropdowns() { gReset(); }
+
     </script>
     <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
         <div class="doc-modal-content">

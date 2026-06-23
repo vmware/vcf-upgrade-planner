@@ -57,7 +57,7 @@
         },
         {
             "id": "supervisor",
-            "display_name": "VMware vSphere Supervisor",
+            "display_name": "vSphere Supervisor",
             "category": "advanced",
             "upgrade_phase": "mid_infrastructure"
         },
@@ -80,19 +80,13 @@
             "upgrade_phase": "post_infrastructure"
         },
         {
-            "id": "vxrail",
-            "display_name": "Dell VxRail",
-            "category": "advanced",
-            "upgrade_phase": "mid_infrastructure"
-        },
-        {
             "id": "vdefend",
             "display_name": "VMware vDefend Distributed Firewall",
             "category": "advanced"
         },
         {
             "id": "operations_orchestrator",
-            "display_name": "VMware Aria Automation Orchestrator (VMware Orchestrator)",
+            "display_name": "Standalone Aria Automation Orchestrator (VMware Orchestrator)",
             "category":"advanced"
         },
         {
@@ -344,16 +338,16 @@
             ]
         },
         "supervisor": {
-            "name": "VMware vSphere Supervisor",
+            "name": "vSphere Supervisor",
             "steps": [
-                "Upgrade VMware vSphere Supervisor - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
+                "Upgrade vSphere Supervisor - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {
                     "type": "warning",
-                    "title": "VMware vSphere Supervisor deployed on vSphere Lifecycle Baseline Clusters(VUM)",
+                    "title": "vSphere Supervisor deployed on vSphere Lifecycle Baseline Clusters(VUM)",
                     "bullets": [
-                        "Customers with VMware vSphere Supervisor clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"
+                        "Customers with vSphere Supervisor clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"
                     ]
                 }
             ]
@@ -519,7 +513,7 @@
                     "type": "info",
                     "title": "VxRail Upgrades",
                     "bullets": [
-                        "All upgrades for VxRail Appliances will be validated thru Dell support team or Dell Field/Partner(s).There are different pre-check and Solve Desktop Procedure based on the VxRail Hardware and VxRail versions. It is recommended not to attempt online upgrade thru VxRail Manager UI/VxL Manager vCenter Plugin."
+                        "All upgrades for VxRail Appliances will be validated thru Dell support team or Dell Field/Partner(s). There are different pre-check and Solve Desktop Procedure based on the VxRail Hardware and VxRail versions. It is recommended not to attempt online upgrade thru VxRail Manager UI/VxL Manager vCenter Plugin."
                     ]
                 }
             ]
@@ -581,7 +575,7 @@
       ]
     },
     "operations_orchestrator": {
-        "name": "VCF Operations Orchestrator",
+        "name": "Standalone VCF Operations Orchestrator (Aria Automation Orchestrator)",
         "notices": [
             {
             "type": "info",

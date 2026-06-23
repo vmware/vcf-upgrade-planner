@@ -107,7 +107,7 @@
         },
         {
             "id": "supervisor",
-            "display_name": "VMware vSphere Supervisor",
+            "display_name": "vSphere Supervisor",
             "category": "advanced",
             "upgrade_phase": "mid_infrastructure"
         },
@@ -123,7 +123,7 @@
         },
         {
             "id": "operations_orchestrator",
-            "display_name": "VMware Aria Automation Orchestrator (VMware Orchestrator)",
+            "display_name": "Standalone Aria Automation Orchestrator (VMware Orchestrator)",
             "category":"advanced"
         },
         {
@@ -146,6 +146,11 @@
             "display_name": "VMware Identity Manager",
             "category": "advanced",
             "upgrade_phase": "post_infrastructure"
+        },
+        {
+            "id": "auto_deploy",
+            "display_name": "Auto Deploy",
+            "upgrade_phase": "pre_infrastructure"
         }
     ],
     "components": {
@@ -538,7 +543,6 @@
                     "rows": [
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
-                        ["VCF Operations Node", "Small", "1", "4", "16gb", "274gb"],
                         ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
                         ["License server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF management services Nodes", "Small", "4", "40", "82gb", "3,000gb"]
@@ -759,15 +763,15 @@
             ]
         },
         "supervisor": {
-            "name": "VMware vSphere Supervisor",
+            "name": "vSphere Supervisor",
             "steps": [
-                "Upgrade VMware vSphere Supervisor - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
+                "Upgrade vSphere Supervisor - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {
                     "type": "warning",
-                    "title": "VMware vSphere Supervisor deployed on vSphere Lifecycle Baseline Clusters(VUM)",
-                    "bullets": ["Customers with VMware vSphere Supervisor clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"]
+                    "title": "vSphere Supervisor deployed on vSphere Lifecycle Baseline Clusters(VUM)",
+                    "bullets": ["Customers with vSphere Supervisor clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"]
                 }
             ]
         },
@@ -906,7 +910,7 @@
       ]
     },
     "operations_orchestrator": {
-      "name": "VCF Operations Orchestrator",
+      "name": "Standalone VCF Operations Orchestrator",
       "notices": [
         {
           "type": "info",
