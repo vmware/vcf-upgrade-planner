@@ -1084,6 +1084,30 @@
                 </div>
             </div>
 
+             <!-- Deployment Configuration -->
+            <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue);">
+                <h3 style="color: var(--text-primary); margin-bottom: 14px; font-size: 16px;">&#x1F3D7;&#xFE0F; Deployment Configuration</h3>
+                <div style="margin-bottom: 14px;">
+                    <label style="font-weight: 600; font-size: 14px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Deployment Type:</label>
+                    <div style="display: flex; gap: 20px;">
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px;">
+                            <input type="radio" id="simpleRadio" name="deploymentType" value="simple" checked onchange="deploymentType='simple'; updateDeploymentSize(); autoGenerateUpgradePlan();">
+                            Simple
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px;">
+                            <input type="radio" id="haRadio" name="deploymentType" value="ha" onchange="deploymentType='ha'; updateDeploymentSize(); autoGenerateUpgradePlan();">
+                            High Availability
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label for="deploymentSize" style="font-weight: 600; font-size: 14px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Deployment Size:</label>
+                    <select id="deploymentSize" onchange="deploymentSize=this.value; autoGenerateUpgradePlan();" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg); color: var(--text-primary); font-size: 14px;">
+                        <option value="small">Small</option>
+                    </select>
+                </div>
+            </div>
+
            <!-- Part 2: Additional Components - Option G Smart Tag Search -->
             <div style="margin-bottom:20px; padding:20px; background:var(--card-bg); border-radius:12px; border:1px solid var(--border-color); border-left:4px solid var(--vmw-blue);">
             <h3 style="color:var(--text-primary);margin-bottom:12px;">&#x1F50D; Optional Features & Components</h3>
