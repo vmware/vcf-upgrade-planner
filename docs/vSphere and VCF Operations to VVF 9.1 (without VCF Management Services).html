@@ -1,12 +1,11 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vSphere to VCF 9.1 - (VCF Automation not included)</title>
+    <title>vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-    <script src="docs_inline.js"></script>
     <script>
         (function() {
             var savedTheme = localStorage.getItem('theme') || 'light';
@@ -26,6 +25,7 @@
             });
         })();
     </script>
+    <script src="docs_inline.js"></script>
     <style>
         :root {
             --vmw-blue: #0088b5;
@@ -64,14 +64,12 @@
         }
 
         a {
-            color: #0088b5;
+            color: var(--vmw-blue);
             text-decoration: none;
-            font-weight: 500;
         }
 
         a:hover {
             text-decoration: underline;
-            color: #006d96;
         }
 
         [data-theme="dark"] a {
@@ -80,20 +78,6 @@
 
         [data-theme="dark"] a:hover {
             color: #8FE3FF;
-        }
-        
-        /* Documentation-style list formatting */
-        ol, ul {
-            line-height: 1.8;
-        }
-        
-        ol li, ul li {
-            margin-bottom: 8px;
-        }
-        
-        ul ul {
-            list-style-type: circle;
-            margin-top: 8px;
         }
 
         /* Dark Mode Toggle Switch */
@@ -331,8 +315,9 @@
             padding: 32px;
             margin-bottom: 28px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0.6;
+            opacity: 1;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            scroll-margin-top: 20px;
         }
 
         [data-theme="dark"] .section {
@@ -344,6 +329,7 @@
             font-weight: 600;
             margin-bottom: 24px;
             letter-spacing: -0.01em;
+            color: var(--vmw-dark);
         }
 
         .section.active {
@@ -549,15 +535,16 @@
             /* Show the generated print content */
             #printAllPhases { display: block !important; }
 
-            /* Do NOT use page-break-inside: avoid on .section — causes blank pages on tall sections */
+            /* Phase cards — allow breaks INSIDE tall cards; only force avoid on small ones */
             .section {
                 opacity: 1 !important;
                 border: 1px solid #ccc !important;
+                /* Do NOT use page-break-inside: avoid here — it causes blank pages on tall sections */
                 break-inside: auto;
                 page-break-inside: auto;
             }
 
-            /* Each phase card in the printed output */
+            /* Each phase block in the printed output */
             #printAllPhases > div > div {
                 break-inside: avoid-column;
                 page-break-inside: avoid;
@@ -566,6 +553,7 @@
             }
 
             /* Tables: no overflow scrolling in print */
+            .print-table-wrap,
             div[style*="overflow-x"] {
                 overflow: visible !important;
             }
@@ -679,8 +667,6 @@
         .plan-updating {
             animation: planUpdate 0.4s ease-out;
         }
-        
-
 
         @media (max-width: 768px) {
             .sidebar {
@@ -701,7 +687,6 @@
                 padding: 24px;
             }
         }
-
         .doc-modal {
             display: none;
             position: fixed;
@@ -902,8 +887,8 @@
             flex: 1;
             min-width: 0;
         }
-    
-        /* ── TechDocs DITA normalisation ──────────────────────────────────────── */
+
+        /* ── TechDocs DITA normalisation ──────────────────────────────────── */
         .doc-modal-body .linklist,
         .doc-modal-body .relatedlinks,
         .doc-modal-body .linkpool,
@@ -1012,16 +997,29 @@
         }
     
         /* ---- Option G Smart Tag Search styles ---- */
-        .g-group-title { font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--vmw-blue);margin:16px 0 8px;padding:4px 0 4px 10px;border-left:3px solid var(--vmw-blue);background:var(--bg);border-radius:0 4px 4px 0; }
-        .g-chips { display:flex;flex-wrap:wrap;gap:8px; }
-        .g-chip { padding:6px 13px;border-radius:20px;border:1.5px solid var(--border-color);background:var(--card-bg);cursor:pointer;font-size:0.84rem;font-weight:500;color:var(--text-secondary);transition:all 0.15s;user-select:none; }
-        .g-chip:hover { border-color:var(--vmw-blue);color:var(--vmw-blue); }
-        .g-chip.g-selected { background:var(--vmw-blue);border-color:var(--vmw-blue);color:white;font-weight:600; }
-        .g-chip mark { background:rgba(255,230,0,0.45);border-radius:2px;font-weight:700;color:inherit; }
-        .g-empty { font-size:0.84rem;color:var(--vmw-gray);font-style:italic;padding:6px 0; }
-        .g-sel-tag { display:inline-flex;align-items:center;gap:5px;background:var(--vmw-blue);color:white;padding:3px 10px;border-radius:14px;font-size:0.78rem;margin:2px;font-weight:500; }
-        .g-sel-tag .g-rm { cursor:pointer;opacity:0.8;margin-left:2px;font-size:0.75rem; }
-        .g-sel-tag .g-rm:hover { opacity:1; }
+ /* ---- Option G Smart Tag Search styles ---- */
+       .g-group-title {
+             font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--vmw-blue); margin: 16px 0 8px;
+            padding: 4px 0 4px 10px; border-left: 3px solid var(--vmw-blue);
+            background: var(--bg); border-radius: 0 4px 4px 0;
+        }        .g-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .g-chip {
+            padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--border-color);
+            background: var(--card-bg); cursor: pointer; font-size: 0.84rem; font-weight: 500;
+            color: var(--text-secondary); transition: all 0.15s; user-select: none;
+        }
+        .g-chip:hover { border-color: var(--vmw-blue); color: var(--vmw-blue); }
+        .g-chip.g-selected { background: var(--vmw-blue); border-color: var(--vmw-blue); color: white; font-weight: 600; }
+        .g-chip mark { background: rgba(255,230,0,0.45); border-radius: 2px; font-weight: 700; color: inherit; }
+        .g-empty { font-size: 0.84rem; color: var(--vmw-gray); font-style: italic; padding: 6px 0; }
+        .g-sel-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: var(--vmw-blue); color: white;
+            padding: 3px 10px; border-radius: 14px; font-size: 0.78rem; margin: 2px; font-weight: 500;
+        }
+        .g-sel-tag .g-rm { cursor: pointer; opacity: 0.8; margin-left: 2px; font-size: 0.75rem; }
+        .g-sel-tag .g-rm:hover { opacity: 1; }
 
     </style>
 </head>
@@ -1059,19 +1057,19 @@
                     </div>
                 </div>
                 <div class="sidebar-counter">
-                    <img src="https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vcf-no-automation.svg?label=Visitors&color=00BCD4&labelColor=092138" alt="Visitor counter" />
+                    <img src="https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-no-vcf.svg?label=Visitors&color=00C48C&labelColor=092138" alt="Visitor counter" />
                 </div>
             </div>
         </div>
-
+        
         <!-- Main Content Wrapper -->
         <div class="main-wrapper">
             <div class="container">
                 <header id="environment">
-                    <h1>vSphere to VCF 9.1 - (VCF Automation not included)</h1>
+                    <h1>vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)</h1>
                 </header>
         <!-- Configuration Section -->
-        <div class="section" style="opacity: 1;">
+        <div id="environment" class="section">
             <h2>🖥️ Current Environment</h2>
             
             <!-- Part 1: Summary -->
@@ -1082,53 +1080,43 @@
                 </div>
             </div>
 
-             <!-- Deployment Configuration -->
-            <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue);">
-                <h3 style="color: var(--text-primary); margin-bottom: 14px; font-size: 16px;">&#x1F3D7;&#xFE0F; Deployment Configuration</h3>
-                <div style="margin-bottom: 14px;">
-                    <label style="font-weight: 600; font-size: 14px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Deployment Type:</label>
-                    <div style="display: flex; gap: 20px;">
-                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px;">
-                            <input type="radio" id="simpleRadio" name="deploymentType" value="simple" checked onchange="deploymentType='simple'; updateDeploymentSize(); autoGenerateUpgradePlan();">
-                            Simple
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px;">
-                            <input type="radio" id="haRadio" name="deploymentType" value="ha" onchange="deploymentType='ha'; updateDeploymentSize(); autoGenerateUpgradePlan();">
-                            High Availability
-                        </label>
-                    </div>
-                </div>
-                <div>
-                    <label for="deploymentSize" style="font-weight: 600; font-size: 14px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Deployment Size:</label>
-                    <select id="deploymentSize" onchange="deploymentSize=this.value; autoGenerateUpgradePlan();" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg); color: var(--text-primary); font-size: 14px;">
-                        <option value="small">Small</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Part 2: Additional Components - Option G Smart Tag Search -->
+                     <!-- Part 2: Additional Components &mdash; Option G Smart Tag Search -->
             <div style="margin-bottom:20px; padding:20px; background:var(--card-bg); border-radius:12px; border:1px solid var(--border-color); border-left:4px solid var(--vmw-blue);">
-            <h3 style="color:var(--text-primary);margin-bottom:12px;">&#x1F50D; Optional Features & Components</h3>
-            <p style="margin-bottom:14px;color:var(--text-secondary);font-size:0.9rem;">Select any additional components or features &mdash; your plan updates automatically.</p>
+            <h3 style="color: var(--text-primary); margin-bottom: 12px;">&#x1F9E9; Optional Features & Components</h3>
+            <p style="margin-bottom: 14px; color: var(--text-secondary); font-size: 0.9rem;">
+                Select any additional components or features &mdash; your plan updates automatically.
+            </p>
+
+            <!-- Hidden checkboxes kept for backward-compatibility with existing JS -->
             <input type="checkbox" id="vlcmCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
             <input type="checkbox" id="witnessCheck"    style="display:none" onchange="autoGenerateUpgradePlan()">
             <input type="checkbox" id="vchaCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
             <input type="checkbox" id="autodeployCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
-            <input type="checkbox" id="elmCheck"        style="display:none" onchange="autoGenerateUpgradePlan()">
-            <input type="checkbox" id="supervisorCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
-            <!-- Hidden grid container required by generateAdvancedProductsFromJSON() -->
-            <div id="advancedProductsGrid" style="display:none"></div>
-            <div style="margin-bottom:20px;">
+
+            <div style="margin-bottom: 20px;">
+        
+
+                <!-- Results area -->
                 <div id="gResults" style="margin-bottom:10px;"></div>
-                <div style="margin-top:12px;"><button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">&#x21BA; Reset Selections</button></div>
-                 <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary); font-style: italic;">
+
+
+
+                <!-- Reset button -->
+                <div style="margin-top:12px;">
+                    <button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">
+                        &#x21BA; Reset Selections
+                    </button>
+                </div>
+                  <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary); font-style: italic;">
                     Note: These products will add additional upgrade phases to your plan based on dependency and compatibility requirements.
                 </p>
             </div>
             </div>
+
         </div>
+
         <!-- Upgrade Phases Section -->
-        <div id="phases" class="section" style="opacity: 1;">
+        <div id="phases" class="section">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
                 <div>
                     <h2 style="margin-bottom: 4px;">📋 Your Upgrade Plan</h2>
@@ -1140,7 +1128,8 @@
                     📄 Export Complete Plan
                 </button>
             </div>
-
+            
+            <div class="diagram-container" id="diagram">
                 <!-- Safe Stopping Point Info Banner -->
                 <div style="background: linear-gradient(135deg, #E1D5E7 0%, #F3E8FA 100%); border-left: 4px solid #7C3AED; padding: 16px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);">
                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -1152,8 +1141,7 @@
                         </div>
                     </div>
                 </div>
-            
-            <div class="diagram-container" id="diagram">
+                
                 <div class="diagram-zoom-controls">
                     <span style="font-size:0.82rem;color:var(--text-secondary);margin-right:4px;">Zoom:</span>
                     <button class="diagram-zoom-btn" onclick="diagramZoom(-0.15)" title="Zoom out">&#x2212;</button>
@@ -1170,8 +1158,9 @@
             <div id="autodeployBanner" style="display:none; margin-bottom:20px; background:#fff8e1; border-left:4px solid #ffc107; padding:16px 20px; border-radius:8px;">
                 <strong style="color:#856404; display:block; margin-bottom:6px;">&#9888;&#65039; Auto Deploy is Deprecated in vSphere 9.x and will be removed in a future major release of VCF</strong>
                 <ul style="margin:0 0 0 16px; color:#533f03; font-size:0.92rem; line-height:1.7;">
-                    <li>Auto Deploy is deprecated in vSphere 9.x and not supported for VCF</li>
+                    <li>Auto Deploy is deprecated in vSphere 9.x</li>
                     <li>Customers with local disks in their hosts must transition to Zero Touch Provisioning (ZTP) as part of this upgrade.</li>
+                    <li>Customers with no local disks in their hosts may continue to use Auto Deploy (stateless) in vSphere 9.x, but must plan to move to Zero Touch Provisioning (ZTP).</li>
                     <li>Contact GSS for support with this transition: <a href="https://support.broadcom.com" target="_blank">support.broadcom.com</a></li>
                 </ul>
             </div>
@@ -1202,12 +1191,10 @@
         let vlcmSelected = false;
         let witnessSelected = false;
         let vchaSelected = false;
-        let elmSelected = false;
-        let deploymentType = 'simple'; // simple or ha
-        let deploymentSize = 'small'; // small, medium, large
+        let vxrailSelected = false;
+        let vxrailVersion = null;
         let upgradeData = null; // Will hold the loaded JSON data
         let allPhases = []; // Store all phases
-        let nsxInEnvironment = false; // True when NSX exists (any version) — for badge + convert table selection
         let currentPhaseIndex = 0; // Track which phase we're showing
         let allSteps = []; // Store all steps (groups of phases)
         let currentStepIndex = 0; // Track which step we're showing
@@ -1238,7 +1225,7 @@
             loadSelectionsFromStorage();
             displaySelectedSummary();
             generateAdvancedProductsFromJSON();
-            // Build Option G index and render chips
+            // Build Option G index from loaded data then render chips
             gBuildIndex();
             gRender('');
             // Auto-generate the initial upgrade plan
@@ -1248,7 +1235,7 @@
 
         async function loadUpgradeData() {
             try {
-                const response = await fetch('vsphere-to-vcf-no-automation-data.json');
+                const response = await fetch('vsphere-no-vcf-data-no-ms.json');
                 upgradeData = await response.json();
                 console.log('Upgrade data loaded successfully');
             } catch (error) {
@@ -1271,31 +1258,8 @@
             // Clear existing content
             gridContainer.innerHTML = '';
 
-            // When vCenter, ESX, and Operations (if selected) are all already on 9.1.x,
-            // pre_infrastructure products (SRM, vSphere Replication, Avi, HCX) must be hidden
-            // because those are only needed BEFORE upgrading vCenter/ESX — which is already done.
-            const allOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x' &&
-                (!operationsSelected || operationsVersion === '9.1.x');
-
             // Generate checkboxes from JSON
             upgradeData.optional_products.forEach(product => {
-
-                // Hide NSX Federation if NSX was not selected on the index page
-                if (product.id === 'nsx_federation' || product.id === 'nsx_edge' && localStorage.getItem('nsx-selected') !== 'true') {
-                    return;
-                }
-
-                // Hide vDefend if NSX was not selected on the index page
-                if (product.id === 'vdefend' && localStorage.getItem('nsx-selected') !== 'true') {
-                    return;
-                }
-
-                // Hide pre_infrastructure products when all components are already on 9.1.x
-                // (SRM, vSphere Replication, Avi, HCX must be upgraded before vCenter/ESX — already done)
-                if (allOn91 && product.upgrade_phase === 'pre_infrastructure') {
-                    return;
-                }
-
                 const checkboxGroup = document.createElement('div');
                 checkboxGroup.className = 'checkbox-group';
                 
@@ -1323,21 +1287,10 @@
             vcenterVersion = localStorage.getItem('vcenter-version') || '8.0u3';
             esxVersion = localStorage.getItem('esx-version') || '8.0u3';
             window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
-            // Default to true if not set (so page works standalone)
-            const opsStorageValue = localStorage.getItem('operations-selected');
-            operationsSelected = opsStorageValue === null ? true : opsStorageValue === 'true';
+            operationsSelected = localStorage.getItem('operations-selected') === 'true';
             operationsVersion = localStorage.getItem('operations-version') || '8.18.x';
-            nsxSelected = localStorage.getItem('nsx-selected') === 'true';
-            nsxVersion = localStorage.getItem('nsx-version') || '4.2.x';
-            // nsxInEnvironment: true when NSX is present (any version) — used for badge display and convert table selection
-            nsxInEnvironment = nsxSelected;
-            // NSX 9.1 is bundled within VCF — suppress standalone NSX upgrade phases but keep badge + _with_nsx tables
-            if (nsxVersion === '9.1.x') nsxSelected = false;
-            
-            console.log('=== LOAD SELECTIONS DEBUG ===');
-            console.log('localStorage nsx-selected:', localStorage.getItem('nsx-selected'));
-            console.log('nsxSelected variable:', nsxSelected);
-            console.log('Operations:', operationsSelected);
+            vxrailSelected = localStorage.getItem('vxrail-selected') === 'true';
+            vxrailVersion = localStorage.getItem('vxrail-version') || '8.0.x';
         }
 
         function displaySelectedSummary() {
@@ -1345,75 +1298,45 @@
             let html = '<ul class="component-list">';
             
             html += `<li><span class="badge included">✓ vCenter</span><span class="badge version">v${vcenterVersion}</span></li>`;
-            html += `<li><span class="badge included">✓ ESX</span><span class="badge version">v${esxVersion}</span></li>`;
+            
+            // Show VxRail or ESX based on selection
+            if (vxrailSelected) {
+                html += `<li><span class="badge included">✓ VxRail</span><span class="badge version">v${vxrailVersion}</span></li>`;
+            } else {
+                html += `<li><span class="badge included">✓ ESX</span><span class="badge version">v${esxVersion}</span></li>`;
+            }
             
             if (operationsSelected) {
                 html += `<li><span class="badge included">✓ VCF Operations</span><span class="badge version">v${operationsVersion}</span></li>`;
-            }
-
-            if (nsxInEnvironment){
-                html += `<li><span class="badge included">✓ NSX</span><span class="badge version">v${nsxVersion}</span></li>`;
-            }
-
+            } 
+            
             html += '</ul>';
             summary.innerHTML = html;
-        }
-
-        function updateDeploymentSize() {
-            const simpleRadio = document.getElementById('simpleRadio');
-            const haRadio = document.getElementById('haRadio');
-            const sizeSelect = document.getElementById('deploymentSize');
-            
-            deploymentType = simpleRadio.checked ? 'simple' : 'ha';
-            
-            if (deploymentType === 'simple') {
-                // Simple deployment: only Small is available
-                sizeSelect.innerHTML = '<option value="small">Small</option>';
-                deploymentSize = 'small';
-            } else {
-                // HA deployment: Medium or Large
-                sizeSelect.innerHTML = `
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
-                `;
-                deploymentSize = 'medium'; // Default to medium for HA
-            }
-            
-            // Regenerate the plan with new deployment config
-            autoGenerateUpgradePlan();
         }
 
         function autoGenerateUpgradePlan() {
             vlcmSelected = document.getElementById('vlcmCheck').checked;
             witnessSelected = document.getElementById('witnessCheck').checked;
-            supervisorSelected = document.getElementById('supervisorCheck') ? document.getElementById('supervisorCheck').checked : false;
             vchaSelected = document.getElementById('vchaCheck').checked;
-            elmSelected = document.getElementById('elmCheck').checked;
             
-            // Get deployment configuration
-            const simpleRadio = document.getElementById('simpleRadio');
-            deploymentType = simpleRadio && simpleRadio.checked ? 'simple' : 'ha';
-            const sizeSelect = document.getElementById('deploymentSize');
-            deploymentSize = sizeSelect ? sizeSelect.value : 'small';
-            
-            // Use selections set by Option G (gSyncCheckboxes).
-            // Merge legacy checkbox states on top.
+            // Use selections already set by gSyncCheckboxes() (Option G).
+            // Merge in the 4 legacy checkbox states on top so they stay in sync.
             const selectedProducts = Object.assign({}, window.selectedAdvancedProducts || {});
-            selectedProducts['vum_migration'] = document.getElementById('vlcmCheck')?.checked || false;
-            selectedProducts['vsan_witness']  = document.getElementById('witnessCheck')?.checked || false;
-            selectedProducts['vcha']          = document.getElementById('vchaCheck')?.checked || false;
-            selectedProducts['auto_deploy']   = document.getElementById('autodeployCheck')?.checked || false;
+            selectedProducts['vum_migration'] = document.getElementById('vlcmCheck').checked;
+            selectedProducts['vsan_witness']  = document.getElementById('witnessCheck').checked;
+            selectedProducts['vcha']          = document.getElementById('vchaCheck').checked;
+            selectedProducts['auto_deploy']   = document.getElementById('autodeployCheck').checked;
 
             // Store for use in generateUpgradePlan
             window.selectedAdvancedProducts = selectedProducts;
-            
+
             // Show/hide Auto Deploy deprecation banner
             const autodeployBanner = document.getElementById('autodeployBanner');
             const autodeployCheck = document.getElementById('autodeployCheck');
             if (autodeployBanner && autodeployCheck) {
                 autodeployBanner.style.display = autodeployCheck.checked ? 'block' : 'none';
             }
-            
+
             // Auto-generate without requiring button click
             generateUpgradePlan();
         }
@@ -1439,18 +1362,11 @@
                 console.error('No upgrade order defined in JSON');
                 return;
             }
-            
 
-            // Operations pre-upgrade for sub-8.18 versions (first)
+            // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
             if (operationsSelected && (operationsVersion === '8.16.x' || operationsVersion === '8.17.x')) {
                 const opsPrereqData = upgradeData.components['operations_prereq'] || null;
                 if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x before upgrading to 9.1', data: opsPrereqData, componentId: 'operations_prereq' });
-            }
-
-            // NSX pre-upgrade for 4.1.x (after Ops prereq)
-            if (nsxSelected && nsxVersion === '4.1.x') {
-                const nsxPrereqData = upgradeData.components['nsx_prereq'] || null;
-                if (nsxPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade NSX to 4.2.x', description: 'Upgrade NSX to 4.2.x before proceeding with the upgrade path', data: nsxPrereqData, componentId: 'nsx_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
@@ -1466,18 +1382,11 @@
                 const prereqData = upgradeData.components['vcenter_esx_prereq'] || null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade ESX Hosts to 8.0u3', description: 'Upgrade ESX hosts to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
             }
+
             console.log('Generating upgrade plan with selected products:', selectedProducts);
-            console.log('NSX Selected:', nsxSelected);
-            console.log('Operations Selected:', operationsSelected);
             
-            // Use appropriate upgrade order based on NSX selection
-            const orderArray = nsxSelected ? upgradeData.upgrade_order : upgradeData.upgrade_order_without_nsx;
-            console.log('Using upgrade order:', nsxSelected ? 'WITH NSX' : 'WITHOUT NSX');
-            console.log('Order array:', orderArray);
-            
-            
-            // Iterate through the selected upgrade order array to maintain strict sequence
-            orderArray.forEach(componentId => {
+            // Iterate through upgrade_order array to maintain strict sequence
+            upgradeData.upgrade_order.forEach(componentId => {
                 let shouldInclude = false;
                 let componentData = upgradeData.components[componentId];
                 let phaseTitle = '';
@@ -1485,139 +1394,66 @@
                 
                 // Determine if this component should be included based on component type
                 if (componentId === 'operations') {
-                    // Operations only included if CURRENTLY INSTALLED and NOT already on 9.1.x
-                    // If not installed, it will be installed during Convert step
-                    // If already on 9.1.x, no upgrade needed - it is already at target version (just convert)
-                    if (operationsSelected && operationsVersion !== '9.1.x') {
-                        shouldInclude = true;
-                        // Customer HAS Operations - UPGRADE it
-                        if (operationsVersion === '8.18.x') {
-                            phaseTitle = 'Upgrade VCF Operations';
-                            phaseDescription = 'Upgrade VCF Operations from 8.18.x to 9.1';
-                        } else {
-                            phaseTitle = 'Upgrade VCF Operations';
-                            phaseDescription = 'Upgrade VCF Operations from 9.0.x to 9.1';
-                        }
-                        // Use operations component (upgrade steps)
-                        componentData = upgradeData.components['operations'];
-                    } else {
-                        // Customer DOES NOT have Operations, or is already on 9.1.x - no upgrade phase needed
+                    // Operations included unless already on 9.1.x (no upgrade needed)
+                    // If not installed, always install it; if installed and on 9.1.x, skip upgrade phase
+                    if (operationsSelected && operationsVersion === '9.1.x') {
+                        // Already at target version — no upgrade phase needed
                         shouldInclude = false;
+                    } else {
+                        shouldInclude = true;
+                        if (operationsSelected) {
+                            // Customer HAS Operations - UPGRADE it
+                            const effOpsVer = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
+                            if (effOpsVer === '8.18.x') {
+                                phaseTitle = 'Upgrade VCF Operations';
+                                phaseDescription = 'Upgrade VCF Operations from 8.18.x to 9.1';
+                            } else {
+                                phaseTitle = 'Upgrade VCF Operations';
+                                phaseDescription = 'Upgrade VCF Operations from 9.0.x to 9.1';
+                            }
+                            componentData = upgradeData.components['operations'];
+                        } else {
+                            // Customer does NOT have Operations - INSTALL it
+                            phaseTitle = 'Install VCF Operations';
+                            phaseDescription = 'Install VCF Operations 9.1 (new installation)';
+                            componentData = upgradeData.components['operations_install'];
+                        }
                     }
-                } else if (componentId === 'vcha') {
-                    // vCHA only if checkbox selected (remove BEFORE vCenter)
-                    shouldInclude = vchaSelected;
-                    phaseTitle = componentData ? componentData.name : 'vCenter High Availability (vCHA)';
-                    phaseDescription = 'Remove vCenter High Availability configuration';
                 } else if (componentId === 'vcenter') {
-                    // vCenter included unless already on 9.1.x (no upgrade needed, just convert)
+                    // vCenter included unless already on 9.1.x (no upgrade needed)
                     shouldInclude = vcenterVersion !== '9.1.x';
                     phaseTitle = componentData ? componentData.name : 'vCenter Server';
                     phaseDescription = 'Upgrade ' + phaseTitle;
-                } else if (componentId === 'elm_break') {
-                    // ELM Break only if checkbox selected (break AFTER vCenter, BEFORE Convert)
-                    shouldInclude = elmSelected && nsxSelected;;
-                    phaseTitle = componentData ? componentData.name : 'Enhanced Linked Mode (ELM) - Break Configuration';
-                    phaseDescription = 'Break Enhanced Linked Mode before VCF conversion';
-                } else if (componentId === 'elm_upgrade_ring') {
-                    // ELM Upgrade Ring - not used in this VCF conversion path
-                    shouldInclude = elmSelected && !nsxSelected;
-                    phaseTitle = componentData ? componentData.name : 'Enhanced Linked Mode (ELM) - Break Configuration';
-                    phaseDescription = 'Break Enhanced Linked Mode before VCF conversion';
-                } else if (componentId === 'convert') {
-                    // Convert to VCF always included in VCF migration paths
-                    shouldInclude = true;
-                    // Use appropriate convert component based on Operations installation status
-                    if (operationsSelected) {
-                        componentData = upgradeData.components['convert_with_ops'];
-                        phaseTitle = 'Converge to VCF 9.1';
-                    } else {
-                        componentData = upgradeData.components['convert_with_vsphere_only'];
-                        phaseTitle = 'Converge to VCF 9.1';
-                    }
-                    
-                    // Select appropriate tables based on deployment configuration AND NSX selection
-                    if (componentData) {
-                        try {
-                            // Build table key: tables_{type}_{size}_{nsx_status}
-                            const nsxSuffix = nsxInEnvironment ? '_with_nsx' : '_without_nsx';
-                            const tableKey = `tables_${deploymentType}_${deploymentSize}${nsxSuffix}`;
-                            
-                            console.log('Looking for table key:', tableKey);
-                            
-                            // Clone component data once
-                            const clonedData = JSON.parse(JSON.stringify(componentData));
-                            
-                            if (clonedData[tableKey]) {
-                                console.log('Found exact match:', tableKey);
-                                clonedData.tables = clonedData[tableKey];
-                                componentData = clonedData;
-                            } else {
-                                // Fallback: try without NSX suffix
-                                const fallbackKey = `tables_${deploymentType}_${deploymentSize}`;
-                                console.log('Trying fallback:', fallbackKey);
-                                if (clonedData[fallbackKey]) {
-                                    console.log('Found fallback match:', fallbackKey);
-                                    clonedData.tables = clonedData[fallbackKey];
-                                    componentData = clonedData;
-                                } else if (clonedData.tables_simple_small_without_nsx) {
-                                    console.log('Using final fallback: tables_simple_small_without_nsx');
-                                    clonedData.tables = clonedData.tables_simple_small_without_nsx;
-                                    componentData = clonedData;
-                                } else {
-                                    console.warn('No suitable table variant found for component');
-                                }
-                            }
-                        } catch (error) {
-                            console.error('Error selecting tables:', error);
-                        }
-                    }
-                    
-                    phaseDescription = 'Deploy SDDC Manager and converge vSphere to VCF platform';
-                } else if (componentId === 'nsx') {
-                    // NSX only if checkbox selected
-                    shouldInclude = nsxSelected;
-                    phaseTitle = componentData ? componentData.name : 'NSX';
+                }  else if (componentId === 'vxrail') {
+                    // VxRail only if selected - replaces ESX
+                    shouldInclude = vxrailSelected;
+                    phaseTitle = componentData ? componentData.name : 'VxRail';
                     phaseDescription = 'Upgrade ' + phaseTitle;
-                } else if (componentId === 'logs') {
-                    // Logs is a fresh install, not an upgrade
-                    shouldInclude = selectedProducts[componentId] === true;
-                    phaseTitle = componentData ? componentData.name : componentId;
-                    phaseDescription = 'Deploy ' + phaseTitle;
-                } else if (componentId === 'vum_migration') {
-                    // vLCM only if checkbox selected
-                    shouldInclude = vlcmSelected;
-                    // Use NSX-specific VUM documentation link based on whether NSX is selected
-                    componentData = nsxSelected
-                        ? upgradeData.components['vum_migration']
-                        : (upgradeData.components['vum_migration_without_nsx'] || upgradeData.components['vum_migration']);
-                    phaseTitle = componentData ? componentData.name : 'vLCM Migration';
-                    phaseDescription = 'Migrate from Baseline to Image-based management';
-                } else if (componentId === 'vsan_witness') {
-                    // vSAN Witness only if checkbox selected
-                    shouldInclude = witnessSelected;
-                    phaseTitle = componentData ? componentData.name : 'vSAN Witness';
-                    phaseDescription = 'Upgrade vSAN Witness Host';
-                } else if (componentId === 'supervisor') {
-                    // supervisor only if checkbox selected
-                    shouldInclude = supervisorSelected;
-                    phaseTitle = componentData ? componentData.name : 'vSphere Supervisor';
-                    phaseDescription = 'Upgrade vSphere Supervisor';
                 } else if (componentId === 'esx') {
-                    // ESX always included
-                    shouldInclude = esxVersion !== '9.1.x';
+                    // ESX only if VxRail is NOT selected
+                    shouldInclude = !vxrailSelected;
                     phaseTitle = componentData ? componentData.name : 'ESX Hosts';
                     phaseDescription = 'Upgrade ' + phaseTitle;
-                } else if (componentId === 'nsx_edge') {
-                    // NSX Edge/Finalize always included after ESX
-                    // Title and description depend on whether NSX Edge Nodes checkbox is selected
-                    shouldInclude = nsxSelected;
-                    phaseTitle = selectedProducts['nsx_edge'] === true
-                        ? 'NSX Edge & NSX Finalize'
-                        : 'NSX Finalize';
-                    phaseDescription = selectedProducts['nsx_edge'] === true
-                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
-                        : 'Finalize NSX upgrade';
+                } else if (componentId === 'elm') {
+                    // elm only if checkbox selected
+                    shouldInclude = elmSelected;
+                    phaseTitle = componentData ? componentData.name : 'Enhanced Linked Mode (ELM)';
+                    phaseDescription = 'Break Enhanced Linked Mode';
+                } else if (componentId === 'vcha') {
+                    // vcha Witness only if checkbox selected
+                    shouldInclude = vchaSelected;
+                    phaseTitle = componentData ? componentData.name : 'vCenter High Availability (VCHA)';
+                    phaseDescription = 'Remove vCenter High Avialability';
+                } else if (componentId === 'vsan_witness') {
+                    // vcha Witness only if checkbox selected
+                    shouldInclude = witnessSelected;
+                    phaseTitle = componentData ? componentData.name : 'vSAN Witness Upgrade';
+                    phaseDescription = 'Upgrade ' + phaseTitle;
+                } else if (componentId === 'vum_migration') {
+                    // vcha Witness only if checkbox selected
+                    shouldInclude = vlcmSelected;
+                    phaseTitle = componentData ? componentData.name : 'VUM Cluster Migration to VMware Lifecycle Manager Images (vLCM)';
+                    phaseDescription = 'Upgrade ' + phaseTitle;
                 } else {
                     // All other components (advanced products) - check if selected
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1643,32 +1479,17 @@
             });
             
             console.log('Generated', phases.length, 'phases in upgrade_order sequence');
-            console.log('Phases array:', phases.map(p => p.componentId));
             allPhases = phases;
             
             // Group phases into steps
             const steps = groupPhasesIntoSteps(phases, selectedProducts);
-            console.log('Steps created:', steps.length);
-            console.log('Steps array:', steps.map(s => s.title));
             allSteps = steps;
             currentStepIndex = 0; // Always start from first step
             
             // Update counter
             const counter = document.getElementById('phaseCounter');
             if (counter) {
-                counter.textContent = `${steps.length} step${steps.length !== 1 ? 's' : ''}, ${phases.length} phase${phases.length !== 1 ? 's' : ''}`;
-            }
-            
-            // Even if no steps, show a helpful message
-            if (steps.length === 0) {
-                const container = document.getElementById('phaseContainer');
-                container.innerHTML = `
-                    <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 30px; border-radius: 8px;">
-                        <h3 style="color: #856404; margin-bottom: 16px;">⚠️ No Upgrade Plan Generated</h3>
-                        <p style="margin-bottom: 20px;">Please ensure you've selected all required components from the previous page (index.html).</p>
-                    </div>
-                `;
-                return;
+                counter.textContent = `${steps.length} phase${steps.length !== 1 ? 's' : ''}, ${phases.length} component${phases.length !== 1 ? 's' : ''}`;
             }
             
             displayStepsView();
@@ -1676,63 +1497,42 @@
             // Smooth scroll on first generation
             if (steps.length > 0) {
                 setTimeout(() => {
-                    const s3 = document.getElementById('step3');
-                    if (s3) s3.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
             }
         }
         
         function groupPhasesIntoSteps(phases, selectedProducts) {
-            selectedProducts = selectedProducts || window.selectedAdvancedProducts || {};
             const steps = [];
-            
-            // Categorize phases based on new order:
-            // 1. Optional Products (SRM, Replication, AVI, HCX)
-            // 2. Operations Upgrade (only if already installed)
-            // 3. Convert to VCF (includes Ops install if not installed)
-            // 4. NSX Federation and NSX
-            // 5. vCenter
-            // 6. Pre-ESX Infrastructure (vLCM, vSAN Witness, supervisor)
-            // 7. ESX Hosts
-            // 9. Post-Infrastructure (Logs, Network)
+            selectedProducts = selectedProducts || {};
 
-            const prereqPhases = []; // Pre-upgrade steps (NSX, Ops, vCenter/ESX)
-            const drPhases = []; // Disaster Recovery (Replication + SRM)
-            const aviPhases = []; // AVI separate
-            const hcxPhases = []; // HCX separate
+            // Buckets — ordered: DR → AVI → Operations+License → vCHA → vCenter → vLCM → Witness → supervisor → VxRail/ESX → Post-infra
+            const prereqPhases = [];
+            const drPhases = [];
+            const aviPhases = [];
             const operationsPhases = [];
             const vchaPhases = [];
-            const convertPhases = [];
-            const nsxfedPhases = [];
-            const nsxPhases = [];
             const vcenterPhases = [];
-            const elmPhases = [];
             const vlcmPhases = [];
             const supervisorPhases = [];
             const witnessPhases = [];
             const esxPhases = [];
-            const nsxEdgePhases = [];
+            const vxrailPhases = [];
             const advancedPhases = [];
             const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
-            const vidmPhases =[];
-            
+
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
-                const isPreInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'pre_infrastructure';
                 const isPostInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'post_infrastructure';
-                
-                if (phase.componentId === 'nsx_prereq' || phase.componentId === 'operations_prereq' || phase.componentId === 'vcenter_esx_prereq') {
+
+                if (phase.componentId === 'vcenter_esx_prereq' || phase.componentId === 'operations_prereq') {
                     prereqPhases.push(phase);
-                } else if (phase.componentId === 'operations') {
-                    operationsPhases.push(phase);
-                } else if(phase.componentId === 'replication' || phase.componentId === 'srm' || phase.componentId === 'vsan_data_protection') {
+                } else if (phase.componentId === 'replication' || phase.componentId === 'srm' || phase.componentId === 'vsan_data_protection') {
                     drPhases.push(phase);
                 } else if (phase.componentId === 'avi') {
                     aviPhases.push(phase);
-                } else if (phase.componentId === 'hcx') {
-                    hcxPhases.push(phase);
-                } else if (phase.componentId === 'operations') {
+                } else if (phase.componentId === 'operations' || phase.componentId === 'operations_install') {
                     operationsPhases.push(phase);
                 } else if (phase.componentId === 'operations_orchestrator') {
                     operations_orchestratorPhases.push(phase);
@@ -1740,68 +1540,37 @@
                     vchaPhases.push(phase);
                 } else if (phase.componentId === 'vcenter') {
                     vcenterPhases.push(phase);
-                } else if (phase.componentId === 'elm_break' || phase.componentId === 'elm_upgrade_ring') {
-                    elmPhases.push(phase);
-                } else if (phase.componentId === 'convert') {
-                    convertPhases.push(phase);
-                } else if (phase.componentId === 'nsx_federation') {
-                    nsxfedPhases.push(phase);
-                } else if (phase.componentId === 'nsx') {
-                    nsxPhases.push(phase);
                 } else if (phase.componentId === 'vum_migration') {
                     vlcmPhases.push(phase);
                 } else if (phase.componentId === 'vsan_witness') {
                     witnessPhases.push(phase);
                 } else if (phase.componentId === 'supervisor') {
                     supervisorPhases.push(phase);
+                } else if (phase.componentId === 'vxrail') {
+                    vxrailPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
-                } else if (phase.componentId === 'nsx_edge') {
-                    nsxEdgePhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
                     vsan_file_servicePhases.push(phase);
-                } else if (phase.componentId === 'vidm') {
-                    vidmPhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 }
             });
-            
-            // Sort groups
-            prereqPhases.sort((a, b) => a.number - b.number);
-            drPhases.sort((a, b) => a.number - b.number);
-            aviPhases.sort((a, b) => a.number - b.number);
-            hcxPhases.sort((a, b) => a.number - b.number);
-            operationsPhases.sort((a, b) => a.number - b.number);
-            vchaPhases.sort((a, b) => a.number - b.number);
-            convertPhases.sort((a, b) => a.number - b.number);
-            nsxfedPhases.sort((a, b) => a.number - b.number);
-            nsxPhases.sort((a, b) => a.number - b.number);
-            vcenterPhases.sort((a, b) => a.number - b.number);
-            elmPhases.sort((a, b) => a.number - b.number);
-            vlcmPhases.sort((a, b) => a.number - b.number);
-            supervisorPhases.sort((a, b) => a.number - b.number);
-            witnessPhases.sort((a, b) => a.number - b.number);
-            esxPhases.sort((a, b) => a.number - b.number);
-            nsxEdgePhases.sort((a, b) => a.number - b.number);
-            advancedPhases.sort((a, b) => a.number - b.number);
-            operations_orchestratorPhases.sort((a, b) => a.number - b.number);
-            vsan_file_servicePhases.sort((a, b) => a.number - b.number);
-            vidmPhases.sort((a, b) => a.number - b.number);
 
-            // Build steps in correct order
-            // Determine if any pre-req upgrades are present
-            const hasPrereqs = prereqPhases.length > 0;
+            // Sort all buckets
+            [prereqPhases, drPhases, aviPhases, operationsPhases, vchaPhases, vcenterPhases,
+             vlcmPhases, supervisorPhases, witnessPhases, vxrailPhases, esxPhases, advancedPhases]
+                .forEach(arr => arr.sort((a, b) => a.number - b.number));
 
-            // If NO pre-reqs: Operations stays in its normal early position
-            if (!hasPrereqs && operationsPhases.length > 0) {
+            // Build steps
+            prereqPhases.forEach(phase => {
                 steps.push({
                     number: steps.length + 1,
-                    title: 'Operations Upgrade',
-                    description: 'Upgrade VCF Operations',
-                    phases: operationsPhases
+                    title: phase.title,
+                    description: phase.description,
+                    phases: [phase]
                 });
-            }
+            });
 
             if (drPhases.length > 0) {
                 steps.push({
@@ -1811,277 +1580,49 @@
                     phases: drPhases
                 });
             }
-            
-            if (aviPhases.length > 0) {
-                // Always attach License Hub to AVI step when AVI is selected
-                const _lhDataAvi = upgradeData.components['license_hub'];
-                if (_lhDataAvi) {
-                    aviPhases.push({ number: aviPhases.length + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataAvi, componentId: 'license_hub' });
+
+             if (aviPhases.length > 0) {
+                const combinedAviPhases = [...aviPhases];
+                const licenseHubData = upgradeData.components['license_hub'];
+                if (licenseHubData) {
+                    combinedAviPhases.push({
+                        number: Math.max(0, ...combinedAviPhases.map(p => p.number)) + 1,
+                        title: 'Deploy License Hub',
+                        description: 'Deploy License Hub',
+                        data: licenseHubData,
+                        componentId: 'license_hub'
+                    });
                 }
                 steps.push({
                     number: steps.length + 1,
-                    title: 'Upgrade Avi Load Balancer & Deploy License Hub',
-                    description: 'Upgrade Avi Load Balancer and Deploy License Hub',
-                    phases: aviPhases
-                });
-            }
-            
-            if (hcxPhases.length > 0) {
-                steps.push({
-                    number: steps.length + 1,
-                    title: 'HCX',
-                    description: 'Upgrade HCX (Hybrid Cloud Extension)',
-                    phases: hcxPhases
-                });
-            }
-            
-            
-            
-            // Dynamic ordering for Convert and vCenter based on NSX selection
-            // Prereq steps — each renders as its own phase
-            prereqPhases.forEach(phase => {
-                steps.push({ number: steps.length + 1, title: phase.title, description: phase.description, phases: [phase] });
-            });
-
-                        const nsxSelected = nsxPhases.length > 0;
-            
-            if (nsxSelected) {
-                // If NSX is selected: vCHA → vCenter → ELM → vLCM → Convert → NSX Federation → NSX → Witness/supervisor
-
-                 if (hasPrereqs && operationsPhases.length > 0) {
-                steps.push({
-                    number: steps.length + 1,
-                    title: 'Operations Upgrade',
-                    description: 'Upgrade VCF Operations',
-                    phases: operationsPhases
-                });
-            }   
-
-            if (operations_orchestratorPhases.length > 0) {
-                steps.push({
-                    number: steps.length + 1,
-                    title: 'External VCF Operations Orchestrator',
-                    description: 'Upgrade VCF Operations Orchestrator',
-                    phases: operations_orchestratorPhases
+                    title: combinedAviPhases.some(p => p.componentId === 'license_hub') ? 'AVI (NSX ALB) & Deploy License Hub' : 'Upgrade Avi Load Balancer',
+                    description: combinedAviPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade AVI (NSX Advanced Load Balancer) and Deploy License Hub' : 'Upgrade Avi Load Balancer',
+                    phases: combinedAviPhases
                 });
             }
 
-                if (vchaPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'Remove vCenter High Availability',
-                        description: 'Remove vCHA configuration before vCenter upgrade',
-                        phases: vchaPhases
-                    });
-                }
 
-                if (elmPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'Break Enhanced Linked Mode',
-                        description: 'Break ELM configuration before VCF conversion',
-                        phases: elmPhases
+            if (operationsPhases.length > 0) {
+                // Always attach License Server to the Operations step
+                const combinedOperationsPhases = [...operationsPhases];
+                const licenseData = upgradeData.components['license'];
+                if (licenseData) {
+                    combinedOperationsPhases.push({
+                        number: combinedOperationsPhases.length + 1,
+                        title: 'License Server',
+                        description: 'Deploy License Server',
+                        data: licenseData,
+                        componentId: 'license'
                     });
                 }
-                
-                
-                if (convertPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'Converge to VCF 9.1',
-                        description: 'Converge to VCF',
-                        phases: convertPhases
-                    });
-                }
-                
-                if (nsxfedPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'NSX Federation Setup',
-                        description: 'Configure NSX Federation for multi-site management',
-                        phases: nsxfedPhases
-                    });
-                }
-                
-                if (nsxPhases.length > 0) {
-                    // Inject License Hub into NSX step only when vDefend selected AND AVI not selected
-                    // (if AVI selected, License Hub already appears under the AVI step)
-                    const _vdefendOnly = selectedProducts['vdefend'] === true && aviPhases.length === 0;
-                    const _nsxPhasesCombined = [...nsxPhases];
-                    if (_vdefendOnly) {
-                        const _lhDataNsx = upgradeData.components['license_hub'];
-                        if (_lhDataNsx) {
-                            _nsxPhasesCombined.push({ number: _nsxPhasesCombined.length + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataNsx, componentId: 'license_hub' });
-                        }
-                    }
-                    steps.push({
-                        number: steps.length + 1,
-                        title: _vdefendOnly ? 'Upgrade NSX Local Managers & Deploy License Hub' : 'Upgrade NSX Local Managers',
-                        description: _vdefendOnly ? 'Deploy License Hub' : 'Upgrade NSX Local Managers',
-                        phases: _nsxPhasesCombined
-                    });
-                }
-
-                 if (vcenterPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'vCenter Upgrade',
-                        description: 'Upgrade vCenter Server',
-                        phases: vcenterPhases
-                    });
-                }
-                
-                
-                if (vlcmPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'vLCM Migration',
-                        description: 'Migrate from VUM to vLCM',
-                        phases: vlcmPhases
-                    });
-                }
-
-                if (witnessPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'Witness Upgrade',
-                        description: 'Upgrade Witness Host',
-                        phases: witnessPhases
-                    });
-                }
-
-                if (supervisorPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'vSphere Supervisor',
-                        description: 'Upgrade vSphere Supervisor',
-                        phases: supervisorPhases
-                    });
-                }
-
-    
-            } else if (nsxVersion === '9.1.x') {
-                // NSX already at 9.1.x: ELM → Convert first, then vCenter → vLCM → Witness → Supervisor
-                if (hasPrereqs && operationsPhases.length > 0) {
-                    steps.push({ number: steps.length + 1, title: 'Operations Upgrade', description: 'Upgrade VCF Operations', phases: operationsPhases });
-                }
-                if (vchaPhases.length > 0) {
-                    steps.push({ number: steps.length + 1, title: 'Remove vCenter High Availability', description: 'Remove vCHA configuration before conversion', phases: vchaPhases });
-                }
-                if (elmPhases.length > 0) {
-                    steps.push({ number: steps.length + 1, title: 'Break Enhanced Linked Mode', description: 'Break ELM configuration before VCF conversion', phases: elmPhases });
-                }
-                if (convertPhases.length > 0) {
-                    steps.push({ number: steps.length + 1, title: 'Converge to VCF 9.1', description: 'Converge to VCF', phases: convertPhases });
-                }
-                if (vcenterPhases.length > 0) {
-                    steps.push({ number: steps.length + 1, title: 'vCenter Upgrade', description: 'Upgrade vCenter Server', phases: vcenterPhases });
-                }
-                if (vlcmPhases.length > 0) {
-                    steps.push({ number: steps.length + 1, title: 'vLCM Migration', description: 'Migrate from VUM to vLCM', phases: vlcmPhases });
-                }
-                if (witnessPhases.length > 0) {
-                    steps.push({ number: steps.length + 1, title: 'Witness Upgrade', description: 'Upgrade Witness Host', phases: witnessPhases });
-                }
-                if (supervisorPhases.length > 0) {
-                    steps.push({ number: steps.length + 1, title: 'vSphere Supervisor', description: 'Upgrade vSphere Supervisor', phases: supervisorPhases });
-                }
-            } else {
-                // If NSX is NOT selected: vCHA → vCenter → ELM → vLCM → Convert → Witness/supervisor
-                 if (hasPrereqs && operationsPhases.length > 0) {
+                const opsIsInstall = !operationsSelected;
                 steps.push({
                     number: steps.length + 1,
-                    title: 'Operations Upgrade',
-                    description: 'Upgrade VCF Operations',
-                    phases: operationsPhases
-                });
-            }
-
-            
-                if (vchaPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'Remove vCenter High Availability',
-                        description: 'Remove vCHA configuration before vCenter upgrade',
-                        phases: vchaPhases
-                    });
-                }
-                
-                if (vcenterPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'vCenter Upgrade',
-                        description: 'Upgrade vCenter Server',
-                        phases: vcenterPhases
-                    });
-                }
-                
-                if (elmPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'Break Enhanced Linked Mode',
-                        description: 'Break ELM configuration before VCF conversion',
-                        phases: elmPhases
-                    });
-                }
-                
-                if (vlcmPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'vLCM Migration',
-                        description: 'Migrate from VUM to vLCM',
-                        phases: vlcmPhases
-                    });
-                }
-                
-                if (convertPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'Converge to VCF 9.1',
-                        description: 'Converge to VCF',
-                        phases: convertPhases
-                    });
-                }
-
-
-                if (witnessPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'Witness Upgrade',
-                        description: 'Upgrade Witness Host',
-                        phases: witnessPhases
-                    });
-                }
-
-                if (supervisorPhases.length > 0) {
-                    steps.push({
-                        number: steps.length + 1,
-                        title: 'vSphere Supervisor',
-                        description: 'Update vSphere Supervisor',
-                        phases: supervisorPhases
-                    });
-                }
-                
-            }
-            
-            if (esxPhases.length > 0) {
-                steps.push({
-                    number: steps.length + 1,
-                    title: 'ESX Hosts',
-                    description: 'Upgrade ESX host infrastructure',
-                    phases: esxPhases
-                });
-            }
-
-            if (nsxEdgePhases.length > 0) {
-                const _nsxEdgeSelected = selectedProducts['nsx_edge'] === true;
-                steps.push({
-                    number: steps.length + 1,
-                    title: _nsxEdgeSelected ? 'NSX Edge & NSX Finalize' : 'NSX Finalize',
-                    description: _nsxEdgeSelected
-                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
-                        : 'Finalize NSX upgrade',
-                    phases: nsxEdgePhases
+                    title: opsIsInstall ? 'Install VCF Operations & Deploy License Server' : 'Upgrade VCF Operations & Deploy License Server',
+                    description: opsIsInstall
+                        ? 'Install VCF Operations 9.1 and Deploy License Server'
+                        : 'Upgrade VCF Operations and Deploy License Server',
+                    phases: combinedOperationsPhases
                 });
             }
 
@@ -2093,7 +1634,79 @@
                     phases: operations_orchestratorPhases
                 });
             }
-            
+
+            if (vchaPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'vCenter Appliance High Availability (vCHA)',
+                    description: 'Remove vCenter Appliance High Availability configuration before upgrading vCenter',
+                    phases: vchaPhases
+                });
+            }
+
+            if (vcenterPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'vCenter Upgrade',
+                    description: 'Upgrade vCenter',
+                    phases: vcenterPhases
+                });
+            }
+
+            if (vlcmPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'vLCM Migration',
+                    description: 'Migrate from VUM to vLCM',
+                    phases: vlcmPhases
+                });
+            }
+
+            if (witnessPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'Witness Upgrade',
+                    description: 'Upgrade Witness Host',
+                    phases: witnessPhases
+                });
+            }
+
+            if (supervisorPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'vSphere Supervisor',
+                    description: 'Upgrade vSphere Supervisor',
+                    phases: supervisorPhases
+                });
+            }
+
+            if (vxrailPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'VxRail Upgrade',
+                    description: 'Upgrade VxRail infrastructure (replaces ESX upgrade)',
+                    phases: vxrailPhases
+                });
+            }
+
+            if (esxPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'ESX Hosts',
+                    description: 'Upgrade ESX host infrastructure',
+                    phases: esxPhases
+                });
+            }
+
+            if (advancedPhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'Post-Infrastructure Products',
+                    description: 'Upgrade additional products (Operations for Logs)',
+                    phases: advancedPhases
+                });
+            }
+
             if (vsan_file_servicePhases.length > 0) {
                 steps.push({
                     number: steps.length + 1,
@@ -2103,32 +1716,6 @@
                 });
             }
 
-            if (vidmPhases.length > 0) {
-                steps.push({
-                    number: steps.length + 1,
-                    title: 'VMware Identity Manager Migration',
-                    description: 'Migration from VMware Identity Manager to VMware Identity Broker',
-                    phases: vidmPhases
-                });
-            }
-            
-            if (advancedPhases.length > 0) {
-                steps.push({
-                    number: steps.length + 1,
-                    title: 'Post-Infrastructure Products',
-                    description: 'Upgrade additional products (Log Management)',
-                    phases: advancedPhases
-                });
-            }
-            
-            // Renumber all phases sequentially across all steps
-            let phaseCounter = 1;
-            steps.forEach(step => {
-                step.phases.forEach((phase, idx) => {
-                    phase.number = idx + 1;
-                });
-            });
-            
             return steps;
         }
         
@@ -2138,11 +1725,11 @@
             setTimeout(() => container.classList.remove('plan-updating'), 400);
             
             if (currentStepIndex >= allSteps.length) {
-                // All steps complete
+                // All phases complete
                 container.innerHTML = `
                     <div style="background: #d4edda; border: 2px solid #28a745; padding: 30px; border-radius: 8px; text-align: center;">
-                        <h3 style="color: #28a745; margin-bottom: 16px;">✓ All Steps Complete!</h3>
-                        <p style="margin-bottom: 20px;">You have reviewed all upgrade steps. You can now proceed with the upgrade following the documented steps.</p>
+                        <h3 style="color: #28a745; margin-bottom: 16px;">✓ All Phases Complete!</h3>
+                        <p style="margin-bottom: 20px;">You have reviewed all upgrade phases. You can now proceed with the upgrade following the documented steps.</p>
                         <button class="btn" onclick="window.location.href='index.html'" style="background: #6c757d;">Start Over</button>
                     </div>
                 `;
@@ -2165,19 +1752,19 @@
             // Sort phases by their original phase number to maintain order
             const sortedPhases = [...step.phases].sort((a, b) => a.number - b.number);
             
-            // Phases
-            sortedPhases.forEach((phase, phaseIdx) => {
-                html += `<div style="background: var(--card-bg); border: 2px solid var(--vmw-blue); padding: 20px 25px; margin: 15px 0; border-radius: 6px;">`;
-                html += `<h3 style="margin: 0 0 15px 0; color: #0088b5; font-size: 1.5rem; font-weight: 600;">Step ${phaseIdx + 1}: ${phase.title}</h3>`;
-                html += `<p style="margin-bottom: 15px; color: var(--text-primary); line-height: 1.6; font-size: 1rem;">${phase.description}</p>`;
+            // Steps within each phase
+            sortedPhases.forEach((phase, stepPhaseIndex) => {
+                const stepNumberInPhase = stepPhaseIndex + 1;
+                html += `<div style="background: var(--card-bg); border: 2px solid var(--vmw-blue); padding: 15px; margin: 10px 0; border-radius: 6px;">`;
+                html += `<h4 style="margin: 0 0 10px 0; color: var(--vmw-blue);">Step ${stepNumberInPhase}: ${phase.title}</h4>`;
+                html += `<p style="margin-bottom: 10px; color: var(--text-primary);">${phase.description}</p>`;
                 
                 if (phase.data) {
                     if (phase.data.prereqs && phase.data.prereqs.length > 0) {
-                        html += `<h4 style="font-size: 1.1rem; color: #0088b5; margin: 20px 0 10px 0; font-weight: 600;">Prerequisites</h4><ul style="margin: 0 0 15px 20px; font-size: 1rem; color: var(--text-primary); line-height: 1.8;">`;
+                        html += `<p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px;"><strong>Prerequisites:</strong></p><ul style="margin: 5px 0 10px 20px; font-size: 0.9rem; color: var(--text-primary);">`;
                         phase.data.prereqs.forEach(p => html += `<li>${p}</li>`);
                         html += `</ul>`;
                     }
-
                     if (phase.data.tables && phase.data.tables.length > 0) {
                         phase.data.tables.forEach(table => {
                             html += `<div style="margin-top: 15px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;">`;
@@ -2203,23 +1790,14 @@
                         });
                     }
 
-
-                    if (phase.data.notices && phase.data.notices.length > 0) {
+                      if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
                             const icon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
                             html += `<div style="background: var(--card-bg); border-left: 4px solid ${color}; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>${icon} ${notice.title}</strong>`;
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += `<ul style="margin: 5px 0 0 20px;">`;
-                                notice.bullets.forEach(b => {
-                                if (typeof b === 'object' && b.sub_bullets) {
-                                    html += `<li>${b.text}<ul style="margin: 4px 0 0 20px;">`;
-                                    b.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                    html += `</ul></li>`;
-                                } else {
-                                    html += `<li>${b}</li>`;
-                                }
-                            });
+                                notice.bullets.forEach(b => html += `<li>${b}</li>`);
                                 html += `</ul>`;
                             }
                             html += `</div>`;
@@ -2227,34 +1805,27 @@
                     }
 
                     if (phase.data.steps && phase.data.steps.length > 0) {
-                        html +=`<h4 style="font-size: 1.1rem; color: #0088b5; margin: 20px 0 10px 0; font-weight: 600;">Steps</h4><ol style="margin: 0 0 15px 25px; padding-left: 5px; font-size: 1rem; color: var(--text-primary); line-height: 1.8;">`;
+                        html +=`<p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px;"><strong>Steps:</strong></p><ul style="margin: 5px 0 10px 20px; font-size: 0.9rem; color: var(--text-primary);">`;
                         phase.data.steps.forEach(s => html += `<li>${s}</li>`);
                         html += `</ul>`;
                     }
-                
+                    
                 }
                 
                 html += `</div>`;
             });
             
-            // Safe Stopping Point Banner - AFTER all steps in the Phase
-            const hasSafeStop = step.phases.some(phase => phase.data && phase.data.safe_stopping_point);
-            if (hasSafeStop) {
-                // Get the first phase with a safe stopping point to get the reason
-                const safeStopPhase = step.phases.find(phase => phase.data && phase.data.safe_stopping_point);
-                html += `<div style="background: #E1D5E7; border-left: 4px solid #7C3AED; padding: 16px; margin: 20px 0; border-radius: 6px; font-size: 1rem; color: #000;"><strong>⏸️ After this Phase: SAFE STOPPING POINT</strong>`;
-                if (safeStopPhase && safeStopPhase.data && safeStopPhase.data.stopping_point_reason) {
-                    html += `<p style="margin: 10px 0 0 0;">${safeStopPhase.data.stopping_point_reason}</p>`;
-                }
-                html += `</div>`;
-            }
+            // Safe Stopping Point Banner - Smart DR Grouping
+            const safeStopPhases = step.phases.filter(phase => phase.data && phase.data.safe_stopping_point);
+            // Safe stopping point info is now shown once above the diagram
+            // No need to repeat it for each phase
             
             // Navigation buttons
             html += `<div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">`;
             
             // Back button (only show after first step)
             if (currentStepIndex > 0) {
-                html += `<button class="btn" onclick="previousStep()" style="background: var(--vmw-gray); flex: 0 0 auto;">← Back</button>`;
+                html += `<button class="btn" onclick="previousStep()" style="background: var(--vmw-gray); flex: 0 0 auto;">← Previous Phase</button>`;
             }
             
             // Next Step button
@@ -2274,9 +1845,6 @@
             
             container.innerHTML = applyTargetVersion(html);
             generateDiagram();
-            
-            // Initialize inline documentation after content is loaded
-            setTimeout(() => initInlineDocumentation(), 100);
         }
         
         function nextStep() {
@@ -2291,7 +1859,6 @@
             }
         }
         
-
         // Opens a clean standalone popup window with the upgrade plan content.
         // Captures the rendered Mermaid diagram SVG from the main page and
         // prepends it, so the PDF export includes the visual flow diagram.
@@ -2302,7 +1869,6 @@
             if (diagramContainer) {
                 var svgEl = diagramContainer.querySelector('svg');
                 if (svgEl) {
-                    // Clone and make it print-safe (remove interactive attributes)
                     var cloned = svgEl.cloneNode(true);
                     cloned.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
                     cloned.style.maxWidth = '100%';
@@ -2393,24 +1959,32 @@
             var blobUrl = URL.createObjectURL(blob);
             var win = window.open(blobUrl, '_blank', 'width=960,height=700');
             if (!win) {
-                alert('Pop-up blocked — please allow pop-ups for this page and try again.');
+                alert('Pop-up blocked \u2014 please allow pop-ups for this page and try again.');
                 URL.revokeObjectURL(blobUrl);
                 return;
             }
             win.focus();
             setTimeout(function() { win.print(); win.close(); URL.revokeObjectURL(blobUrl); }, 600);
         }
+
         function exportStep(stepNumber) {
             const step = allSteps.find(s => s.number === stepNumber);
-            if (!step) return alert('Step not found');
+            if (!step) return alert('Phase not found');
             
             const printDiv = document.getElementById('printAllPhases');
             let html = '<div style="padding: 20px;">';
             html += `<h2 style="color: #3d6680; margin-bottom: 20px;">Phase ${step.number}: ${step.title}</h2>`;
             
-            step.phases.forEach(phase => {
+            // Add a simple diagram showing ONLY this phase
+            html += '<div style="background: #f0f2f5; padding: 20px; margin-bottom: 20px; border-radius: 8px; text-align: center;">';
+            html += '<div style="display: inline-block; background: #3d6680; color: #dde8f0; padding: 20px 40px; border-radius: 8px; font-size: 18px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,119,200,0.3);">';
+            html += `Phase ${step.number}: ${step.title}`;
+            html += '</div>';
+            html += '</div>';
+            
+            step.phases.forEach((phase, index) => {
                 html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px;">';
-                html += '<h3 style="color: #3d6680;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
+                html += '<h3 style="color: #3d6680;">Step ' + (index + 1) + ': ' + phase.title + '</h3>';
                 html += '<p>' + phase.description + '</p>';
                 
                 if (phase.data) {
@@ -2419,22 +1993,13 @@
                         phase.data.prereqs.forEach(p => html += '<li>' + p + '</li>');
                         html += '</ul>';
                     }
-
                      if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
                             html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += '<ul>';
-                                notice.bullets.forEach(b => {
-                                if (typeof b === 'object' && b.sub_bullets) {
-                                    html += '<li>' + stripHtml(b.text) + '<ul style="margin: 4px 0 0 20px;">';
-                                    b.sub_bullets.forEach(sb => html += '<li>' + stripHtml(sb) + '</li>');
-                                    html += '</ul></li>';
-                                } else {
-                                    html += '<li>' + stripHtml(b) + '</li>';
-                                }
-                            });
+                                notice.bullets.forEach(b => html += '<li>' + stripHtml(b) + '</li>');
                                 html += '</ul>';
                             }
                             html += '</div>';
@@ -2476,7 +2041,7 @@
                         });
                         html += '</ul>';
                     }
-                     if (phase.data.tables && phase.data.tables.length > 0) {
+                    if (phase.data.tables && phase.data.tables.length > 0) {
                         phase.data.tables.forEach(table => {
                             html += '<div style="margin-top: 15px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">';
                             html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
@@ -2500,6 +2065,7 @@
                             html += '</tbody></table></div></div>';
                         });
                     }
+                   
                 }
                 html += '</div>';
             });
@@ -2523,7 +2089,7 @@
             
             phases.forEach(phase => {
                 html += `<div class="phase">`;
-                html += `<h3>Step ${phase.number}: ${phase.title}</h3>`;
+                html += `<h3>Phase ${phase.number}: ${phase.title}</h3>`;
                 html += `<p>${phase.description}</p>`;
                 
                 // If we have detailed data from JSON, show it
@@ -2537,7 +2103,7 @@
                         });
                         html += `</ul>`;
                     }
-                    
+
                       // Notices/Warnings
                     if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
@@ -2548,20 +2114,14 @@
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += `<ul style="margin: 8px 0 0 20px;">`;
                                 notice.bullets.forEach(bullet => {
-                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                        html += `</ul></li>`;
-                                    } else {
-                                        html += `<li>${bullet}</li>`;
-                                    }
+                                    html += `<li>${bullet}</li>`;
                                 });
                                 html += `</ul>`;
                             }
                             html += `</div>`;
                         });
                     }
-
+                    
                     // Upgrade Steps
                     if (phase.data.steps && phase.data.steps.length > 0) {
                         html += `<h4 style="margin-top: 16px; color: var(--vmw-blue);">Steps:</h4>`;
@@ -2595,16 +2155,10 @@
             // Regenerate ALL phases regardless of current progress
             const phases = [];
 
-            // Operations pre-upgrade for sub-8.18 versions (first)
+            // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
             if (operationsSelected && (operationsVersion === '8.16.x' || operationsVersion === '8.17.x')) {
                 const opsPrereqData = upgradeData ? upgradeData.components['operations_prereq'] : null;
                 if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x before upgrading to 9.1', data: opsPrereqData, componentId: 'operations_prereq' });
-            }
-
-            // NSX pre-upgrade for 4.1.x (after Ops prereq)
-            if (nsxSelected && nsxVersion === '4.1.x') {
-                const nsxPrereqData = upgradeData ? upgradeData.components['nsx_prereq'] : null;
-                if (nsxPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade NSX to 4.2.x', description: 'Upgrade NSX to 4.2.x before proceeding', data: nsxPrereqData, componentId: 'nsx_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
@@ -2621,38 +2175,52 @@
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade ESX Hosts to 8.0u3', description: 'Upgrade ESX hosts to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
             }
 
-            const opsData = upgradeData ? upgradeData.components.operations : null;
-            if (operationsSelected) {
+            // Operations — included unless already on 9.1.x; install if not currently deployed
+            if (operationsSelected && operationsVersion !== '9.1.x') {
+                const opsData = upgradeData ? upgradeData.components.operations : null;
                 const effOpsVersion = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
-                const opsDesc = effOpsVersion === '8.18.x' ? 'Upgrade VCF Operations from 8.18.x to 9.1' : 'Upgrade VCF Operations from 9.0.x to 9.1';
+                const opsDesc = effOpsVersion === '8.18.x'
+                    ? 'Upgrade VCF Operations from 8.18.x to 9.1'
+                    : 'Upgrade VCF Operations from 9.0.x to 9.1';
                 phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: opsDesc, data: opsData, componentId: 'operations' });
-            } else {
-                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.1 (new installation)', data: opsData, componentId: 'operations' });
+            } else if (!operationsSelected) {
+                const opsInstallData = upgradeData ? upgradeData.components.operations_install : null;
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.1 (new installation)', data: opsInstallData, componentId: 'operations_install' });
+            }
+            // operationsSelected && operationsVersion === '9.1.x': already at target, skip upgrade phase
+
+            // License Server — always included alongside Operations
+            const licenseData = upgradeData ? upgradeData.components.license : null;
+            phases.push({ number: phases.length + 1, title: 'License Server', description: 'Deploy License Server', data: licenseData, componentId: 'license' });
+
+            // vCenter — included unless already on 9.1.x (no upgrade needed)
+            if (vcenterVersion !== '9.1.x') {
+                const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
+                const effVC = (vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2') ? '8.0u3' : vcenterVersion;
+                const vcDesc = effVC === '8' ? 'Upgrade vCenter from 8.x to 9.1' : 'Upgrade vCenter from 9.0.x to 9.1';
+                phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
             }
 
-            const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
-            const effVC = (vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2') ? '8.0u3' : vcenterVersion;
-            const vcDesc = effVC === '8.0u3' ? 'Upgrade vCenter from 8.0u3 to 9.1' : 'Upgrade vCenter from 9.0.x to 9.1';
-            phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
-
             if (vlcmSelected) {
-                const vlcmData = upgradeData
-                    ? (nsxSelected
-                        ? upgradeData.components.vum_migration
-                        : (upgradeData.components.vum_migration_without_nsx || upgradeData.components.vum_migration))
-                    : null;
-                phases.push({ number: phases.length + 1, title: 'vLCM Baseline to Image Migration', description: 'Migrate from Baseline to Image-based management', data: vlcmData });
+                const vlcmData = upgradeData ? upgradeData.components.vum_migration : null;
+                phases.push({ number: phases.length + 1, title: 'vLCM Baseline to Image Migration', description: 'Migrate from Baseline to Image-based management', data: vlcmData, componentId: 'vum_migration' });
             }
 
             if (witnessSelected) {
                 const witnessData = upgradeData ? upgradeData.components.vsan_witness : null;
-                phases.push({ number: phases.length + 1, title: 'vSAN Witness Host', description: 'Upgrade vSAN Witness Host', data: witnessData });
+                phases.push({ number: phases.length + 1, title: 'vSAN Witness Host', description: 'Upgrade vSAN Witness Host', data: witnessData, componentId: 'vsan_witness' });
             }
 
-            const esxData = upgradeData ? upgradeData.components.esx : null;
-            const effESX = (esxVersion === '8.0u1' || esxVersion === '8.0u2') ? '8.0u3' : esxVersion;
-            const esxDesc = effESX === '8.0u3' ? 'Upgrade all ESX hosts from 8.0u3 to 9.1' : 'Upgrade all ESX hosts from 9.0.x to 9.1';
-            phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: esxDesc, data: esxData, componentId: 'esx' });
+            // ESX — always included (unless VxRail)
+            if (!vxrailSelected) {
+                const esxData = upgradeData ? upgradeData.components.esx : null;
+                const effESX = (esxVersion === '8.0u1' || esxVersion === '8.0u2') ? '8.0u3' : esxVersion;
+                const esxDesc = effESX === '8' ? 'Upgrade all ESX hosts from 8.x to 9.1' : 'Upgrade all ESX hosts from 9.0.x to 9.1';
+                phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: esxDesc, data: esxData, componentId: 'esx' });
+            } else {
+                const vxrailData = upgradeData ? upgradeData.components.vxrail : null;
+                phases.push({ number: phases.length + 1, title: 'VxRail Upgrade', description: 'Upgrade VxRail infrastructure', data: vxrailData, componentId: 'vxrail' });
+            }
 
             return phases;
         }
@@ -2688,7 +2256,7 @@
             }
             return null;
         }
-
+        
         function exportToPDF() {
             // Use allSteps to export everything properly grouped
             const phases = allPhases; // Use the actual generated phases
@@ -2698,18 +2266,19 @@
             
             // Core Components Summary
             html += '<div style="background: #f0f7ff; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #3d6680;">';
-            html += '<h3 style="margin-bottom: 8px; font-size:1rem;">Selected Components:</h3>';           
+            html += '<h3 style="margin-bottom: 8px; font-size:1rem;">Selected Components:</h3>';
             html += '<ul style="margin-left: 20px;">';
             html += `<li><span class="badge included">✓ vCenter Server</span><span class="badge version">v${vcenterVersion}</span></li>`;
             html += `<li><span class="badge included">✓ ESX Hosts</span><span class="badge version">v${esxVersion}</span></li>`;
             if (operationsSelected) html += `<li><span class="badge included">✓ VCF Operations</span><span class="badge version">v${operationsVersion}</span></li>`;
             html += '</ul>';
             
-            // Additional Products Section — grouped by chip category
+            // Additional Products Section (only show if any selected)
             const selectedProducts = window.selectedAdvancedProducts || {};
             const hasAdditionalProducts = Object.values(selectedProducts).some(val => val === true);
-
-            if (hasAdditionalProducts && typeof G_INDEX !== 'undefined' && G_INDEX.length) {
+                Object.values(selectedProducts).some(val => val === true);
+            
+           if (hasAdditionalProducts && typeof G_INDEX !== 'undefined' && G_INDEX.length) {
                 // Bucket selected items by group, preserving group order
                 const groupOrder = [];
                 const groupItems = {};
@@ -2741,6 +2310,8 @@
                 // Fallback: flat list if G_INDEX not available
                 html += '<h3 style="margin-top: 16px; margin-bottom: 8px;">Selected Optional Components:</h3>';
                 html += '<ul style="margin-left: 20px;">';
+                
+                // Add selected advanced products
                 if (upgradeData && upgradeData.optional_products) {
                     upgradeData.optional_products.forEach(product => {
                         if (selectedProducts[product.id] === true) {
@@ -2756,9 +2327,9 @@
         
 
             // All phases
-            phases.forEach(phase => {
+            phases.forEach((phase, index) => {
                 html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
-                html += '<h3 style="color: #3d6680; margin-bottom: 8px;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
+                html += '<h3 style="color: #3d6680; margin-bottom: 8px;">Step ' + (index + 1) + ': ' + phase.title + '</h3>';
                 html += '<p style="color: #5a6778; margin-bottom: 12px;">' + phase.description + '</p>';
                 
                 if (phase.data) {
@@ -2768,63 +2339,16 @@
                         phase.data.prereqs.forEach(p => { html += '<li>' + p + '</li>'; });
                         html += '</ul>';
                     }
-
-                      if (phase.data.notices && phase.data.notices.length > 0) {
-                        phase.data.notices.forEach(notice => {
-                            const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
-                            const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
-                            html += '<div style="background: white; border-left: 4px solid ' + color + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
-                            html += '<strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
-                            if (notice.bullets && notice.bullets.length > 0) {
-                                html += '<ul style="margin: 8px 0 0 20px;">';
-                                notice.bullets.forEach(b => {
-                                if (typeof b === 'object' && b.sub_bullets) {
-                                    html += '<li>' + stripHtml(b.text) + '<ul style="margin: 4px 0 0 20px;">';
-                                    b.sub_bullets.forEach(sb => html += '<li>' + stripHtml(sb) + '</li>');
-                                    html += '</ul></li>';
-                                } else {
-                                    html += '<li>' + stripHtml(b) + '</li>';
-                                }
-                            });
-                                html += '</ul>';
-                            }
-                            html += '</div>';
-                        });
-                    }
-                     if (phase.data.tables && phase.data.tables.length > 0) {
-                        phase.data.tables.forEach(table => {
-                            html += '<div style="margin-top: 15px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">';
-                            html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
-                            if (table.description) {
-                                html += '<div style="padding: 10px; background: #f0f2f5; font-size: 0.85rem;">' + table.description + '</div>';
-                            }
-                            html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
-                            html += '<thead><tr style="background: #f0f2f5;">';
-                            table.headers.forEach(header => {
-                                html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600;">' + header + '</th>';
-                            });
-                            html += '</tr></thead><tbody>';
-                            table.rows.forEach((row, idx) => {
-                                const bgColor = idx % 2 === 0 ? '#ffffff' : '#f0f2f5';
-                                html += '<tr style="background: ' + bgColor + ';">';
-                                row.forEach(cell => {
-                                    html += '<td style="padding: 10px; border-bottom: 1px solid #ddd;">' + cell + '</td>';
-                                });
-                                html += '</tr>';
-                            });
-                            html += '</tbody></table></div></div>';
-                        });
-                    }
                     if (phase.data.steps && phase.data.steps.length > 0) {
                         html += '<h4 style="color: #1a2332; margin-top: 12px;">Steps:</h4>';
                         html += '<ul style="margin-left: 20px;">';
-                        phase.data.steps.forEach(s => {
+                        phase.data.steps.forEach(s => { 
                             html += '<li>' + s + '</li>';
                             const docUrl = extractDocUrlFromStep(s);
                             if (docUrl) {
                                 const inlineDoc = getInlineDocForUrl(docUrl);
                                 if (inlineDoc) {
-                                    html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px; page-break-inside: avoid;">';
+                                    html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px;">';
                                     html += '<h5 style="color: #3d6680; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
                                     html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
                                     html += '<p style="margin-top: 12px; font-size: 0.85rem; color: #6c757d;"><strong>Source:</strong> ' + docUrl + '</p>';
@@ -2852,7 +2376,46 @@
                         });
                         html += '</ul>';
                     }
-                  
+                    if (phase.data.notices && phase.data.notices.length > 0) {
+                        phase.data.notices.forEach(notice => {
+                            const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
+                            const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
+                            html += '<div style="background: white; border-left: 4px solid ' + color + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
+                            html += '<strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += '<ul style="margin: 8px 0 0 20px;">';
+                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                                html += '</ul>';
+                            }
+                            html += '</div>';
+                        });
+                    }
+                    
+                    if (phase.data.tables && phase.data.tables.length > 0) {
+                        phase.data.tables.forEach(table => {
+                            html += '<div style="margin-top: 15px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">';
+                            html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
+                            if (table.description) {
+                                html += '<div style="padding: 10px; background: #f0f2f5; font-size: 0.85rem;">' + table.description + '</div>';
+                            }
+                            html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
+                            html += '<thead><tr style="background: #f0f2f5;">';
+                            table.headers.forEach(header => {
+                                html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600;">' + header + '</th>';
+                            });
+                            html += '</tr></thead><tbody>';
+                            table.rows.forEach((row, idx) => {
+                                const bgColor = idx % 2 === 0 ? '#ffffff' : '#f0f2f5';
+                                html += '<tr style="background: ' + bgColor + ';">';
+                                row.forEach(cell => {
+                                    html += '<td style="padding: 10px; border-bottom: 1px solid #ddd;">' + cell + '</td>';
+                                });
+                                html += '</tr>';
+                            });
+                            html += '</tbody></table></div></div>';
+                        });
+                    }
+                    
                 }
                 html += '</div>';
             });
@@ -2892,13 +2455,14 @@
         }
 
         function generateDiagram() {
-            let diagram = '%%{init: {"flowchart": {"nodeSpacing": 60, "rankSpacing": 90}} }%%\ngraph LR\n    Start["Start<br/>Upgrade"]';
+            let diagram = '%%{init: {"flowchart": {"nodeSpacing": 60, "rankSpacing": 90}} }%%\ngraph LR\n    Start["Start Upgrade"]';
+
+
             
             // Build diagram with phases as subgraphs containing steps
             allSteps.forEach((step, stepIndex) => {
                 const phaseId = `Phase${step.number}`;
                 const isCurrentPhase = stepIndex === currentStepIndex;
-                const isCompletedPhase = stepIndex < currentStepIndex;
                 
                 // Check if this phase has a safe stopping point
                 const hasSafeStop = step.phases.some(phase => phase.data && phase.data.safe_stopping_point);
@@ -2907,12 +2471,12 @@
                 
                 // Start subgraph for this phase
                 diagram += `\n    subgraph ${phaseId}["${safeStopIcon}Phase ${step.number}: ${step.title}"]`;
+                diagram += `\n        direction TB`;
                 
                 // Add each step within the phase
                 step.phases.forEach((phase, phaseIdx) => {
                     const stepNodeId = `P${step.number}S${phaseIdx + 1}`;
-                    const safeStopIcon = (phase.data && phase.data.safe_stopping_point) ? '' : '';
-                    const stepLabel = `Step ${phaseIdx + 1}: ${safeStopIcon}${phase.title}`;
+                    const stepLabel = `Step ${phaseIdx + 1}:<br/>${phase.title}`;
                     diagram += `\n        ${stepNodeId}["${stepLabel}"]`;
                 });
                 
@@ -2926,52 +2490,58 @@
             });
             diagram += ` --> End["Complete"]`;
             
-            diagram += '\n    ';
+            // Define classes for better styling
+            diagram += '\n\n    classDef currentPhase fill:#3d6680,stroke:#2c4f66,stroke-width:4px,color:#e8f0f6';
+            diagram += '\n    classDef safeStopPhase fill:#d4c8e0,stroke:#6b3999,stroke-width:4px,color:#1a0a2e';
+            diagram += '\n    classDef completedPhase fill:#2e7d4f,stroke:#1d5c38,stroke-width:3px,color:#d8f0e4';
+            diagram += '\n    classDef futurePhase fill:#dde2e8,stroke:#9aa0a8,stroke-width:2px,color:#3a4450';
+            diagram += '\n    classDef currentStep fill:#6a9db5,stroke:#3d6680,stroke-width:2px,color:#0d1e28';
+            diagram += '\n    classDef completedStep fill:#3a9e60,stroke:#2e7d4f,stroke-width:2px,color:#d8f0e4';
+            diagram += '\n    classDef futureStep fill:#eaecf0,stroke:#8a9099,stroke-width:1px,color:#3a4450';
             
-            // Add styles
-            diagram += 'style Start fill:#dde2e8,stroke:#6c757d,stroke-width:3px,color:#3a4450\n    ';
-            
-            // Style phases based on status
+            // Apply classes to phases and steps
             allSteps.forEach((step, index) => {
                 const phaseId = `Phase${step.number}`;
                 const hasSafeStop = step.phases.some(phase => phase.data && phase.data.safe_stopping_point);
                 const isCurrentPhase = index === currentStepIndex;
                 
+                // Apply class to phase
                 if (isCurrentPhase && hasSafeStop) {
-                    // Current phase at safe stop - purple/violet
-                    diagram += `style ${phaseId} fill:#d4c8e0,stroke:#6b3999,stroke-width:4px,color:#1a0a2e\n    `;
+                    diagram += `\n    class ${phaseId} safeStopPhase`;
                 } else if (index === currentStepIndex) {
-                    // Current phase (no safe stop) - blue background
-                    diagram += `style ${phaseId} fill:#3d6680,stroke:#2c4f66,stroke-width:4px,color:#e8f0f6\n    `;
+                    diagram += `\n    class ${phaseId} currentPhase`;
                 } else if (index < currentStepIndex) {
-                    // Completed phase - green background
-                    diagram += `style ${phaseId} fill:#2e7d4f,stroke:#1d5c38,stroke-width:3px,color:#d8f0e4\n    `;
+                    diagram += `\n    class ${phaseId} completedPhase`;
                 } else {
-                    // Future phase - light gray background
-                    diagram += `style ${phaseId} fill:#dde2e8,stroke:#9aa0a8,stroke-width:2px,color:#3a4450\n    `;
+                    diagram += `\n    class ${phaseId} futurePhase`;
                 }
                 
-                // Style individual steps within phases
+                // Apply classes to steps
                 step.phases.forEach((phase, phaseIdx) => {
                     const stepNodeId = `P${step.number}S${phaseIdx + 1}`;
                     
                     if (index === currentStepIndex) {
-                        // Steps in current phase - darker blue
-                        diagram += `style ${stepNodeId} fill:#6a9db5,stroke:#3d6680,stroke-width:2px,color:#0d1e28\n    `;
+                        diagram += `\n    class ${stepNodeId} currentStep`;
                     } else if (index < currentStepIndex) {
-                        // Steps in completed phase - darker green
-                        diagram += `style ${stepNodeId} fill:#3a9e60,stroke:#2e7d4f,stroke-width:2px,color:#d8f0e4\n    `;
+                        diagram += `\n    class ${stepNodeId} completedStep`;
                     } else {
-                        // Steps in future phase - white
-                        diagram += `style ${stepNodeId} fill:#eaecf0,stroke:#8a9099,stroke-width:1px,color:#3a4450\n    `;
+                        diagram += `\n    class ${stepNodeId} futureStep`;
                     }
                 });
             });
             
-            diagram += 'style End fill:#2e7d4f,stroke:#1d5c38,stroke-width:3px,color:#d8f0e4,color:#000';
+            // Style Start and End nodes
+            diagram += '\n    style Start fill:#dde2e8,stroke:#6c757d,stroke-width:3px,color:#3a4450';
+            diagram += '\n    style End fill:#2e7d4f,stroke:#1d5c38,stroke-width:3px,color:#d8f0e4,color:#000';
             
             const container = document.getElementById('diagramContainer');
-            container.innerHTML = `<pre class="mermaid">${diagram}</pre>`;
+            
+            // Add zoom controls wrapper
+            container.innerHTML = `
+                <div style="position: relative;">
+                    <pre class="mermaid">${diagram}</pre>
+                </div>
+            `;
             
             mermaid.contentLoaded();
             // Strip Mermaid's forced max-width:100% so the diagram renders at its
@@ -2982,13 +2552,14 @@
                     svg.style.maxWidth = 'none';
                     svg.style.width = 'auto';
                     svg.style.minWidth = '700px';
-                    // Store natural dimensions for zoom calculations
                     var r = svg.getBoundingClientRect();
                     svg.dataset.nw = r.width;
                     svg.dataset.nh = r.height;
                 }
             }, 700);
         }
+        
+       
 
         // Dark Mode Toggle
         function toggleDarkMode() {
@@ -3035,68 +2606,16 @@
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.target.classList.add('active');
-        }
-    </script>
-    <script>
-        // Zoom functionality
-        let currentZoom = 1.0;
-        
-        function zoomDiagram(factor) {
-            currentZoom *= factor;
-            const wrapper = document.getElementById('mermaidWrapper');
-            if (wrapper) {
-                wrapper.style.transform = `scale(${currentZoom})`;
-            }
-        }
-        
-        function resetZoom() {
-            currentZoom = 1.0;
-            const wrapper = document.getElementById('mermaidWrapper');
-            if (wrapper) {
-                wrapper.style.transform = 'scale(1)';
+            
+            // Find and activate the clicked nav item
+            const clickedItem = event.target.closest('.nav-item');
+            if (clickedItem) {
+                clickedItem.classList.add('active');
             }
         }
 
-        // Dark Mode Toggle
-        function toggleDarkMode() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Update toggle switch
-            const toggle = document.getElementById('themeToggle');
-            if (newTheme === 'dark') {
-                toggle.classList.add('active');
-            } else {
-                toggle.classList.remove('active');
-            }
-            
-            // Regenerate diagram with new theme colors
-            if (typeof generateDiagram === 'function') {
-                generateDiagram();
-            }
-        }
-
-        // Load saved theme on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            
-            // Update toggle switch if dark mode is active
-            const toggle = document.getElementById('themeToggle');
-            if (savedTheme === 'dark') {
-                toggle.classList.add('active');
-            }
-        });
-
-                // INLINE DOCUMENTATION MODAL SYSTEM
-        var _inlineDocsInitialized = false;
+        // INLINE DOCUMENTATION MODAL SYSTEM
         function initInlineDocumentation() {
-            if (_inlineDocsInitialized) return;
-            _inlineDocsInitialized = true;
             if (typeof window.INLINE_DOCS === 'undefined') {
                 console.warn('INLINE_DOCS not loaded');
                 return;
@@ -3281,91 +2800,79 @@
         window.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => initInlineDocumentation(), 1000);
         });
-
-        // Sidebar navigation function
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-            
-            // Update active nav item
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
     
         // ============================================================
-        // Option G - Smart Tag Search
+        // Option G — Smart Tag Search
         // ============================================================
 
-        // Group constants (single source of truth)
+        // Category map: component id → display group
+        // ── GROUP CONFIGURATION ────────────────────────────────────────────────
+        // Currently 3 groups are defined. To add a 4th group:
+        //
+        //   STEP 1 — Add a new group name string (pick an emoji + label):
+        //            const G_GROUP_4 = '&#x1F310; My New Group';
+        //
+        //   STEP 2 — Map any component id(s) to it in G_GROUP_MAP, e.g.:
+        //            my_new_component: G_GROUP_4,
+        //
+        //   STEP 3 — Add keywords for it in G_KEYWORD_MAP, e.g.:
+        //            my_new_component: 'my new component keywords',
+        //
+        //   STEP 4 — If the component has a legacy hidden checkbox, add it
+        //            to G_CHECKBOX_MAP too, e.g.:
+        //            my_new_component: 'myNewCheck',
+        //
+        //   STEP 5 — Add the component to optional_products in the JSON file.
+        //
+        // ── GROUP NAMES (single source of truth — change the label here only) ─
         const G_GROUP_FEATURES   = 'Features';
-        ///const G_GROUP_PRODUCT       = 'Products';
+       //const G_GROUP_VSAN       = 'vSAN';
         const G_GROUP_COMPONENTS = 'Components';
-        const G_GROUP_ADDON      = 'Add-on';  // <-- uncomment & rename to add a 4th group
+        // const G_GROUP_4       = 'My New Group';   // <-- uncomment & rename to add a 4th group
 
         const G_GROUP_MAP = {
-            // Features
-            supervisor:              G_GROUP_FEATURES,
+            // ── Features ──────────────────────────────────────────────────────
             vcha:                    G_GROUP_FEATURES,
             auto_deploy:             G_GROUP_FEATURES,
+            supervisor:              G_GROUP_FEATURES,
             vum_migration:           G_GROUP_FEATURES,
-            elm:                     G_GROUP_FEATURES,
             vsan_data_protection:    G_GROUP_FEATURES,
             vsan_file_service:       G_GROUP_FEATURES,
-            nsx_federation:          G_GROUP_FEATURES,
 
-            // Product
-            
-
-            // Components
+            // ── Components ────────────────────────────────────────────────────
             srm:                     G_GROUP_COMPONENTS,
             replication:             G_GROUP_COMPONENTS,
             avi:                     G_GROUP_COMPONENTS,
-            hcx:                     G_GROUP_COMPONENTS,
-            vdefend:                 G_GROUP_COMPONENTS,
-            operations_orchestrator: G_GROUP_COMPONENTS,
-            nsx_edge:                G_GROUP_COMPONENTS,
-            vidm:                    G_GROUP_COMPONENTS,
             logs:                    G_GROUP_COMPONENTS,
-            network:                 G_GROUP_COMPONENTS,
+            operations_orchestrator: G_GROUP_COMPONENTS,
             vsan_witness:            G_GROUP_COMPONENTS,
 
-            // Add-on:
-            vdefend:                 G_GROUP_ADDON,
+            // ── 4th Group (placeholder — uncomment and map ids here) ──────────
+            // my_new_component:     G_GROUP_4,
         };
 
+        // Keyword map: component id → search keywords
         const G_KEYWORD_MAP = {
-            supervisor:              'supervisor kubernetes k8s tanzu workload',
-            vcha:                    'vcha ha high availability vcenter',
-            auto_deploy:             'auto deploy stateless esx provision',
-            vum_migration:           'vum cluster upgrade manager legacy vlcm',
-            elm:                     'elm enhanced linked mode multi vcenter break',
             vsan_data_protection:    'vsan san storage protection data dp',
             vsan_file_service:       'vsan san file service nfs smb shares',
             vsan_witness:            'vsan witness stretched host cluster',
             srm:                     'srm site recovery manager dr disaster failover',
             replication:             'replication replicate vsphere async vm dr',
+            vcha:                    'vcha ha high availability vcenter',
+            auto_deploy:             'auto deploy stateless esx provision',
+            supervisor:              'supervisor kubernetes k8s tanzu workload',
             avi:                     'avi load balancer nsx alb network lb',
-            hcx:                     'hcx hybrid cloud extension migration mobility',
-            nsx_federation:          'nsx federation multi-site locations',
-            vdefend:                 'vdefend distributed firewall security microsegmentation dfw',
-            operations_orchestrator: 'aria automation orchestrator workflow',
-            nsx_edge:                'nsx edge node gateway transit',
-            vidm:                    'vidm identity manager authentication sso',
             logs:                    'logs log vcf operations observability syslog',
-            network:                 'vcf operations networks aria network insight',
+            operations_orchestrator: 'aria automation orchestrator workflow',
+            vum_migration:           'vum cluster upgrade manager legacy vlcm',
         };
 
+        // Map component ids to the legacy hidden checkbox ids
         const G_CHECKBOX_MAP = {
             vum_migration: 'vlcmCheck',
             vsan_witness:  'witnessCheck',
             vcha:          'vchaCheck',
             auto_deploy:   'autodeployCheck',
-            elm:           'elmCheck',
-            supervisor:    'supervisorCheck',
         };
 
         let G_INDEX = [];
@@ -3375,53 +2882,65 @@
             G_INDEX = [];
             if (!upgradeData) return;
 
-            // NSX-gated items — only show if NSX is in the environment
-            const NSX_GATED = new Set(['nsx_federation', 'vdefend', 'nsx_edge', 'hcx']);
-            const nsxInEnv = localStorage.getItem('nsx-selected') === 'true';
-
             const seen = new Set();
+
+            // Add all optional_products entries
             (upgradeData.optional_products || []).forEach(p => {
-                // Skip NSX-dependent items if NSX is not selected
-                if (NSX_GATED.has(p.id) && !nsxInEnv) return;
                 seen.add(p.id);
-                G_INDEX.push({ id: p.id, name: p.display_name, keywords: G_KEYWORD_MAP[p.id] || p.display_name.toLowerCase(), group: G_GROUP_MAP[p.id] || 'Other' });
+                G_INDEX.push({
+                    id:       p.id,
+                    name:     p.display_name,
+                    keywords: G_KEYWORD_MAP[p.id] || p.display_name.toLowerCase(),
+                    group:    G_GROUP_MAP[p.id]   || '&#x1F4E6; Other',
+                });
             });
 
-            // Add ELM from components if present
-            if (!seen.has('elm') && upgradeData.components?.['elm_break']) {
-                G_INDEX.push({ id: 'elm', name: 'Enhanced Linked Mode (ELM)', keywords: G_KEYWORD_MAP['elm'] || 'elm enhanced linked mode', group: G_GROUP_MAP['elm'] || 'Features' });
-            }
-
-            // Add other legacy items
-            ['vsan_witness','vcha','auto_deploy','vum_migration'].forEach(id => {
-                if (!seen.has(id) && upgradeData.components?.[id]) {
-                    G_INDEX.push({ id, name: upgradeData.components[id].name || id, keywords: G_KEYWORD_MAP[id] || id, group: G_GROUP_MAP[id] || 'Other' });
+            // Add legacy items (vcha, vsan_witness, auto_deploy, vum_migration)
+            // that may not be in optional_products but are in components
+            ['vsan_witness', 'vcha', 'auto_deploy', 'vum_migration'].forEach(id => {
+                if (!seen.has(id) && upgradeData.components && upgradeData.components[id]) {
+                    G_INDEX.push({
+                        id:       id,
+                        name:     upgradeData.components[id].name || id,
+                        keywords: G_KEYWORD_MAP[id] || id,
+                        group:    G_GROUP_MAP[id]   || '&#x1F4E6; Other',
+                    });
                 }
             });
 
+            // Sort by group then name
             G_INDEX.sort((a, b) => a.group.localeCompare(b.group) || a.name.localeCompare(b.name));
         }
 
         function gRender(query) {
+            const q = (query || '').trim().toLowerCase();
+            const matches = q === '' ? G_INDEX : G_INDEX.filter(i =>
+                i.name.toLowerCase().includes(q) || i.keywords.includes(q)
+            );
+
             const groups = {};
-            G_INDEX.forEach(item => { if (!groups[item.group]) groups[item.group] = []; groups[item.group].push(item); });
+            matches.forEach(item => {
+                if (!groups[item.group]) groups[item.group] = [];
+                groups[item.group].push(item);
+            });
+
             const el = document.getElementById('gResults');
             if (!el) return;
-            if (!Object.keys(groups).length) { el.innerHTML = '<div class="g-empty">No components available.</div>'; return; }
+
+            if (Object.keys(groups).length === 0) {
+                el.innerHTML = '<div class="g-empty">No matches for “' + query + '”.</div>';
+                return;
+            }
+
             let html = '';
-            // Sort groups by defined order: Components → Features → Add-on → anything else
-            const G_GROUP_ORDER = [G_GROUP_COMPONENTS, G_GROUP_FEATURES, G_GROUP_ADDON || 'Add-on'];
-            const sortedGroups = Object.keys(groups).sort((a, b) => {
-                const ai = G_GROUP_ORDER.indexOf(a);
-                const bi = G_GROUP_ORDER.indexOf(b);
-                return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-            });
-            for (const grp of sortedGroups) { const items = groups[grp];
+            for (const [grp, items] of Object.entries(groups)) {
                 html += '<div class="g-group-title">' + grp + '</div><div class="g-chips">';
                 items.forEach(item => {
                     const sel = gSelected.has(item.id);
-                    const label = item.name;
-                    html += '<span class="g-chip' + (sel ? ' g-selected' : '') + '" data-id="' + item.id + '" onclick="gToggle(this)">' + label + '</span>';
+                    const escaped = q
+                        ? item.name.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>')
+                        : item.name;
+                    html += '<span class="g-chip' + (sel ? ' g-selected' : '') + '" data-id="' + item.id + '" onclick="gToggle(this)">' + escaped + '</span>';
                 });
                 html += '</div>';
             }
@@ -3430,9 +2949,16 @@
 
         function gToggle(chip) {
             const id = chip.dataset.id;
-            gSelected.has(id) ? gSelected.delete(id) : gSelected.add(id);
-            chip.classList.toggle('g-selected');
-            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan();
+            if (gSelected.has(id)) {
+                gSelected.delete(id);
+                chip.classList.remove('g-selected');
+            } else {
+                gSelected.add(id);
+                chip.classList.add('g-selected');
+            }
+            gSyncCheckboxes();
+            gUpdateSummary();
+            autoGenerateUpgradePlan();
         }
 
         function gSyncCheckboxes() {
@@ -3448,11 +2974,16 @@
         function gUpdateSummary() {
             const el = document.getElementById('gSummary');
             if (!el) return;
-            if (!gSelected.size) { el.innerHTML = 'No optional components selected — your plan will include core components only.'; el.style.color = 'var(--text-secondary)'; return; }
+            if (gSelected.size === 0) {
+                el.innerHTML = 'No optional components selected — your plan will include core components only.';
+                el.style.color = 'var(--text-secondary)';
+                return;
+            }
             const names = G_INDEX.filter(i => gSelected.has(i.id)).map(i => i.name);
             el.style.color = 'var(--text-primary)';
             el.innerHTML = '<strong>Selected: </strong>' + names.map(n => {
-                const id = G_INDEX.find(i => i.name === n)?.id || n;
+                const item = G_INDEX.find(i => i.name === n);
+                const id = item ? item.id : n;
                 return '<span class="g-sel-tag">' + n + ' <span class="g-rm" onclick="gRemove(\'' + id + '\')">&#x2715;</span></span>';
             }).join('');
         }
@@ -3461,26 +2992,26 @@
             gSelected.delete(id);
             const chip = document.querySelector('.g-chip[data-id="' + id + '"]');
             if (chip) chip.classList.remove('g-selected');
-            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan();
+            gSyncCheckboxes();
+            gUpdateSummary();
+            autoGenerateUpgradePlan();
         }
 
         function gReset() {
             gSelected.clear();
-            gRender('');
-            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan();
+            const inp = document.getElementById('gSearchInput');
+            gRender(inp ? inp.value : '');
+            gSyncCheckboxes();
+            gUpdateSummary();
+            autoGenerateUpgradePlan();
         }
 
         function resetDropdowns() { gReset(); }
 
     </script>
-            </div>
-        </div>
-    </div>
-
-    <!-- Documentation Modal -->
     <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
         <div class="doc-modal-content">
-                        <div class="doc-modal-header">
+            <div class="doc-modal-header">
                 <div style="display:flex; align-items:center; gap:12px; min-width:0;">
                     <button id="docModalBackBtn" class="doc-modal-back" onclick="docModalGoBack()" style="display:none;" title="Go back">&#8592; Back</button>
                     <h2 id="docModalTitle" style="margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Documentation</h2>

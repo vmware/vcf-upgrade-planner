@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vSphere and VCF Operations to 9.1</title>
+    <title>vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <script>
         (function() {
@@ -1066,7 +1066,7 @@
         <div class="main-wrapper">
             <div class="container">
                 <header id="environment">
-                    <h1>vSphere and VCF Operations to 9.1</h1>
+                    <h1>vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)</h1>
                 </header>
         <!-- Configuration Section -->
         <div id="environment" class="section">
@@ -1235,7 +1235,7 @@
 
         async function loadUpgradeData() {
             try {
-                const response = await fetch('vsphere-no-vcf-data.json');
+                const response = await fetch('vsphere-no-vcf-data-ms.json');
                 upgradeData = await response.json();
                 console.log('Upgrade data loaded successfully');
             } catch (error) {
@@ -1394,30 +1394,23 @@
                 
                 // Determine if this component should be included based on component type
                 if (componentId === 'operations') {
-                    // Operations included unless already on 9.1.x (no upgrade needed)
-                    // If not installed, always install it; if installed and on 9.1.x, skip upgrade phase
-                    if (operationsSelected && operationsVersion === '9.1.x') {
-                        // Already at target version — no upgrade phase needed
+                    // Only include if Operations is already deployed AND needs upgrading.
+                    // If not selected (not deployed), skip — the VCF Installer deploys it automatically.
+                    // If already on 9.1.x, skip — no upgrade needed.
+                    if (!operationsSelected || operationsVersion === '9.1.x') {
                         shouldInclude = false;
                     } else {
                         shouldInclude = true;
-                        if (operationsSelected) {
-                            // Customer HAS Operations - UPGRADE it
-                            const effOpsVer = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
-                            if (effOpsVer === '8.18.x') {
-                                phaseTitle = 'Upgrade VCF Operations';
-                                phaseDescription = 'Upgrade VCF Operations from 8.18.x to 9.1';
-                            } else {
-                                phaseTitle = 'Upgrade VCF Operations';
-                                phaseDescription = 'Upgrade VCF Operations from 9.0.x to 9.1';
-                            }
-                            componentData = upgradeData.components['operations'];
+                        // Customer HAS Operations — upgrade it
+                        const effOpsVer = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
+                        if (effOpsVer === '8.18.x') {
+                            phaseTitle = 'Upgrade VCF Operations';
+                            phaseDescription = 'Upgrade VCF Operations from 8.18.x to 9.1';
                         } else {
-                            // Customer does NOT have Operations - INSTALL it
-                            phaseTitle = 'Install VCF Operations';
-                            phaseDescription = 'Install VCF Operations 9.1 (new installation)';
-                            componentData = upgradeData.components['operations_install'];
+                            phaseTitle = 'Upgrade VCF Operations';
+                            phaseDescription = 'Upgrade VCF Operations from 9.0.x to 9.1';
                         }
+                        componentData = upgradeData.components['operations'];
                     }
                 } else if (componentId === 'vcenter') {
                     // vCenter included unless already on 9.1.x (no upgrade needed)
@@ -1454,6 +1447,20 @@
                     shouldInclude = vlcmSelected;
                     phaseTitle = componentData ? componentData.name : 'VUM Cluster Migration to VMware Lifecycle Manager Images (vLCM)';
                     phaseDescription = 'Upgrade ' + phaseTitle;
+                } else if (componentId === 'vcf_installer') {
+                    // Always include VCF Installer — variant depends on whether Operations is already deployed
+                    shouldInclude = true;
+                    if (operationsSelected) {
+                        // Operations already upgraded above — installer deploys License + Mgmt Services only
+                        componentData = upgradeData.components['vcf_installer_vcenter_with_ops'];
+                        phaseTitle = 'VCF Installer';
+                        phaseDescription = 'Deploy VCF Installer to provision Management Services (VCF Operations already deployed)';
+                    } else {
+                        // No Operations — installer deploys VCF Operations + License + Mgmt Services
+                        componentData = upgradeData.components['vcf_installer_vcenter_only'];
+                        phaseTitle = 'VCF Installer';
+                        phaseDescription = 'Deploy VCF Installer to provision VCF Operations and Management Services';
+                    }
                 } else {
                     // All other components (advanced products) - check if selected
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1521,6 +1528,7 @@
             const advancedPhases = [];
             const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
+            const vcf_installerPhases = [];
 
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
@@ -1550,6 +1558,8 @@
                     vxrailPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
+                } else if (phase.componentId === 'vcf_installer' || phase.componentId === 'vcf_installer_vcenter_only' || phase.componentId === 'vcf_installer_vcenter_with_ops') {
+                    vcf_installerPhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
                     vsan_file_servicePhases.push(phase);
                 } else if (isPostInfraOptional) {
@@ -1603,25 +1613,15 @@
 
 
             if (operationsPhases.length > 0) {
-                // Always attach License Server to the Operations step
+                // License Server is covered by the VCF Installer step in this path — do not attach it here
                 const combinedOperationsPhases = [...operationsPhases];
-                const licenseData = upgradeData.components['license'];
-                if (licenseData) {
-                    combinedOperationsPhases.push({
-                        number: combinedOperationsPhases.length + 1,
-                        title: 'License Server',
-                        description: 'Deploy License Server',
-                        data: licenseData,
-                        componentId: 'license'
-                    });
-                }
                 const opsIsInstall = !operationsSelected;
                 steps.push({
                     number: steps.length + 1,
-                    title: opsIsInstall ? 'Install VCF Operations & Deploy License Server' : 'Upgrade VCF Operations & Deploy License Server',
+                    title: opsIsInstall ? 'Install VCF Operations' : 'Upgrade VCF Operations',
                     description: opsIsInstall
-                        ? 'Install VCF Operations 9.1 and Deploy License Server'
-                        : 'Upgrade VCF Operations and Deploy License Server',
+                        ? 'Install VCF Operations 9.1'
+                        : 'Upgrade VCF Operations',
                     phases: combinedOperationsPhases
                 });
             }
@@ -1668,6 +1668,20 @@
                     title: 'Witness Upgrade',
                     description: 'Upgrade Witness Host',
                     phases: witnessPhases
+                });
+            }
+
+            if (vcf_installerPhases.length > 0) {
+                const installerIsWithOps = operationsSelected;
+                steps.push({
+                    number: steps.length + 1,
+                    title: installerIsWithOps
+                        ? 'VCF Installer (Management Services)'
+                        : 'VCF Installer (VCF Operations + Management Services)',
+                    description: installerIsWithOps
+                        ? 'Deploy VCF Installer to provision the License Server and Management Services. VCF Operations was already upgraded in a prior step.'
+                        : 'Deploy VCF Installer to provision VCF Operations, the License Server, and Management Services.',
+                    phases: vcf_installerPhases
                 });
             }
 

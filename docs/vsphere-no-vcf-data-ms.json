@@ -10,6 +10,7 @@
     "vcha",
     "vcenter",
     "vum_migration",
+    "vcf_installer",
     "supervisor",
     "vsan_witness",
     "vxrail",
@@ -239,7 +240,7 @@
           "type": "warning",
           "title": "vCenter High Availability",
           "bullets": [
-            "vCenter High Availability(vCHA) is not supported for Convert or Import"
+            "vCenter High Availability(vCHA) is not supported for VVF Deployment using VCF Installer"
           ]
         }
     ],
@@ -274,7 +275,7 @@
     "logs": {
       "name": "Log Management",
       "steps": [
-        "There is no upgrade path here - customers can stay on VCF Operations for Logs 8.18 or 9.0"
+        "There is no upgrade path here - customers can stay on VCF Operations for Logs 8.18/9.0 or deploy 9.1 logs on VCF Management Service - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "replication": {
@@ -348,92 +349,29 @@
         {
           "title": "Required Network Configuration",
           "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": [
-            "Component",
-            "Number of Address(es)",
-            "FQDN",
-            "Example"
-          ],
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            [
-              "VCF Operations",
-              "1",
-              "1",
-              "vcfops.rainpole.io"
-            ],
-            [
-              "License server",
-              "1",
-              "1",
-              "vcflic.rainpole.io"
-            ],
-            [
-              "VCF Management Services",
-              "12-30",
-              "None",
-              "N/A"
-            ],
-            [
-              "Fleet Component Service",
-              "1",
-              "1",
-              "vcffleet.rainpole.io"
-            ],
-            [
-              "Instance Service",
-              "1",
-              "1",
-              "vcfins.rainpole.io"
-            ],
-            [
-              "VCF Instance Service Runtime",
-              "1",
-              "1",
-              "vcfrun.rainpole.io"
-            ]
+            ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
+            ["License server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF management services", "Minimum 10", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]
           ]
         },
         {
           "title": "Required Component Sizes",
           "description": "Size requirements for all nodes",
-          "headers": [
-            "Component",
-            "Size",
-            "Number of Nodes",
-            "vCPU",
-            "Memory",
-            "Storage"
-          ],
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            [
-              "VCF Operations Node",
-              "Medium",
-              "1",
-              "8",
-              "32gb",
-              "274gb"
-            ],
-            [
-              "License server",
-              "Small",
-              "1",
-              "2",
-              "4gb",
-              "12gb"
-            ],
-            [
-              "VCF Management Services Nodes",
-              "Small",
-              "3",
-              "12",
-              "24gb",
-              "1,807gb"
-            ]
+            ["VCF Operations Node", "Medium", "1", "8", "32gb", "274gb"],
+            ["License server", "Small", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Small", "3", "28", "58gb", "2,466gb"]
           ]
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server and VCF Operations deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server and VCF Operations deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1/install-vcf-management-services-to-vsphere-foundation-environment.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -454,78 +392,27 @@
         {
           "title": "Required Network Configuration",
           "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": [
-            "Component",
-            "Number of Address(es)",
-            "FQDN",
-            "Example"
-          ],
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            [
-              "License server",
-              "1",
-              "1",
-              "vcflic.rainpole.io"
-            ],
-            [
-              "VCF Management Services",
-              "12-30",
-              "None",
-              "N/A"
-            ],
-            [
-              "Fleet Component Service",
-              "1",
-              "1",
-              "vcffleet.rainpole.io"
-            ],
-            [
-              "Instance Service",
-              "1",
-              "1",
-              "vcfins.rainpole.io"
-            ],
-            [
-              "VCF Instance Service Runtime",
-              "1",
-              "1",
-              "vcfrun.rainpole.io"
-            ]
+            ["License server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF management services", "Minimum 12", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]
           ]
         },
         {
           "title": "Required Component Sizes",
           "description": "Size requirements for all nodes (All nodes are ",
-          "headers": [
-            "Component",
-            "Size",
-            "Number of Nodes",
-            "vCPU",
-            "Memory",
-            "Storage"
-          ],
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            [
-              "License server",
-              "Small",
-              "1",
-              "2",
-              "4gb",
-              "12gb"
-            ],
-            [
-              "VCF Management Services Nodes",
-              "Small",
-              "3",
-              "36",
-              "72gb",
-              "5,421gb"
-            ]
+            ["License server", "Small", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Small", "3", "28", "58gb", "2,466gb"]
           ]
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1/install-vcf-management-services-to-vsphere-foundation-environment.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -546,73 +433,22 @@
         {
           "title": "Required Network Configuration",
           "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": [
-            "Component",
-            "Number of Address(es)",
-            "FQDN",
-            "Example"
-          ],
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            [
-              "License server",
-              "1",
-              "1",
-              "vcflic.rainpole.io"
-            ],
-            [
-              "VCF Management Services",
-              "12-30",
-              "None",
-              "N/A"
-            ],
-            [
-              "Fleet Component Service",
-              "1",
-              "1",
-              "vcffleet.rainpole.io"
-            ],
-            [
-              "Instance Service",
-              "1",
-              "1",
-              "vcfins.rainpole.io"
-            ],
-            [
-              "VCF Instance Service Runtime",
-              "1",
-              "1",
-              "vcfrun.rainpole.io"
-            ]
+            ["License server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF management services", "Minimum 10", "None", "N/A"],
+            ["Fleet Component Service","1", "1", "vcffleet.rainpole.io"],
+            ["Instance Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]
           ]
         },
         {
           "title": "Required Component Sizes",
           "description": "Size requirements for all nodes (All nodes are ",
-          "headers": [
-            "Component",
-            "Size",
-            "Number of Nodes",
-            "vCPU",
-            "Memory",
-            "Storage"
-          ],
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            [
-              "License server",
-              "Small",
-              "1",
-              "2",
-              "4gb",
-              "12gb"
-            ],
-            [
-              "VCF Management Services Nodes",
-              "Small",
-              "3",
-              "36",
-              "72gb",
-              "5,421gb"
-            ]
+            ["License server", "Small", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Small", "3", "28", "58gb", "2,466gb"]
           ]
         }
       ],
@@ -648,87 +484,24 @@
         {
           "title": "Required Network Configuration",
           "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": [
-            "Component",
-            "Number of Address(es)",
-            "FQDN",
-            "Example"
-          ],
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            [
-              "VCF Operations",
-              "1",
-              "1",
-              "vcfops.rainpole.io"
-            ],
-            [
-              "License server",
-              "1",
-              "1",
-              "vcflic.rainpole.io"
-            ],
-            [
-              "VCF Management Services",
-              "12-30",
-              "None",
-              "N/A"
-            ],
-            [
-              "Fleet Component Service",
-              "1",
-              "1",
-              "vcffleet.rainpole.io"
-            ],
-            [
-              "Instance Service",
-              "1",
-              "1",
-              "vcfins.rainpole.io"
-            ],
-            [
-              "VCF Instance Service Runtime",
-              "1",
-              "1",
-              "vcfrun.rainpole.io"
-            ]
+            ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
+            ["License server", "1", "1", "vcflic.rainpole.io"],
+            ["VCF management services", "Minimum 10", "None", "N/A"],
+            ["Fleet Component Service", "1", "1", "vcffleet.rainpole.io"],
+            ["Instance Service", "1", "1", "vcfins.rainpole.io"],
+            ["VCF Instance Service Runtime", "1", "1", "vcfrun.rainpole.io"]
           ]
         },
         {
           "title": "Required Component Sizes",
           "description": "Size requirements for all nodes",
-          "headers": [
-            "Component",
-            "Size",
-            "Number of Nodes",
-            "vCPU",
-            "Memory",
-            "Storage"
-          ],
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            [
-              "VCF Operations Node",
-              "Medium",
-              "1",
-              "8",
-              "32gb",
-              "274gb"
-            ],
-            [
-              "License server",
-              "Small",
-              "1",
-              "2",
-              "4gb",
-              "12gb"
-            ],
-            [
-              "VCF Management Services Nodes",
-              "Small",
-              "3",
-              "12",
-              "24gb",
-              "1,807gb"
-            ]
+            ["VCF Operations Node", "Medium", "1", "8", "32gb", "274gb"],
+            ["License server", "Small", "1", "2", "4gb", "12gb"],
+            ["VCF Management Services Nodes", "Small", "3", "28", "58gb", "2,466gb"]
           ]
         }
       ],
@@ -838,7 +611,7 @@
           "type": "info",
           "title": "Required Before Proceeding",
           "bullets": [
-            "Verify that you are upgrading from VMware Aria Automation Orchestrator 8.18.1 or later"
+            "Verify that you are upgrading from Aria Automation Orchestrator 8.18.1 or later"
           ]
         }
       ],

@@ -1149,7 +1149,7 @@
           "type": "info",
           "title": "Required Before Proceeding",
           "bullets": [
-            "Verify that you are upgrading from VMware Aria Automation Orchestrator 8.18.1 or later"
+            "Verify that you are upgrading from Aria Automation Orchestrator 8.18.1 or later"
           ]
         }
       ],

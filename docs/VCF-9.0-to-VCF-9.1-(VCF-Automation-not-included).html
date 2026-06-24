@@ -2016,17 +2016,27 @@
                             const icon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
                             html += `<div style="background: var(--card-bg); border-left: 4px solid ${color}; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>${icon} ${notice.title}</strong>`;
                                 if (notice.bullets && notice.bullets.length > 0) {
-                                html += `<ul style="margin: 8px 0 0 20px;">`;
-                                notice.bullets.forEach(bullet => {
-                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                        html += `</ul></li>`;
-                                    } else {
-                                        html += `<li>${bullet}</li>`;
-                                    }
+                                // Separate regular bullets from notice_block entries (rendered as styled divs)
+                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
+                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
+                                if (_regBullets.length > 0) {
+                                    html += `<ul style="margin: 8px 0 0 20px;">`;
+                                    _regBullets.forEach(bullet => {
+                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            html += `</ul></li>`;
+                                        } else {
+                                            html += `<li>${bullet}</li>`;
+                                        }
+                                    });
+                                    html += `</ul>`;
+                                }
+                                _noticeBlocks.forEach(block => {
+                                    html += `<div style="background: var(--card-bg); border-left: 4px solid #17a2b8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
+                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                    html += `</ul></div>`;
                                 });
-                                html += `</ul>`;
                             }
                             html += `</div>`;
                         });
@@ -2246,18 +2256,28 @@
                         phase.data.notices.forEach(notice => {
                             const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
                             html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
-                                if (notice.bullets && notice.bullets.length > 0) {
-                                html += `<ul style="margin: 8px 0 0 20px;">`;
-                                notice.bullets.forEach(bullet => {
-                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                        html += `</ul></li>`;
-                                    } else {
-                                        html += `<li>${bullet}</li>`;
-                                    }
+                                                                if (notice.bullets && notice.bullets.length > 0) {
+                                // Separate regular bullets from notice_block entries (rendered as styled divs)
+                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
+                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
+                                if (_regBullets.length > 0) {
+                                    html += `<ul style="margin: 8px 0 0 20px;">`;
+                                    _regBullets.forEach(bullet => {
+                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            html += `</ul></li>`;
+                                        } else {
+                                            html += `<li>${bullet}</li>`;
+                                        }
+                                    });
+                                    html += `</ul>`;
+                                }
+                                _noticeBlocks.forEach(block => {
+                                    html += `<div style="background: var(--card-bg); border-left: 4px solid #17a2b8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
+                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                    html += `</ul></div>`;
                                 });
-                                html += `</ul>`;
                             }
                             html += '</div>';
                         });
@@ -2326,17 +2346,27 @@
                             html += `<div style="background: #f0f2f5; border-left: 4px solid ${noticeColor}; padding: 12px; margin-top: 16px; border-radius: 4px;">`;
                             html += `<strong>${noticeIcon} ${notice.title}</strong>`;
                             if (notice.bullets && notice.bullets.length > 0) {
-                                html += `<ul style="margin: 8px 0 0 20px;">`;
-                                notice.bullets.forEach(bullet => {
-                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                        html += `</ul></li>`;
-                                    } else {
-                                        html += `<li>${bullet}</li>`;
-                                    }
+                                // Separate regular bullets from notice_block entries (rendered as styled divs)
+                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
+                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
+                                if (_regBullets.length > 0) {
+                                    html += `<ul style="margin: 8px 0 0 20px;">`;
+                                    _regBullets.forEach(bullet => {
+                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            html += `</ul></li>`;
+                                        } else {
+                                            html += `<li>${bullet}</li>`;
+                                        }
+                                    });
+                                    html += `</ul>`;
+                                }
+                                _noticeBlocks.forEach(block => {
+                                    html += `<div style="background: var(--card-bg); border-left: 4px solid #17a2b8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
+                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                    html += `</ul></div>`;
                                 });
-                                html += `</ul>`;
                             }
                             html += `</div>`;
                         });
@@ -2515,18 +2545,28 @@
                             const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
                             html += '<div style="background: white; border-left: 4px solid ' + color + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
                             html += '<strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
-                            if (notice.bullets && notice.bullets.length > 0) {
-                                html += `<ul style="margin: 8px 0 0 20px;">`;
-                                notice.bullets.forEach(bullet => {
-                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                        html += `</ul></li>`;
-                                    } else {
-                                        html += `<li>${bullet}</li>`;
-                                    }
+                                                       if (notice.bullets && notice.bullets.length > 0) {
+                                // Separate regular bullets from notice_block entries (rendered as styled divs)
+                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
+                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
+                                if (_regBullets.length > 0) {
+                                    html += `<ul style="margin: 8px 0 0 20px;">`;
+                                    _regBullets.forEach(bullet => {
+                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            html += `</ul></li>`;
+                                        } else {
+                                            html += `<li>${bullet}</li>`;
+                                        }
+                                    });
+                                    html += `</ul>`;
+                                }
+                                _noticeBlocks.forEach(block => {
+                                    html += `<div style="background: var(--card-bg); border-left: 4px solid #17a2b8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
+                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                    html += `</ul></div>`;
                                 });
-                                html += `</ul>`;
                             }
                             html += '</div>';
                         });

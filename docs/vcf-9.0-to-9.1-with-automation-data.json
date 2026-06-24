@@ -127,14 +127,15 @@
             "steps": [
                 "Upgrade vCenter to version 9.1 using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
             ],
-            "notices": [
-                {
-                    "type": "warning",
-                    "title": "Integrated Windows Authentication on vCenter",
+           "notices": [
+            {
+                "type": "info",
+                "title": "Common Known Issues",
                     "bullets": [
-                        "Replace Integrated Windows Authentication configured with another IDP configuration"
+                    "License assignment fails upgrading vCenter from 9.0.x to 9.1. - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440471' target='_blank'>View Documentation</a>).",
+                    "Licenses could not be assigned to vCenters during license assignment on VCF 9.1 - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/424533' target='_blank'>View Documentation</a>)."           
                     ]
-                }
+             }
             ]
         },
         "esx": {
@@ -181,7 +182,8 @@
                         "sub_bullets": [
                         "When attempting to upgrade to VMware Cloud Foundation (VCF) 9.1, users may find that while the version 9.1 option is available in the SDDC Manager Binary Management dropdown menu, no binaries are displayed for any category (Upgrade, Patch, or Install) - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440282' target='_blank'>View Documentation</a>).",
                         "Upgrading VCF Operations from 9.0.2 to 9.1 returns sync error when upgrading ESXi host - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440407' target='_blank'>View Documentation</a>)."
-                        ]
+                        ],
+                    "type": "notice_block"
                     }
                     ]
                  }
@@ -241,14 +243,9 @@
             "notices": [
                 {
                 "type": "info",
-                "title": "VCF Operations for Networks Information",
+                "title": "Common Known Issues",
                 "bullets": [
-                {
-                "text": "Common Known Issues:",
-                "sub_bullets": [
                     "Upgrading VCF 9.0 environment to 9.1 fails when trying to Import VCF Operations for Networks in Fleet Lifecycle - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/440459' target='_blank'>View Documentation</a>)."
-                    ]
-                }
             ]
             }            
             ]
@@ -257,6 +254,15 @@
             "name": "Identity Broker",
             "steps": [
                 "Identity Broker Upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
+            ],
+             "notices": [
+                {
+                "type": "info",
+                "title": "Common Known Issues",
+                "bullets": [
+                    "Source and target systems use different datastores - Upgrade of VCF Components from 9.0 to 9.1 fails during Import Validation Precheck - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article?articleNumber=440045' target='_blank'>View Documentation</a>)."
+            ]
+            }            
             ],
             "upgrade_tables_simple_small": [
                 {
@@ -346,6 +352,13 @@
                         "All IP Ranges must be on the VCF Management Network.",
                         "An internal IP range is used by VCF services runtime, this IP range is 198.18.0.0/15, it is important to ensure this IP range does not overlap with the IP range of your management network, this internal network can be changed to 240.0.0.0/15 or 250.0.0.0/15 by using JSON specification file to deploy."
                         ]
+                    },
+                    {
+                    "text": "Common Known Issues:",
+                        "sub_bullets": [
+                            "Deploy VCF Management Components task fails during Import VCF Operations in Fleet Lifecycle stage - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/441858/deploy-vcf-management-components-task-fa.html' target='_blank'>View Documentation</a>)."
+                            ],
+                    "type": "notice_block"
                     }
                 ]
         }
@@ -437,8 +450,15 @@
                         "All 8 IP addresses must reside on the same network where your current Automation nodes are deployed.",
                         "The FQDN from the existing Automation instance is automatically transferred as VCF Automation FQDN of the 9.1 instance.",
                         "If your existing Automation instance uses an external load balancer, no changes in its configuration are required.",
-                        "VCF Automation 9.0.x IP addresses of the existing nodes are freed after the upgrade."
-                    ]
+                        "VCF Automation 9.0.x IP addresses of the existing nodes are freed after the upgrade.",
+                        {
+                        "text": "Common Known Issues:",
+                        "sub_bullets": [
+                            "Source and target systems use different datastores - Upgrade of VCF Components from 9.0 to 9.1 fails during Import Validation Precheck - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article?articleNumber=440045' target='_blank'>View Documentation</a>)."
+                            ],
+                        "type": "notice_block"
+                        }
+                     ] 
                 },
                 {
                     "type": "warning",

@@ -3484,7 +3484,7 @@
             if (!upgradeData) return;
 
             // NSX-gated items — only show if NSX is in the environment
-            const NSX_GATED = new Set(['nsx_federation', 'vdefend', 'nsx_edge']);
+            const NSX_GATED = new Set(['nsx_federation', 'vdefend', 'nsx_edge', 'hcx']);
             const nsxInEnv = localStorage.getItem('nsx-selected') === 'true';
 
             const seen = new Set();

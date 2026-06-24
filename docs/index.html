@@ -1149,7 +1149,8 @@
             if (vcenter && !esx && vxrail) {
                 // VxRail: same result with or without Operations
                 paths = [
-                    { title: 'vSphere and VCF Operations to 9.1', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF based on Dell support', icon: '' }
+                    { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
+                    { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' }
                 ];
             } else if (vcenter && esx && automation && !nsx && !operations && !vxrail) {
                 // vCenter + ESX + Automation
@@ -1206,7 +1207,8 @@
                     ];
                 }   else {
                     paths = [
-                        { title: 'vSphere and VCF Operations to 9.1', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including Operations and VCF Automation', icon: '' }
                     ];
@@ -1222,12 +1224,14 @@
             } else if (vcenter && esx && !operations && !automation && !nsx) {
                 if (alreadyOn91) {
                     paths = [
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                     ];
                 } else {
                     paths = [
-                        { title: 'vSphere and VCF Operations to 9.1', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
                         { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
                     ];
@@ -1242,7 +1246,7 @@
                     const pathCard = document.createElement('div');
                     pathCard.className = 'path-card';
                     var displayTitle = savedTargetVer
-                        ? path.title.replace('VCF 9.1', 'VCF ' + savedTargetVer).replace('to 9.1', 'to ' + savedTargetVer)
+                        ? path.title.replace('VVF 9.1', 'VVF ' + savedTargetVer).replace('VCF 9.1', 'VCF ' + savedTargetVer).replace('to 9.1', 'to ' + savedTargetVer)
                         : path.title;
 
                     if (validationErrors.length > 0) {
@@ -1439,7 +1443,7 @@
             document.getElementById('navPath').classList.remove('nav-hidden');
             
             // Handle vSphere no VCF path
-            if (pathTitle === 'vSphere and VCF Operations to 9.1') {
+            if (pathTitle === 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)') {
                 // Store vSphere component versions in localStorage
                 const vcenterVersion = document.getElementById('vcenter').value || '8';
                 const esxVersion = document.getElementById('esx').value || '8';
@@ -1456,7 +1460,25 @@
                 localStorage.setItem('vxrail-version', vxrailVersion);
                 
                 // Navigate to vSphere no VCF page
-                window.location.href = 'vSphere-and-VCF-Operations-to-9.1.html';
+                window.location.href = 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services).html';
+            } else if (pathTitle === 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)') {
+                // Store vSphere component versions in localStorage
+                const vcenterVersion = document.getElementById('vcenter').value || '8';
+                const esxVersion = document.getElementById('esx').value || '8';
+                const operationsSelected = document.getElementById('operationsCheck').checked;
+                const operationsVersion = document.getElementById('operations').value || '9.0.x';
+                const vxrailSelected = document.getElementById('vxrailCheck').checked;
+                const vxrailVersion = document.getElementById('vxrail').value || '8.0.x';
+                
+                localStorage.setItem('vcenter-version', vcenterVersion);
+                localStorage.setItem('esx-version', esxVersion);
+                localStorage.setItem('operations-selected', operationsSelected.toString());
+                localStorage.setItem('operations-version', operationsVersion);
+                localStorage.setItem('vxrail-selected', vxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vxrailVersion);
+                
+                // Navigate to vSphere no VCF page
+                window.location.href = 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services).html';
             } else if (pathTitle === 'vSphere to VCF 9.1 (VCF Automation not included)') {
                 // Store all selections including NSX and VXRail
                 const vcenterVersion = document.getElementById('vcenter').value || '8';
