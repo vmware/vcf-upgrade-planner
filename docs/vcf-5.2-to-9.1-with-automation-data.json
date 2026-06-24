@@ -383,7 +383,7 @@
     "vsan_witness": {
       "name": "vSAN Witness Host",
       "steps": [
-        "Upgrade vSAN Witness host to version 9.1 - will happen as part of ESX upgrade after Convert"
+        "Upgrade vSAN Witness host to version 9.1 - will happen as part of ESX upgrade"
       ],
       "notices": [
         {

@@ -139,7 +139,7 @@
           "type": "warning",
           "title": "vCenter High Availability",
           "bullets": [
-            "vCenter High Availability (vCHA) is not supported for Convert or Import"
+            "vCenter High Availability (vCHA) is not supported for converge or import"
           ]
         }
       ],
@@ -290,7 +290,7 @@
       ]
     },
     "convert_with_vsphere_only": {
-      "name": "Convert to VCF 9.1",
+      "name": "Converge to VCF 9.1",
       "tables_simple_small_without_nsx": [
         {
           "title": "Required Network Configuration (Simple - Small)",
@@ -483,16 +483,15 @@
       "steps": [
         "Deploy of VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/deploy-the-vmware-cloud-foundation-installer-appliance.html' target='_blank'>View Documentation</a>).",
         "Downloading Binaries to VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/downloading-binaries-to-the-vcf-installer-appliance.html' target='_blank'>View Documentation</a>).",
-        "Start convert to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/deploy-a-new-vcf-fleet-or-a-new-vcf-instance.html' target='_blank'>View Documentation</a>)."
+        "Start converge to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/deploy-a-new-vcf-fleet-or-a-new-vcf-instance.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
                 {
                     "type": "info",
                     "title": "VCF Conversion Process",
                     "bullets": [
-                        "This step converts your vSphere environment to VCF 9.1",
                         "Minimum 12 IP addresses required for deployment.",
-                        "Appliance Sizes can be adjusted using API call to do Convert - All Guidance is provided in link (<a href='https://developer.broadcom.com/xapis/vcf-installer-api/latest/v1/sddcs/post/' target='_blank'>View Documentation</a>).",
+                        "Appliance Sizes can be adjusted using API call to do converge - All Guidance is provided in link (<a href='https://developer.broadcom.com/xapis/vcf-installer-api/latest/v1/sddcs/post/' target='_blank'>View Documentation</a>).",
                         "VCF Management Service IP Address Options - All Guidance is provided in link (<a href='https://williamlam.com/2026/05/vcf-9-1-additional-ip-allocation-options-for-vcf-management-services-vcfms-in-vcf-installer-and-sddc-manager.html' target='_blank'>View Documentation</a>).",
                     {
                     "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
@@ -589,7 +588,7 @@
       ]
     },
     "convert_with_ops": {
-      "name": "Convert to VCF 9.1",
+      "name": "Converge to VCF 9.1",
       "tables_simple_small_without_nsx": [
         {
           "title": "Required Network Configuration (Simple - Small)",
@@ -758,14 +757,14 @@
       "steps": [
         "Deploy of VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/deploy-the-vmware-cloud-foundation-installer-appliance.html' target='_blank'>View Documentation</a>).",
         "Downloading Binaries to VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/downloading-binaries-to-the-vcf-installer-appliance.html' target='_blank'>View Documentation</a>).",
-        "Start convert to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/deploy-a-new-vcf-fleet-or-a-new-vcf-instance.html' target='_blank'>View Documentation</a>)."
+        "Start converge to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/deploy-a-new-vcf-fleet-or-a-new-vcf-instance.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
           "type": "info",
           "title": "VCF Conversion Process",
           "bullets": [
-            "This step converts your vSphere environment to VCF 9.1"
+            "This step converge your vSphere environment to VCF 9.1"
           ]
         }
       ],
@@ -996,7 +995,7 @@
     "vsan_witness": {
       "name": "vSAN Witness Host",
       "steps": [
-        "Upgrade vSAN Witness host to version 9.1 - will happen as part of ESX upgrade after Convert"      
+        "Upgrade vSAN Witness host to version 9.1 - will happen as part of ESX upgrade"      
       ],
       "notices": [
         {

@@ -1350,7 +1350,7 @@
             console.log('localStorage nsx-selected:', localStorage.getItem('nsx-selected'));
             console.log('nsxSelected variable:', nsxSelected);
             console.log('Operations:', operationsSelected);
-            console.log('Automation:', automationSelected, automationSelected ? '(existing – upgrade phase)' : '(new install – merged into Convert)');
+            console.log('Automation:', automationSelected, automationSelected ? '(existing – upgrade phase)' : '(new install – merged into converge)');
         }
         
 
@@ -1644,7 +1644,7 @@
                             if (autoComponentForInstall && autoComponentForInstall[autoInstallKey] && cd.tables) {
                                 autoComponentForInstall[autoInstallKey].forEach((autoTable) => {
                                     cd.tables.push(autoTable);
-                                    console.log('Convert new install: added separate automation install table:', autoTable.title);
+                                    console.log('converge new install: added separate automation install table:', autoTable.title);
                                 });
                             }
                             componentData = cd;
@@ -2105,7 +2105,7 @@
                 if (convertPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
-                        title: 'Convert to VCF 9.1' + (!automationSelected ? ' + Install VCF Automation' : ''),
+                        title: 'Converge to VCF 9.1' + (!automationSelected ? ' + Install VCF Automation' : ''),
                         description: !automationSelected ? 'Deploy SDDC Manager, converge vSphere to VCF 9.1, and install VCF Automation' : 'Deploy SDDC Manager and converge vSphere to VCF 9.1',
                         phases: convertPhases
                     });

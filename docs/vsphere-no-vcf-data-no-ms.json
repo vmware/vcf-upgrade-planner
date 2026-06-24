@@ -234,15 +234,6 @@
     },
     "vcha": {
       "name": "vCenter High Availability (vCHA)",
-      "notices": [
-        {
-          "type": "warning",
-          "title": "vCenter High Availability",
-          "bullets": [
-            "vCenter High Availability(vCHA) is not supported for Convert or Import"
-          ]
-        }
-    ],
       "steps": [
         "Disable vCenter High Availability(vCHA) - All Guidance is provided in link ((<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-availability/vcenter-server-high-availability/manage-your-vcenter-ha-cluster/remove-a-vcenter-ha-configuration.html' target='_blank'>View Documentation</a>)"
       ]
