@@ -125,7 +125,7 @@
         "vcenter": {
             "name": "vCenter",
             "steps": [
-                "Upgrade vCenter to version 9.1 using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
+                "Upgrade vCenter to version 9.1 using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
             ],
            "notices": [
             {

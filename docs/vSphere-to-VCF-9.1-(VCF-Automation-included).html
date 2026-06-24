@@ -1549,6 +1549,9 @@
                     shouldInclude = vcenterVersion !== '9.1.x';
                     phaseTitle = componentData ? componentData.name : 'vCenter Server';
                     phaseDescription = 'Upgrade ' + phaseTitle;
+                    if (nsxInEnvironment && componentData && componentData.steps_with_nsx) {
+                        componentData = Object.assign({}, componentData, { steps: componentData.steps_with_nsx });
+                    }
                 } else if (componentId === 'elm_break') {
                     // ELM Break if NSX is present in any form (including already at 9.1.x)
                     shouldInclude = elmSelected && nsxInEnvironment;
