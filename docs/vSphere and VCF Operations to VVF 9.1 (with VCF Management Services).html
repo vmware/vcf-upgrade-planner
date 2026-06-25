@@ -1366,7 +1366,7 @@
             // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
             if (operationsSelected && (operationsVersion === '8.16.x' || operationsVersion === '8.17.x')) {
                 const opsPrereqData = upgradeData.components['operations_prereq'] || null;
-                if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x before upgrading to 9.1', data: opsPrereqData, componentId: 'operations_prereq' });
+                if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
@@ -1405,10 +1405,10 @@
                         const effOpsVer = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
                         if (effOpsVer === '8.18.x') {
                             phaseTitle = 'Upgrade VCF Operations';
-                            phaseDescription = 'Upgrade VCF Operations from 8.18.x to 9.1';
+                            phaseDescription = 'Upgrade VCF Operations';
                         } else {
                             phaseTitle = 'Upgrade VCF Operations';
-                            phaseDescription = 'Upgrade VCF Operations from 9.0.x to 9.1';
+                            phaseDescription = 'Upgrade VCF Operations';
                         }
                         componentData = upgradeData.components['operations'];
                     }
@@ -1620,7 +1620,7 @@
                     number: steps.length + 1,
                     title: opsIsInstall ? 'Install VCF Operations' : 'Upgrade VCF Operations',
                     description: opsIsInstall
-                        ? 'Install VCF Operations 9.1'
+                        ? 'Install VCF Operations'
                         : 'Upgrade VCF Operations',
                     phases: combinedOperationsPhases
                 });
@@ -2172,7 +2172,7 @@
             // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
             if (operationsSelected && (operationsVersion === '8.16.x' || operationsVersion === '8.17.x')) {
                 const opsPrereqData = upgradeData ? upgradeData.components['operations_prereq'] : null;
-                if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x before upgrading to 9.1', data: opsPrereqData, componentId: 'operations_prereq' });
+                if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
@@ -2194,12 +2194,12 @@
                 const opsData = upgradeData ? upgradeData.components.operations : null;
                 const effOpsVersion = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
                 const opsDesc = effOpsVersion === '8.18.x'
-                    ? 'Upgrade VCF Operations from 8.18.x to 9.1'
-                    : 'Upgrade VCF Operations from 9.0.x to 9.1';
+                    ? 'Upgrade VCF Operations'
+                    : 'Upgrade VCF Operations';
                 phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: opsDesc, data: opsData, componentId: 'operations' });
             } else if (!operationsSelected) {
                 const opsInstallData = upgradeData ? upgradeData.components.operations_install : null;
-                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.1 (new installation)', data: opsInstallData, componentId: 'operations_install' });
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations (new installation)', data: opsInstallData, componentId: 'operations_install' });
             }
             // operationsSelected && operationsVersion === '9.1.x': already at target, skip upgrade phase
 
@@ -2211,7 +2211,7 @@
             if (vcenterVersion !== '9.1.x') {
                 const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
                 const effVC = (vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2') ? '8.0u3' : vcenterVersion;
-                const vcDesc = effVC === '8' ? 'Upgrade vCenter from 8.x to 9.1' : 'Upgrade vCenter from 9.0.x to 9.1';
+                const vcDesc = effVC === '8' ? 'Upgrade vCenter' : 'Upgrade vCenter';
                 phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
             }
 
@@ -2229,7 +2229,7 @@
             if (!vxrailSelected) {
                 const esxData = upgradeData ? upgradeData.components.esx : null;
                 const effESX = (esxVersion === '8.0u1' || esxVersion === '8.0u2') ? '8.0u3' : esxVersion;
-                const esxDesc = effESX === '8' ? 'Upgrade all ESX hosts from 8.x to 9.1' : 'Upgrade all ESX hosts from 9.0.x to 9.1';
+                const esxDesc = effESX === '8' ? 'Upgrade all ESX hosts from 8.x to 9.1.x' : 'Upgrade all ESX hosts from 9.0.x to 9.1.x';
                 phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: esxDesc, data: esxData, componentId: 'esx' });
             } else {
                 const vxrailData = upgradeData ? upgradeData.components.vxrail : null;

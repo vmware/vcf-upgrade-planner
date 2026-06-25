@@ -93,7 +93,7 @@
         }
       ],
       "steps": [
-        "Upgrade vCenter to version 9.1 using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
+        "Upgrade vCenter using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -124,7 +124,7 @@
         },
         {
           "type": "info",
-          "title": "Check HCL for Hardware support on VCF 9.1",
+          "title": "Check HCL for Hardware support",
           "bullets": [
             "Intel Skylake (Broadwell, Kabylake & Skylake) Processors no longer supported (deprecated in earlier releases), requires RPQ"
           ]
@@ -218,14 +218,14 @@
         }
       ],
       "steps": [
-        "Deploy VCF Operations 9.1  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
+        "Deploy VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
           "type": "info",
           "title": "New Installation",
           "bullets": [
-            "This is a fresh installation of VCF Operations 9.1",
+            "This is a fresh installation of VCF Operations",
             "Configure cluster settings after deployment",
             "Add vCenter endpoints for monitoring",
             "The maximum number of Cloud Proxies and Unified Cloud Proxies per cluster node is 100 for Small and Medium configurations, and 200 for Large and Extra-Large configurations."
@@ -275,7 +275,7 @@
     "logs": {
       "name": "Log Management",
       "steps": [
-        "There is no upgrade path here - customers can stay on VCF Operations for Logs 8.18/9.0 or deploy 9.1 logs on VCF Management Service - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
+        "There is no upgrade path here - customers can stay on VCF Operations for Logs 8.18/9.0 or deploy 9.x logs on VCF Management Service - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "replication": {
@@ -364,14 +364,14 @@
           "description": "Size requirements for all nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Operations Node", "Medium", "1", "8", "32gb", "274gb"],
+            ["VCF Operations node", "Medium", "1", "8", "32gb", "274gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"],
-            ["VCF Management Services Nodes", "Small", "3", "28", "58gb", "2,466gb"]
+            ["VCF Management Services nodes", "Small", "3", "28", "58gb", "2,466gb"]
           ]
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server and VCF Operations deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1/install-vcf-management-services-to-vsphere-foundation-environment.html' target='_blank'>View Documentation</a>)."
+        "Deploy VCF Installer(SDDC ova) appliance (includes automatic license server and VCF Operations deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1/install-vcf-management-services-to-vsphere-foundation-environment.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -407,12 +407,12 @@
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
             ["License server", "Small", "1", "2", "4gb", "12gb"],
-            ["VCF Management Services Nodes", "Small", "3", "28", "58gb", "2,466gb"]
+            ["VCF Management Services nodes", "Small", "3", "28", "58gb", "2,466gb"]
           ]
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1/install-vcf-management-services-to-vsphere-foundation-environment.html' target='_blank'>View Documentation</a>)."
+        "Deploy VCF Installer(SDDC ova) appliance (includes automatic license server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1/install-vcf-management-services-to-vsphere-foundation-environment.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -448,12 +448,12 @@
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
             ["License server", "Small", "1", "2", "4gb", "12gb"],
-            ["VCF Management Services Nodes", "Small", "3", "28", "58gb", "2,466gb"]
+            ["VCF Management Services nodes", "Small", "3", "28", "58gb", "2,466gb"]
           ]
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy VCF Installer(SDDC ova) appliance (includes automatic license server deployment - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -499,14 +499,14 @@
           "description": "Size requirements for all nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Operations Node", "Medium", "1", "8", "32gb", "274gb"],
+            ["VCF Operations node", "Medium", "1", "8", "32gb", "274gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"],
-            ["VCF Management Services Nodes", "Small", "3", "28", "58gb", "2,466gb"]
+            ["VCF Management Services nodes", "Small", "3", "28", "58gb", "2,466gb"]
           ]
         }
       ],
       "steps": [
-        "Deploy SDDC Manager for VCF Installer 9.1 appliance (includes automatic license server and VCF Operations deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
+        "Deploy VCF Installer(SDDC ova) appliance (includes automatic license server and VCF Operations deployment) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/use-existing-vsphere-infrastructure-to-create-a-new-vcf-fleet-or-a-new-vcf-instance-using-the-deployment-wizard.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -554,7 +554,7 @@
           "type": "warning",
           "title": "Required Before Proceeding",
           "bullets": [
-            "Your current VCF Operations version must be upgraded to 8.18.x before upgrading to 9.1"
+            "Your current VCF Operations version must be upgraded to 8.18.x"
           ]
         }
       ],
@@ -616,19 +616,19 @@
         }
       ],
       "steps": [
-        "Upgrade VCF Operations Orchestrator to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
+        "Upgrade VCF Operations Orchestrator- All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "vsan_data_protection": {
       "name": "vSAN Data Protection",
       "steps": [
-        "Upgrade vSAN Data Protection to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade/upgrading-srm.html' target='_blank'>View Documentation</a>)."      
+        "Upgrade vSAN Data Protection - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade/upgrading-srm.html' target='_blank'>View Documentation</a>)."      
       ]
     },
     "vsan_file_service": {
       "name": "vSAN File Service",
       "steps": [
-        "Upgrade vSAN File Service to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
+        "Upgrade vSAN File Service - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
       ]
     }
   }

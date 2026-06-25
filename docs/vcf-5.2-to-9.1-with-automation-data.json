@@ -138,7 +138,7 @@
     "vcenter": {
       "name": "vCenter",
       "steps": [
-        "Upgrade vCenter to version 9.1 using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
+        "Upgrade vCenter using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -170,7 +170,7 @@
         },
         {
           "type": "info",
-          "title": "Check HCL for Hardware support on VCF 9.1",
+          "title": "Check HCL for Hardware support",
           "bullets": [
             "Intel Skylake (Broadwell, Kabylake & Skylake) Processors no longer supported (deprecated in earlier releases), requires RPQ"
           ]
@@ -224,7 +224,7 @@
                 }
       ],
       "steps": [
-        "Upgrade VCF Operations to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+        "Upgrade VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "operations_install": {
@@ -286,7 +286,7 @@
         }
       ],
       "steps": [
-        "Deploy VCF Operations 9.1  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
+        "Deploy VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "license": {
@@ -316,7 +316,7 @@
     "logs": {
       "name": "Log Management",
       "steps": [
-        "Deploy new Log Management 9.1 services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
+        "Deploy new Log Management services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "network": {
@@ -336,7 +336,7 @@
           "type": "info",
           "title": "VMware Identity Management",
           "bullets": [
-            "Will Continue to work and function after products are upgrade to 9.1, there is just no upgrade path"
+            "Will Continue to work and function after products are upgrade, there is just no upgrade path"
           ]
         }
       ]
@@ -368,7 +368,7 @@
     "supervisor": {
       "name": "vSphere Supervisor",
       "steps": [
-        "Upgrade vSphere Supervisor to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
+        "Upgrade vSphere Supervisor - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -383,7 +383,7 @@
     "vsan_witness": {
       "name": "vSAN Witness Host",
       "steps": [
-        "Upgrade vSAN Witness host to version 9.1 - will happen as part of ESX upgrade"
+        "Upgrade vSAN Witness host - will happen as part of ESX upgrade"
       ],
       "notices": [
         {
@@ -398,13 +398,13 @@
     "sddc_manager": {
       "name": "SDDC Manager",
       "steps": [
-        "Upgrade SDDC Manager to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>)."
+        "Upgrade SDDC Manager - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "vcfms": {
       "name": "VCF Management Services Deployment",
       "steps": [
-        "Deploy VCF management services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
+        "Deploy VCF management services - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
       ],
      "notices": [
                 {
@@ -444,7 +444,7 @@
           "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management service Nodes", "Small", "4", "12", "24gb", "3,000gb"],
+            ["VCF management services nodes", "Small", "4", "12", "24gb", "3,000gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"]
           ]
         }
@@ -468,7 +468,7 @@
           "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management service Nodes", "Medium", "9", "84", "174gb", "3,600gb"],
+            ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"]         
           ]
         }
@@ -492,7 +492,7 @@
           "description": "Size requirements for VCF management service nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management service Nodes", "Large", "10", "120", "234gb", "4,402gb"],
+            ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"]          
           ]
         }
@@ -501,17 +501,16 @@
     "automation": {
       "name": "VCF Automation (VCF Automation) Upgrade",
       "steps": [
-        "Upgrade VCF Automation to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-3-import-and-upgrade-VCF-automation-8-to-vcf-automation-9.html' target='_blank'>View Documentation</a>)."
+        "Upgrade VCF Automation - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-3-import-and-upgrade-VCF-automation-8-to-vcf-automation-9.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
           "type": "info",
           "title": "VCF Automation Components",
           "bullets": [
-            "All 8 IP addresses must reside on the same network where your current Automation nodes are deployed.",
-            "The FQDN from the existing Automation instance is automatically transferred as VCF Automation FQDN of the 9.1 instance.",
+            "The FQDN from the existing Automation instance is automatically transferred to the new VCF Automation instance.",
             "If your existing Automation instance uses an external load balancer, no changes in its configuration are required.",
-            "VCF Automation 8.18.x IP addresses of the existing nodes are automatically assigned as VIPs for the 9.1 instance."
+            "VCF Automation 8.18.x IP addresses of the existing nodes are automatically assigned as VIPs for the new instance."
           ]
         },
         {
@@ -529,7 +528,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
+            ["VCF Automation node IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
             ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -539,7 +538,7 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation Node", "Small", "1", "16", "64gb","600gb"]
+            ["VCF Automation node", "Small", "1", "16", "64gb","600gb"]
           ]
         }
       ],
@@ -549,7 +548,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
+            ["VCF Automation node(s) IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
             ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -559,7 +558,7 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation Node", "Medium", "3", "72", "288gb","2,700gb"]
+            ["VCF Automation nodes", "Medium", "3", "72", "288gb","2,700gb"]
           ]
         }
       ],
@@ -569,7 +568,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
+            ["VCF Automation node(s) IP Pool(new)", "Minimum of /29 (CIDR block)", "0", "N/A"],
             ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -580,7 +579,7 @@
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
 
           "rows": [
-            ["VCF Automation Node", "Large", "3", "96", "384gb","3,600gb"]
+            ["VCF Automation nodes", "Large", "3", "96", "384gb","3,600gb"]
           ]
         }
       ]
@@ -612,7 +611,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation node IP Pool(new)", "5", "0", "N/A"],
             ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -622,7 +621,7 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation Node", "Small", "1", "16", "64gb","600gb"]
+            ["VCF Automation node", "Small", "1", "16", "64gb","600gb"]
           ]
         }
       ],
@@ -632,7 +631,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
            "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
            "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation node(s) IP Pool(new)", "5", "0", "N/A"],
             ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -642,7 +641,7 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation Node", "Medium", "3", "72", "288gb","2,700gb"]
+            ["VCF Automation nodes", "Medium", "3", "72", "288gb","2,700gb"]
           ]
         }
       ],
@@ -652,7 +651,7 @@
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["VCF Automation Node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation node(s) IP Pool(new)", "5", "0", "N/A"],
             ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
             ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
           ]
@@ -662,7 +661,7 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation Node", "Large", "3", "96", "384gb","3,600gb"]
+            ["VCF Automation nodes", "Large", "3", "96", "384gb","3,600gb"]
           ]
         }
       ]
@@ -670,7 +669,7 @@
     "nsx": {
       "name": "NSX Local Managers",
       "steps": [
-        "Upgrade NSX Local Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/checklist-for-upgrading-nsx.html' target='_blank'>View Documentation</a>)."
+        "Upgrade NSX Local Managers - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/checklist-for-upgrading-nsx.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -685,7 +684,7 @@
     "nsx_federation": {
       "name": "NSX Federation",
       "steps": [
-        "Upgrade NSX Global Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-nsx-in-a-federated-environment.html' target='_blank'>View Documentation</a>)."
+        "Upgrade NSX Global Managers - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-nsx-in-a-federated-environment.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -782,25 +781,25 @@
             }
         ],
         "steps": [
-            "Upgrade VCF Operations Orchestrator to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
+            "Upgrade VCF Operations Orchestrator - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
         ]
     },
     "vsan_data_protection": {
       "name": "vSAN Data Protection",
       "steps": [
-        "Upgrade vSAN Data Protection to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade/upgrading-srm.html' target='_blank'>View Documentation</a>)."      
+        "Upgrade vSAN Data Protection - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade/upgrading-srm.html' target='_blank'>View Documentation</a>)."      
       ]
     },
     "vsan_file_service": {
       "name": "vSAN File Service",
       "steps": [
-        "Upgrade vSAN File Service to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
+        "Upgrade vSAN File Service - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
       ]
     },
     "nsx_edge": {
       "name": "NSX Edge/NSX Finalize",
       "steps":[
-            "Finalize NSX to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
+            "Finalize NSX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
         ]
     },
     "vcf_prereq": {

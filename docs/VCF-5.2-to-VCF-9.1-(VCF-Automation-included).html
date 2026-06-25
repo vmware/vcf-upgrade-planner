@@ -1374,12 +1374,12 @@
 
             // Inject pre-req step for VCF 5.2.0 / 5.2.1 upgrading to 9.1.0100
             const needsPrereq = (vcfdetailVersion === '5.2.0' || vcfdetailVersion === '5.2.1')
-                && window.targetVcf91Version === '9.1.0100';
+                && (window.targetVcf91Version === '9.1.0100' || window.targetVcf91Version === '9.1.0200');
             if (needsPrereq && upgradeData.components['vcf_prereq']) {
                 phases.push({
                     number: 1,
                     title: upgradeData.components['vcf_prereq'].name,
-                    description: 'Required pre-upgrade step before proceeding to VCF 9.1.0100',
+                    description: 'Required pre-upgrade step before proceeding to VCF ' + window.targetVcf91Version,
                     data: upgradeData.components['vcf_prereq'],
                     componentId: 'vcf_prereq'
                 });
@@ -1408,7 +1408,7 @@
                     const automationComponentId = window.automationIsUpgrade ? 'automation' : 'automation_install';
                     componentData = upgradeData.components[automationComponentId];
                     phaseTitle = componentData ? componentData.name : componentId;
-                    phaseDescription = window.automationIsUpgrade ? 'Upgrade VCF Automation to 9.1' : 'Install VCF Automation 9.1';
+                    phaseDescription = window.automationIsUpgrade ? 'Upgrade VCF Automation' : 'Install VCF Automation';
 
                     // Select size-variant tables based on upgrade vs install path
                     if (componentData) {
@@ -1697,7 +1697,7 @@
                 'vcf_prereq': {
                     phases: prereqPhases,
                     title: 'Pre-Upgrade: Upgrade VCF to 5.2.2 or 5.2.3',
-                    description: 'Required pre-upgrade step before proceeding to VCF 9.1.0100'
+                    description: 'pre-upgrade step before proceeding to VCF ' + window.targetVcf91Version,
                 },
                 'drProducts': {
                     phases: replicationPhases,
@@ -1725,7 +1725,7 @@
                 },
                 'vcfms':{
                     phases: vcfmsPhases,
-                    title: 'VCF Management Service Deployment 9.1',
+                    title: 'VCF Management Service Deployment',
                     description: 'Deploy VCF management services on first SDDC Instance'
                 },
                 'nsx_federation': {
@@ -2309,18 +2309,18 @@
             const opsData = upgradeData ? upgradeData.components.operations : null;
             
             if (operationsSelected && operationsVersion === '8.18.x') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations from 8.18.x to 9.0', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations', data: opsData });
             } else if (operationsSelected && operationsVersion === '9.0.x') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations from 9.0.x to 9.1', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations', data: opsData });
             } else if (!operationsSelected) {
-                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.0 (new installation)', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations (new installation)', data: opsData });
             }
 
             const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
             if (vcenterVersion === '8') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: 'Upgrade vCenter from 8.x to 9.1', data: vcenterData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: 'Upgrade vCenter', data: vcenterData });
             } else {
-                phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: 'Upgrade vCenter from 9.0.x to 9.1', data: vcenterData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: 'Upgrade vCenter', data: vcenterData });
             }
 
             if (vlcmSelected) {
@@ -2335,9 +2335,9 @@
 
             const esxData = upgradeData ? upgradeData.components.esx : null;
             if (esxVersion === '8') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: 'Upgrade all ESX hosts from 8.x to 9.1', data: esxData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: 'Upgrade all ESX hosts', data: esxData });
             } else {
-                phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: 'Upgrade all ESX hosts from 9.0.x to 9.1', data: esxData });
+                phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: 'Upgrade all ESX hosts', data: esxData });
             }
 
             return phases;

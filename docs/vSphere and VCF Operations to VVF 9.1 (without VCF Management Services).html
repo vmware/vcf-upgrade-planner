@@ -1366,7 +1366,7 @@
             // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
             if (operationsSelected && (operationsVersion === '8.16.x' || operationsVersion === '8.17.x')) {
                 const opsPrereqData = upgradeData.components['operations_prereq'] || null;
-                if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x before upgrading to 9.1', data: opsPrereqData, componentId: 'operations_prereq' });
+                if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
@@ -1406,16 +1406,16 @@
                             const effOpsVer = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
                             if (effOpsVer === '8.18.x') {
                                 phaseTitle = 'Upgrade VCF Operations';
-                                phaseDescription = 'Upgrade VCF Operations from 8.18.x to 9.1';
+                                phaseDescription = 'Upgrade VCF Operations from 8.18.x';
                             } else {
                                 phaseTitle = 'Upgrade VCF Operations';
-                                phaseDescription = 'Upgrade VCF Operations from 9.0.x to 9.1';
+                                phaseDescription = 'Upgrade VCF Operations from 9.0.x';
                             }
                             componentData = upgradeData.components['operations'];
                         } else {
                             // Customer does NOT have Operations - INSTALL it
                             phaseTitle = 'Install VCF Operations';
-                            phaseDescription = 'Install VCF Operations 9.1 (new installation)';
+                            phaseDescription = 'Install VCF Operations (new installation)';
                             componentData = upgradeData.components['operations_install'];
                         }
                     }
@@ -1620,7 +1620,7 @@
                     number: steps.length + 1,
                     title: opsIsInstall ? 'Install VCF Operations & Deploy License Server' : 'Upgrade VCF Operations & Deploy License Server',
                     description: opsIsInstall
-                        ? 'Install VCF Operations 9.1 and Deploy License Server'
+                        ? 'Install VCF Operations and Deploy License Server'
                         : 'Upgrade VCF Operations and Deploy License Server',
                     phases: combinedOperationsPhases
                 });
@@ -2158,7 +2158,7 @@
             // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
             if (operationsSelected && (operationsVersion === '8.16.x' || operationsVersion === '8.17.x')) {
                 const opsPrereqData = upgradeData ? upgradeData.components['operations_prereq'] : null;
-                if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x before upgrading to 9.1', data: opsPrereqData, componentId: 'operations_prereq' });
+                if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
@@ -2180,12 +2180,12 @@
                 const opsData = upgradeData ? upgradeData.components.operations : null;
                 const effOpsVersion = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
                 const opsDesc = effOpsVersion === '8.18.x'
-                    ? 'Upgrade VCF Operations from 8.18.x to 9.1'
-                    : 'Upgrade VCF Operations from 9.0.x to 9.1';
+                    ? 'Upgrade VCF Operations from 8.18.x to 9.1.x'
+                    : 'Upgrade VCF Operations from 9.0.x to 9.1.x';
                 phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: opsDesc, data: opsData, componentId: 'operations' });
             } else if (!operationsSelected) {
                 const opsInstallData = upgradeData ? upgradeData.components.operations_install : null;
-                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.1 (new installation)', data: opsInstallData, componentId: 'operations_install' });
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations (new installation)', data: opsInstallData, componentId: 'operations_install' });
             }
             // operationsSelected && operationsVersion === '9.1.x': already at target, skip upgrade phase
 
@@ -2197,7 +2197,7 @@
             if (vcenterVersion !== '9.1.x') {
                 const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
                 const effVC = (vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2') ? '8.0u3' : vcenterVersion;
-                const vcDesc = effVC === '8' ? 'Upgrade vCenter from 8.x to 9.1' : 'Upgrade vCenter from 9.0.x to 9.1';
+                const vcDesc = effVC === '8' ? 'Upgrade vCenter' : 'Upgrade vCenter';
                 phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
             }
 
@@ -2215,7 +2215,7 @@
             if (!vxrailSelected) {
                 const esxData = upgradeData ? upgradeData.components.esx : null;
                 const effESX = (esxVersion === '8.0u1' || esxVersion === '8.0u2') ? '8.0u3' : esxVersion;
-                const esxDesc = effESX === '8' ? 'Upgrade all ESX hosts from 8.x to 9.1' : 'Upgrade all ESX hosts from 9.0.x to 9.1';
+                const esxDesc = effESX === '8' ? 'Upgrade all ESX hosts from 8.x to 9.1.x' : 'Upgrade all ESX hosts from 9.0.x to 9.1.x';
                 phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: esxDesc, data: esxData, componentId: 'esx' });
             } else {
                 const vxrailData = upgradeData ? upgradeData.components.vxrail : null;
@@ -3033,6 +3033,236 @@
             </div>
         </div>
     </div>
+
+<style id="rn-styles">
+/* ── Release Notes Section ── */
+.rn-section {
+  margin: 40px 0 0 0;
+  padding: 0 0 24px 0;
+}
+.rn-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary, #1a2d40);
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border-color, #d8e3ec);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rn-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #d8e3ec);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.rn-card-header {
+  background: #e8f4fa;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--border-color, #d8e3ec);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+[data-theme="dark"] .rn-card-header { background: #152130; }
+.rn-card-header h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1674b1;
+  margin: 0;
+}
+.rn-card-body { padding: 14px 18px; }
+/* Bullet list */
+.rn-list { list-style: none; padding: 0; margin: 0; }
+.rn-list li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-color, #d8e3ec);
+  font-size: 0.9rem;
+}
+.rn-list li:last-child { border-bottom: none; }
+.rn-list li::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #0098C7;
+  flex-shrink: 0;
+}
+.rn-list a { color: #1674b1; text-decoration: none; font-weight: 500; }
+.rn-list a:hover { text-decoration: underline; }
+.rn-note-text { font-size: 0.81rem; color: var(--text-secondary, #5a6a7a); }
+/* Table */
+.rn-table-wrap { overflow-x: auto; }
+.rn-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.rn-table thead tr { background: #e8f4fa; }
+[data-theme="dark"] .rn-table thead tr { background: #152130; }
+.rn-table th {
+  text-align: left;
+  padding: 9px 13px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1674b1;
+  border-bottom: 2px solid var(--border-color, #d8e3ec);
+}
+.rn-table td {
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--border-color, #d8e3ec);
+  vertical-align: middle;
+}
+.rn-table tbody tr:last-child td { border-bottom: none; }
+.rn-table tbody tr:nth-child(even) { background: rgba(0,152,199,0.03); }
+.rn-table tbody tr.rn-row-updated { background: rgba(26,122,60,0.07); }
+[data-theme="dark"] .rn-table tbody tr.rn-row-updated { background: rgba(26,122,60,0.15); }
+.rn-table a { color: #1674b1; text-decoration: none; font-weight: 500; }
+.rn-table a:hover { text-decoration: underline; }
+/* Badges */
+.rn-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.rn-badge-updated { background: #e6f7ec; color: #1a7a3c; border: 1px solid #1a7a3c; }
+.rn-badge-same    { background: #f0f4f8; color: #5a6a7a; border: 1px solid #d8e3ec; }
+[data-theme="dark"] .rn-badge-updated { background: #0d3320; color: #5de08a; border-color: #5de08a; }
+[data-theme="dark"] .rn-badge-same    { background: #1e2d3e; color: #7a9ab8; border-color: #2a3a4e; }
+/* Version pill */
+.rn-ver-pill {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: monospace;
+}
+.rn-ver-0100 { background: #f0f4f8; color: #5a6a7a; border: 1px solid #d8e3ec; }
+.rn-ver-0200 { background: #e6f7ec; color: #1a7a3c; border: 1px solid #1a7a3c; }
+[data-theme="dark"] .rn-ver-0100 { background: #1e2d3e; color: #7a9ab8; border-color: #2a3a4e; }
+[data-theme="dark"] .rn-ver-0200 { background: #0d3320; color: #5de08a; border-color: #5de08a; }
+</style>
+
+<!-- ═══════════════════════════════════════════════
+     RELEASE NOTES SECTION — injected
+═══════════════════════════════════════════════ -->
+<div id="rn-section-wrap" style="display:none; padding: 0 24px; max-width: 900px; margin: 0 auto;">
+  <div class="rn-section">
+    <div class="rn-section-title">&#x1F4CB; Release Notes</div>
+
+    <div class="rn-card">
+      <div class="rn-card-header"><h3>&#x1F535; VCF Operations</h3></div>
+      <div class="rn-card-body">
+        <ul class="rn-list" id="rn-ops-list"></ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script id="rn-script">
+(function() {
+  // ── Release Notes Data ──────────────────────────────────
+  var RN_OPS_ITEMS = [
+    {
+      id: 'vcf_operations',
+      versions: {
+        '9.1.0.0100': { label: 'VCF Operations 9.1.0.0100 Release Notes', note: 'includes the cloud proxy and license server components', url: 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/rn/vmware-vcf-operations-release-notes-9-1-0-0100.html' },
+        '9.1.0.0200': { label: 'VCF Operations 9.1.0.0200 Release Notes', note: 'includes the cloud proxy and license server components', url: 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/rn/vmware-vcf-operations-release-notes-9-1-0-0200.html' }
+      }
+    },
+    {
+      id: 'vcf_operations_hcx',
+      versions: {
+        '9.1.0.0100': { label: 'VCF Operations HCX 9.1.0.0100 Release Notes', url: 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/rn/vmware-vcf-operations-hcx-release-notes-9-1-0-0100.html' }
+      }
+    },
+    {
+      id: 'vcf_operations_networks',
+      versions: {
+        '9.1.0.0100': { label: 'VCF Operations for Networks 9.1.0.0100 Release Notes', url: 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/rn/vmware-vcf-operations-for-networks-release-notes-9-1-0-0100.html' }
+      }
+    },
+    {
+      id: 'vcf_operations_orchestrator',
+      versions: {
+        '9.1.0.0100': { label: 'VCF Operations Orchestrator 9.1.0.0100 Release Notes', url: 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/rn/vmware-vcf-operations-orchestrator-release-notes-9-1-0-0100.html' }
+      }
+    }
+  ];
+
+  
+  
+  
+  
+  
+  
+  
+  
+
+  // ── Core resolver ──────────────────────────────────────
+  function rnResolve(versionsMap, destination) {
+    var keys = Object.keys(versionsMap).sort();
+    var best = null;
+    for (var i = 0; i < keys.length; i++) {
+      if (keys[i] <= destination) best = keys[i];
+    }
+    return best ? { key: best, data: versionsMap[best] } : null;
+  }
+
+  // ── Render VCF Operations bullet list ─────────────────
+  function rnRenderOps(destination) {
+    var ul = document.getElementById('rn-ops-list');
+    if (!ul) return;
+    ul.innerHTML = '';
+    RN_OPS_ITEMS.forEach(function(item) {
+      var r = rnResolve(item.versions, destination);
+      if (!r) return;
+      var updated = r.key === destination && Object.keys(item.versions).some(function(k) { return k < destination; });
+      var li = document.createElement('li');
+      var html = '<a href="' + r.data.url + '" target="_blank">' + r.data.label + '</a>';
+      if (r.data.note) html += ' <span class="rn-note-text">(' + r.data.note + ')</span>';
+      if (updated) html += ' <span class="rn-badge rn-badge-updated">&#x2191; Updated</span>';
+      li.innerHTML = html;
+      ul.appendChild(li);
+    });
+  }
+
+  
+
+  // ── Init ───────────────────────────────────────────────
+  function rnInit() {
+    var raw = localStorage.getItem('target-vcf91-version') || '';
+    // Normalise: '9.1.0100' -> '9.1.0.0100'
+    var dest = raw.replace(/^(9\.1\.)(0[12]00)$/, '$10.$2');
+    if (!dest) dest = '9.1.0.0100'; // fallback
+
+    var wrap = document.getElementById('rn-section-wrap');
+    if (wrap) wrap.style.display = '';
+
+    rnRenderOps(dest);
+    
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', rnInit);
+  } else {
+    rnInit();
+  }
+})();
+</script>
 </body>
 
 </html>

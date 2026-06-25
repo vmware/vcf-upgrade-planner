@@ -110,7 +110,7 @@
         "vcenter": {
             "name": "vCenter",
             "steps": [
-                "Upgrade vCenter to version 9.1 using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
+                "Upgrade vCenter using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {
@@ -142,7 +142,7 @@
                 },
                 {
                     "type": "info",
-                    "title": "Check HCL for Hardware support on VCF 9.1",
+                    "title": "Check HCL for Hardware support",
                     "bullets": [
                         "Intel Skylake (Broadwell, Kabylake & Skylake) Processors no longer supported (deprecated in earlier releases), requires RPQ"
                     ]
@@ -196,7 +196,7 @@
                 }
              ],
             "steps": [
-                "Upgrade VCF Operations to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+                "Upgrade VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "operations_install": {
@@ -258,7 +258,7 @@
         }
       ],
             "steps": [
-                "Deploy VCF Operations 9.1  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
+                "Deploy VCF Operations  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "license": {
@@ -288,13 +288,13 @@
         "logs": {
             "name": "Log Management",
             "steps": [
-                "Deploy new Log Management 9.1 services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
+                "Deploy new Log Management services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "network": {
             "name": "VCF Operations for Network",
             "steps": [
-                "Upgrade VCF Operations for Network to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
+                "Upgrade VCF Operations for Network - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "vidm": {
@@ -308,7 +308,7 @@
                     "type": "info",
                     "title": "VMware Identity Management",
                     "bullets": [
-                        "Will Continue to work and function after products are upgrade to 9.1, there is just no upgrade path"
+                        "Will Continue to work and function after products are upgrade, there is just no upgrade path"
                     ]
                 }
             ]
@@ -316,13 +316,13 @@
         "replication": {
             "name": "vSphere Replication",
             "steps": [
-                "Upgrade Protection and Recovery to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+                "Upgrade Protection and Recovery - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "srm": {
             "name": "Site Recovery Manager",
             "steps": [
-                "Upgrade Protection and Recovery to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+                "Upgrade Protection and Recovery  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "avi": {
@@ -355,7 +355,7 @@
         "vsan_witness": {
             "name": "vSAN Witness Host",
             "steps": [
-                "Upgrade vSAN Witness host to version 9.1 - will happen as part of ESX upgrade workflow in VCF Operations"            
+                "Upgrade vSAN Witness host  - will happen as part of ESX upgrade workflow in VCF Operations"            
             ],
             "notices": [
                 {
@@ -370,13 +370,13 @@
         "sddc_manager": {
             "name": "SDDC Manager",
             "steps": [
-                "Upgrade SDDC Manager to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>)."
+                "Upgrade SDDC Manager - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>)."
             ]
         },
         "vcfms": {
             "name": "VCF Management Service Deployment",
             "steps": [
-                "Deploy VCF Management Services for 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
+                "Deploy VCF Management Services - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {
@@ -417,7 +417,7 @@
           "description": "Size requirements for VCF management services nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management services Nodes", "Small", "4", "12", "24gb", "3,000gb"],
+            ["VCF management services nodes", "Small", "4", "12", "24gb", "3,000gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"]
           ]
         }
@@ -441,7 +441,7 @@
           "description": "Size requirements for VCF management services nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management services Nodes", "Medium", "9", "84", "174gb", "3,600gb"],
+            ["VCF management services nodes", "Medium", "7", "84", "174gb", "3,600gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"]       
           ]
         }
@@ -465,7 +465,7 @@
           "description": "Size requirements for VCF management services nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF management services Nodes", "Large", "10", "120", "234gb", "4,402gb"],
+            ["VCF management services nodes", "Large", "7", "228", "234gb", "4,402gb"],
             ["License server", "Small", "1", "2", "4gb", "12gb"]    
           ]
         }
@@ -474,7 +474,7 @@
         "nsx": {
             "name": "NSX Local Managers",
             "steps": [
-                "Upgrade NSX Local Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/checklist-for-upgrading-nsx.html' target='_blank'>View Documentation</a>)."
+                "Upgrade NSX Local Managers - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/checklist-for-upgrading-nsx.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {
@@ -489,7 +489,7 @@
         "nsx_federation": {
             "name": "NSX Federation",
             "steps": [
-                "Upgrade NSX Global Managers to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-nsx-in-a-federated-environment.html' target='_blank'>View Documentation</a>)."
+                "Upgrade NSX Global Managers - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-nsx-in-a-federated-environment.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {
@@ -586,25 +586,25 @@
             }
         ],
         "steps": [
-            "Upgrade VCF Operations Orchestrator to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
+            "Upgrade VCF Operations Orchestrator - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
         ]
     },
      "vsan_data_protection": {
       "name": "vSAN Data Protection",
       "steps": [
-        "Upgrade vSAN Data Protection to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade/upgrading-srm.html' target='_blank'>View Documentation</a>)."      
+        "Upgrade vSAN Data Protection - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade/upgrading-srm.html' target='_blank'>View Documentation</a>)."      
       ]
     },
     "vsan_file_service": {
       "name": "vSAN File Service",
       "steps": [
-        "Upgrade vSAN File Service to version 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
+        "Upgrade vSAN File Service - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
       ]
     },
     "nsx_edge": {
         "name": "NSX Edge/NSX Finalize",
         "steps":[
-            "Finalize NSX to 9.1 - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
+            "Finalize NSX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
         ]
     },
     "vcf_prereq": {
