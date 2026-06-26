@@ -358,7 +358,7 @@
                     "rows": [
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
-                        ["VCF Operations nodes", "Medium", "3", "72", "288gb", "822gb"],
+                        ["VCF Operations nodes", "Medium", "3", "48", "144gb", "822gb"],
                         ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
                         ["License server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
@@ -391,7 +391,7 @@
                     "rows": [
                         ["SDDC Manager", "Default", "1", "4", "16", "908"],
                         ["NSX Manager", "Large", "3", "36", "144", "900"],
-                        ["VCF Operations nodes", "Large", "3", "48", "144gb", "822gb"],
+                        ["VCF Operations nodes", "Large", "3", "72", "384gb", "822gb"],
                         ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
                         ["License server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
@@ -452,7 +452,7 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
-                        ["VCF Operations nodes", "Medium", "3", "24", "96gb", "822gb"],
+                        ["VCF Operations nodes", "Medium", "3", "48", "144gb", "822gb"],
                         ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
                         ["License server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
@@ -483,7 +483,7 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
                         ["SDDC Manager", "Default", "1", "4", "16", "908"],
-                        ["VCF Operations nodes", "Large", "3", "48", "144gb", "822gb"],
+                        ["VCF Operations nodes", "Large", "3", "72", "384gb", "822gb"],
                         ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
                         ["License server", "Default", "1", "2", "4gb", "12gb"],
                         ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
