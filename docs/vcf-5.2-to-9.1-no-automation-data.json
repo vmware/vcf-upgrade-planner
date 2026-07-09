@@ -125,6 +125,7 @@
         "esx": {
             "name": "ESX",
             "steps": [
+                "Build ESX image in vCenter - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/working-with-image-library/create-an-image-in-image-library.html' target='_blank'>View Documentation</a>).",
                 "Importing Images for Lifecycle - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/managing-vsphere-lifecycle-manager-images-for-vmware-cloud-foundation/import-a-vsphere-lifecycle-manager-image-to-a-vcf-instance.html' target='_blank'>View Documentation</a>).",
                 "Upgrade ESX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/esx-upgrade.html' target='_blank'>View Documentation</a>).",
                 "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
@@ -563,9 +564,11 @@
           "type": "info",
           "title": "IP Requirements",
           "bullets": [
-            "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
-            "Node IP pool: 4 contiguous IP addresses",
-            "Service IP pool: 4 contiguous IP addresses"
+                "A License Hub must be deployed within your environment, or AVI and NSX must have outbound internet access for direct license validation.",
+                "If internet access is not available, deploy a License Hub before proceeding.",
+                "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
+                "Node IP pool: 4 contiguous IP addresses",
+                "Service IP pool: 4 contiguous IP addresses"
           ]
         }
       ],
@@ -619,7 +622,7 @@
         }
       ],
       "steps": [
-        "VCF Upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-5-2-and-earlier/5-2/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2.html' target='_blank'>View Documentation</a>)."
+        "VCF Upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-5-2-and-earlier/5-2/vmware-cloud-foundation-lifecycle-management/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2-lifecycle.html' target='_blank'>View Documentation</a>)."
       ]
     }
     }

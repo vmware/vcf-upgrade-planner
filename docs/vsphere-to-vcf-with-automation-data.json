@@ -218,13 +218,13 @@
     "esx": {
       "name": "ESX",
       "steps": [
+        "Build ESX image in vCenter - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/working-with-image-library/create-an-image-in-image-library.html' target='_blank'>View Documentation</a>).",
         "Importing Images for Lifecycle - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/managing-vsphere-lifecycle-manager-images-for-vmware-cloud-foundation/import-a-vsphere-lifecycle-manager-image-to-a-vcf-instance.html' target='_blank'>View Documentation</a>).",
         "Upgrade ESX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/esx-upgrade.html' target='_blank'>View Documentation</a>).",
         "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
         "Upgrade VMware Tools - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vmtools_001&appid=vmtools-13-1&language=&format=rendered' target='_blank'>View Documentation</a>).",
         "Virtual machines compatibility - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vsphclient_076&appid=vsphere-9-1&language=&format=rendered' target='_blank'>View Documentation</a>).",
         "(Optional) Upgrade vSAN On-Disk Format Versions - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-on-disk-format-versions.html' target='_blank'>View Documentation</a>)."
-
       ],
       "notices": [
         {
@@ -275,6 +275,15 @@
         "Upgrade VCF Operations to compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
+        {
+         "type": "warning",
+         "title": "Aria Operations Placement Before Convergence",
+         "bullets": [
+           "Aria Operations must reside within the vCenter targeted for convergence.",
+           "If Aria Operations is on a different vCenter, migrate it to the target vCenter before proceeding.",
+           "If building a new Greenfield management cluster and reusing an existing Aria Operations instance, deploy a new vCenter and migrate Aria Operations to it prior to convergence."
+          ]
+        },
         {
           "type": "info",
           "title": "Upgrade Options when having multiple VCF Operations",
@@ -792,7 +801,7 @@
     "automation": {
       "name": "VCF Automation",
       "steps": [
-        "Upgrade VCF Automation - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-3-import-and-upgrade-VCF-automation-8-to-vcf-automation-9.html' target='_blank'>View Documentation</a>)."
+        "Upgrade VCF Automation - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-3-import-and-upgrade-aria-automation-8-to-vcf-automation-9.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
         {
@@ -1098,7 +1107,7 @@
       ],
       "steps": [
         "vCenter upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso.html' target='_blank'>View Documentation</a>).",
-        "ESX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/overview-of-the-esxi-host-upgrade-process.html#GUID-FE668788-1F32-4CB2-845C-5547DD59EB48-en' target='_blank'>View Documentation</a>)."
+        "ESX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/esx-upgrade/upgrading-esxi-hosts-upgrade.html' target='_blank'>View Documentation</a>)."
       ]
     },
       "license_hub": {
