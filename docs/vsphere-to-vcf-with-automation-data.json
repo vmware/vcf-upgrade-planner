@@ -161,7 +161,7 @@
         }
       ],
       "steps": [
-        "Break ELM After All vCenter Instances that were upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
+        "Break ELM After All vCenter Instances that were upgraded - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
 
       ]
     },
@@ -252,7 +252,7 @@
                 {
                     "type": "warning",
                     "title": "vSphere Lifecycle Management with Baselines is no longer supported",
-                    "bullets": ["vSphere Lifecycle Management with Baselines is no longer supported, clusters will need to be transition as part of the upgrade which is discussed on the upgrade paths"]
+                    "bullets": ["vSphere Lifecycle Management with Baselines is no longer supported. Clusters will need to be transitioned as part of the upgrade, as discussed in the upgrade paths."]
                 }
             ]
         },
@@ -265,7 +265,7 @@
                 {
                     "type": "warning",
                     "title": "vSphere Lifecycle Management with Baselines is no longer supported",
-                    "bullets": ["vSphere Lifecycle Management with Baselines is no longer supported, clusters will need to be transition as part of the upgrade which is discussed on the upgrade paths"]
+                    "bullets": ["vSphere Lifecycle Management with Baselines is no longer supported. Clusters will need to be transitioned as part of the upgrade, as discussed in the upgrade paths."]
                 }
             ]
     },
@@ -275,6 +275,15 @@
         "Upgrade VCF Operations to compatible release - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
+      {
+         "type": "warning",
+         "title": "Aria Operations Placement Before Convergence",
+         "bullets": [
+           "Aria Operations must reside within the vCenter targeted for convergence.",
+           "If Aria Operations is on a different vCenter, migrate it to the target vCenter before proceeding.",
+           "If building a new Greenfield management cluster and reusing an existing Aria Operations instance, deploy a new vCenter and migrate Aria Operations to it prior to convergence."
+          ]
+        },
         {
          "type": "warning",
          "title": "Aria Operations Placement Before Convergence",
@@ -1140,6 +1149,8 @@
           "type": "info",
           "title": "IP Requirements",
           "bullets": [
+            "A License Hub must be deployed within your environment, or AVI and NSX must have outbound internet access for direct license validation.",
+            "If internet access is not available, deploy a License Hub before proceeding.",
             "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
             "Node IP pool: 4 contiguous IP addresses",
             "Service IP pool: 4 contiguous IP addresses"
@@ -1188,7 +1199,7 @@
     "vidm": {
       "name": "VMware Identity Manager",
       "steps": [
-        "Move from VMware Identity Manager to VMware Identity Broker - Deployed of Identity Broker is part of the Management Service deployment",
+        "Move from VMware Identity Manager to VMware Identity Broker — Deployment of Identity Broker is part of the Management Service deployment.",
         "Migrate from VMware Identity Manager to Identity Broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [

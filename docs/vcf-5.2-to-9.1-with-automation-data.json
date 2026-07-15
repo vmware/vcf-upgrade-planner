@@ -188,7 +188,7 @@
           "type": "warning",
           "title": "vSphere Lifecycle Management with Baselines is no longer supported",
           "bullets": [
-            "vSphere Lifecycle Management with Baselines is no longer supported, clusters will need to be transition as part of the upgrade which is discussed on the upgrade paths"
+            "vSphere Lifecycle Management with Baselines is no longer supported. Clusters will need to be transitioned as part of the upgrade, as discussed in the upgrade paths."
           ]
         }
       ]
@@ -311,7 +311,7 @@
                 }
             ],
       "steps": [
-        "Deploy license server and registration - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations/add-license-server.html' target='_blank'>View Documentation</a>)."
+        "Deploy license server and registration - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "logs": {
@@ -329,7 +329,7 @@
     "vidm": {
       "name": "VMware Identity Manager",
       "steps": [
-        "Move from VMware Identity Manager to VMware Identity Broker - Deployed of Identity Broker is part of the Management Service deployment",
+        "Move from VMware Identity Manager to VMware Identity Broker — Deployment of Identity Broker is part of the Management Service deployment.",
         "Migrate from VMware Identity Manager to Identity Broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
       ],
       "notices": [
@@ -721,7 +721,7 @@
     "notices": [
       {
         "type": "info",
-        "title": "ELM Prerequisties",
+        "title": "ELM Prerequisites",
         "bullets": [
           "All vCenters in VCF Instances that are ELM ring need to be on 9.1",
           "Resolve Enhanced Linked Mode (ELM) Drift for Upgraded vCenter Instances - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime/resolve-enhanced-linked-mode--elm--drift-for-upgraded-vmware-cloud-foundation-vcenters.html' target='_blank'>View Documentation</a>)."
@@ -759,11 +759,11 @@
           "type": "info",
           "title": "IP Requirements",
           "bullets": [
-              "A License Hub must be deployed within your environment, or AVI and NSX must have outbound internet access for direct license validation.",
-              "If internet access is not available, deploy a License Hub before proceeding.",
-              "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
-              "Node IP pool: 4 contiguous IP addresses",
-              "Service IP pool: 4 contiguous IP addresses"
+            "A License Hub must be deployed within your environment, or AVI and NSX must have outbound internet access for direct license validation.",
+            "If internet access is not available, deploy a License Hub before proceeding.",
+            "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
+            "Node IP pool: 4 contiguous IP addresses",
+            "Service IP pool: 4 contiguous IP addresses"
           ]
         }
       ],

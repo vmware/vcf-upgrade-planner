@@ -1,10 +1,10 @@
- <!DOCTYPE html>
+] <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCF 5.2 to VCF 9.1 - (VCF Automation included)</title>
+    <title>VCF 9.0 to VCF 9.1 - (Upgrade VCF Instance)</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <script>
         (function() {
@@ -795,6 +795,7 @@
             color: var(--vmw-blue); text-decoration: none; font-weight: 600; cursor: pointer;
         }
         .doc-modal-footer .external-link:hover { text-decoration: underline; }
+    
         /* Sub-pages sidebar */
         .doc-modal-inner {
             display: flex;
@@ -961,7 +962,7 @@
             background: rgba(64, 180, 229, 0.12) !important;
             color: var(--vmw-blue) !important;
         }
-
+    
         /* ---- Option G grouped chip styles ---- */
         .g-group-title { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1674b1; border-left:3px solid #1674b1; padding-left:7px; margin:14px 0 7px; display:flex; align-items:center; gap:6px; background:rgba(22,116,177,0.07); border-radius:0 4px 4px 0; padding-top:4px; padding-bottom:4px; }
         .g-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
@@ -1010,7 +1011,7 @@
                     </div>
                 </div>
                 <div class="sidebar-counter">
-                    <img src="https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-5.2-to-9.1-with-automation.svg?label=Visitors&color=7B61FF&labelColor=092138" alt="Visitor counter" />
+                    <img src="https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-9.0-to-9.1-vcf-instance.svg?label=Visitors&color=F59E0B&labelColor=092138" alt="Visitor counter" />
                 </div>
             </div>
         </div>
@@ -1019,12 +1020,13 @@
         <div class="main-wrapper">
             <div class="container">
                 <header id="environment">
-                    <h1>VCF 5.2 to VCF 9.1 - With Automation</h1>
+                    <h1>VCF 9.0 to VCF 9.1 - (Upgrade VCF Instance)</h1>
                 </header>
         <!-- Configuration Section -->
         <div class="section" style="opacity: 1;">
             <h2>🖥️ Current Environment</h2>
             
+           
             <!-- Part 1: Summary -->
             <div style="background: var(--card-bg); border-left: 4px solid var(--vmw-blue); border-radius: 6px; padding: 16px; margin-bottom: 24px; border: 1px solid var(--border-color);">
                 <h3 style="color: var(--vmw-blue); margin-bottom: 12px; font-size: 1.1rem;">✅ Selected Components</h3>
@@ -1033,9 +1035,7 @@
                 </div>
             </div>
 
-           
-
-              <!-- Deployment Configuration -->
+            <!-- Deployment Configuration -->
             <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue);">
                 <h3 style="color: var(--text-primary); margin-bottom: 14px; font-size: 16px;">&#x1F3D7;&#xFE0F; Deployment Configuration</h3>
                 <div style="margin-bottom: 14px;">
@@ -1059,45 +1059,79 @@
                 </div>
             </div>
 
-
-            <!-- Optional Components Chip Picker (replaces Advanced Products toggle) -->
+             <!-- Optional Components Chip Picker (replaces Advanced Products toggle) -->
             <div style="margin-bottom:20px; padding:20px; background:var(--card-bg); border-radius:12px; border:1px solid var(--border-color); border-left:4px solid var(--vmw-blue);">
                 <h3 style="color:var(--text-primary); margin-bottom:12px; font-size:16px;">&#x1F9E9; Optional Components & Features</h3>
                 <p style="margin-bottom:14px; color:var(--text-secondary); font-size:0.9rem;">Select any additional components or features &mdash; your plan updates automatically.</p>
+                <input type="checkbox" id="vlcmCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
+                <input type="checkbox" id="autodeployCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
+                <input type="checkbox" id="elmCheck"        style="display:none" onchange="autoGenerateUpgradePlan()">
                 <input type="checkbox" id="supervisorCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
-                <input type="checkbox" id="elmCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
                 <div id="advancedProductsGrid" style="display:none"></div>
                 <div id="gResults" style="margin-bottom:10px;"></div>
-                <div id="gSummary" style="min-height:36px;padding:10px 14px;background:var(--bg);border:1px solid var(--border-color);border-radius:8px;font-size:0.85rem;color:var(--text-secondary);">No optional components selected &mdash; your plan will include core components only.</div>
                 <div style="margin-top:12px;"><button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">&#x21BA; Reset Selections</button></div>
-            </div>
-            
-            <!-- VCF Operations checkbox (always visible, outside the collapsible section) -->
-            <div style="margin-bottom: 16px; padding: 16px; background: var(--card-bg); border-radius: 8px; border: 2px solid var(--vmw-blue);">
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="operationsCheck" onchange="autoGenerateUpgradePlan()" checked>
-                        <span>VCF Operations (Aria Operations)</span>
-                    </label>
-                </div>
-                <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
-                    ℹ️ Operations is always included. <strong>Checked</strong> = Upgrade existing installation | <strong>Unchecked</strong> = Fresh install
+                <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary); font-style: italic;">
+                    Note: These products will add additional upgrade phases to your plan based on dependency and compatibility requirements.
                 </p>
             </div>
 
-              <!-- Automation checkbox (special: always included, checkbox controls upgrade vs install) -->
-                <div style="margin-bottom: 20px; padding: 16px; background: var(--card-bg); border-radius: 8px; border: 2px solid var(--vmw-blue);">
-                    <div class="checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="automationCheck" onchange="autoGenerateUpgradePlan()" checked>
-                            <span>VCF Automation (Aria Automation)</span>
+            </div>
+
+
+
+        <!-- VMware Identity Broker (vIDB) — outside Additional Products, below Automation -->
+            <div style="margin-bottom: 20px; padding: 16px; background: var(--card-bg); border-radius: 8px; border: 2px solid var(--vmw-blue);">
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="vidbCheck" onchange="(function(el){
+                            var embQ = document.getElementById('vidbEmbeddedQuestion');
+                            var overlayQ = document.getElementById('vidbOverlayQuestion');
+                            if (!el.checked) {
+                                embQ.style.display = 'none';
+                                overlayQ.style.display = 'none';
+                                window.vidbIsEmbedded = null;
+                                window.vidbOnOverlay = null;
+                                document.querySelectorAll('input[name=vidbEmbedded]').forEach(function(r){ r.checked = false; });
+                                document.querySelectorAll('input[name=vidbOverlay]').forEach(function(r){ r.checked = false; });
+                            } else {
+                                embQ.style.display = 'block';
+                            }
+                            autoGenerateUpgradePlan();
+                        })(this)">
+                        <span>Identity Broker</span>
+                    </label>
+                </div>
+                <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
+                    &#x2139;&#xFE0F; <strong>Unchecked</strong> = Identity Broker not yet deployed &mdash; install is covered as part of VCF Management Services deployment | <strong>Checked + Embedded</strong> = no separate upgrade step; notice added to vCenter phase | <strong>Checked + Not Embedded</strong> = Appliance Identity Broker upgrade step added
+                </p>
+                <!-- Question 1: Is Identity Broker Embedded? -->
+                <div id="vidbEmbeddedQuestion" style="display:none; margin-top:10px; padding:12px 14px; background:var(--bg); border-left:4px solid var(--vmw-blue); border-radius:6px; font-size:0.88rem;">
+                    <p style="margin:0 0 8px 0; font-weight:600; color:var(--text-primary);">Is Identity Broker deployed as Embedded (part of vCenter)?</p>
+                    <div style="display:flex; gap:16px;">
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="radio" name="vidbEmbedded" value="yes" onchange="window.vidbIsEmbedded=true; window.vidbOnOverlay=null; document.getElementById('vidbOverlayQuestion').style.display='none'; document.querySelectorAll('input[name=vidbOverlay]').forEach(function(r){ r.checked=false; }); autoGenerateUpgradePlan();"> Yes (Embedded)
+                        </label>
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="radio" name="vidbEmbedded" value="no" onchange="window.vidbIsEmbedded=false; document.getElementById('vidbOverlayQuestion').style.display='block'; autoGenerateUpgradePlan();"> No (Appliance)
                         </label>
                     </div>
-                    <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
-                        ℹ️ Automation is always included. <strong>Checked</strong> = Upgrade existing installation | <strong>Unchecked</strong> = Fresh install
-                    </p>
                 </div>
-           
+                <!-- Question 2: Overlay? (only shown when Not Embedded) -->
+                <div id="vidbOverlayQuestion" style="display:none; margin-top:10px; padding:12px 14px; background:var(--bg); border-left:4px solid var(--vmw-blue); border-radius:6px; font-size:0.88rem;">
+                    <p style="margin:0 0 8px 0; font-weight:600; color:var(--text-primary);">Is Identity Broker deployed on an NSX Overlay network?</p>
+                    <div style="display:flex; gap:16px;">
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="radio" name="vidbOverlay" value="yes" onchange="window.vidbOnOverlay=true; autoGenerateUpgradePlan();"> Yes
+                        </label>
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="radio" name="vidbOverlay" value="no" onchange="window.vidbOnOverlay=false; autoGenerateUpgradePlan();"> No
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        
+        
 
             <div class="diagram-container" id="diagram">
 
@@ -1115,7 +1149,7 @@
                 </button>
             </div>
 
-             <!-- Safe Stopping Point Info Banner -->
+              <!-- Safe Stopping Point Info Banner -->
                 <div style="background: linear-gradient(135deg, #E1D5E7 0%, #F3E8FA 100%); border-left: 4px solid #7C3AED; padding: 16px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div>
@@ -1159,17 +1193,17 @@
 
     <script>
         // Variables to store selections
-        let vlcmSelected = false;
         let witnessSelected = false;
         let deploymentType = 'simple';
         let deploymentSize = 'small';
         let vxrailSelected = false;
-        let elmSelected = false;
         let upgradeData = null; // Will hold the loaded JSON data
         let allPhases = []; // Store all phases
         let currentPhaseIndex = 0; // Track which phase we're showing
         let allSteps = []; // Store all steps (groups of phases)
         let currentStepIndex = 0; // Track which phase we're showing (called stepIndex for code consistency)
+        window.vidbOnOverlay = null; // null = not yet answered, true = on overlay, false = not on overlay
+        window.vidbIsEmbedded = null; // null = not yet answered, true = embedded in vCenter, false = standalone
 
         // Initialize page
 
@@ -1207,7 +1241,7 @@
 
         async function loadUpgradeData() {
             try {
-                const response = await fetch('vcf-5.2-to-9.1-with-automation-data.json');
+                const response = await fetch('vcf-9.0-to-9.1-instance.json');
                 upgradeData = await response.json();
                 console.log('Upgrade data loaded successfully');
             } catch (error) {
@@ -1232,6 +1266,9 @@
 
             // Generate checkboxes from JSON
             upgradeData.optional_products.forEach(product => {
+                // vIDB is rendered as a standalone item outside this grid (below Operations)
+                if (product.id === 'vidb') return;
+
                 const checkboxGroup = document.createElement('div');
                 checkboxGroup.className = 'checkbox-group';
                 
@@ -1241,14 +1278,15 @@
                 const input = document.createElement('input');
                 input.type = 'checkbox';
                 input.id = product.id + 'Check';
-                input.onchange = autoGenerateUpgradePlan; // Auto-update on change
-                
                 const span = document.createElement('span');
                 span.textContent = product.display_name;
-                
+
                 label.appendChild(input);
                 label.appendChild(span);
                 checkboxGroup.appendChild(label);
+
+                input.onchange = autoGenerateUpgradePlan;
+
                 gridContainer.appendChild(checkboxGroup);
             });
 
@@ -1256,16 +1294,16 @@
         }
 
         function loadSelectionsFromStorage() {
-           vcfVersion =  localStorage.getItem('vcf-version') || '5.2';
+           vcfVersion =  localStorage.getItem('vcf-version') || '9.0';
            vcfdetailVersion = localStorage.getItem('vcf-detailed-version');
            window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
-            // Read VxRail selection passed from index page
+         // Read VxRail selection passed from index page
            const _vxrailRaw = localStorage.getItem('vxrail-selected');
            vxrailSelected = _vxrailRaw === 'true';
            window.vxrailVersion = localStorage.getItem('vxrail-version') || '';
             console.log('=== LOAD SELECTIONS DEBUG ===');
             console.log('vxrailSelected:', vxrailSelected, 'vxrailVersion:', window.vxrailVersion);
-            console.log('=== LOAD SELECTIONS DEBUG ===');
+     
         }
 
         function displaySelectedSummary() {
@@ -1273,6 +1311,7 @@
             let html = '<ul class="component-list">';
             
             html += `<li><span class="badge included">✓ VCF Version</span><span class="badge version">v${vcfdetailVersion}</span></li>`;
+            
             if (vxrailSelected) {
                 const _vxrVer = window.vxrailVersion ? ` <span class="badge version">v${window.vxrailVersion}</span>` : '';
                 html += `<li><span class="badge included">✓ Dell VxRail (HCI)</span>${_vxrVer}</li>`;
@@ -1282,12 +1321,13 @@
             summary.innerHTML = html;
         }
 
+
         function updateDeploymentSize() {
             const simpleRadio = document.getElementById('simpleRadio');
             const sizeSelect = document.getElementById('deploymentSize');
-            
+
             deploymentType = simpleRadio.checked ? 'simple' : 'ha';
-            
+
             if (deploymentType === 'simple') {
                 sizeSelect.innerHTML = '<option value="small">Small</option>';
                 deploymentSize = 'small';
@@ -1295,25 +1335,26 @@
                 sizeSelect.innerHTML = '<option value="medium">Medium</option><option value="large">Large</option>';
                 deploymentSize = 'medium';
             }
-            
+
             autoGenerateUpgradePlan();
         }
 
-
-         function autoGenerateUpgradePlan() {
+        function autoGenerateUpgradePlan() {
             supervisorSelected = document.getElementById('supervisorCheck') ? document.getElementById('supervisorCheck').checked : false;
-             elmSelected = document.getElementById('elmCheck').checked;
 
+            // Get deployment configuration from DOM
+            const simpleRadio = document.getElementById('simpleRadio');
+            deploymentType = simpleRadio && simpleRadio.checked ? 'simple' : 'ha';
+            const sizeSelect = document.getElementById('deploymentSize');
+            deploymentSize = sizeSelect ? sizeSelect.value : 'small';
             
             // Collect advanced product selections
             const selectedProducts = {};
             
-            // Add Optional Features checkboxes (VUM and vSAN Witness)
-            selectedProducts['vum_migration'] = vlcmSelected;
+            // Add Optional Features checkboxes (vSAN Witness)
             selectedProducts['vsan_witness'] = witnessSelected;
             selectedProducts['supervisor'] = supervisorSelected;
             selectedProducts['vxrail'] = vxrailSelected;
-            selectedProducts['elm'] = elmSelected;
             
             // Merge chip selections
             const chipSel = window.selectedAdvancedProducts || {};
@@ -1328,17 +1369,9 @@
             // Store for use in generateUpgradePlan
             window.selectedAdvancedProducts = selectedProducts;
             
-            const simpleRadio = document.getElementById('simpleRadio');
-            deploymentType = simpleRadio && simpleRadio.checked ? 'simple' : 'ha';
-            const sizeSelect = document.getElementById('deploymentSize');
-            deploymentSize = sizeSelect ? sizeSelect.value : 'small';
-
             // Store Operations state for special handling (checked = upgrade, unchecked = install)
             const operationsCheck = document.getElementById('operationsCheck');
             window.operationsIsUpgrade = operationsCheck ? operationsCheck.checked : true;
-
-            const automationCheck = document.getElementById('automationCheck');
-            window.automationIsUpgrade = automationCheck ? automationCheck.checked : true;
             
             // Auto-generate without requiring button click
             generateUpgradePlan();
@@ -1365,25 +1398,9 @@
                 console.error('No upgrade order defined in JSON');
                 return;
             }
-
-            // Use install_order when Automation is a fresh install (unchecked),
-            // so automation is placed after ESX instead of immediately after vcfms.
-            const orderArray = (!window.automationIsUpgrade && upgradeData.install_order)
-                ? upgradeData.install_order
-                : upgradeData.upgrade_order;
-
-            // Inject pre-req step for VCF 5.2.0 / 5.2.1 upgrading to 9.1.0100
-            const needsPrereq = (vcfdetailVersion === '5.2.0' || vcfdetailVersion === '5.2.1')
-                && (window.targetVcf91Version === '9.1.0.0100');
-            if (needsPrereq && upgradeData.components['vcf_prereq']) {
-                phases.push({
-                    number: 1,
-                    title: upgradeData.components['vcf_prereq'].name,
-                    description: 'Required pre-upgrade step before proceeding to VCF ' + window.targetVcf91Version,
-                    data: upgradeData.components['vcf_prereq'],
-                    componentId: 'vcf_prereq'
-                });
-            }
+            
+            
+            const orderArray = upgradeData.upgrade_order;
 
             // Iterate through the selected upgrade order array to maintain strict sequence
             orderArray.forEach(componentId => {
@@ -1393,53 +1410,24 @@
                 let phaseDescription = '';
                 
                 // Define CORE components that are ALWAYS included
-                const coreComponents = ['vcenter', 'sddc_manager', 'nsx', 'operations', 'operations_install', 'automation', 'automation_install', 'vcfms'];
+                const coreComponents = ['vcenter', 'sddc_manager', 'nsx', 'esx', 'operations', 'vcfms'];
                 
                 // Determine if this component should be included based on component type
-                if (componentId === 'operations' || componentId === 'operations_install') {
-                    // Operations ALWAYS included
+                if (componentId === 'operations') {
                     shouldInclude = true;
-                    // Use upgrade or install component based on checkbox
-                    const operationsComponentId = window.operationsIsUpgrade ? 'operations' : 'operations_install';
-                    componentData = upgradeData.components[operationsComponentId];
+                    componentData = upgradeData.components['operations'];
                     phaseTitle = componentData ? componentData.name : componentId;
-                } else if (componentId === 'automation' || componentId === 'automation_install'){
-                    shouldInclude = true;
-                    const automationComponentId = window.automationIsUpgrade ? 'automation' : 'automation_install';
-                    componentData = upgradeData.components[automationComponentId];
-                    phaseTitle = componentData ? componentData.name : componentId;
-                    phaseDescription = window.automationIsUpgrade ? 'Upgrade VCF Automation' : 'Install VCF Automation';
 
-                    // Select size-variant tables based on upgrade vs install path
-                    if (componentData) {
-                        try {
-                            if (window.automationIsUpgrade) {
-                                // Upgrade: pick tables_simple_small / tables_ha_medium / tables_ha_large
-                                const upgradeTableKey = deploymentType === 'simple'
-                                    ? 'upgrade_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
-                                const cloned = JSON.parse(JSON.stringify(componentData));
-                                if (cloned[upgradeTableKey]) {
-                                    console.log('automation upgrade: using table key:', upgradeTableKey);
-                                    cloned.tables = cloned[upgradeTableKey];
-                                    componentData = cloned;
-                                }
-                            } else {
-                                // Install: pick automation_install_tableKey
-                                const automation_install_tableKey = deploymentType === 'simple'
-                                    ? 'install_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'install_tables_ha_large' : 'install_tables_ha_medium');
-                                const cloned = JSON.parse(JSON.stringify(componentData));
-                                if (cloned[automation_install_tableKey]) {
-                                    console.log('automation install: using table key:', automation_install_tableKey);
-                                    cloned.tables = cloned[automation_install_tableKey];
-                                    componentData = cloned;
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Error selecting automation tables:', e);
-                        }
-                    }
+                } else if (componentId === 'vxrail') {
+                    // VxRail only if selected - replaces ESX
+                    shouldInclude = selectedProducts['vxrail'] === true;
+                    phaseTitle = componentData ? componentData.name : 'vxrail';
+                    phaseDescription = 'Upgrade ' + phaseTitle; 
+                } else if (componentId === 'esx') {
+                    // ESX only if VxRail is NOT selected
+                    shouldInclude = selectedProducts['vxrail'] !== true;
+                    phaseTitle = componentData ? componentData.name : 'esx';
+                    phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'vcfms') {
                     // VCF Management Services always included — select size-variant tables
                     shouldInclude = true;
@@ -1457,16 +1445,79 @@
                                 console.log('vcfms: key not found, falling back to:', fallback);
                                 if (cloned[fallback]) cloned.tables = cloned[fallback];
                             }
+                            // Identity Broker FQDN in VCFMS table — three use cases:
+                            // UC1: Not deployed (vidbCheck unchecked) → keep FQDN row; user must supply a new FQDN
+                            // UC2: Deployed Embedded (vidbCheck checked + vidbIsEmbedded true) → keep FQDN row; new FQDN required
+                            // UC3: Deployed Appliance (vidbCheck checked + vidbIsEmbedded false) → remove row; existing FQDN is re-used
+                            const _vidbExisting = document.getElementById('vidbCheck') && document.getElementById('vidbCheck').checked;
+                            if (_vidbExisting && window.vidbIsEmbedded === false && cloned.tables) {
+                                cloned.tables = cloned.tables.map(function(table) {
+                                    if (table.rows) {
+                                        return Object.assign({}, table, {
+                                            rows: table.rows.filter(function(row) {
+                                                return row[0] !== 'Identity Broker';
+                                            })
+                                        });
+                                    }
+                                    return table;
+                                });
+                            }
                             componentData = cloned;
                         } catch (e) {
                             console.error('Error selecting vcfms tables:', e);
                         }
                     }
-                } else if (componentId === 'elm') {
-                    // ELM Upgrade Ring - not used in this VCF conversion path
-                    shouldInclude = elmSelected
-                    phaseTitle = componentData ? componentData.name : 'Enhanced Linked Mode (ELM) - Break Configuration';
-                    phaseDescription = 'Break Enhanced Linked Mode before VIDB Configuration on vCenters'; 
+                } else if (componentId === 'vcenter') {
+                    // vCenter — always included; inject Embedded Identity Broker notice when applicable
+                    shouldInclude = true;
+                    phaseTitle = componentData ? componentData.name : 'vCenter';
+                    phaseDescription = 'Upgrade vCenter Server';
+                    if (window.vidbIsEmbedded === true && componentData) {
+                        try {
+                            const cloned = JSON.parse(JSON.stringify(componentData));
+                            if (!cloned.notices) cloned.notices = [];
+                            cloned.notices.push({
+                                type: 'info',
+                                title: 'Embedded Identity Broker',
+                                bullets: [
+                                    "Embedded Identity Broker will be installed as part of this vCenter upgrade. No separate Identity Broker upgrade step is required.",
+                                    "To move off embedded identity broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/what-is/managing-vmware-cloud-foundation-operations-sso/migration-of-vcf-identity-broker-embedded-to-vcf-identity-broker-appliance.html' target='_blank'>View Documentation</a>)."                                ]
+                            });
+                            componentData = cloned;
+                        } catch(e) {
+                            console.error('Error injecting vidb embedded notice into vCenter:', e);
+                        }
+                    }
+                } else if (componentId === 'vidb') {
+                    // Unchecked = install covered by VCFMS; no separate step needed
+                    // Checked + Embedded = no separate step (notice injected into vCenter phase above)
+                    // Checked + Not Embedded = standalone upgrade step with sizing tables
+                    const _vidbEl = document.getElementById('vidbCheck');
+                    const _vidbChecked = _vidbEl && _vidbEl.checked;
+                    if (!_vidbChecked) {
+                        shouldInclude = false; // Install covered by VCFMS deployment
+                    } else if (window.vidbIsEmbedded === true) {
+                        shouldInclude = false; // Embedded — handled via vCenter notice
+                    } else if (window.vidbIsEmbedded === false) {
+                        // Standalone upgrade
+                        shouldInclude = true;
+                        phaseTitle = componentData ? componentData.name : 'Identity Broker';
+                        phaseDescription = 'Upgrade Identity Broker';
+                        if (componentData) {
+                            try {
+                                const vidbUpgradeKey = deploymentType === 'simple'
+                                    ? 'upgrade_tables_simple_small'
+                                    : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
+                                const cloned = JSON.parse(JSON.stringify(componentData));
+                                if (cloned[vidbUpgradeKey]) {
+                                    cloned.tables = cloned[vidbUpgradeKey];
+                                    componentData = cloned;
+                                }
+                            } catch(e) { console.error('Error selecting vidb upgrade tables:', e); }
+                        }
+                    } else {
+                        shouldInclude = false; // Embedded question not yet answered — blocking check will catch this
+                    }
                 } else if (coreComponents.includes(componentId)) {
                     // Core components ALWAYS included
                     shouldInclude = true;
@@ -1487,16 +1538,6 @@
                     shouldInclude = selectedProducts[componentId] === true;
                     phaseTitle = componentData ? componentData.name : componentId;
                     phaseDescription = 'Deploy ' + phaseTitle;
-                } else if (componentId === 'vxrail') {
-                    // VxRail only if selected - replaces ESX
-                    shouldInclude = selectedProducts['vxrail'] === true;
-                    phaseTitle = componentData ? componentData.name : 'vxrail';
-                    phaseDescription = 'Upgrade ' + phaseTitle; 
-                } else if (componentId === 'esx') {
-                    // ESX only if VxRail is NOT selected
-                    shouldInclude = selectedProducts['vxrail'] !== true;
-                    phaseTitle = componentData ? componentData.name : 'esx';
-                    phaseDescription = 'Upgrade ' + phaseTitle;
                 } else {
                     // ALL OTHER components are OPTIONAL - only include if selected
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1531,6 +1572,31 @@
             console.log('Steps created:', steps.length);
             console.log('Steps array:', steps.map(s => s.title));
             allSteps = steps;
+
+            // Prepend vIDB overlay transition step when vIDB is selected, NOT embedded, and deployed on NSX Overlay
+            const _vidbSelectedForOverlay = document.getElementById('vidbCheck') && document.getElementById('vidbCheck').checked;
+            if (_vidbSelectedForOverlay && window.vidbIsEmbedded === false && window.vidbOnOverlay === true) {
+                const _overlayComponentData = upgradeData.components['vidb_overlay_transition'];
+                if (_overlayComponentData) {
+                    const _overlayTransitionStep = {
+                        number: 1,
+                        title: _overlayComponentData.name,
+                        description: 'Move Identity Broker off the NSX Overlay Network to the VCF Management Network before proceeding with any other upgrade steps.',
+                        phases: [{
+                            number: 1,
+                            title: _overlayComponentData.name,
+                            description: 'Move Identity Broker off the NSX Overlay to the VCF Management Network.',
+                            data: _overlayComponentData,
+                            componentId: 'vidb_overlay_transition'
+                        }]
+                    };
+                    allSteps.unshift(_overlayTransitionStep);
+                    allSteps.forEach(function(s, i) { s.number = i + 1; });
+                } else {
+                    console.warn('vidb_overlay_transition component not found in upgradeData');
+                }
+            }
+
             currentStepIndex = 0; // Always start from first step
             
             // Update counter
@@ -1550,6 +1616,42 @@
                 `;
                 return;
             }
+
+            // Block plan rendering if vIDB is checked but required questions not yet answered
+            const _vidbCheckEl = document.getElementById('vidbCheck');
+            const _vidbIsCheckedNow = _vidbCheckEl && _vidbCheckEl.checked;
+            if (_vidbIsCheckedNow && window.vidbIsEmbedded === null) {
+                const container = document.getElementById('phaseContainer');
+                container.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #fff8e1, #fff3cd); border: 2px solid #ffc107; padding: 30px; border-radius: 12px; text-align: center; margin-top: 10px;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">&#x26A0;&#xFE0F;</div>
+                        <h3 style="color: #856404; margin-bottom: 12px;">Answer Required Before Plan Can Be Generated</h3>
+                        <p style="color: #5a4a00; margin-bottom: 8px; font-size: 0.95rem;">
+                            <strong>Identity Broker</strong> is selected as an existing deployment.
+                        </p>
+                        <p style="color: #5a4a00; margin: 0; font-size: 0.95rem;">
+                            Please answer the <strong>"Is Identity Broker deployed as Embedded (part of vCenter)?"</strong> question above to generate your upgrade plan.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            if (_vidbIsCheckedNow && window.vidbIsEmbedded === false && window.vidbOnOverlay === null) {
+                const container = document.getElementById('phaseContainer');
+                container.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #fff8e1, #fff3cd); border: 2px solid #ffc107; padding: 30px; border-radius: 12px; text-align: center; margin-top: 10px;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">&#x26A0;&#xFE0F;</div>
+                        <h3 style="color: #856404; margin-bottom: 12px;">Answer Required Before Plan Can Be Generated</h3>
+                        <p style="color: #5a4a00; margin-bottom: 8px; font-size: 0.95rem;">
+                            <strong>Identity Broker</strong> is configured as a standalone deployment.
+                        </p>
+                        <p style="color: #5a4a00; margin: 0; font-size: 0.95rem;">
+                            Please answer the <strong>"Is Identity Broker deployed on an NSX Overlay network?"</strong> question above to generate your upgrade plan.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
             
             displayStepsView();
             setTimeout(() => initInlineDocumentation(), 100);
@@ -1557,7 +1659,7 @@
             // Smooth scroll on first generation
             if (steps.length > 0) {
                 setTimeout(() => {
-                    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('step3') && document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
             }
         }
@@ -1574,48 +1676,36 @@
             // 3. sddc to VCF (includes Ops install if not installed)
             // 4. NSX
             // 5. vCenter
-            // 6. Pre-ESX Infrastructure (vLCM, vSAN Witness, supervisor)
+            // 6. Pre-ESX Infrastructure (vSAN Witness, supervisor)
             // 7. ESX Hosts
             // 8. Automation Deployment
             // 9. Post-Infrastructure (Logs, Network)
             
-            const prereqPhases = [];
             const optionalPreInfraPhases = [];
-            const operationsPhases = [];
             const sddcPhases = [];
             const vcfmsPhases = [];
             const nsxfedPhases = [];
             const nsxPhases = [];
             const vcenterPhases = [];
-            const vlcmPhases = [];
             const supervisorPhases = [];
             const witnessPhases = [];
             const esxPhases = [];
-            const automationPhases = [];
-            const networkPhases = [];
-            const advancedPhases = [];
-            const vidmPhases =[];
-            const elmPhases = [];
-            const vxrailPhases = [];
-            const operations_orchestratorPhases = [];
-            const vsan_file_servicePhases = [];
             const nsx_edgePhases = [];
+            const vidbPhases =[];
+            const vxrailPhases = [];
+            const vsan_file_servicePhases = [];
 
-            
+
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
                 const isPreInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'pre_infrastructure';
                 const isPostInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'post_infrastructure';
                 
-                if (phase.componentId === 'vcf_prereq') {
-                    prereqPhases.push(phase);
-                } else if (isPreInfraOptional) {
+                if (isPreInfraOptional) {
                     optionalPreInfraPhases.push(phase);
-                } else if (phase.componentId === 'operations') {
-                    operationsPhases.push(phase);
                 } else if (phase.componentId === 'sddc_manager') {
                     sddcPhases.push(phase);
-                }else if (phase.componentId === 'vcfms') {
+                } else if (phase.componentId === 'vcfms') {
                     vcfmsPhases.push(phase);
                 }else if (phase.componentId === 'nsx_federation') {
                     nsxfedPhases.push(phase);
@@ -1623,60 +1713,42 @@
                     nsxPhases.push(phase);
                 } else if (phase.componentId === 'vcenter') {
                     vcenterPhases.push(phase);
-                } else if (phase.componentId === 'vum_migration') {
-                    vlcmPhases.push(phase);
                 } else if (phase.componentId === 'vsan_witness') {
                     witnessPhases.push(phase);
                 } else if (phase.componentId === 'supervisor') {
                     supervisorPhases.push(phase);
                 } else if (phase.componentId === 'vxrail') {
                     vxrailPhases.push(phase);
-                } else if (phase.componentId === 'elm') {
-                    elmPhases.push(phase);
                 } else if (phase.componentId === 'esx') {
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'nsx_edge') {
                     nsx_edgePhases.push(phase);
-                } else if (phase.componentId === 'automation' || phase.componentId === 'automation_install') {
-                    automationPhases.push(phase);
-                } else if (phase.componentId === 'operations_orchestrator') {
-                    operations_orchestratorPhases.push(phase);
-                } else if (phase.componentId === 'vidm') {
-                    vidmPhases.push(phase);
-                } else if (phase.componentId === 'network') {
-                    networkPhases.push(phase);
-                } else if (isPostInfraOptional) {
-                    advancedPhases.push(phase);
+                } else if (phase.componentId === 'vidb') {
+                    vidbPhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
                     vsan_file_servicePhases.push(phase);
                 }
             });
             
             // Sort groups
-            prereqPhases.sort((a, b) => a.number - b.number);
             optionalPreInfraPhases.sort((a, b) => a.number - b.number);
-            operationsPhases.sort((a, b) => a.number - b.number);
             sddcPhases.sort((a, b) => a.number - b.number);
             vcfmsPhases.sort((a, b) => a.number - b.number);
             nsxfedPhases.sort((a, b) => a.number - b.number);
             nsxPhases.sort((a, b) => a.number - b.number);
             vcenterPhases.sort((a, b) => a.number - b.number);
-            vlcmPhases.sort((a, b) => a.number - b.number);
             supervisorPhases.sort((a, b) => a.number - b.number);
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
-            automationPhases.sort((a, b) => a.number - b.number);
-            networkPhases.sort((a, b) => a.number - b.number);
-            advancedPhases.sort((a, b) => a.number - b.number);
-            elmPhases.sort((a, b) => a.number - b.number);
-            vidmPhases.sort((a, b) => a.number - b.number);
+            nsx_edgePhases.sort((a, b) => a.number - b.number);
+            vidbPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
-            operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             vsan_file_servicePhases.sort((a, b) => a.number - b.number);
+
             
             // Build steps in the order defined by currentOrder (dynamic based on NSX selection)
             // Group Replication + SRM together, keep AVI and HCX separate
-            const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'replication' || p.componentId === 'srm' || p.componentId === 'vsan_data_protection');
+            const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'vlr' || p.componentId === 'vsan_data_protection');
             const aviPhases = optionalPreInfraPhases.filter(p => p.componentId === 'avi');
             // Inject License Hub into AVI step when AVI is selected
             if (aviPhases.length > 0) {
@@ -1694,29 +1766,15 @@
             
             // Create a map of component groups to their step definitions
             const stepDefinitions = {
-                'vcf_prereq': {
-                    phases: prereqPhases,
-                    title: 'Pre-Upgrade: Upgrade VCF to 5.2.2 or 5.2.3',
-                    description: 'pre-upgrade step before proceeding to VCF ' + window.targetVcf91Version,
-                },
                 'drProducts': {
                     phases: replicationPhases,
                     title: 'Disaster Recovery Products',
-                    description: 'Upgrade vSphere Replication, Site Recovery Manager or vSAN Data Protection'
+                    description: 'Upgrade VMware Live Recovery or vSAN Data Protection'
                 },
                 'avi': {
                     phases: aviPhases,
-                    title: aviPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade Avi Load Balancer & Deploy License Hub' : (aviPhases.length > 0 ? aviPhases[0].title : 'Upgrade Avi Load Balancer'),
+                    title: aviPhases.some(p => p.componentId === 'license_hub') ? 'Avi Load Balancer & Deploy License Hub' : (aviPhases.length > 0 ? aviPhases[0].title : 'Avi Load Balancer'),
                     description: aviPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade Avi Load Balancer and Deploy License Hub' : (aviPhases.length > 0 ? aviPhases[0].description : 'Upgrade Avi Load Balancer')
-                },
-                'hcx': {
-                    phases: hcxPhases,
-                    title: hcxPhases.length > 0 ? hcxPhases[0].title : 'VMware HCX',
-                    description: hcxPhases.length > 0 ? hcxPhases[0].description : 'Upgrade VMware HCX'
-                },
-                'operations': {
-                    phases: operationsPhases,
-                    title: window.operationsIsUpgrade ? 'VCF Operations Upgrade' : 'VCF Operations Install'
                 },
                 'sddc_manager': {
                     phases: sddcPhases,
@@ -1728,26 +1786,25 @@
                     title: 'VCF Management Service Deployment',
                     description: 'Deploy VCF management services on first SDDC Instance'
                 },
+                'hcx': {
+                    phases: hcxPhases,
+                    title: hcxPhases.length > 0 ? hcxPhases[0].title : 'VMware HCX',
+                    description: hcxPhases.length > 0 ? hcxPhases[0].description : 'Upgrade VMware HCX'
+                },
                 'nsx_federation': {
                     phases: nsxfedPhases,
                     title: 'NSX Global Manager Upgrade',
                     description: 'Upgrade Fderation'
                 },
-
                 'nsx': {
                     phases: nsxPhases,
-                    title: nsxPhases.some(p => p.componentId === 'license_hub') ? 'NSX Local Manager Upgrade & Deploy License Hub' : 'NSX Local Manager Upgrade',
-                    description: nsxPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade NSX and Deploy License Hub' : 'NSX Local Manager Upgrade'
+                    title: nsxPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade NSX Local Manager & Deploy License Hub' : 'NSX Local Manager Upgrade',
+                    description: nsxPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade NSX and Deploy License Hub' : 'Upgrade NSX'
                 },
                 'vcenter': {
                     phases: vcenterPhases,
                     title: 'vCenter Upgrade',
                     description: 'Upgrade vCenter Server'
-                },
-                'vlcm': {
-                    phases: vlcmPhases,
-                    title: 'Migrate to vLCM',
-                    description: 'Migrate from VUM to vSphere Lifecycle Manager'
                 },
                 'supervisor': {
                     phases: supervisorPhases,
@@ -1763,7 +1820,6 @@
                     phases: vxrailPhases,
                     title: 'VxRail',
                     description: 'Upgrade VxRail hardware and software'
-
                 },
                 'esx': {
                     phases: esxPhases,
@@ -1779,83 +1835,39 @@
                         ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
                         : 'Finalize NSX upgrade'
                 },
-                'automation': {
-                    phases: automationPhases,
-                    title: window.automationIsUpgrade ? 'VCF Automation Upgrade' : 'VCF Automation Install'
-                },
-                'operations_orchestrator': {
-                    phases: operations_orchestratorPhases,
-                    title: 'Standalone VCF Operations Orchestrator',
-                    description: "Upgrade VCF Operations Orchestrator "
-                },
-                'vidm': {
-                    phases: vidmPhases,
-                    title: 'VMware Identity Manager Migration',
-                    description: 'Migration from VMware Identity Manager to VMware Identity Broker'
-
-                },
-                'network': {
-                    phases: networkPhases,
-                    title: 'VCF Operations for Networks',
-                    description: 'Upgrade VCF Operations for Networks'
-                },
-                'advanced': {
-                    phases: advancedPhases,
-                    title: 'Post-Infrastructure Products',
-                    description: 'Upgrade additional products (Log Management)'
-                },
-                'elm': {
-                    phases: elmPhases,
-                    title: 'ELM Breakage on SDDC Manager',
-                    description: 'Break ELM on SDDC manager pre step to set up VIDB'
+                 'vidb': {
+                    phases: vidbPhases,
+                    title: 'Identity Broker',
+                    description: 'Upgrade Identity Broker'
                 },
                 'vsan_file_service': {
-                    phases: vsan_file_servicePhases,
-                    title: 'vSAN File Service',
-                    description: 'Upgrade vSAN File Service'
+                 phases: vsan_file_servicePhases,
+                 title: 'vSAN File Service',
+                 description: 'Upgrade vSAN File Services'
                 }
-
             };
             
             // Map component IDs to their step groups
             const componentToStepGroup = {
-                'vcf_prereq': 'vcf_prereq',
-                'replication': 'drProducts',
-                'srm': 'drProducts',
-                'vsan_data_protection': "drProducts",
+                'vlr': 'drProducts',
+                'vsan_data_protection': 'drProducts',
                 'avi': 'avi',
                 'hcx': 'hcx',
-                'operations': 'operations',
                 'nsx': 'nsx',
                 'nsx_federation': 'nsx_federation',
                 'vcenter': 'vcenter',
-                'vum_migration': 'vlcm',
                 'vsan_witness': 'witness',
                 'supervisor': 'supervisor',
                 'vxrail': 'vxrail',
                 'esx': 'esx',
-                'automation': 'automation',
-                'logs': 'advanced',
-                'network': 'network',
                 'sddc_manager': 'sddc_manager',
                 'vcfms': 'vcfms',
-                'vidm': 'vidm',
-                'elm': 'elm',
-                'operations_orchestrator': 'operations_orchestrator',
+                'vidb': 'vidb',
                 'vsan_file_service': 'vsan_file_service',
                 'nsx_edge': 'nsx_edge'
+
             };
             
-            // Insert vcf_prereq as the very first step if present
-            if (prereqPhases.length > 0) {
-                steps.push({
-                    number: 1,
-                    title: stepDefinitions['vcf_prereq'].title,
-                    description: stepDefinitions['vcf_prereq'].description,
-                    phases: prereqPhases
-                });
-            }
-
             // Track which step groups have been added
             const addedStepGroups = new Set();
             
@@ -1880,7 +1892,6 @@
         }
         
         function displayStepsView() {
-            try {
             const container = document.getElementById('phaseContainer');
             container.classList.add('plan-updating');
             setTimeout(() => container.classList.remove('plan-updating'), 400);
@@ -1949,23 +1960,33 @@
                             html += `</tbody></table></div></div>`;
                         });
                     }
-                   if (phase.data.notices && phase.data.notices.length > 0) {
+                     if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
                             const icon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
                             html += `<div style="background: var(--card-bg); border-left: 4px solid ${color}; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>${icon} ${notice.title}</strong>`;
-                           if (notice.bullets && notice.bullets.length > 0) {
-                                html += `<ul style="margin: 8px 0 0 20px;">`;
-                                notice.bullets.forEach(bullet => {
-                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                        html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                        bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                        html += `</ul></li>`;
-                                    } else {
-                                        html += `<li>${bullet}</li>`;
-                                    }
+                                if (notice.bullets && notice.bullets.length > 0) {
+                                // Separate regular bullets from notice_block entries (rendered as styled divs)
+                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
+                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
+                                if (_regBullets.length > 0) {
+                                    html += `<ul style="margin: 8px 0 0 20px;">`;
+                                    _regBullets.forEach(bullet => {
+                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            html += `</ul></li>`;
+                                        } else {
+                                            html += `<li>${bullet}</li>`;
+                                        }
+                                    });
+                                    html += `</ul>`;
+                                }
+                                _noticeBlocks.forEach(block => {
+                                    html += `<div style="background: var(--card-bg); border-left: 4px solid #17a2b8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
+                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                    html += `</ul></div>`;
                                 });
-                                html += `</ul>`;
                             }
                             html += `</div>`;
                         });
@@ -1975,7 +1996,6 @@
                         phase.data.steps.forEach(s => html += `<li>${s}</li>`);
                         html += `</ul>`;
                     }
-                
                 }
                 
                 html += `</div>`;
@@ -2018,10 +2038,6 @@
             
             container.innerHTML = applyTargetVersion(html);
             generateDiagram();
-            } catch(err) {
-                console.error('displayStepsView CRASH at stepIndex', currentStepIndex, ':', err);
-                document.getElementById('phaseContainer').innerHTML = '<div style="color:red;padding:20px;"><strong>Render error (see console):</strong> ' + err.message + '</div>';
-            }
         }
         
         function nextStep() {
@@ -2198,15 +2214,32 @@
                         phase.data.notices.forEach(notice => {
                             const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
                             html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
-                            if (notice.bullets && notice.bullets.length > 0) {
-                                html += '<ul>';
-                                notice.bullets.forEach(b => html += '<li>' + stripHtml(b) + '</li>');
-                                html += '</ul>';
+                                                                if (notice.bullets && notice.bullets.length > 0) {
+                                // Separate regular bullets from notice_block entries (rendered as styled divs)
+                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
+                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
+                                if (_regBullets.length > 0) {
+                                    html += `<ul style="margin: 8px 0 0 20px;">`;
+                                    _regBullets.forEach(bullet => {
+                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            html += `</ul></li>`;
+                                        } else {
+                                            html += `<li>${bullet}</li>`;
+                                        }
+                                    });
+                                    html += `</ul>`;
+                                }
+                                _noticeBlocks.forEach(block => {
+                                    html += `<div style="background: var(--card-bg); border-left: 4px solid #17a2b8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
+                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                    html += `</ul></div>`;
+                                });
                             }
                             html += '</div>';
                         });
                     }
-
                     if (phase.data.steps && phase.data.steps.length > 0) {
                         html += '<h4>Steps:</h4><ul>';
                         phase.data.steps.forEach(s => {
@@ -2218,14 +2251,13 @@
                                     html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px;">';
                                     html += '<h5 style="color: #3d6680; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
                                     html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
-                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);"><strong>Source:</strong> ' + docUrl + '</p>';
+                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: #6c757d;"><strong>Source:</strong> ' + docUrl + '</p>';
                                     html += '</div>';
                                 }
                             }
                         });
                         html += '</ul>';
                     }
-
                 }
                 html += '</div>';
             });
@@ -2249,7 +2281,7 @@
             
             phases.forEach(phase => {
                 html += `<div class="phase">`;
-                html += `<h3>Phase ${phase.number}: ${phase.title}</h3>`;
+                html += `<h3>Step ${phaseIdx + 1}: ${phase.title}</h3>`;
                 html += `<p>${phase.description}</p>`;
                 
                 // If we have detailed data from JSON, show it
@@ -2264,7 +2296,7 @@
                         html += `</ul>`;
                     }
 
-                    // Notices/Warnings
+                      // Notices/Warnings
                     if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const noticeColor = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
@@ -2272,11 +2304,27 @@
                             html += `<div style="background: #f0f2f5; border-left: 4px solid ${noticeColor}; padding: 12px; margin-top: 16px; border-radius: 4px;">`;
                             html += `<strong>${noticeIcon} ${notice.title}</strong>`;
                             if (notice.bullets && notice.bullets.length > 0) {
-                                html += `<ul style="margin: 8px 0 0 20px;">`;
-                                notice.bullets.forEach(bullet => {
-                                    html += `<li>${bullet}</li>`;
+                                // Separate regular bullets from notice_block entries (rendered as styled divs)
+                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
+                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
+                                if (_regBullets.length > 0) {
+                                    html += `<ul style="margin: 8px 0 0 20px;">`;
+                                    _regBullets.forEach(bullet => {
+                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            html += `</ul></li>`;
+                                        } else {
+                                            html += `<li>${bullet}</li>`;
+                                        }
+                                    });
+                                    html += `</ul>`;
+                                }
+                                _noticeBlocks.forEach(block => {
+                                    html += `<div style="background: var(--card-bg); border-left: 4px solid #17a2b8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
+                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                    html += `</ul></div>`;
                                 });
-                                html += `</ul>`;
                             }
                             html += `</div>`;
                         });
@@ -2321,7 +2369,7 @@
             } else if (operationsSelected && operationsVersion === '9.0.x') {
                 phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations', data: opsData });
             } else if (!operationsSelected) {
-                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations (new installation)', data: opsData });
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations 9.0 (new installation)', data: opsData });
             }
 
             const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
@@ -2329,11 +2377,6 @@
                 phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: 'Upgrade vCenter', data: vcenterData });
             } else {
                 phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: 'Upgrade vCenter', data: vcenterData });
-            }
-
-            if (vlcmSelected) {
-                const vlcmData = upgradeData ? upgradeData.components.vum_migration : null;
-                phases.push({ number: phases.length + 1, title: 'vLCM Baseline to Image Migration', description: 'Migrate from Baseline to Image-based management', data: vlcmData });
             }
 
             if (witnessSelected) {
@@ -2378,7 +2421,6 @@
             html += '<h3 style="margin-bottom: 8px; font-size:1rem;">Selected Components:</h3>';           
             html += '<ul style="margin-left: 20px;">';
             html += `<li><span class="badge included">✓ VCF Version</span><span class="badge version">v${vcfdetailVersion}</span></li>`;
-            
             if (vxrailSelected) {
                 const _vxrVer = window.vxrailVersion ? ` <span class="badge version">v${window.vxrailVersion}</span>` : '';
                 html += `<li><span class="badge included">✓ Dell VxRail (HCI)</span>${_vxrVer}</li>`;
@@ -2386,55 +2428,32 @@
             
             html += '</ul>';
             
-           // Additional Products Section — grouped by chip category
+                        // Additional Products Section — grouped by chip category
             const selectedProducts = window.selectedAdvancedProducts || {};
             const hasAdditionalProducts = Object.values(selectedProducts).some(val => val === true);
-
             if (hasAdditionalProducts && typeof G_INDEX !== 'undefined' && G_INDEX.length) {
-                // Bucket selected items by group, preserving group order
-                const groupOrder = [];
-                const groupItems = {};
+                const groupOrder = []; const groupItems = {};
                 G_INDEX.forEach(item => {
                     if (selectedProducts[item.id]) {
-                        if (!groupItems[item.group]) {
-                            groupOrder.push(item.group);
-                            groupItems[item.group] = [];
-                        }
+                        if (!groupItems[item.group]) { groupOrder.push(item.group); groupItems[item.group] = []; }
                         groupItems[item.group].push(item.name);
                     }
                 });
-
+                const G_EXPORT_ORDER = { 'Components': 0, 'Features': 1, 'Add-on': 2 };
+                groupOrder.sort((a, b) => { const oa = G_EXPORT_ORDER[a]!==undefined?G_EXPORT_ORDER[a]:99; const ob = G_EXPORT_ORDER[b]!==undefined?G_EXPORT_ORDER[b]:99; return oa-ob; });
                 if (groupOrder.length) {
-                    html += '<div style="margin-top:16px;">';
-                    html += '<h3 style="margin-bottom:10px;font-size:1rem;">Selected Optional Components:</h3>';
-                    // Sort group order: Components → Features → Add-on
-            const G_EXPORT_ORDER = { 'Components': 0, 'Features': 1, 'Add-on': 2 };
-            groupOrder.sort((a, b) => {
-                const oa = G_EXPORT_ORDER[a] !== undefined ? G_EXPORT_ORDER[a] : 99;
-                const ob = G_EXPORT_ORDER[b] !== undefined ? G_EXPORT_ORDER[b] : 99;
-                return oa - ob;
-            });
-            groupOrder.forEach(grp => {
-                        html += '<div style="margin-bottom:10px;">';
-                        html += '<div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#1674b1;border-left:3px solid #1674b1;padding-left:7px;margin-bottom:5px;">' + grp + '</div>';
-                        html += '<ul style="margin-left:18px;margin-top:0;">';
-                        groupItems[grp].forEach(name => {
-                            html += '<li style="font-size:0.92rem;">' + name + '</li>';
-                        });
+                    html += '<div style="margin-top:16px;"><h3 style="margin-bottom:10px;font-size:1rem;">Selected Optional Components:</h3>';
+                    groupOrder.forEach(grp => {
+                        html += '<div style="margin-bottom:10px;"><div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;color:#1674b1;border-left:3px solid #1674b1;padding-left:7px;margin-bottom:5px;">' + grp + '</div><ul style="margin-left:18px;margin-top:0;">';
+                        groupItems[grp].forEach(name => { html += '<li style="font-size:0.92rem;">' + name + '</li>'; });
                         html += '</ul></div>';
                     });
                     html += '</div>';
                 }
             } else if (hasAdditionalProducts) {
-                // Fallback: flat list if G_INDEX not available
-                html += '<h3 style="margin-top: 16px; margin-bottom: 8px;">Selected Optional Components:</h3>';
-                html += '<ul style="margin-left: 20px;">';
+                html += '<h3 style="margin-top:16px;margin-bottom:8px;">Selected Optional Components:</h3><ul style="margin-left:20px;">';
                 if (upgradeData && upgradeData.optional_products) {
-                    upgradeData.optional_products.forEach(product => {
-                        if (selectedProducts[product.id] === true) {
-                            html += '<li>' + product.display_name + '</li>';
-                        }
-                    });
+                    upgradeData.optional_products.forEach(product => { if (selectedProducts[product.id]) html += '<li>' + product.display_name + '</li>'; });
                 }
                 html += '</ul>';
             }
@@ -2478,22 +2497,39 @@
                             html += '</tbody></table></div></div>';
                         });
                     }
-
-                      if (phase.data.notices && phase.data.notices.length > 0) {
+                     if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
                             const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
                             html += '<div style="background: white; border-left: 4px solid ' + color + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
                             html += '<strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
-                            if (notice.bullets && notice.bullets.length > 0) {
-                                html += '<ul style="margin: 8px 0 0 20px;">';
-                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
-                                html += '</ul>';
+                                                       if (notice.bullets && notice.bullets.length > 0) {
+                                // Separate regular bullets from notice_block entries (rendered as styled divs)
+                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
+                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
+                                if (_regBullets.length > 0) {
+                                    html += `<ul style="margin: 8px 0 0 20px;">`;
+                                    _regBullets.forEach(bullet => {
+                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            html += `</ul></li>`;
+                                        } else {
+                                            html += `<li>${bullet}</li>`;
+                                        }
+                                    });
+                                    html += `</ul>`;
+                                }
+                                _noticeBlocks.forEach(block => {
+                                    html += `<div style="background: var(--card-bg); border-left: 4px solid #17a2b8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
+                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                    html += `</ul></div>`;
+                                });
                             }
                             html += '</div>';
                         });
                     }
-                    
+
                     if (phase.data.steps && phase.data.steps.length > 0) {
                         html += '<h4 style="color: #1a2332; margin-top: 12px;">Steps:</h4>';
                         html += '<ul style="margin-left: 20px;">';
@@ -2506,14 +2542,13 @@
                                     html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px; page-break-inside: avoid;">';
                                     html += '<h5 style="color: #3d6680; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
                                     html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
-                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);"><strong>Source:</strong> ' + docUrl + '</p>';
+                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: #6c757d;"><strong>Source:</strong> ' + docUrl + '</p>';
                                     html += '</div>';
                                 }
                             }
                         });
                         html += '</ul>';
                     }
-                  
                 }
                 html += '</div>';
             });
@@ -2986,12 +3021,9 @@
             vsan_data_protection:    G_GROUP_FEATURES,
             vsan_file_service:       G_GROUP_FEATURES,
             nsx_federation:          G_GROUP_FEATURES,
-            vum_migration:           G_GROUP_FEATURES,
-            elm:                     G_GROUP_FEATURES,
 
             // Components
-            srm:                     G_GROUP_COMPONENTS,
-            replication:             G_GROUP_COMPONENTS,
+            vlr:                     G_GROUP_COMPONENTS,
             avi:                     G_GROUP_COMPONENTS,
             hcx:                     G_GROUP_COMPONENTS,
             operations_orchestrator: G_GROUP_COMPONENTS,
@@ -2999,7 +3031,7 @@
             logs:                    G_GROUP_COMPONENTS,
             network:                 G_GROUP_COMPONENTS,
             vsan_witness:            G_GROUP_COMPONENTS,
-            vidm:                    G_GROUP_COMPONENTS,
+            vidb:                    G_GROUP_COMPONENTS,
 
             // Add-on:
             vdefend:                 G_GROUP_ADDON,
@@ -3014,8 +3046,7 @@
             vsan_data_protection:    'vsan san storage protection data dp',
             vsan_file_service:       'vsan san file service nfs smb shares',
             vsan_witness:            'vsan witness stretched host cluster',
-            srm:                     'srm site recovery manager dr disaster failover',
-            replication:             'replication replicate vsphere async vm dr',
+            vlr:                     'VMware Live Recovery dr disaster failover',            
             avi:                     'avi load balancer nsx alb network lb',
             hcx:                     'hcx hybrid cloud extension migration mobility',
             nsx_federation:          'nsx federation multi-site locations',
@@ -3025,14 +3056,13 @@
             vidm:                    'vidm identity manager authentication sso',
             logs:                    'logs log vcf operations observability syslog',
             network:                 'vcf operations networks aria network insight',
-            vidm:                    'vidm vmware identity manager idm sso',
+            vidb:                    'vidb identity broker idm authentication sso',
         };
 
         const G_CHECKBOX_MAP = {
-            vum_migration: 'vlcmCheck',
             vsan_witness:  'witnessCheck',
-            elm:           'elmCheck',
             supervisor:    'supervisorCheck',
+            vidb:          'vidbCheck',
         };
 
         let G_INDEX = [];
@@ -3042,21 +3072,24 @@
             G_INDEX = [];
             if (!upgradeData) return;
 
+            // NSX-gated items — only show if NSX is in the environment
+            // vidb has dedicated embedded/overlay UI — exclude from chips
+            const SKIP_IDS = new Set(['vidb']);
 
             const seen = new Set();
             (upgradeData.optional_products || []).forEach(p => {
-                // Skip NSX-dependent items if NSX is not selected
+                if (SKIP_IDS.has(p.id)) return;
                 seen.add(p.id);
                 G_INDEX.push({ id: p.id, name: p.display_name, keywords: G_KEYWORD_MAP[p.id] || p.display_name.toLowerCase(), group: G_GROUP_MAP[p.id] || 'Other' });
             });
 
             // Add ELM from components if present
-            if (!seen.has('elm') && upgradeData.components?.['elm']) {
+            if (!seen.has('elm') && upgradeData.components?.['elm_break']) {
                 G_INDEX.push({ id: 'elm', name: 'Enhanced Linked Mode (ELM)', keywords: G_KEYWORD_MAP['elm'] || 'elm enhanced linked mode', group: G_GROUP_MAP['elm'] || 'Features' });
             }
 
             // Add other legacy items
-            ['vsan_witness','vum_migration'].forEach(id => {
+            ['vsan_witness','vcha','auto_deploy','vum_migration'].forEach(id => {
                 if (!seen.has(id) && upgradeData.components?.[id]) {
                     G_INDEX.push({ id, name: upgradeData.components[id].name || id, keywords: G_KEYWORD_MAP[id] || id, group: G_GROUP_MAP[id] || 'Other' });
                 }
@@ -3141,21 +3174,19 @@
 
         function resetDropdowns() { gReset(); }
     </script>
-
             </div>
         </div>
     </div>
-    <!-- Documentation Modal -->
     <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
         <div class="doc-modal-content">
-            <div class="doc-modal-header">
+                        <div class="doc-modal-header">
                 <div style="display:flex; align-items:center; gap:12px; min-width:0;">
                     <button id="docModalBackBtn" class="doc-modal-back" onclick="docModalGoBack()" style="display:none;" title="Go back">&#8592; Back</button>
                     <h2 id="docModalTitle" style="margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Documentation</h2>
                 </div>
                 <button class="doc-modal-close" onclick="closeDocModal()">&times;</button>
             </div>
-            <div class="doc-modal-inner">
+                        <div class="doc-modal-inner">
                 <div class="doc-subpages-sidebar" id="docSubpagesSidebar">
                     <h4>Related Pages</h4>
                     <ul class="doc-subpages-list" id="docSubpagesList"></ul>
@@ -3169,6 +3200,7 @@
                 </a>
             </div>
         </div>
+    </div>
 </body>
 
 </html>

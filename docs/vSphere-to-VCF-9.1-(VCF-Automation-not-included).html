@@ -1147,7 +1147,7 @@
                         <div>
                             <strong style="color: #7C3AED; font-size: 16px;">Safe Stopping Points</strong>
                             <p style="margin: 4px 0 0 0; color: #5a6778; font-size: 14px;">
-                                Each Phases is safe stopping points where you can pause for validation and testing before proceeding with the next phase.
+                                Each phase is a safe stopping point where you can pause for validation and testing before proceeding to the next phase.
                             </p>
                         </div>
                     </div>
@@ -2300,6 +2300,13 @@
         // Captures the rendered Mermaid diagram SVG from the main page and
         // prepends it, so the PDF export includes the visual flow diagram.
         function _openPrintWindow(contentHtml) {
+            // Capture page title from the visible h1
+            var _h1El = document.querySelector('h1');
+            var pageTitle = (_h1El && _h1El.textContent.trim()) ? _h1El.textContent.trim() : document.title;
+            var titleBlock = '<div style="margin-bottom:24px; padding:18px 20px; background:#1a2d40; border-radius:8px;">'
+                + '<h1 style="margin:0; font-size:1.4rem; font-weight:700; color:#ffffff; letter-spacing:0.01em;">' + pageTitle + '</h1>'
+                + '<p style="margin:6px 0 0; font-size:0.82rem; color:#a0b8cc;">Generated: ' + new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) + '</p>'
+                + '</div>';
             // Capture the rendered Mermaid SVG from the main page
             var diagramSvg = '';
             var diagramContainer = document.getElementById('diagramContainer');
@@ -2366,7 +2373,7 @@
             // Blob URL — this avoids document.write() and the associated
             // "DOM text reinterpreted as HTML" security warning.
             var printHtml = '<!DOCTYPE html>\n'
-                + '<html lang="en"><head><meta charset="utf-8"><title>Upgrade Guide Export</title>'
+                + '<html lang="en"><head><meta charset="utf-8"><title>' + pageTitle + '</title>'
                 + '<style>'
                 + '*, *::before, *::after { box-sizing: border-box; }'
                 + 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;'
@@ -2389,6 +2396,7 @@
                 + '@page { size: A4 landscape; margin: 12mm 10mm; }'
                 + '@media print { body { padding: 0; } }'
                 + '</style></head><body>'
+                + titleBlock
                 + diagramSvg
                 + contentHtml
                 + '</body></html>';

@@ -1136,7 +1136,7 @@
                         <div>
                             <strong style="color: #7C3AED; font-size: 16px;">Safe Stopping Points</strong>
                             <p style="margin: 4px 0 0 0; color: #5a6778; font-size: 14px;">
-                                Each Phases is safe stopping points where you can pause for validation and testing before proceeding with the next phase.
+                                Each phase is a safe stopping point where you can pause for validation and testing before proceeding to the next phase.
                             </p>
                         </div>
                     </div>
@@ -1863,6 +1863,13 @@
         // Captures the rendered Mermaid diagram SVG from the main page and
         // prepends it, so the PDF export includes the visual flow diagram.
         function _openPrintWindow(contentHtml) {
+            // Capture page title from the visible h1
+            var _h1El = document.querySelector('h1');
+            var pageTitle = (_h1El && _h1El.textContent.trim()) ? _h1El.textContent.trim() : document.title;
+            var titleBlock = '<div style="margin-bottom:24px; padding:18px 20px; background:#1a2d40; border-radius:8px;">'
+                + '<h1 style="margin:0; font-size:1.4rem; font-weight:700; color:#ffffff; letter-spacing:0.01em;">' + pageTitle + '</h1>'
+                + '<p style="margin:6px 0 0; font-size:0.82rem; color:#a0b8cc;">Generated: ' + new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) + '</p>'
+                + '</div>';
             // Capture the rendered Mermaid SVG from the main page
             var diagramSvg = '';
             var diagramContainer = document.getElementById('diagramContainer');
@@ -1928,7 +1935,7 @@
             // Blob URL — this avoids document.write() and the associated
             // "DOM text reinterpreted as HTML" security warning.
             var printHtml = '<!DOCTYPE html>\n'
-                + '<html lang="en"><head><meta charset="utf-8"><title>Upgrade Guide Export</title>'
+                + '<html lang="en"><head><meta charset="utf-8"><title>' + pageTitle + '</title>'
                 + '<style>'
                 + '*, *::before, *::after { box-sizing: border-box; }'
                 + 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;'
@@ -1951,6 +1958,7 @@
                 + '@page { size: A4 landscape; margin: 12mm 10mm; }'
                 + '@media print { body { padding: 0; } }'
                 + '</style></head><body>'
+                + titleBlock
                 + diagramSvg
                 + contentHtml
                 + '</body></html>';
@@ -3034,127 +3042,8 @@
         </div>
     </div>
 
-<style id="rn-styles">
-/* ── Release Notes Section ── */
-.rn-section {
-  margin: 40px 0 0 0;
-  padding: 0 0 24px 0;
-}
-.rn-section-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text-primary, #1a2d40);
-  margin-bottom: 18px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--border-color, #d8e3ec);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.rn-card {
-  background: var(--card-bg, #fff);
-  border: 1px solid var(--border-color, #d8e3ec);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-.rn-card-header {
-  background: #e8f4fa;
-  padding: 11px 18px;
-  border-bottom: 1px solid var(--border-color, #d8e3ec);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-[data-theme="dark"] .rn-card-header { background: #152130; }
-.rn-card-header h3 {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: #1674b1;
-  margin: 0;
-}
-.rn-card-body { padding: 14px 18px; }
-/* Bullet list */
-.rn-list { list-style: none; padding: 0; margin: 0; }
-.rn-list li {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--border-color, #d8e3ec);
-  font-size: 0.9rem;
-}
-.rn-list li:last-child { border-bottom: none; }
-.rn-list li::before {
-  content: '';
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #0098C7;
-  flex-shrink: 0;
-}
-.rn-list a { color: #1674b1; text-decoration: none; font-weight: 500; }
-.rn-list a:hover { text-decoration: underline; }
-.rn-note-text { font-size: 0.81rem; color: var(--text-secondary, #5a6a7a); }
-/* Table */
-.rn-table-wrap { overflow-x: auto; }
-.rn-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-}
-.rn-table thead tr { background: #e8f4fa; }
-[data-theme="dark"] .rn-table thead tr { background: #152130; }
-.rn-table th {
-  text-align: left;
-  padding: 9px 13px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #1674b1;
-  border-bottom: 2px solid var(--border-color, #d8e3ec);
-}
-.rn-table td {
-  padding: 10px 13px;
-  border-bottom: 1px solid var(--border-color, #d8e3ec);
-  vertical-align: middle;
-}
-.rn-table tbody tr:last-child td { border-bottom: none; }
-.rn-table tbody tr:nth-child(even) { background: rgba(0,152,199,0.03); }
-.rn-table tbody tr.rn-row-updated { background: rgba(26,122,60,0.07); }
-[data-theme="dark"] .rn-table tbody tr.rn-row-updated { background: rgba(26,122,60,0.15); }
-.rn-table a { color: #1674b1; text-decoration: none; font-weight: 500; }
-.rn-table a:hover { text-decoration: underline; }
-/* Badges */
-.rn-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.rn-badge-updated { background: #e6f7ec; color: #1a7a3c; border: 1px solid #1a7a3c; }
-.rn-badge-same    { background: #f0f4f8; color: #5a6a7a; border: 1px solid #d8e3ec; }
-[data-theme="dark"] .rn-badge-updated { background: #0d3320; color: #5de08a; border-color: #5de08a; }
-[data-theme="dark"] .rn-badge-same    { background: #1e2d3e; color: #7a9ab8; border-color: #2a3a4e; }
-/* Version pill */
-.rn-ver-pill {
-  display: inline-block;
-  padding: 2px 9px;
-  border-radius: 30px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: monospace;
-}
-.rn-ver-0100 { background: #f0f4f8; color: #5a6a7a; border: 1px solid #d8e3ec; }
-.rn-ver-0200 { background: #e6f7ec; color: #1a7a3c; border: 1px solid #1a7a3c; }
-[data-theme="dark"] .rn-ver-0100 { background: #1e2d3e; color: #7a9ab8; border-color: #2a3a4e; }
-[data-theme="dark"] .rn-ver-0200 { background: #0d3320; color: #5de08a; border-color: #5de08a; }
-</style>
 
+</script>
 </body>
 
 </html>

@@ -1,13 +1,9 @@
 {
     "upgrade_order": [
-        "operations",
         "replication",
         "srm",
         "vsan_data_protection",
         "avi",
-        "sddc_manager",
-        "vcfms",
-        "network",
         "hcx",
         "nsx_federation",
         "nsx",
@@ -18,9 +14,6 @@
         "vxrail",
         "esx",
         "nsx_edge",
-        "vidm",
-        "operations_orchestrator",
-        "logs",
         "elm",
         "vsan_file_service"
     ],
@@ -62,32 +55,9 @@
             "upgrade_phase": "mid_infrastructure"
         },
         {
-            "id": "logs",
-            "display_name": "VCF Operations for Logs",
-            "category": "advanced",
-            "upgrade_phase": "post_infrastructure"
-        },
-        {
-            "id": "network",
-            "display_name": "VCF Operations for Networks",
-            "category": "advanced",
-            "upgrade_phase": "post_infrastructure"
-        },
-        {
-            "id": "vidm",
-            "display_name": "VMware Identity Manager",
-            "category": "advanced",
-            "upgrade_phase": "post_infrastructure"
-        },
-        {
             "id": "vdefend",
             "display_name": "VMware vDefend Distributed Firewall",
             "category": "advanced"
-        },
-        {
-            "id": "operations_orchestrator",
-            "display_name": "Standalone Aria Automation Orchestrator (VMware Orchestrator)",
-            "category":"advanced"
         },
         {
             "id": "vsan_file_service",
@@ -165,155 +135,6 @@
                 }
             ]
         },
-        "operations": {
-            "name": "VCF Operations Upgrade",
-            "notices": [
-                {
-                    "type": "info",
-                    "title": "VCF Operations Licensing",
-                    "bullets": [
-                        "VCF Operations need to be licensed within 90 days of upgrade. License Server is deployed during the VCF Management Services deployment."
-                    ]
-                }
-            ],
-             "tables": [
-                {
-                    "title": "Required Network Configuration",
-                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
-                    "headers": ["Deployment Type", "Number Node", "Number of Address(es)", "FQDN", "Example"],
-                    "rows": [
-                        ["Cloud proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
-
-                    ]
-                },
-                {
-                    "title": "Required Component Sizes Cloud Proxy",
-                    "description": "Size requirements for all nodes",
-                    "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster (Object and Metrics)"],
-                    "rows": [
-                        ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
-                        ["Unified Standard", "8", "48gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"]
-                    ]
-                }
-             ],
-            "steps": [
-                "Upgrade VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
-            ]
-        },
-        "operations_install": {
-            "name": "VCF Operations Installation",
-            "notices": [
-                {
-                    "type": "info",
-                    "title": "VCF Operations Licensing",
-                    "bullets": [
-                        "VCF Operations need to be licensed within 90 days of upgrade. License Server is deployed during the VCF Management Services deployment."
-                    ]
-                }
-            ],
-            "tables": [
-            {
-          "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Deployment Type", "Number Node", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["Simple", "1", "1", "1", "vcfops.rainpole.io"],
-            ["High Availability(HA)", "4", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io)"],
-            ["Continuous Availability(CA)", "4", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io,opsd01.sfo.rainpole.io"],
-            ["Cloud proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
-
-          ]
-        },
-        {
-          "title": "Required Component Sizes Simple/HA",
-          "description": "Size requirements for all nodes",
-          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster (Object and Metrics)"],
-          "rows": [
-            ["Extra Small", "2", "8gb", "274gb", "1", "700, 140,000", "N/A", "700, 140,000"],
-            ["Small", "4", "16gb", "274gb", "2", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
-            ["Medium", "8", "32gb", "274gb", "8", "30,000, 5,000,000", "17,000, 4,000,000", "136,000, 32,000,000"],
-            ["Large", "16", "48gb", "274gb", "16", "44,000, 8,000,000", "36,000, 6,000,000", "576,000, 81,600,000"],
-            ["Extra Large", "24", "128gb", "274gb", "12", "100,000, 20,000,000", "88,000, 15,000,000", "1,056,000, 126,000,000"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes CA",
-          "description": "Size requirements for all nodes",
-          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster (Object and Metrics)"],
-          "rows": [
-            ["Small", "4", "16gb", "274gb", "1", "10,000, 1,600,000", "6,000, 1,400,000", "12,000, 2,800,000"],
-            ["Medium", "8", "32gb", "274gb", "4", "30,000, 5,000,000", "17,000, 4,000,000", "136,000, 32,000,000"],
-            ["Large", "16", "48gb", "274gb", "8", "44,000, 8,000,000", "36,000, 6,000,000", "576,000, 81,600,000"],
-            ["Extra Large", "24", "128gb", "gb", "6", "100,000, 20,000,000", "88,000, 15,000,000", "1,056,000, 126,000,000"],
-            ["Witness", "2", "8gb", "274gb", "N/A", "N/A", "N/A", "N/A"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes Cloud Proxy",
-          "description": "Size requirements for all nodes",
-          "headers": ["Size", "vCPU", "Memory", "Storage", "Maximum Nodes per Cluster", "Single node (Object and Metrics)", "Multiple Nodes (Object and Metrics)", "HA Cluster (Object and Metrics)"],
-          "rows": [
-            ["Unified Small", "4", "16gb", "384gb", "1000", "16,000, 2,400,000", "N/A", "N/A"],
-            ["Unified Standard", "8", "48gb", "384gb", "1000", "80,000, 12,000,000", "N/A", "N/A"]
-          ]
-        }
-      ],
-            "steps": [
-                "Deploy VCF Operations  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore/deploy-vcf-operations.html' target='_blank'>View Documentation</a>)."
-            ]
-        },
-        "license": {
-            "name": "License Server",
-            "tables": [
-                {
-                    "title": "Required Network Configuration",
-                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
-                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-                    "rows": [
-                        ["License server", "1", "1", "vcflic.rainpole.io"]
-                    ]
-                },
-                {
-                    "title": "Required Component Sizes",
-                    "description": "Size requirements for all nodes",
-                    "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
-                    "rows": [
-                        ["License server", "Small", "1", "2", "4gb", "12gb"]
-                    ]
-                }
-            ],
-            "steps": [
-                "Deploy license server and registration - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations.html' target='_blank'>View Documentation</a>)."
-            ]
-        },
-        "logs": {
-            "name": "Log Management",
-            "steps": [
-                "Deploy new Log Management services - there is no in-place upgrade path. All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html' target='_blank'>View Documentation</a>)."
-            ]
-        },
-        "network": {
-            "name": "VCF Operations for Network",
-            "steps": [
-                "Upgrade VCF Operations for Network - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-4-upgrade-additional-management-components-in-vcf-9.html' target='_blank'>View Documentation</a>)."
-            ]
-        },
-        "vidm": {
-            "name": "VMware Identity Manager",
-            "steps": [
-                "Move from VMware Identity Manager to VMware Identity Broker — Deployment of Identity Broker is part of the Management Service deployment.",
-                "Migrate from VMware Identity Manager to Identity Broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
-            ],
-            "notices": [
-                {
-                    "type": "info",
-                    "title": "VMware Identity Management",
-                    "bullets": [
-                        "Will Continue to work and function after products are upgrade, there is just no upgrade path"
-                    ]
-                }
-            ]
-        },
         "replication": {
             "name": "vSphere Replication",
             "steps": [
@@ -367,110 +188,6 @@
                     ]
                 }
             ]
-        },
-        "sddc_manager": {
-            "name": "SDDC Manager",
-            "steps": [
-                "Upgrade SDDC Manager - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/apply-cloud-foundation-5-2-update-bundle.html' target='_blank'>View Documentation</a>)."
-            ]
-        },
-        "vcfms": {
-            "name": "VCF Management Service Deployment",
-            "steps": [
-                "Deploy VCF Management Services - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html' target='_blank'>View Documentation</a>)."
-            ],
-            "notices": [
-                {
-                    "type": "info",
-                    "title": "VCF management services",
-                    "bullets": [
-                        "This path does NOT include VCF Automation deployment",
-                        "Minimum 12 IP addresses required for deployment.",
-                    {
-                    "text": "An additional 18 IP addresses can be added afterwards for the following scenarios:",
-                    "sub_bullets": [
-                        "New VCF management services are added.",
-                        "Scale out of VCF Management services or new nodes as upgrade to future versions take place.",
-                        "A maximum of 30 IP address is required, these can be added as new IP ranges in the Lifecycle section of the VCF Operations UI, these ranges do not need to be continuous.",
-                        "All IP Ranges must be on the VCF Management Network.",
-                        "An internal IP range is used by VCF services runtime, this IP range is 198.18.0.0/15, it is important to ensure this IP range does not overlap with the IP range of your management network, this internal network can be changed to 240.0.0.0/15 or 250.0.0.0/15 by using JSON specification file to deploy."
-                        ]
-                    }
-                ]
-        }
-            ],
-        "tables_simple_small": [
-        {
-          "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"]  
-        ]
-        },
-        {
-          "title": "Required Component Sizes",
-          "description": "Size requirements for VCF management services nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
-          "rows": [
-            ["VCF management services nodes", "Small", "4", "12", "24gb", "3,000gb"],
-            ["License server", "Small", "1", "2", "4gb", "12gb"]
-          ]
-        }
-      ],
-      "tables_ha_medium": [
-        {
-          "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"]
-         ]
-        },
-        {
-          "title": "Required Component Sizes",
-          "description": "Size requirements for VCF management services nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
-          "rows": [
-            ["VCF management services nodes", "Medium", "7", "84", "174gb", "3,600gb"],
-            ["License server", "Small", "1", "2", "4gb", "12gb"]       
-          ]
-        }
-      ],
-      "tables_ha_large": [
-        {
-          "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"]         
-        ]
-        },
-        {
-          "title": "Required Component Sizes",
-          "description": "Size requirements for VCF management services nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
-          "rows": [
-            ["VCF management services nodes", "Large", "7", "228", "234gb", "4,402gb"],
-            ["License server", "Small", "1", "2", "4gb", "12gb"]    
-          ]
-        }
-      ]
         },
         "nsx": {
             "name": "NSX Local Managers",
@@ -564,7 +281,7 @@
           "type": "info",
           "title": "IP Requirements",
           "bullets": [
-            "A License Hub must be deployed within your environment, or AVI and NSX must have outbound internet access for direct license validation.",
+            "A License Hub must be deployed within your environment if does not already exist, or AVI and NSX must have outbound internet access for direct license validation.",
             "If internet access is not available, deploy a License Hub before proceeding.",
             "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
             "Node IP pool: 4 contiguous IP addresses",
@@ -576,21 +293,6 @@
         "Deploy license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/security-services-platform/5-1/licensing-overview/deploying-license-hub.html' target='_blank'>View Documentation</a>).",
         "Details of license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/security-modernization/vdefend-lateral-security/security-services-platform-for-vmware-cloud-foundation/license-hub-for-vdefend-and-avi/license-hub-for-vmware-vdefend-and-vmware-avi-load-balancer.html' target='_blank'>View Documentation</a>)."
       ]
-    },
-    "operations_orchestrator": {
-        "name": "Standalone VCF Operations Orchestrator (Aria Automation Orchestrator)",
-        "notices": [
-            {
-            "type": "info",
-            "title": "Required Before Proceeding",
-            "bullets": [
-                "Verify that you are upgrading from Aria Automation Orchestrator 8.18.1 or later"
-            ]
-            }
-        ],
-        "steps": [
-            "Upgrade VCF Operations Orchestrator - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-a-standalone-or-clustered-vrealize-orchestrator-8-0-1-deployment-with-iso-image.html' target='_blank'>View Documentation</a>)."
-        ]
     },
      "vsan_data_protection": {
       "name": "vSAN Data Protection",
@@ -610,7 +312,7 @@
             "Finalize NSX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
         ]
     },
-    "vcf_prereq": {
+     "vcf_prereq": {
       "name": "Pre-Upgrade: Upgrade VCF to 5.2.2 or 5.2.3",
       "notices": [
         {

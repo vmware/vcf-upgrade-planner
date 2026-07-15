@@ -1,0 +1,578 @@
+{
+    "upgrade_order": [
+        "replication",
+        "srm",
+        "vsan_data_protection",
+        "avi",
+        "license_hub",
+        "hcx",
+        "vcha",
+        "vcenter",
+        "elm_break",
+        "import",
+        "nsx_federation",
+        "nsx",
+        "vum_migration",
+        "supervisor",
+        "vsan_witness",
+        "esx",
+        "nsx_edge",
+        "vsan_file_service"
+    ],
+    "upgrade_order_without_nsx": [
+        "replication",
+        "srm",
+        "vsan_data_protection",
+        "avi",
+        "license_hub",
+        "hcx",
+        "vcha",
+        "vcenter",
+        "vum_migration",
+        "elm_upgrade_ring",
+        "import",
+        "supervisor",
+        "vsan_witness",
+        "esx",
+        "vsan_file_service"
+    ],
+    "upgrade_order_nsx91": [
+    "replication",
+    "srm",
+    "vsan_data_protection",
+    "avi",
+    "license_hub",
+    "hcx",
+    "vcha",
+    "elm_break",
+    "import",
+    "vcenter",
+    "vum_migration",
+    "supervisor",
+    "vsan_witness",
+    "esx",
+    "vsan_file_service"
+    ],
+    "optional_products": [
+        {
+            "id": "srm",
+            "display_name": "Site Recovery Manager (SRM)",
+            "category": "advanced",
+            "upgrade_phase": "pre_infrastructure"
+        },
+        {
+            "id": "replication",
+            "display_name": "vSphere Replication",
+            "category": "advanced",
+            "upgrade_phase": "pre_infrastructure"
+        },
+        {
+            "id": "avi",
+            "display_name": "Avi Load Balancer",
+            "category": "advanced",
+            "upgrade_phase": "pre_infrastructure"
+        },
+        {
+            "id": "hcx",
+            "display_name": "VMware HCX",
+            "category": "advanced",
+            "upgrade_phase": "pre_infrastructure"
+        },
+        {
+            "id": "supervisor",
+            "display_name": "vSphere Supervisor",
+            "category": "advanced",
+            "upgrade_phase": "mid_infrastructure"
+        },
+        {
+            "id": "nsx_federation",
+            "display_name": "NSX Federation",
+            "category": "advanced"
+        },
+        {
+            "id": "vdefend",
+            "display_name": "VMware vDefend Distributed Firewall",
+            "category": "advanced"
+        },
+        {
+            "id": "vsan_file_service",
+            "display_name": "vSAN File Service",
+            "category":"advanced"
+        },
+        {
+            "id": "vsan_data_protection",
+            "display_name": "vSAN Data Protection",
+            "category":"advanced"
+        },
+        {
+            "id": "nsx_edge",
+            "display_name": "NSX Edge Node(s)",
+            "category":"advanced"
+        },
+        {
+            "id": "auto_deploy",
+            "display_name": "Auto Deploy",
+            "upgrade_phase": "pre_infrastructure"
+        }
+    ],
+    "components": {
+        "vcha": {
+            "name": "vCenter High Availability (vCHA)",
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "vCenter High Availability",
+                    "bullets": [
+                        "vCenter High Availability (vCHA) is not supported for converge or import"
+                    ]
+                }
+            ],
+            "steps": [
+                "Disable vCenter High Availability(vCHA) - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-availability/vcenter-server-high-availability/manage-your-vcenter-ha-cluster/remove-a-vcenter-ha-configuration.html' target='_blank'>View Documentation</a>)"
+            ]
+        },
+        "elm_upgrade_ring": {
+            "name": "Enhanced Linked Mode (ELM) - Upgrade All vCenter Instances",
+            "notices": [
+                {
+                    "type": "info",
+                    "title": "ELM Upgrade Requirements",
+                    "bullets": [
+                        "ALL vCenter instances in the ELM ring must be upgraded to maintain ELM",
+                        "Upgrade vCenter Instances sequentially, one at a time",
+                        "Verify replication status after each vCenter upgrade"
+                    ]
+                }
+            ],
+            "steps": [
+                "Break ELM After All vCenter Instances - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
+            ]
+        },
+        "elm_break": {
+            "name": "Enhanced Linked Mode (ELM) - Break Configuration",
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "Breaking Enhanced Linked Mode",
+                    "bullets": [
+                        "Breaking ELM is REQUIRED for VCF conversion",
+                        "Breaking ELM is REQUIRED when using NSX in vSphere 8",
+                        "This action cannot be easily reversed",
+                        "Document the configuration before breaking"
+                    ]
+                }
+            ],
+            "steps": [
+                "Break ELM on 8.0 vCenter Instances that has NSX - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/370062/splitting-enhanced-linked-mode-elm.html' target='_blank'>View Documentation</a>)"
+            ]
+        },
+        "vcenter": {
+            "name": "vCenter",
+            "steps": [
+                "Upgrade vCenter to version using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
+            ],
+            "steps_with_nsx": [
+                "Upgrade vCenter to version using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "Integrated Windows Authentication on vCenter",
+                    "bullets": ["Replace Integrated Windows Authentication configured with another IDP configuration"]
+                },
+                {
+                    "type": "warning",
+                    "title": "vCenter Location",
+                    "bullets": ["Virtual machine of vCenter instance hosted on one of the clusters that is managed by the same instance"]
+                },
+                {
+                    "type": "warning",
+                    "title": "VXRAIL",
+                    "bullets": ["vCenter Instances or Clusters managed by Dell VxRail are not supported in VCF Upgrade today for vSphere environments"]
+                }
+            ]
+        },
+        "esx": {
+            "name": "ESX",
+            "steps": [
+                "Build ESX image in vCenter - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/working-with-image-library/create-an-image-in-image-library.html' target='_blank'>View Documentation</a>).",
+                "Importing Images for Lifecycle - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/managing-vsphere-lifecycle-manager-images-for-vmware-cloud-foundation/import-a-vsphere-lifecycle-manager-image-to-a-vcf-instance.html' target='_blank'>View Documentation</a>).",
+                "Upgrade ESX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/esx-upgrade.html' target='_blank'>View Documentation</a>).",
+                "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
+                "Upgrade VMware Tools - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vmtools_001&appid=vmtools-13-1&language=&format=rendered' target='_blank'>View Documentation</a>).",
+                "Virtual machines compatibility - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vsphclient_076&appid=vsphere-9-1&language=&format=rendered' target='_blank'>View Documentation</a>).",
+                "(Optional) Upgrade vSAN On-Disk Format Versions - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-on-disk-format-versions.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "ESX bootbank",
+                    "bullets": ["Validate ESX bootbank is at least 1gb in size by running command on host df -h /bootbank"]
+                },
+                {
+                    "type": "info",
+                    "title": "Check HCL for Hardware support",
+                    "bullets": ["Intel Skylake (Broadwell, Kabylake & Skylake) Processors no longer supported (deprecated in earlier releases), requires RPQ"]
+                }
+            ]
+        },
+        "vum_migration": {
+            "name": "VUM-Based Clusters",
+            "steps": [
+                "Migrate from vLCM Baselines to vLCM Images - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/vlcm-baseline-to-vlcm-image-cluster-transition-.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "vSphere Lifecycle Management with Baselines is no longer supported",
+                    "bullets": ["vSphere Lifecycle Management with Baselines is no longer supported. Clusters will need to be transitioned as part of the upgrade, as discussed in the upgrade paths."]
+                }
+            ]
+        },
+        "vum_migration_without_nsx": {
+            "name": "VUM-Based Clusters",
+            "steps": [
+                "Migrate from vLCM Baselines to vLCM Images - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/using-images-to-install-and-update-esxi-hosts-and-clusters/switching-from-baselines-to-images.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "vSphere Lifecycle Management with Baselines is no longer supported",
+                    "bullets": ["vSphere Lifecycle Management with Baselines is no longer supported. Clusters will need to be transitioned as part of the upgrade, as discussed in the upgrade paths."]
+                }
+            ]
+        },
+        "import_with_vsphere_only": {
+            "name": "Import to VCF",
+            "notices": [
+                {
+                    "type": "info",
+                    "title": "Shared NSX Manager Across vCenters",
+                    "bullets": [
+                    "If a shared NSX Manager is selected during the import process, the vSphere version must align with the NSX version in use.",
+                    "NSX 4.2.x supports vSphere 8 — no vCenter upgrade is required before import. NSX 9.1 requires vSphere 9.1 — the vCenter being imported must be upgraded to 9.1 before proceeding.",
+                    "It is recommended to import all vCenters connected to a shared NSX Manager before upgrading the shared NSX Manager instance."
+                ]
+                }
+            ],
+            "tables_simple_medium_without_nsx": [
+                {
+                    "title": "Required Network Configuration (Simple - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"]
+                    ]
+                }
+            ],
+            "tables_simple_large_without_nsx": [
+                {
+                    "title": "Required Network Configuration (Simple - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Large", "1", "12", "48gb", "300gb"]
+                    ]
+                }
+            ],   
+            "tables_simple_xlarge_without_nsx": [
+                {
+                    "title": "Required Network Configuration (Simple - Extra Large",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Extra Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Extra Large", "1", "24", "98gb", "400gb"]
+                    ]
+                }
+            ], 
+              "tables_ha_medium_without_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "4", "4", "nsxvip.rainpole.io, nsxmgra.rainpole.io, nsxmgrb.rainpole.io, nsxmgrc.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Medium", "3", "6", "24gb", "300gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_without_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "4", "4", "nsxvip.rainpole.io, nsxmgra.rainpole.io, nsxmgrb.rainpole.io, nsxmgrc.rainpole.io"]                    
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Large", "3", "12", "48gb", "300gb"]
+                    ]
+                }
+            ],   
+            "tables_ha_xlarge_without_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Extra Large",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "4", "4", "nsxvip.rainpole.io, nsxmgra.rainpole.io, nsxmgrb.rainpole.io, nsxmgrc.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Extra Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Extra Large", "3", "24", "98gb", "400gb"]
+                    ]
+                }
+            ],            
+            "steps": [
+                "Downloading Binaries to VCF Depot - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/download-bundles-from-sddc-manager.html' target='_blank'>View Documentation</a>).",
+                "Start import to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/building-your-private-cloud-infrastructure/working-with-workload-domains/import-an-existing-vcenter-to-create-a-workload-domain.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "replication": {
+            "name": "vSphere Replication",
+            "steps": [
+                "Upgrade Protection and Recovery - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "srm": {
+            "name": "Site Recovery Manager",
+            "steps": [
+                "Upgrade Protection and Recovery  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "avi": {
+            "name": "Avi Load Balancer",
+            "steps": [
+                "Upgrade Avi Load Balancer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer/32-1/vmware-avi-load-balancer-administration-guide/nsx-advanced-load-balancer-controller-operations/upgrade-and-patches/upgrade-guide.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "hcx": {
+            "name": "HCX",
+            "steps": [
+                "Upgrade HCX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/updating-vmware-hcx.html' target='_blank'>View Documentation</a>)."
+            ]
+        },
+        "supervisor": {
+            "name": "vSphere Supervisor",
+            "steps": [
+                "Upgrade vSphere Supervisor - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration/updating-vsphere-supervisor/updating-the-vsphere-with-tanzu-environment/update-the-supervisor-kubernetes-version.html#GUID-13821893-573b-48ff-8725-57a7fb0daecf-en' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "vSphere Supervisor deployed on vSphere Lifecycle Baseline Clusters(VUM)",
+                    "bullets": ["Customers with vSphere Supervisor clusters deployed on vSphere Lifecycle Baseline Clusters are not supported, a migration to vSphere Lifecycle Images(vLCM) is required - <a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/managing-host-and-cluster-lifecycle/vsphere-lifecycle-manager-and-other-vmware-products-and-solutions/vsphere-lifecycle-manager-and-vsphere-with-tanzu.html' target='_blank'>see documentation</a>"]
+                }
+            ]
+        },
+        "vsan_witness": {
+            "name": "vSAN Witness Host",
+            "steps": [
+                "Upgrade vSAN Witness host - will happen as part of ESX upgrade"
+            ],
+            "notices": [
+                {
+                    "type": "info",
+                    "title": "vSAN Witness Host Upgrade",
+                    "bullets": ["vSAN Witness hosts must be upgraded before ESX hosts in stretched clusters"]
+                }
+            ]
+        },
+        "nsx": {
+            "name": "NSX Local Managers",
+            "steps": [
+                "Upgrade NSX Local Managers - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/checklist-for-upgrading-nsx.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "NSX Version Compatibility",
+                    "bullets": [
+                        "Review VMware Product Interoperability Matrix"
+                    ]
+                }
+            ]
+        },
+          "nsx_federation": {
+            "name": "NSX Federation",
+            "steps": [
+                "Upgrade NSX Global Managers - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-nsx-in-a-federated-environment.html' target='_blank'>View Documentation</a>)."
+            ],
+            "notices": [
+                {
+                    "type": "warning",
+                    "title": "Federation Prerequisites",
+                    "bullets": [
+                        "All NSX sites must be on compatible versions",
+                        "Network connectivity required between all sites",
+                        "Upgrade BEFORE NSX Local Managers"
+                    ]
+                }
+            ]
+        },
+      "vcenter_esx_prereq": {
+      "name": "Pre-Upgrade: Upgrade vCenter and ESX to 8.0u3",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "Your current vCenter and/or ESX version must be upgraded to 8.0u3 before continuing with this upgrade path"
+           ]
+        }
+      ],
+      "steps": [
+        "vCenter upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso.html' target='_blank'>View Documentation</a>).",
+        "ESX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/esx-upgrade/upgrading-esxi-hosts-upgrade.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "operations_prereq": {
+      "name": "Pre-Upgrade: Upgrade VCF Operations to 8.18.x",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "Your current VCF Operations version must be upgraded to 8.18.x"
+          ]
+        }
+      ],
+      "steps": [
+        "Upgrade VCF Operations Standalone - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/getting-started-with-vmware-aria-operations-8-18/upgrade-backup-and-restore/software-updates-admin-ui-only/install-a-software-update.html' target='_blank'>View Documentation</a>).",
+        "Upgrade VCF Operations managed by vRSLCM - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-suite-lifecycle/8-16/vmware-aria-suite-lifecycle-installation-upgrade-and-management-8-16/upgrading-product-versions-in-the-lifecycle-operations-service/upgrade-a-vrealize-suite-product/upgrade-vrealize-operations-manager.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "nsx_prereq": {
+      "name": "Pre-Upgrade: Upgrade NSX Local Managers to 4.2.x",
+      "notices": [
+        {
+          "type": "warning",
+          "title": "Required Before Proceeding",
+          "bullets": [
+            "NSX 4.1.x must be upgraded to 4.2.x before proceeding with the VCF upgrade path"
+          ]
+        }
+      ],
+      "steps": [
+        "Upgrade NSX Local Managers - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/nsx/vmware-nsx/4-2/upgrade-guide/upgrading-nsx-t-checklist.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+    "license_hub": {
+      "name": "VMware vDefend Distributed Firewall/Avi Load Balancer License Hub",
+      "tables": [
+        {
+          "title": "Required Network Configuration license hub",
+          "description": "Prepare the following IP addresses and DNS entries before deployment:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["Node IP pool", "4", "0", "N/A"],
+            ["Service IP pool", "4", "0", "N/A"]
+            ]
+        },
+        {
+            "title": "Required Component Sizes license hub",
+            "description": "Size requirements for all nodes license hub",
+            "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+            "rows": [
+                ["Installer", "Default", "1", "4", "6gb", "400gb"],
+                ["License Hub Controller", "Default", "1", "2", "8gb", "155gb"],
+                ["License Hub Worker", "Default", "1", "4", "16gb", "255gb"],
+                ["Content library", "Default", "N/A", "N/A", "N/A", "50gb"],
+                ["Persistent Volume Claim (PVC)", "Default", "N/A", "N/A", "N/A", "50gb"]
+                ]
+        }
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "IP Requirements",
+          "bullets": [
+            "A License Hub must be deployed within your environment if does not already exist, or AVI and NSX must have outbound internet access for direct license validation.",
+            "If internet access is not available, deploy a License Hub before proceeding.",
+            "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
+            "Node IP pool: 4 contiguous IP addresses",
+            "Service IP pool: 4 contiguous IP addresses"
+          ]
+        }
+      ],
+      "steps": [
+        "Deploy license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/security-services-platform/5-1/licensing-overview/deploying-license-hub.html' target='_blank'>View Documentation</a>).",
+        "Details of license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/security-modernization/vdefend-lateral-security/security-services-platform-for-vmware-cloud-foundation/license-hub-for-vdefend-and-avi/license-hub-for-vmware-vdefend-and-vmware-avi-load-balancer.html' target='_blank'>View Documentation</a>)."
+      ]
+    },
+     "vsan_data_protection": {
+      "name": "vSAN Data Protection",
+      "steps": [
+        "Upgrade vSAN Data Protection - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade/upgrading-srm.html' target='_blank'>View Documentation</a>)."      
+      ]
+    },
+    "vsan_file_service": {
+      "name": "vSAN File Service",
+      "steps": [
+        "Upgrade vSAN File Service  - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html' target='_blank'>View Documentation</a>)."      
+      ]
+    },
+    "nsx_edge": {
+        "name": "NSX Edge/NSX Finalize",
+        "steps":[
+            "Finalize NSX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/update-the-nsx-edge-cluster-and-finalize-nsx-update.html' target='_blank'>View Documentation</a>)."      
+        ]
+    },
+    "vidm": {
+      "name": "VMware Identity Manager",
+      "steps": [
+        "Move from VMware Identity Manager to VMware Identity Broker — Deployment of Identity Broker is part of the Management Service deployment.",
+        "Migrate from VMware Identity Manager to Identity Broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html' target='_blank'>View Documentation</a>)."
+      ],
+      "notices": [
+        {
+          "type": "info",
+          "title": "VMware Identity Management",
+          "bullets": [
+            "Will Continue to work and function after products are upgrade, there is just no upgrade path"
+          ]
+        }
+      ]
+    }
+    }
+}

@@ -140,7 +140,7 @@
           "type": "warning",
           "title": "vSphere Lifecycle Management with Baselines is no longer supported",
           "bullets": [
-            "vSphere Lifecycle Management with Baselines is no longer supported, clusters will need to be transition as part of the upgrade which is discussed on the upgrade paths"
+            "vSphere Lifecycle Management with Baselines is no longer supported. Clusters will need to be transitioned as part of the upgrade, as discussed in the upgrade paths."
           ]
         }
       ]
@@ -259,7 +259,7 @@
         }
       ],
       "steps": [
-        "Deploy license server and registration - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations/add-license-server.html' target='_blank'>View Documentation</a>)."
+        "Registration of license server - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "logs": {
@@ -762,7 +762,7 @@
       ],
       "steps": [
         "vCenter upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso.html' target='_blank'>View Documentation</a>).",
-        "ESX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/overview-of-the-esxi-host-upgrade-process.html#GUID-FE668788-1F32-4CB2-845C-5547DD59EB48-en' target='_blank'>View Documentation</a>)."
+        "ESX upgrade - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/esx-upgrade/upgrading-esxi-hosts-upgrade.html' target='_blank'>View Documentation</a>)."
       ]
     },
     "operations_prereq": {

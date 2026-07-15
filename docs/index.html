@@ -561,6 +561,157 @@
                 padding: 24px;
             }
         }
+
+        /* ── Fleet-Check Yes/No Buttons ── */
+        .fleet-check-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .fleet-check-btn {
+            flex: 1;
+            min-width: 140px;
+            max-width: 200px;
+            padding: 16px 24px;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-primary);
+        }
+
+        .fleet-check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,136,181,0.18);
+        }
+
+        .fleet-check-btn.yes {
+            border-color: var(--vmw-blue);
+            color: var(--vmw-blue);
+        }
+
+        .fleet-check-btn.yes:hover {
+            background: var(--vmw-blue);
+            color: white;
+        }
+
+        .fleet-check-btn.no {
+            border-color: var(--pulse-red);
+            color: var(--pulse-red);
+        }
+
+        .fleet-check-btn.no:hover {
+            background: var(--pulse-red);
+            color: white;
+        }
+
+        .fleet-explain-box {
+            margin-top: 16px;
+            padding: 16px 20px;
+            background: rgba(0,136,181,0.07);
+            border-left: 4px solid var(--vmw-blue);
+            border-radius: 8px;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ── vSphere Intent Option Cards ── */
+        .intent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .intent-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px 20px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .intent-card:hover {
+            border-color: var(--vmw-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,136,181,0.18), 0 3px 8px rgba(0,136,181,0.1);
+        }
+
+        .intent-card.selected {
+            border-color: var(--vmw-blue);
+            background: rgba(0,136,181,0.06);
+            box-shadow: 0 0 0 3px rgba(0,136,181,0.15);
+        }
+
+        [data-theme="dark"] .intent-card:hover,
+        [data-theme="dark"] .intent-card.selected {
+            box-shadow: 0 8px 20px rgba(78,144,170,0.3), 0 3px 8px rgba(78,144,170,0.15);
+        }
+
+        .intent-card-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .intent-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Intent inference helpers */
+        .intent-card.inferred {
+            border-color: var(--vmw-blue);
+            background: rgba(0,136,181,0.06);
+            box-shadow: 0 0 0 3px rgba(0,136,181,0.18);
+        }
+        .intent-card.intent-hidden {
+            display: none !important;
+        }
+
+        .intent-card.intent-dimmed {
+            opacity: 0.35;
+            pointer-events: none;
+            filter: grayscale(40%);
+        }
+        .intent-infer-badge {
+            display: inline-block;
+            background: var(--vmw-blue);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            letter-spacing: 0.04em;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .intent-infer-note {
+            margin-top: 14px;
+            padding: 10px 16px;
+            background: rgba(0,136,181,0.07);
+            border-left: 3px solid var(--vmw-blue);
+            border-radius: 6px;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+        .intent-card-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
     </style>
 </head>
 
@@ -585,6 +736,9 @@
                 </div>
                 <div class="nav-item nav-hidden" id="navProducts" onclick="scrollToElement('vsphereQuestions')">
                     <span>📦</span> Products
+                </div>
+                <div class="nav-item nav-hidden" id="navGoal" onclick="scrollToGoal()">
+                    <span>🎯</span> Upgrade Goal
                 </div>
                 <div class="nav-item nav-hidden" id="navPath" onclick="scrollToElement('pathSelection')">
                     <span>🛤️</span> Upgrade Path
@@ -618,16 +772,16 @@
                 <option value="vcf">VCF</option>
             </select>
         </div>
-
-        <!-- vSphere Questions -->
         <div class="hidden" id="vsphereQuestions">
             <div class="question-section">
                 <label class="question-label">📦 Select your current products:</label>
                 
-                <div style="background: rgba(1, 152, 199, 0.1); border-left: 4px solid var(--vmw-blue); border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.95rem; color: var(--text-primary);">
-                    <strong>ℹ️ Note: vCenter and either ESX or VxRail must be selected to proceed with upgrade paths.
-                </strong></div><strong>
-                
+                <div id="productNoteBox" style="background: rgba(1, 152, 199, 0.1); border-left: 4px solid var(--vmw-blue); border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.95rem; color: var(--text-primary);">
+                    <strong>ℹ️ Select the products in your current environment. vCenter and either ESX or VxRail must be selected to proceed</strong>
+                </div>
+
+
+
                 <!-- vCenter -->
                 <div class="checkbox-group">
                     <label class="checkbox-label">
@@ -682,10 +836,6 @@
                     </label>
                 </div>
 
-                <!-- Convert-only info note (shown when vCenter+ESX are already on 9.1.x) -->
-                <div id="convertOnlyNote" style="display: none; margin: 8px 0 12px 0; padding: 12px 16px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px; font-size: 0.88rem; color: #856404;">
-                    <strong>⚠️ Converge to VCF is the only option at this stage.</strong><br/>
-                </div>
 
                 <!-- VCF Automation -->
                 <div class="checkbox-group" id="automationCheckboxGroup">
@@ -712,6 +862,7 @@
                                 <option value="">-- Select Version --</option>
                                 <option value="4.1.x">4.1.x</option>
                                 <option value="4.2.x">4.2.x</option>
+                                <option value="9.0.x">9.0.x</option>
                                 <option value="9.1.x">9.1.x</option>
                             </select>
                         </div>
@@ -740,7 +891,60 @@
                         <span>VMware Cloud Director</span>
                     </label>
                 </div>
-            </strong></div><strong>
+            </div>
+
+        </div>
+
+        <!-- vSphere Intent Question (shown after selecting vSphere) -->
+        <div class="hidden" id="vsphereIntent">
+            <div class="question-section">
+                <label class="question-label">🎯 What is your upgrade goal?</label>
+                <div class="intent-grid">
+
+                     <!-- Option 4: Upgrade just vCenter and Operations with the option of VVF -->
+                    <div class="intent-card" id="intentCardVVF" onclick="selectVsphereIntent('vvf')">
+                        <div class="intent-card-icon">🔧</div>
+                        <div class="intent-card-title">Upgrade to vSphere 9.1 (No VCF Fleet)</div>
+                        <div class="intent-card-desc">
+                            Upgrade vSphere & Aria/VCF Operations now, upgrade to VCF at later point
+                        </div>
+                    </div>
+
+                    <!-- Option 1: Building a Fleet -->
+                    <div class="intent-card" id="intentCardFleet" onclick="selectVsphereIntent('fleet')">
+                        <div class="intent-card-icon">🏗️</div>
+                        <div class="intent-card-title">Create New VCF 9.1 Fleet</div>
+                        <div class="intent-card-desc">
+                            Converge your existing vSphere environment into new VCF Fleet
+                        <a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/vmware-cloud-foundation-concepts/vcf-operations-deployment-models.html" target="_blank" rel="noopener" onclick="event.stopPropagation();" title="Learn more about VCF deployment models" style="display:inline-flex;align-items:center;justify-content:center;margin-left:6px;width:18px;height:18px;border-radius:50%;background:var(--vmw-blue,#0070c0);color:#fff;font-size:11px;font-weight:700;text-decoration:none;vertical-align:middle;flex-shrink:0;">i</a>
+
+                        </div>
+                    </div>
+
+                    <!-- Option 2: Additional VCF Instance -->
+                    <div class="intent-card" id="intentCardInstance" onclick="selectVsphereIntent('instance')">
+                        <div class="intent-card-icon">➕</div>
+                        <div class="intent-card-title">Expand existing VCF Fleet with new 9.1 VCF Instance</div>
+                        <div class="intent-card-desc">
+                            Converge your vSphere environment into a new VCF instance with your existing VCF Fleet.                     
+                        </div>
+                    </div>
+
+                    <!-- Option 3: Import a Workload Domain -->
+                    <div class="intent-card" id="intentCardImport" onclick="selectVsphereIntent('import')">
+                        <div class="intent-card-icon">📥</div>
+                        <div class="intent-card-title"> Expand existing VCF Fleet with new VCF Workload Domain</div>
+                        <div class="intent-card-desc">
+                            Import your vSphere environment into a new VCF Workload Domain with your existing VCF Fleet    
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="intent-infer-note" id="intentInferNote" style="display:none;"></div>
+            </div>
+        </div>
 
             <!-- vSphere Path Selection (appears after products selected) -->
             <div class="path-selection hidden" id="pathSelection">
@@ -762,12 +966,14 @@
                     </div>
                 </div>
             </div>
-        </strong></div><strong>
 
+    
         <!-- VCF Questions -->
         <div class="hidden" id="vcfQuestions">
             <div class="question-section">
                 <label class="question-label">Select Your Current Environment</label>
+
+    
                 
                 <!-- VCF Version Checkboxes -->
                 <div class="checkbox-group">
@@ -850,6 +1056,45 @@
                 </div>
             </div>
 
+
+        <!-- VCF Intent Question (shown after selecting VCF) -->
+        <div class="hidden" id="vcfIntent">
+            <div class="question-section">
+                <label class="question-label">🎯 What is your upgrade goal?</label>
+                <div class="intent-grid">
+
+                    <!-- Option 1: Upgrade VCF Fleet -->
+                    <div class="intent-card" id="intentCardVcfFleet" onclick="selectVcfIntent('fleet')">
+                        <div class="intent-card-icon">🏗️</div>
+                        <div class="intent-card-title">Create New VCF 9.1 Fleet</div>
+                        <div class="intent-card-desc">
+                            Upgrade your existing VCF environment into new VCF Fleet
+                            <a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation.html" target="_blank" rel="noopener" onclick="event.stopPropagation();" title="Learn more about VCF deployment models" style="display:inline-flex;align-items:center;justify-content:center;margin-left:6px;width:18px;height:18px;border-radius:50%;background:var(--vmw-blue,#0070c0);color:#fff;font-size:11px;font-weight:700;text-decoration:none;vertical-align:middle;flex-shrink:0;">i</a>
+                        </div>
+                    </div>
+
+                    <!-- Option 2: Upgrade VCF Instance -->
+                    <div class="intent-card" id="intentCardVcfInstance" onclick="selectVcfIntent('instance')">
+                        <div class="intent-card-icon">⬆️</div>
+                        <div class="intent-card-title">Expand existing VCF Fleet with upgrade of existing VCF Instance</div>
+                        <div class="intent-card-desc">
+                            Upgrade second VCF Instance into your existing VCF Fleet.                   
+                        </div>
+                    </div>
+
+                    <!-- Option 3: Upgrade VCF Workload Domain -->
+                    <div class="intent-card" id="intentCardVcfWorkload" onclick="selectVcfIntent('workload')">
+                        <div class="intent-card-icon">🗂️</div>
+                        <div class="intent-card-title">Upgrade VCF Workload Domain</div>
+                        <div class="intent-card-desc">
+                            Upgrade an existing workload domain within VCF instance.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
             <!-- VCF Path Selection (appears after version selected) -->
             <div class="path-selection hidden" id="vcfPathSelection">
                 <div class="question-section">
@@ -870,23 +1115,55 @@
                 </div>
             </div>
         </div>
-    </strong></div><strong>
+    </div>
 
     <script>
         function handleStartingPointChange() {
             const startingPoint = document.getElementById('startingPoint').value;
             const vsphereQuestions = document.getElementById('vsphereQuestions');
-            const vcfQuestions = document.getElementById('vcfQuestions');
+            const vsphereIntent   = document.getElementById('vsphereIntent');
+            const vcfIntent = document.getElementById('vcfIntent')
+            const vcfQuestions    = document.getElementById('vcfQuestions');
 
-            // Hide both sections first
+            // Clear intents FIRST so resetFormState's change events don't re-render paths
+            localStorage.removeItem('vsphere-intent');
+            localStorage.removeItem('vcf-intent');
+
+            // Full reset — clears all checkboxes, dropdowns, and paths
+            resetFormState();
+
+            // Hide all sections and paths
             vsphereQuestions.classList.add('hidden');
+            vsphereIntent.classList.add('hidden');
+            vcfIntent.classList.add('hidden');
             vcfQuestions.classList.add('hidden');
+            const _navGoal = document.getElementById('navGoal');
+            if (_navGoal) _navGoal.classList.add('nav-hidden');
+            const vcfPathSel = document.getElementById('vcfPathSelection');
+            if (vcfPathSel) vcfPathSel.classList.add('hidden');
+            const vspherPathSel = document.getElementById('pathSelection');
+            if (vspherPathSel) vspherPathSel.classList.add('hidden');
+            document.querySelectorAll('.intent-card').forEach(c => c.classList.remove('selected'));
 
-            // Show the appropriate section
             if (startingPoint === 'vsphere') {
                 vsphereQuestions.classList.remove('hidden');
+                vsphereIntent.classList.remove('hidden');
+                applyIntentVisibility();
+                if (typeof updateIntentCardHints === 'function') updateIntentCardHints(null);
+                const navDeployment = document.getElementById('navDeployment');
+                if (navDeployment) navDeployment.classList.remove('nav-hidden');
+                const navProducts = document.getElementById('navProducts');
+                if (navProducts) navProducts.classList.remove('nav-hidden');
+                const _navGoalSp = document.getElementById('navGoal');
+                if (_navGoalSp) _navGoalSp.classList.remove('nav-hidden');
             } else if (startingPoint === 'vcf') {
                 vcfQuestions.classList.remove('hidden');
+                vcfIntent.classList.remove('hidden');
+                localStorage.removeItem('vcf-intent');
+                const navDeployment = document.getElementById('navDeployment');
+                if (navDeployment) navDeployment.classList.remove('nav-hidden');
+                const navProducts = document.getElementById('navProducts');
+                if (navProducts) navProducts.classList.remove('nav-hidden');
             }
         }
 
@@ -898,7 +1175,6 @@
             const nsxCheckboxGroup = document.getElementById('nsxCheckboxGroup');
             const automationCheckboxGroup = document.getElementById('automationCheckboxGroup');
             const vxrailCheckboxGroup = document.getElementById('vxrailCheckboxGroup');
-            const convertOnlyNote = document.getElementById('convertOnlyNote');
             const vcdCheckboxGroup = document.getElementById('vcdCheckboxGroup');
 
             // Trigger when vCenter AND ESX are already on 9.1.x (with or without Operations).
@@ -907,8 +1183,6 @@
             const infraOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
 
             if (infraOn91) {
-                // Show the informational note
-                if (convertOnlyNote) convertOnlyNote.style.display = 'block';
 
                 // Disable (but keep visible) NSX and Automation checkboxes
                 const nsxCheck = document.getElementById('nsxCheck');
@@ -954,33 +1228,35 @@
 
 
             } else {
-                // Restore NSX and Automation to normal
-                if (convertOnlyNote) convertOnlyNote.style.display = 'none';
 
                 const nsxCheck = document.getElementById('nsxCheck');
                 const automationCheck = document.getElementById('automationCheck');
 
                 if (nsxCheck) nsxCheck.disabled = false;
                 if (nsxCheckboxGroup) {
-                    nsxCheckboxGroup.style.display = 'block';
                     nsxCheckboxGroup.style.opacity = '';
                     nsxCheckboxGroup.style.pointerEvents = '';
                 }
 
                 if (automationCheck) automationCheck.disabled = false;
                 if (automationCheckboxGroup) {
-                    automationCheckboxGroup.style.display = 'block';
                     automationCheckboxGroup.style.opacity = '';
                     automationCheckboxGroup.style.pointerEvents = '';
                 }
-
-
-                if (vxrailCheckboxGroup) vxrailCheckboxGroup.style.display = 'block';
-                    // Disable VMware Cloud Director
-
             }
 
-            
+            // Always re-apply intent visibility last so it can't be overridden
+            applyIntentVisibility();
+        }
+
+        function applyIntentVisibility() {
+            // Products always show all checkboxes; constraints shown in destination section.
+            ['operationsCheckboxGroup','vxrailCheckboxGroup','automationCheckboxGroup','vcdCheckboxGroup','nsxCheckboxGroup'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) { el.style.display = ''; el.style.opacity = ''; el.style.pointerEvents = ''; }
+            });
+            const noteBox = document.getElementById('productNoteBox');
+            if (noteBox) noteBox.style.display = '';
         }
 
         function toggleDropdown(checkboxId, dropdownId) {
@@ -1000,19 +1276,20 @@
             
             // Check versions and toggle NSX/Automation/VXRail visibility
             checkVersionsAndToggleOptions();
-            
-            // Update available paths when any checkbox changes
+            if (typeof inferIntentFromProducts === 'function') inferIntentFromProducts();
             updateAvailablePaths();
         }
         
         function handleVersionChange() {
             checkVersionsAndToggleOptions();
+            if (typeof inferIntentFromProducts === 'function') inferIntentFromProducts();
             updateAvailablePaths();
         }
 
         function validateSelections() {
             const errors = [];
-            
+            const intent = localStorage.getItem('vsphere-intent') || '';
+
             // Check that both vCenter and ESX are selected (required)
             const vcenterChecked = document.getElementById('vcenterCheck').checked;
             const esxChecked = document.getElementById('esxCheck').checked;
@@ -1022,13 +1299,14 @@
                 errors.push('vCenter must be selected to proceed');
             }
 
-            // Either ESX or VXRail must be selected (mutually exclusive but at least one required)
-            if (!esxChecked && !vxrailChecked) {
-                errors.push('Either ESX or VxRail must be selected to proceed');
-            }
-
-             if (esxChecked && vxrailChecked) {
-                errors.push('Either ESX or VxRail must be selected to proceed');
+            // instance/import only need vCenter
+            // fleet requires ESX (VxRail not supported)
+            // vvf requires ESX or VxRail
+            if (intent === 'fleet') {
+                if (!esxChecked) errors.push('ESX must be selected to proceed');
+            } else if (intent === 'vvf') {
+                if (!esxChecked && !vxrailChecked) errors.push('Either ESX or VxRail must be selected to proceed');
+                if (esxChecked && vxrailChecked)   errors.push('ESX and VxRail cannot both be selected');
             }
             
             // Check vCenter version if checked
@@ -1067,186 +1345,132 @@
         }
 
         function updateAvailablePaths() {
+            const intent = localStorage.getItem('vsphere-intent') || '';
+
+            // Don't show destination until intent selected
+            if (!intent) {
+                const _ps = document.getElementById('pathSelection');
+                if (_ps) _ps.classList.add('hidden');
+                const _tg = document.getElementById('targetVcf91VersionGroup');
+                if (_tg) _tg.classList.add('hidden');
+                return;
+            }
+
             // Validate selections first
             const validationErrors = validateSelections();
-            
+
             // Get checkbox states
-            const vcenter = document.getElementById('vcenterCheck').checked;
-            const esx = document.getElementById('esxCheck').checked;
+            const vcenter    = document.getElementById('vcenterCheck').checked;
+            const esx        = document.getElementById('esxCheck').checked;
             const operations = document.getElementById('operationsCheck').checked;
             const automation = document.getElementById('automationCheck').checked;
-            const nsx = document.getElementById('nsxCheck').checked;
-            const vxrail = document.getElementById('vxrailCheck').checked;
-            const vcd = document.getElementById('vcdCheck').checked
-            
-            // Get version selections
-            const vcenterVersion = document.getElementById('vcenter').value || '8';
-            const esxVersion = document.getElementById('esx').value || '8';
-            const operationsVersion = document.getElementById('operations').value || '8.18.x';
-            
-            // Check if already fully on 9.1 (all components at 9.1)
-            const alreadyOn91 = (vcenterVersion === '9.1.x' && esxVersion === '9.1.x' && 
-                (!operations || operationsVersion === '9.1.x'));
+            const nsx        = document.getElementById('nsxCheck').checked;
+            const vxrail     = document.getElementById('vxrailCheck').checked;
+            const vcd        = document.getElementById('vcdCheck').checked;
 
-            const opsAlreadyOn91 = operations && operationsVersion === '9.1.x' && vcenterVersion !== '9.1.x';
-            const esxAlreadyOn91 = operations && operationsVersion === '9.1.x' && vcenterVersion  == '9.1.x' && esxVersion !== '9.1.x';
-
-            const pathSelection = document.getElementById('pathSelection');
-            const pathOptions = document.getElementById('pathOptions');
-            const targetVersionGroup = document.getElementById('targetVcf91VersionGroup');
+            const pathSelection    = document.getElementById('pathSelection');
+            const pathOptions      = document.getElementById('pathOptions');
+            const targetVersionGroup  = document.getElementById('targetVcf91VersionGroup');
             const targetVersionSelect = document.getElementById('targetVcf91Version');
-            const savedTargetVer = targetVersionSelect ? targetVersionSelect.value : '';
+            const savedTargetVer   = targetVersionSelect ? targetVersionSelect.value : '';
 
             // Clear existing paths
             pathOptions.innerHTML = '';
-            
+
+            // instance/import only need vCenter; fleet needs vCenter+ESX; vvf needs vCenter+ESX or VxRail
+            const fleetBlock  = (intent === 'fleet' && !esx);
+            const vvfBlock    = (intent === 'vvf'   && !esx && !vxrail);
+            if (!vcenter || fleetBlock || vvfBlock) {
+                pathSelection.classList.add('hidden');
+                if (targetVersionGroup) targetVersionGroup.classList.add('hidden');
+                return;
+            }
+
             // Show validation errors if any
             if (validationErrors.length > 0) {
                 const errorDiv = document.createElement('div');
                 errorDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
-                errorDiv.innerHTML = `
-                    <strong style="color: var(--warning-text);">⚠️ Please complete your selections:</strong>
-                    <ul style="margin: 8px 0 0 20px; color: var(--warning-text);">
-                        ${validationErrors.map(err => `<li>${err}</li>`).join('')}
-                    </ul>
-                `;
+                errorDiv.innerHTML = '<strong style="color: var(--warning-text);">&#9888;&#65039; Please complete your selections:</strong><ul style="margin: 8px 0 0 20px; color: var(--warning-text);">' +
+                    validationErrors.map(function(err){ return '<li>' + err + '</li>'; }).join('') + '</ul>';
                 pathOptions.appendChild(errorDiv);
                 pathSelection.classList.remove('hidden');
                 return;
             }
 
-            // VMware Cloud Director selected — block all paths regardless of version
+            // VMware Cloud Director block (all intents)
             if (vcd) {
-                const vcdMessageDiv = document.createElement('div');
-                vcdMessageDiv.style.cssText = 'background: #e8f4f8; border-left: 4px solid #0088b5; padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #b3d9ea;';
-                vcdMessageDiv.innerHTML = '<p style="color: #1a2d40; font-size: 1rem; line-height: 1.6; margin: 0;">In VCF Automation 9.1, you can use the Migration Tool to perform an in-place migration from VMware Cloud Director to VCF Automation. For more information, contact your Broadcom representative.</p>';
-                pathOptions.appendChild(vcdMessageDiv);
+                const vcdDiv = document.createElement('div');
+                vcdDiv.style.cssText = 'background: #e8f4f8; border-left: 4px solid #0088b5; padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #b3d9ea;';
+                vcdDiv.innerHTML = '<p style="color: #1a2d40; font-size: 1rem; line-height: 1.6; margin: 0;">In VCF Automation 9.1, you can use the Migration Tool to perform an in-place migration from VMware Cloud Director to VCF Automation. For more information, contact your Broadcom representative.</p>';
+                pathOptions.appendChild(vcdDiv);
                 pathSelection.classList.remove('hidden');
                 return;
             }
 
-            // Check for VXRail with Automation or NSX - No path available
-            if (vxrail && (automation || nsx)) {
+            // VxRail + NSX/Automation conflict — VVF intent only
+            if (intent === 'vvf' && vxrail && (automation || nsx)) {
                 const noPathDiv = document.createElement('div');
                 noPathDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
-                noPathDiv.innerHTML = `
-                    <h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.2rem; font-weight: 600;">⚠️ No Upgrade Path Available</h3>
-                    <p style="color: var(--warning-text); margin-bottom: 12px; line-height: 1.6;">
-                        There is currently <strong>no supported upgrade path to vSphere 9.1 or VCF 9.1 on VxRail</strong> when combined with:
-                    </p>
-                    <ul style="margin: 8px 0 12px 20px; color: var(--warning-text);">
-                        ${automation ? '<li>VCF Automation</li>' : ''}
-                        ${nsx ? '<li>NSX</li>' : ''}
-                    </ul>
-                    <p style="color: var(--warning-text); font-style: italic; margin-top: 12px;">
-                        Please adjust your selections or consult VMware documentation for VxRail-specific upgrade paths.
-                    </p>
-                `;
+                noPathDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.2rem; font-weight: 600;">&#9888;&#65039; No Upgrade Path Available</h3>' +
+                    '<p style="color: var(--warning-text); margin-bottom: 12px; line-height: 1.6;">There is currently <strong>no supported upgrade path to VVF 9.1 on VxRail</strong> when combined with:</p>' +
+                    '<ul style="margin: 8px 0 12px 20px; color: var(--warning-text);">' +
+                    (automation ? '<li>VCF Automation</li>' : '') + (nsx ? '<li>NSX</li>' : '') + '</ul>' +
+                    '<p style="color: var(--warning-text); font-style: italic; margin-top: 12px;">Please adjust your selections or consult VMware documentation for VxRail-specific upgrade paths.</p>';
                 pathOptions.appendChild(noPathDiv);
                 pathSelection.classList.remove('hidden');
                 return;
             }
 
-            // Define available paths based on selections
-            let paths = [];
-
-            // Logic for path availability
-            // VxRail + VCD is blocked by the guard above; these branches handle clean VxRail selections.
-            if (vcenter && !esx && vxrail) {
-                // VxRail: same result with or without Operations
-                paths = [
-                    { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
-                    { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' }
-                ];
-            } else if (vcenter && esx && automation && !nsx && !operations && !vxrail) {
-                // vCenter + ESX + Automation
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && nsx && automation && !vxrail) {
-                // vCenter + ESX + NSX + Automation
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && operations && automation && !nsx && !vxrail) {
-                // vCenter + ESX + Operations + Automation
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && !operations && automation && !nsx && !vxrail) {
-                // vCenter + ESX + Operations + Automation
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && !operations && automation && nsx && !vxrail) {
-                // vCenter + ESX + Operations + Automation
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && operations && automation && nsx && !vxrail) {
-                // vCenter + ESX + Operations + Automation
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && operations && automation && !nsx && !vxrail) {
-                // vCenter + ESX + Operations + Automation
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && nsx && operations && !automation && !vxrail) {
-                // vCenter + ESX + NSX + Operations
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && nsx && !operations && !automation && !vxrail) {
-                // vCenter + ESX + NSX only
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including NSX and VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && operations && !nsx && !automation && !vxrail) {
-              if (alreadyOn91) {
-                    paths = [
-                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Migrate to VCF 9.1 with Operations, excluding VCF Automation', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including Operations and VCF Automation', icon: '' }
-                    ];
-                }   else {
-                    paths = [
-                        { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
-                        { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including Operations and VCF Automation', icon: '' }
-                    ];
-                }
-            } else if (vcenter && esx && nsx && !operations && !automation && !vxrail) {
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including NSX and VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && nsx && operations && !automation && !vxrail) {
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including NSX and VCF Automation components', icon: '' }
-                ];
-            } else if (vcenter && esx && !operations && !automation && !nsx) {
-                if (alreadyOn91) {
-                    paths = [
-                        { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                    ];
-                } else {
-                    paths = [
-                        { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
-                        { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)', desc: 'Begin with an upgrade of vSphere and Operations. Expand to VCF on your timeline', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Basic upgrade to VCF 9.1 without VCF Automation', icon: '' },
-                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Full upgrade to VCF 9.1 including VCF Automation components', icon: '' }
-                    ];
-                }
+            // Intent-specific constraint notes
+            const _ecn = document.getElementById('pathConstraintNote');
+            if (_ecn) _ecn.remove();
+            const _cnMap = {
+                instance: '<ul style="margin:4px 0 0 16px;padding:0;"><li>For <strong>Upgrade vSphere to VCF Instance</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed.</li><li>Ensure the selected <strong>Target Version</strong> is the same as or lower than the existing VCF Fleet version.</li></ul>',
+                import:   '<ul style="margin:4px 0 0 16px;padding:0;"><li>For <strong>Upgrade vSphere environment to Workload Domain</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed.</li><li>Ensure the selected <strong>Target Version</strong> is the same as or lower than the existing VCF Fleet version.</li></ul>',
+                vvf:      'For <strong>Upgrade vSphere and Operations</strong>: NSX and VCF Automation are not supported in this path.',
+                fleet:    'For <strong>Upgrade vSphere environment to Create New VCF 9.1 Fleet</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed'
+            };
+            const _cnt = _cnMap[intent] || '';
+            if (_cnt) {
+                const _cnel = document.createElement('div');
+                _cnel.id = 'pathConstraintNote';
+                _cnel.style.cssText = 'background:rgba(0,136,181,0.07);border-left:3px solid var(--vmw-blue);border-radius:6px;padding:10px 16px;margin-bottom:16px;font-size:0.88rem;color:var(--text-secondary);line-height:1.55;';
+                _cnel.innerHTML = '&#x1F4A1; ' + _cnt;
+                pathOptions.appendChild(_cnel);
             }
 
-            // Show path selection if we have any paths
+                        // ── Path sets by intent ──────────────────────────────────────────────
+            let paths = [];
+
+            if (intent === 'fleet') {
+                paths = [
+                    { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Converge your vSphere environment into a VCF managed fleet. VCF Automation is not included in this path and can be added later.', icon: '' },
+                    { title: 'vSphere to VCF 9.1 (VCF Automation included)',     desc: 'Converge your vSphere environment into a VCF managed fleet with VCF Automation fully integrated from the start.', icon: '' }
+                ];
+            } else if (intent === 'instance') {
+                paths = [
+                    { title: 'Upgrade vSphere environment to VCF Instance', desc: ' Converge your vSphere environment into a new VCF instance that joins your established VCF fleet.', icon: '' }
+                ];
+            } else if (intent === 'import') {
+                paths = [
+                    { title: 'Upgrade vSphere environment to VCF Workload Domain', desc: 'Import your vSphere environment as workload domain into an existing VCF instance.', icon: '' }
+                ];
+            } else if (intent === 'vvf') {
+                paths = [
+                    { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Upgrade vSphere and VCF Operations to VVF 9.1. VCF Management Services are not included; you can add them later at your own pace.', icon: '' },
+                    { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)',    desc: 'Upgrade vSphere and VCF Operations to VVF 9.1 with VCF Management Services included for full lifecycle management capabilities.', icon: '' }
+                ];
+            }
+
+            // ── Render paths ─────────────────────────────────────────────────────
             if (paths.length > 0) {
-                if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                // instance intent navigates to a fixed page — no target version needed
+                const needsTargetVersion = true;
+                if (targetVersionGroup) {
+                    if (needsTargetVersion) {
+                        targetVersionGroup.classList.remove('hidden');
+                    }
+                }
 
                 paths.forEach(function(path) {
                     const pathCard = document.createElement('div');
@@ -1255,17 +1479,13 @@
                         ? path.title.replace('VVF 9.1', 'VVF ' + savedTargetVer).replace('VCF 9.1', 'VCF ' + savedTargetVer).replace('to 9.1', 'to ' + savedTargetVer)
                         : path.title;
 
-                    if (validationErrors.length > 0) {
+                    if (!savedTargetVer && needsTargetVersion) {
                         pathCard.style.opacity = '0.5';
-                        pathCard.style.cursor = 'not-allowed';
-                        pathCard.onclick = function() { alert('Please complete all required selections:\n\n' + validationErrors.join('\n')); };
-                    } else if (!savedTargetVer) {
-                        pathCard.style.opacity = '0.5';
-                        pathCard.style.cursor = 'not-allowed';
+                        pathCard.style.cursor  = 'not-allowed';
                         pathCard.onclick = function() { alert('Please select a Target VCF 9.1 Version before proceeding.'); };
                     } else {
                         pathCard.style.opacity = '';
-                        pathCard.style.cursor = 'pointer';
+                        pathCard.style.cursor  = 'pointer';
                         pathCard.onclick = (function(t){ return function(){ selectPath(t); }; })(path.title);
                     }
 
@@ -1344,6 +1564,19 @@
         }
 
         function updateVCFPath() {
+            updateVcfFleetCardLabel();
+
+            const _vcfIC = localStorage.getItem('vcf-intent') || '';
+
+            // Don't show destination paths until an intent card is chosen
+            if (!_vcfIC) {
+                const _vcfps = document.getElementById('vcfPathSelection');
+                if (_vcfps) _vcfps.classList.add('hidden');
+                const _vcftg = document.getElementById('vcfTargetVcf91VersionGroup');
+                if (_vcftg) _vcftg.classList.add('hidden');
+                return;
+            }
+
             const vcfPathSelection = document.getElementById('vcfPathSelection');
             const vcfPathOptions = document.getElementById('vcfPathOptions');
             const vcfTargetVersionGroup = document.getElementById('vcfTargetVcf91VersionGroup');
@@ -1392,20 +1625,36 @@
                 return;
             }
 
+            const vcfIntent = localStorage.getItem('vcf-intent') || 'fleet';
+
             // ── VCF 5.2 selected ──────────────────────────────────────────────
             if (vcf52Checked && vcf52Version) {
                 const tgt = savedVcfTargetVer || '9.1.x';
-                paths = [
-                    { title: 'VCF 5.2 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF from 5.2 to ' + tgt + ' without deploying VCF Automation', icon: '' },
-                    { title: 'VCF 5.2 to VCF 9.1 (VCF Automation included)',     desc: 'Upgrade VCF from 5.2 to ' + tgt + ' and deploy VCF Automation',        icon: '' }
-                ];
+                if (vcfIntent === 'fleet') {
+                    paths = [
+                        { title: 'VCF 5.2 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF Fleet from 5.2 to ' + tgt + ' without deploying VCF Automation', icon: '' },
+                        { title: 'VCF 5.2 to VCF 9.1 (VCF Automation included)',     desc: 'Upgrade VCF Fleet from 5.2 to ' + tgt + ' and deploy VCF Automation',        icon: '' }
+                    ];
+                } else {
+                    // Instance and Workload: no Automation upgrade
+                    paths = [
+                        { title: 'VCF 5.2 to VCF 9.1 (' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ')', desc: 'Upgrade VCF ' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ' from 5.2 to ' + tgt, icon: '' }
+                    ];
+                }
             // ── VCF 9.0 selected ──────────────────────────────────────────────
             } else if (vcf90Checked && vcf90Version) {
                 const tgt90 = savedVcfTargetVer || '9.1.x';
-                paths = [
-                    { title: 'VCF 9.0 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF from 9.0 to ' + tgt90 + ' without deploying VCF Automation', icon: '' },
-                    { title: 'VCF 9.0 to VCF 9.1 (VCF Automation included)',     desc: 'Upgrade VCF from 9.0 to ' + tgt90 + ' and deploy VCF Automation',        icon: '' }
-                ];
+                if (vcfIntent === 'fleet') {
+                    paths = [
+                        { title: 'VCF 9.0 to VCF 9.1 (VCF Automation not included)', desc: 'Upgrade VCF Fleet from 9.0 to ' + tgt90 + ' without deploying VCF Automation', icon: '' },
+                        { title: 'VCF 9.0 to VCF 9.1 (VCF Automation included)',     desc: 'Upgrade VCF Fleet from 9.0 to ' + tgt90 + ' and deploy VCF Automation',        icon: '' }
+                    ];
+                } else {
+                    // Instance and Workload: no Automation upgrade
+                    paths = [
+                        { title: 'VCF 9.0 to VCF 9.1 (' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ')', desc: 'Upgrade VCF ' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ' from 9.0 to ' + tgt90, icon: '' }
+                    ];
+                }
             }
 
             if (paths.length > 0) {
@@ -1542,7 +1791,6 @@
                 
                 window.location.href = 'vSphere-to-VCF-9.1-(VCF-Automation-included).html';
             } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (VCF Automation not included)') {
-                // Store VCF 5.2 version and VxRail selection in localStorage
                 const vcf52Version = document.getElementById('vcf52').value;
                 const vcf52VxrailSelected = document.getElementById('vcf52VxrailCheck').checked;
                 const vcf52VxrailVersion = document.getElementById('vcf52Vxrail').value || '';
@@ -1550,11 +1798,8 @@
                 localStorage.setItem('vcf-detailed-version', vcf52Version);
                 localStorage.setItem('vxrail-selected', vcf52VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf52VxrailVersion);
-                
-                // Navigate to VCF 5.2 to 9.1 no automation page
                 window.location.href = 'VCF-5.2-to-VCF-9.1-(VCF-Automation-not-included).html';
             } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (VCF Automation included)') {
-                // Store VCF 5.2 version and VxRail selection in localStorage
                 const vcf52Version = document.getElementById('vcf52').value;
                 const vcf52VxrailSelected = document.getElementById('vcf52VxrailCheck').checked;
                 const vcf52VxrailVersion = document.getElementById('vcf52Vxrail').value || '';
@@ -1562,11 +1807,26 @@
                 localStorage.setItem('vcf-detailed-version', vcf52Version);
                 localStorage.setItem('vxrail-selected', vcf52VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf52VxrailVersion);
-                
-                // Navigate to VCF 5.2 to 9.1 with automation page
                 window.location.href = 'VCF-5.2-to-VCF-9.1-(VCF-Automation-included).html';
+            } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (Instance)') {
+                const vcf52Version = document.getElementById('vcf52').value;
+                const vcf52VxrailSelected = document.getElementById('vcf52VxrailCheck').checked;
+                const vcf52VxrailVersion = document.getElementById('vcf52Vxrail').value || '';
+                localStorage.setItem('vcf-version', '5.2');
+                localStorage.setItem('vcf-detailed-version', vcf52Version);
+                localStorage.setItem('vxrail-selected', vcf52VxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vcf52VxrailVersion);
+                window.location.href = 'VCF-5.2-to-VCF-9.1-(VCF-Instance).html';
+            } else if (pathTitle === 'VCF 5.2 to VCF 9.1 (Workload Domain)') {
+                const vcf52Version = document.getElementById('vcf52').value;
+                const vcf52VxrailSelected = document.getElementById('vcf52VxrailCheck').checked;
+                const vcf52VxrailVersion = document.getElementById('vcf52Vxrail').value || '';
+                localStorage.setItem('vcf-version', '5.2');
+                localStorage.setItem('vcf-detailed-version', vcf52Version);
+                localStorage.setItem('vxrail-selected', vcf52VxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vcf52VxrailVersion);
+                window.location.href = 'VCF-5.2-to-VCF-9.1-(Workload-Domain).html';
             } else if (pathTitle === 'VCF 9.0 to VCF 9.1 (VCF Automation not included)') {
-                // Store VCF 9.0 version and VxRail selection in localStorage
                 const vcf90Version = document.getElementById('vcf90').value;
                 const vcf90VxrailSelected = document.getElementById('vcf90VxrailCheck').checked;
                 const vcf90VxrailVersion = document.getElementById('vcf90Vxrail').value || '';
@@ -1574,11 +1834,8 @@
                 localStorage.setItem('vcf-detailed-version', vcf90Version);
                 localStorage.setItem('vxrail-selected', vcf90VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf90VxrailVersion);
-                
-                // Navigate to VCF 9.0 to 9.1 no automation page
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-not-included).html';
             } else if (pathTitle === 'VCF 9.0 to VCF 9.1 (VCF Automation included)') {
-                // Store VCF 9.0 version and VxRail selection in localStorage
                 const vcf90Version = document.getElementById('vcf90').value;
                 const vcf90VxrailSelected = document.getElementById('vcf90VxrailCheck').checked;
                 const vcf90VxrailVersion = document.getElementById('vcf90Vxrail').value || '';
@@ -1586,9 +1843,54 @@
                 localStorage.setItem('vcf-detailed-version', vcf90Version);
                 localStorage.setItem('vxrail-selected', vcf90VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf90VxrailVersion);
-                
-                // Navigate to VCF 9.0 to 9.1 with automation page
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html';
+            } else if (pathTitle === 'VCF 9.0 to VCF 9.1 (Instance)') {
+                const vcf90Version = document.getElementById('vcf90').value;
+                const vcf90VxrailSelected = document.getElementById('vcf90VxrailCheck').checked;
+                const vcf90VxrailVersion = document.getElementById('vcf90Vxrail').value || '';
+                localStorage.setItem('vcf-version', '9.0');
+                localStorage.setItem('vcf-detailed-version', vcf90Version);
+                localStorage.setItem('vxrail-selected', vcf90VxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vcf90VxrailVersion);
+                window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Instance).html';
+            } else if (pathTitle === 'VCF 9.0 to VCF 9.1 (Workload Domain)') {
+                const vcf90Version = document.getElementById('vcf90').value;
+                const vcf90VxrailSelected = document.getElementById('vcf90VxrailCheck').checked;
+                const vcf90VxrailVersion = document.getElementById('vcf90Vxrail').value || '';
+                localStorage.setItem('vcf-version', '9.0');
+                localStorage.setItem('vcf-detailed-version', vcf90Version);
+                localStorage.setItem('vxrail-selected', vcf90VxrailSelected.toString());
+                localStorage.setItem('vxrail-version', vcf90VxrailVersion);
+                window.location.href = 'VCF-9.0-to-VCF-9.1-(Workload-Domain).html';
+            } else if (pathTitle === 'Upgrade vSphere environment to VCF Instance') {
+                const vcenterVersion = document.getElementById('vcenter').value || '8';
+                const esxVersion = document.getElementById('esx').value || '8';
+                const nsxSelected = document.getElementById('nsxCheck').checked;
+                const nsxVersion = document.getElementById('nsx').value || '4.2.x';
+                localStorage.setItem('vcenter-version', vcenterVersion);
+                localStorage.setItem('esx-version', esxVersion);
+                localStorage.setItem('nsx-selected', nsxSelected.toString());
+                localStorage.setItem('nsx-version', nsxVersion);
+                window.location.href = 'vSphere-to-VCF-9.1-(Additonal-VCF-Instance).html';
+
+            } else if (pathTitle === 'Upgrade vSphere environment to VCF Workload Domain') {
+                // Store VCF 9.0 version and election in localStorage
+               // Store all selections including NSX, VXRail, and Automation
+                const vcenterVersion = document.getElementById('vcenter').value || '8';
+                const esxVersion = document.getElementById('esx').value || '8';
+                const nsxSelected = document.getElementById('nsxCheck').checked;
+                const nsxVersion = document.getElementById('nsx').value || '4.2.x';
+
+                // If vCenter + ESX are already on 9.1.x, Operations is already deployed —
+                // force operations-selected=true so sub-pages use the correct convert_with_ops tables
+                const infraAlreadyOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
+
+                localStorage.setItem('vcenter-version', vcenterVersion);
+                localStorage.setItem('esx-version', esxVersion);
+                localStorage.setItem('nsx-selected', nsxSelected.toString());
+                localStorage.setItem('nsx-version', nsxVersion);
+                // Navigate to VCF 9.0 to 9.1 with automation page
+                window.location.href = 'vSphere-to-VCF-9.1-(import).html';
             } else if (pathTitle === 'VCF 9.1.0 to VCF 9.1.0100 (VCF Automation not included)') {
                 localStorage.setItem('vcf-version', '9.1.0');
                 localStorage.setItem('vcf-detailed-version', '9.1.0');
@@ -1602,6 +1904,354 @@
             } else {
                 // For other paths, show alert (placeholder for future pages)
                 alert('Selected path: ' + pathTitle + '\n\nThis will navigate to the next step in the upgrade process.');
+            }
+        }
+
+        function resetFormState() {
+            // Uncheck all product checkboxes and hide their version dropdowns
+            const checkboxIds = [
+                'vcenterCheck','esxCheck','operationsCheck','automationCheck',
+                'nsxCheck','vxrailCheck','vcdCheck',
+                'vcf52Check','vcf52VxrailCheck','vcf90Check','vcf90VxrailCheck','vcf91Check'
+            ];
+            checkboxIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.checked = false;
+            });
+
+            // Reset all version selects to default
+            const selectIds = [
+                'vcenter','esx','operations','automation','nsx','vxrail',
+                'vcf52','vcf52Vxrail','vcf90','vcf90Vxrail','vcf91',
+                'targetVcf91Version','vcfTargetVcf91Version'
+            ];
+            selectIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.selectedIndex = 0;
+            });
+
+            // Hide all version dropdown panels
+            const dropdownIds = [
+                'vcenterDropdown','esxDropdown','operationsDropdown','automationDropdown',
+                'nsxDropdown','vxrailDropdown',
+                'vcf52Dropdown','vcf52VxrailDropdown','vcf90Dropdown','vcf90VxrailDropdown','vcf91Dropdown'
+            ];
+            dropdownIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            // Clear and hide destination/path sections
+            ['pathOptions','vcfPathOptions'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '';
+            });
+            ['pathSelection','vcfPathSelection'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            ['targetVcf91VersionGroup','vcfTargetVcf91VersionGroup'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            ['operationsCheckboxGroup','vxrailCheckboxGroup','automationCheckboxGroup','vcdCheckboxGroup','nsxCheckboxGroup'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) { el.style.display = ''; el.style.opacity = ''; el.style.pointerEvents = ''; }
+            });
+
+            // Hide all question/intent sections — the active intent handler re-shows what's needed
+            ['fleetCheckSection','vsphereQuestions','vcfQuestions','vcfIntent'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            // Clear relevant localStorage keys
+            ['vcenter-version','esx-version','nsx-version','vcf-version'].forEach(k => localStorage.removeItem(k));
+
+            // Fire change events on key checkboxes so all downstream cascade logic
+            // (toggleDropdown, updateAvailablePaths) runs with everything unchecked,
+            // ensuring Destination Options and version dropdowns are fully hidden.
+            ['vcenterCheck','esxCheck','nsxCheck','operationsCheck','automationCheck','vxrailCheck','vcdCheck'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.checked = false;
+                    el.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+
+        function selectVsphereIntent(intent) {
+            document.querySelectorAll('.intent-card').forEach(c => c.classList.remove('selected'));
+            const cardMap = { fleet: 'intentCardFleet', instance: 'intentCardInstance', import: 'intentCardImport', vvf: 'intentCardVVF' };
+            const selectedCard = document.getElementById(cardMap[intent]);
+            if (selectedCard) selectedCard.classList.add('selected');
+            localStorage.setItem('vsphere-intent', intent);
+            applyIntentVisibility();
+            const pathOptions = document.getElementById('pathOptions');
+            if (pathOptions) pathOptions.innerHTML = '';
+            const pathSel = document.getElementById('pathSelection');
+            if (pathSel) pathSel.classList.add('hidden');
+            const tgv = document.getElementById('targetVcf91VersionGroup');
+            if (tgv) tgv.classList.add('hidden');
+            updateAvailablePaths();
+            const navProducts = document.getElementById('navProducts');
+            if (navProducts) navProducts.classList.remove('nav-hidden');
+            const navGoal = document.getElementById('navGoal');
+            if (navGoal) navGoal.classList.remove('nav-hidden');
+            setTimeout(function() {
+                const ps2 = document.getElementById('pathSelection');
+                if (ps2 && !ps2.classList.contains('hidden')) {
+                    ps2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 150);
+        }
+
+        function updateIntentCardHints(autoIntent) {
+            const allCards = ['intentCardFleet','intentCardInstance','intentCardImport','intentCardVVF'];
+            const nsx      = !!(document.getElementById('nsxCheck')        && document.getElementById('nsxCheck').checked);
+            const ops      = !!(document.getElementById('operationsCheck') && document.getElementById('operationsCheck').checked);
+            const automate = !!(document.getElementById('automationCheck') && document.getElementById('automationCheck').checked);
+            const vxrail   = !!(document.getElementById('vxrailCheck')     && document.getElementById('vxrailCheck').checked);
+            const note     = document.getElementById('intentInferNote');
+
+            // Helper: clear a stored intent that is no longer valid
+            function clearIfInvalid(allowedIntents) {
+                const cur = localStorage.getItem('vsphere-intent') || '';
+                if (cur && !allowedIntents.includes(cur)) {
+                    localStorage.removeItem('vsphere-intent');
+                    localStorage.removeItem('vsphere-auto-intent');
+                    document.querySelectorAll('.intent-card').forEach(c => c.classList.remove('selected'));
+                    const pathOpts = document.getElementById('pathOptions');
+                    if (pathOpts) pathOpts.innerHTML = '';
+                    const pathSel = document.getElementById('pathSelection');
+                    if (pathSel) pathSel.classList.add('hidden');
+                    const tgv = document.getElementById('targetVcf91VersionGroup');
+                    if (tgv) tgv.classList.add('hidden');
+                }
+            }
+
+            // Reset all cards first
+            allCards.forEach(function(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.classList.remove('inferred','intent-dimmed','intent-hidden');
+                const b = el.querySelector('.intent-infer-badge');
+                if (b) b.remove();
+                el.style.pointerEvents = '';
+            });
+            if (note) note.style.display = 'none';
+
+            // ── Rule 1: VxRail selected → only Upgrade vSphere (no Fleet) ──────
+            if (vxrail) {
+                ['intentCardFleet','intentCardInstance','intentCardImport'].forEach(function(id) {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('intent-hidden');
+                });
+                clearIfInvalid(['vvf']);
+                if (note) {
+                    note.style.display = '';
+                    note.innerHTML = '&#x1F4A1; With VxRail selected, only <strong>Upgrade to vSphere 9.1 (No VCF Fleet)</strong> is available.';
+                }
+                return;
+            }
+
+            // ── Rule 2: Automation selected → only Create Fleet ──────────────
+            if (automate) {
+                ['intentCardInstance','intentCardImport','intentCardVVF'].forEach(function(id) {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('intent-hidden');
+                });
+                clearIfInvalid(['fleet']);
+                if (note) {
+                    note.style.display = '';
+                    note.innerHTML = '&#x1F4A1; With VCF Automation selected, only <strong>Create Fleet</strong> is available.';
+                }
+                return;
+            }
+
+            // ── Rule 3a: Ops + NSX → only Create Fleet ───────────────────────
+            if (ops && nsx && !automate && !vxrail) {
+                ['intentCardInstance','intentCardImport','intentCardVVF'].forEach(function(id) {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('intent-hidden');
+                });
+                clearIfInvalid(['fleet']);
+                if (note) {
+                    note.style.display = '';
+                    note.innerHTML = '&#x1F4A1; With VCF Operations and NSX selected, only <strong>Create Fleet</strong> is available.';
+                }
+                return;
+            }
+
+            // ── Rule 3b: Ops only (no NSX) → Create Fleet + Upgrade vSphere (no Fleet) ─
+            if (ops && !nsx) {
+                ['intentCardInstance','intentCardImport'].forEach(function(id) {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('intent-hidden');
+                });
+                clearIfInvalid(['fleet','vvf']);
+                if (note) {
+                    note.style.display = '';
+                    note.innerHTML = '&#x1F4A1; With VCF Operations selected, only <strong>Create New VCF 9.1 Fleet</strong> and <strong>Upgrade to vSphere 9.1 (No VCF Fleet)</strong> are available.';
+                }
+                return;
+            }
+
+            // ── Rule 4: NSX selected → Fleet, Instance, Workload Domain (hide VVF) ─
+            if (nsx && !ops && !automate && !vxrail) {
+                const vvfCard = document.getElementById('intentCardVVF');
+                if (vvfCard) vvfCard.classList.add('intent-hidden');
+                clearIfInvalid(['fleet','instance','import']);
+                if (note) {
+                    note.style.display = '';
+                    note.innerHTML = '&#x1F4A1; With NSX selected, <strong>Create New VCF 9.1 Fleet</strong>, <strong>Expand Fleet with VCF Instance</strong>, and <strong>Expand Fleet with Workload Domain</strong> are the supported paths.';
+                }
+                return;
+            }
+
+            // ── No restricting products — all cards visible ───────────────────
+            // autoIntent used only for visual inferred highlight (no hiding)
+            if (autoIntent) {
+                allCards.forEach(function(id) {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    const key = {intentCardFleet:'fleet',intentCardInstance:'instance',intentCardImport:'import',intentCardVVF:'vvf'}[id];
+                    if (key === autoIntent) {
+                        el.classList.add('inferred');
+                    } else {
+                        el.classList.add('intent-dimmed');
+                    }
+                });
+            }
+        }
+
+                function inferIntentFromProducts() {
+            if (!document.getElementById('startingPoint') || document.getElementById('startingPoint').value !== 'vsphere') return;
+            const vsq = document.getElementById('vsphereQuestions');
+            if (!vsq || vsq.classList.contains('hidden')) return;
+
+            const opsEl    = document.getElementById('operationsCheck');
+            const autoEl   = document.getElementById('automationCheck');
+            const vxrailEl = document.getElementById('vxrailCheck');
+            const ops      = !!(opsEl    && opsEl.checked    && !opsEl.disabled);
+            const automate = !!(autoEl   && autoEl.checked   && !autoEl.disabled);
+            const vxrail   = !!(vxrailEl && vxrailEl.checked);
+
+            // Determine auto-intent:
+            //   Automation → fleet (only fleet visible)
+            //   VxRail     → vvf   (only vvf visible)
+            //   Ops / NSX  → no auto-select, updateIntentCardHints handles visibility
+            let autoIntent = null;
+            if (automate) autoIntent = 'fleet';
+            else if (vxrail) autoIntent = 'vvf';
+
+            // Always update card visibility first
+            updateIntentCardHints(autoIntent);
+
+            // Auto-select only when there is exactly one valid option forced
+            if (autoIntent && localStorage.getItem('vsphere-intent') !== autoIntent) {
+                localStorage.setItem('vsphere-auto-intent', autoIntent);
+                selectVsphereIntent(autoIntent);
+            }
+        }
+        
+        function updateVcfFleetCardLabel() {
+            var vcf90 = document.getElementById('vcf90Check');
+            var isVcf90 = vcf90 && vcf90.checked;
+
+            // Fleet card
+            var fleetCard = document.getElementById('intentCardVcfFleet');
+            if (fleetCard) {
+                var titleEl = fleetCard.querySelector('.intent-card-title');
+                var descEl  = fleetCard.querySelector('.intent-card-desc');
+                if (titleEl && descEl) {
+                    var infoLink = descEl.querySelector('a');
+                    if (isVcf90) {
+                        titleEl.textContent = 'Upgrade VCF Fleet to VCF 9.1';
+                        descEl.textContent = 'Upgrade your existing VCF 9.0 Fleet to VCF 9.1';
+                    } else {
+                        titleEl.textContent = 'Create New VCF 9.1 Fleet';
+                        descEl.textContent = 'Upgrade your existing VCF environment into new VCF Fleet';
+                    }
+                    if (infoLink) descEl.appendChild(infoLink);
+                }
+            }
+
+            // Instance card
+            var instanceCard = document.getElementById('intentCardVcfInstance');
+            if (instanceCard) {
+                var iTitleEl = instanceCard.querySelector('.intent-card-title');
+                var iDescEl  = instanceCard.querySelector('.intent-card-desc');
+                if (iTitleEl && iDescEl) {
+                    if (isVcf90) {
+                        iTitleEl.textContent = 'Upgrade existing VCF Instance';
+                        iDescEl.textContent  = 'Upgrade your existing VCF 9.0 Instance to VCF 9.1.';
+                    } else {
+                        iTitleEl.textContent = 'Expand existing VCF Fleet with upgrade of existing VCF Instance';
+                        iDescEl.textContent  = 'Upgrade second VCF Instance into your existing VCF Fleet.';
+                    }
+                }
+            }
+        }
+
+            function selectVcfIntent(intent) {
+            // Highlight selected card
+            document.querySelectorAll('.intent-card').forEach(c => c.classList.remove('selected'));
+            const cardMap = { fleet: 'intentCardVcfFleet', instance: 'intentCardVcfInstance', workload: 'intentCardVcfWorkload' };
+            const selectedCard = document.getElementById(cardMap[intent]);
+            if (selectedCard) selectedCard.classList.add('selected');
+
+            // Store intent
+            localStorage.setItem('vcf-intent', intent);
+
+            // Clear destination paths only — preserve version selections
+            const vcfPathOpts = document.getElementById('vcfPathOptions');
+            if (vcfPathOpts) vcfPathOpts.innerHTML = '';
+            const vcfPS = document.getElementById('vcfPathSelection');
+            if (vcfPS) vcfPS.classList.add('hidden');
+            const vcfTgv = document.getElementById('vcfTargetVcf91VersionGroup');
+            if (vcfTgv) vcfTgv.classList.add('hidden');
+
+            // Show versions + intent sections (in case coming from a reset)
+            const vcfQ = document.getElementById('vcfQuestions');
+            if (vcfQ) vcfQ.classList.remove('hidden');
+            const vcfI = document.getElementById('vcfIntent');
+            if (vcfI) vcfI.classList.remove('hidden');
+
+            // Recompute paths with new intent
+            updateVCFPath();
+
+            const navProducts = document.getElementById('navProducts');
+            if (navProducts) navProducts.classList.remove('nav-hidden');
+            const navGoalVcf = document.getElementById('navGoal');
+            if (navGoalVcf) navGoalVcf.classList.remove('nav-hidden');
+
+            setTimeout(function() {
+                const ps2 = document.getElementById('vcfPathSelection');
+                if (ps2 && !ps2.classList.contains('hidden')) {
+                    ps2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 150);
+        }
+
+        function answerFleetCheck(hasFleet) {
+            const vsphereQuestions  = document.getElementById('vsphereQuestions');
+            const vcfQuestions  = document.getElementById('vcfQuestions');
+            const fleetCheckSection = document.getElementById('fleetCheckSection');
+            const navProducts       = document.getElementById('navProducts');
+
+            if (hasFleet) {
+                // Yes — reveal the product section for the chosen intent
+                fleetCheckSection.classList.add('hidden');
+                vsphereQuestions.classList.remove('hidden');
+                //vcfQuestions.classList.remove('hidden');
+                if (navProducts) navProducts.classList.remove('nav-hidden');
+                setTimeout(() => vsphereQuestions.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+            } else {
+                // No — switch intent to fleet and restart
+                selectVsphereIntent('fleet');
+                
             }
         }
 
@@ -1624,6 +2274,7 @@
 
         // Load saved theme on page load
         window.addEventListener('DOMContentLoaded', function() {
+            updateVcfFleetCardLabel();
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
             
@@ -1643,6 +2294,16 @@
             const element = document.getElementById(elementId);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function scrollToGoal() {
+            const vsphereIntent = document.getElementById('vsphereIntent');
+            const vcfIntent     = document.getElementById('vcfIntent');
+            if (vsphereIntent && !vsphereIntent.classList.contains('hidden')) {
+                vsphereIntent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else if (vcfIntent && !vcfIntent.classList.contains('hidden')) {
+                vcfIntent.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -1669,9 +2330,9 @@
 
         });
     </script>
-            </strong></div><strong>
-        </strong></div><strong>
-    </strong></div><strong>
+            </div>
+        </div>
+    </div>
 
 
-</strong></body></html>
+</body></html>

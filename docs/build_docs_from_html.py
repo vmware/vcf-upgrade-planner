@@ -7,6 +7,9 @@ Run this whenever you change the HTML file!
 
 import re
 import json
+import sys
+import argparse
+import concurrent.futures
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
@@ -21,6 +24,170 @@ MAX_DEEP_URLS = 1000 # Max sub-pages to deep-scrape per run
 MANUAL_URLS = [
     'https://williamlam.com/2026/05/vcf-9-1-additional-ip-allocation-options-for-vcf-management-services-vcfms-in-vcf-installer-and-sddc-manager.html',
 ]
+
+# Collects (url, reason) tuples for every link that fails during the run
+BAD_LINKS = []
+# Tracks where each URL originated.
+# Keys are URLs; values are lists of source strings, e.g.:
+#   'json:vsphere-no-vcf-data.json'  → direct link found in a JSON file
+#   'manual'                          → listed in MANUAL_URLS
+#   'toc-subpage:<parent_url>'        → TOC sidebar child of a scraped page
+#   'deep-L1:<parent_url>'            → link found inside a level-1 scraped page
+#   'deep-L2:<parent_url>'            → link found inside a level-2 scraped page
+URL_ORIGINS = {}   # url -> list[str]
+
+def _tag_url(url, source):
+    """Record that `url` was discovered from `source` (deduplicates per source)."""
+    URL_ORIGINS.setdefault(url, [])
+    if source not in URL_ORIGINS[url]:
+        URL_ORIGINS[url].append(source)
+
+
+def report_url_origins(urls, output_file='url_origins_report.txt'):
+    """Print and save a comparison of direct JSON links vs sub/deep links.
+
+    Groups every URL into one of:
+      • Direct JSON link  – appeared as an href in at least one JSON data file
+      • Manual URL        – listed in MANUAL_URLS
+      • TOC sub-page only – only discovered as a sidebar child (never in JSON)
+      • Deep-scraped only – only discovered by following body links
+    """
+    direct_json  = []
+    manual_only  = []
+    toc_only     = []
+    deep_only    = []
+    mixed        = []   # in JSON AND also a sub/deep link
+
+    for url in sorted(urls):
+        origins = URL_ORIGINS.get(url, [])
+        is_json   = any(o.startswith('json:')    for o in origins)
+        is_manual = any(o == 'manual'            for o in origins)
+        is_toc    = any(o.startswith('toc-')     for o in origins)
+        is_deep   = any(o.startswith('deep-')    for o in origins)
+
+        if is_json and (is_toc or is_deep):
+            mixed.append((url, origins))
+        elif is_json:
+            direct_json.append((url, origins))
+        elif is_manual:
+            manual_only.append((url, origins))
+        elif is_toc:
+            toc_only.append((url, origins))
+        elif is_deep:
+            deep_only.append((url, origins))
+        else:
+            direct_json.append((url, origins))   # fallback
+
+    lines = []
+
+    def _section(title, items):
+        lines.append(f"\n{'='*80}")
+        lines.append(f"  {title}  ({len(items)})")
+        lines.append('='*80)
+        for url, origins in items:
+            lines.append(f"  {url}")
+            for o in origins:
+                lines.append(f"      ↳ {o}")
+
+    print("\n" + "="*80)
+    print("📊 URL ORIGINS REPORT")
+    print("="*80)
+    print(f"  Direct JSON links   : {len(direct_json)}")
+    print(f"  Manual URLs         : {len(manual_only)}")
+    print(f"  TOC sub-pages only  : {len(toc_only)}")
+    print(f"  Deep-scraped only   : {len(deep_only)}")
+    print(f"  In JSON + sub/deep  : {len(mixed)}")
+    print(f"  TOTAL               : {len(urls)}")
+
+    _section("DIRECT JSON LINKS", direct_json)
+    _section("MANUAL URLS", manual_only)
+    _section("TOC SUB-PAGES ONLY (not in JSON)", toc_only)
+    _section("DEEP-SCRAPED ONLY (not in JSON)", deep_only)
+    _section("IN JSON AND ALSO A SUB/DEEP LINK", mixed)
+
+    report_text = "\n".join(lines)
+    for line in lines:
+        print(line)
+
+    Path(output_file).write_text(
+        "# URL Origins Report\n"
+        "# Shows whether each URL was a direct JSON link, manual, TOC sub-page, or deep-scraped\n"
+        + report_text + "\n",
+        encoding='utf-8'
+    )
+    print(f"\n📄 URL origins report saved to: {output_file}")
+
+
+
+def check_link(url, timeout=10):
+    """HEAD request (GET fallback) to verify a URL is reachable.
+    Returns (ok: bool, reason: str).
+    """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                      'AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/120.0.0.0 Safari/537.36',
+    }
+    try:
+        r = requests.head(url, headers=headers, timeout=timeout,
+                          allow_redirects=True)
+        if r.status_code == 405:          # HEAD not allowed → try GET
+            r = requests.get(url, headers=headers, timeout=timeout,
+                             stream=True, allow_redirects=True)
+            r.close()
+        if r.status_code == 200:
+            return True, 'OK'
+        return False, f'HTTP {r.status_code}'
+    except requests.exceptions.Timeout:
+        return False, 'Timeout'
+    except requests.exceptions.ConnectionError as e:
+        return False, f'ConnectionError: {e}'
+    except Exception as e:
+        return False, str(e)
+
+
+def run_link_check(urls, workers=10):
+    """Check all URLs in parallel and populate BAD_LINKS.
+    Returns a list of (url, reason) for bad links only.
+    """
+    print(f"\n🔍 Checking {len(urls)} URLs for broken links ({workers} workers)…")
+    bad = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+        future_to_url = {pool.submit(check_link, u): u for u in urls}
+        for i, future in enumerate(
+                concurrent.futures.as_completed(future_to_url), 1):
+            url = future_to_url[future]
+            ok, reason = future.result()
+            status = "✅" if ok else "❌"
+            print(f"  [{i}/{len(urls)}] {status} {url}"
+                  + (f"  → {reason}" if not ok else ""))
+            if not ok:
+                bad.append((url, reason))
+    BAD_LINKS.extend(bad)
+    return bad
+
+
+def report_bad_links(bad, output_file='bad_links.txt'):
+    """Print a formatted summary and save bad links to a file."""
+    if not bad:
+        print("\n✅ All links are reachable — no bad links found.")
+        return
+    print(f"\n{'='*80}")
+    print(f"⚠️  BAD LINKS FOUND: {len(bad)}")
+    print(f"{'='*80}")
+    lines = []
+    for url, reason in sorted(bad, key=lambda x: x[1]):
+        line = f"  ❌ [{reason}]  {url}"
+        print(line)
+        lines.append(f"{reason}\t{url}")
+    Path(output_file).write_text(
+        "# Bad links report\n"
+        "# Format: REASON<TAB>URL\n\n" +
+        "\n".join(lines) + "\n",
+        encoding='utf-8'
+    )
+    print(f"\n📄 Bad links saved to: {output_file}")
+
 
 def extract_urls_from_json(json_path):
     """Extract all documentation URLs from the JSON data file"""
@@ -60,7 +227,9 @@ def scrape_documentation(url):
         response = requests.get(url, headers=headers, timeout=15)
         
         if response.status_code != 200:
-            print(f"    ❌ Failed: HTTP {response.status_code}")
+            reason = f'HTTP {response.status_code}'
+            print(f"    ❌ Failed: {reason}")
+            BAD_LINKS.append((url, reason))
             return None
         
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -252,9 +421,12 @@ def scrape_documentation(url):
         
     except requests.exceptions.Timeout:
         print(f"    ❌ Timeout after 15s")
+        BAD_LINKS.append((url, 'Timeout'))
         return None
     except Exception as e:
-        print(f"    ❌ Error: {str(e)}")
+        reason = f'Error: {str(e)}'
+        print(f"    ❌ {reason}")
+        BAD_LINKS.append((url, reason))
         return None
 
 def extract_linked_urls_from_content(html_content, source_url=''):
@@ -307,6 +479,17 @@ def generate_docs_file(docs, output_path):
     print(f"  ✅ Generated: {output_path} ({file_size:,} bytes)")
 
 def main():
+    parser = argparse.ArgumentParser(
+        description='Auto-sync documentation builder')
+    parser.add_argument(
+        '--check-only', action='store_true',
+        help='Only check links for broken URLs; do not scrape or generate output')
+    parser.add_argument(
+        '--url-report', action='store_true',
+        help='After building, print and save a report of which URLs came from JSON, '
+             'MANUAL_URLS, TOC sub-pages, or deep-scrape')
+    args = parser.parse_args()
+
     print("=" * 80)
     print("🔧 AUTO-SYNC DOCUMENTATION BUILDER")
     print("=" * 80)
@@ -320,6 +503,8 @@ def main():
             print(f"\n📖 Reading {json_file}...")
             urls = extract_urls_from_json(json_file)
             all_urls.update(urls)
+            for u in urls:
+                _tag_url(u, f'json:{json_file}')
             print(f"  ✓ Added {len(urls)} URLs from this file")
         else:
             print(f"\n⚠️  {json_file} not found, skipping...")
@@ -329,6 +514,8 @@ def main():
         before = len(all_urls)
         all_urls.update(MANUAL_URLS)
         added = len(all_urls) - before
+        for u in MANUAL_URLS:
+            _tag_url(u, 'manual')
         print(f"\n📌 Added {added} manual URL(s) from MANUAL_URLS list")
 
     urls = sorted(all_urls)
@@ -337,7 +524,21 @@ def main():
     if not urls:
         print("❌ No documentation URLs found in HTML!")
         return
-    
+
+    # --check-only: validate every link then exit without scraping
+    if args.check_only:
+        bad = run_link_check(urls)
+        report_bad_links(bad)
+        if args.url_report:
+            report_url_origins(urls)
+        sys.exit(1 if bad else 0)
+
+    # --url-report standalone: tag all collected URLs as their source then report
+    if args.url_report and not any(URL_ORIGINS.values()):
+        # Origins already tagged during collection above; just run the report
+        report_url_origins(urls)
+        sys.exit(0)
+
     print(f"\n📥 Fetching {len(urls)} documents from Broadcom/Dell...")
     print("=" * 80)
     
@@ -356,12 +557,16 @@ def main():
             new_sp = sp_urls - scraped_urls - deep_urls
             if new_sp:
                 print(f"    📑 Queuing {len(new_sp)} TOC subpages for scraping")
+                for u in new_sp:
+                    _tag_url(u, f'toc-subpage:{url}')
                 deep_urls.update(new_sp)
             # Deep-scrape: find additional linked pages not already in the queue
             linked = extract_linked_urls_from_content(doc['content'], source_url=url)
             new_links = linked - scraped_urls - deep_urls
             if new_links:
                 print(f"    🔗 Found {len(new_links)} linked sub-pages to deep-scrape")
+                for u in new_links:
+                    _tag_url(u, f'deep-L1:{url}')
                 deep_urls.update(new_links)
 
     # Scrape deep-discovered URLs (level 1) and follow their links (level 2)
@@ -381,12 +586,16 @@ def main():
                 new_sp = sp_urls - scraped_urls - deep_urls - level2_urls
                 if new_sp:
                     print(f"    📑 Queuing {len(new_sp)} TOC subpages (level-2)")
+                    for u in new_sp:
+                        _tag_url(u, f'toc-subpage:{url}')
                     level2_urls.update(new_sp)
                 # Level 2: follow links found in level-1 pages
                 linked = extract_linked_urls_from_content(doc['content'], source_url=url)
                 new_links = linked - scraped_urls - deep_urls - level2_urls
                 if new_links:
                     print(f"    🔗 Found {len(new_links)} level-2 links")
+                    for u in new_links:
+                        _tag_url(u, f'deep-L2:{url}')
                     level2_urls.update(new_links)
             scraped_urls.add(url)
 
@@ -417,12 +626,13 @@ def main():
         print(f"  • Scraped: {len(docs)} documents")
         print(f"  • Generated: {OUTPUT_FILE}")
         
-        # Show broken URLs if any
-        failed_count = len(urls) - len(docs)
-        if failed_count > 0:
-            print(f"\n⚠️  {failed_count} URLs failed to scrape")
-            print(f"  (Scroll up to see which URLs returned errors)")
-        
+        # Report any bad links collected during scraping
+        report_bad_links(BAD_LINKS)
+
+        # URL origins report (always after a full build; also on --url-report)
+        all_scraped = list(scraped_urls)
+        report_url_origins(all_scraped)
+
         print(f"\n💡 Next steps:")
         print(f"  1. Both HTML files share the same {OUTPUT_FILE}")
         print(f"  2. When you edit either JSON file, run: python build_docs_from_html.py")
