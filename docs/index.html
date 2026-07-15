@@ -1446,10 +1446,17 @@
             let paths = [];
 
             if (intent === 'fleet') {
-                paths = [
-                    { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Converge your vSphere environment into a VCF managed fleet. VCF Automation is not included in this path and can be added later.', icon: '' },
-                    { title: 'vSphere to VCF 9.1 (VCF Automation included)',     desc: 'Converge your vSphere environment into a VCF managed fleet with VCF Automation fully integrated from the start.', icon: '' }
-                ];
+                const automationSelected = document.getElementById('automationCheck') && document.getElementById('automationCheck').checked;
+                if (automationSelected) {
+                    paths = [
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Converge your vSphere environment into a VCF managed fleet with VCF Automation fully integrated from the start.', icon: '' }
+                    ];
+                } else {
+                    paths = [
+                        { title: 'vSphere to VCF 9.1 (VCF Automation not included)', desc: 'Converge your vSphere environment into a VCF managed fleet. VCF Automation is not included in this path and can be added later.', icon: '' },
+                        { title: 'vSphere to VCF 9.1 (VCF Automation included)',     desc: 'Converge your vSphere environment into a VCF managed fleet with VCF Automation fully integrated from the start.', icon: '' }
+                    ];
+                }
             } else if (intent === 'instance') {
                 paths = [
                     { title: 'Upgrade vSphere environment to VCF Instance', desc: ' Converge your vSphere environment into a new VCF instance that joins your established VCF fleet.', icon: '' }
