@@ -1175,10 +1175,41 @@
             updatePageTitlesForTargetVersion();
         });
 
+          // Patch specific sentences in the loaded JSON based on the selected target version.
+        function patchUpgradeDataForVersion(data) {
+            var ver = localStorage.getItem('target-vcf91-version') || window.targetVcf91Version || '';
+            if (ver !== '9.1.0.0400') return;
+            var OLD_SENTENCE = 'The recommended allocation is 30 IP addresses. These can be added as CIDR in the Lifecycle section of the VCF Operations UI \u2014 they do not need to be continuous.';
+            var NEW_SENTENCE = 'The recommended allocation is 30 IP addresses. These can be added as CIDR or Individual IPs in the Lifecycle section of the VCF Operations UI \u2014 they do not need to be continuous.';
+            function walk(node) {
+                if (Array.isArray(node)) {
+                    for (var i = 0; i < node.length; i++) {
+                        if (typeof node[i] === 'string' && node[i] === OLD_SENTENCE) {
+                            node[i] = NEW_SENTENCE;
+                        } else if (typeof node[i] === 'object' && node[i] !== null) {
+                            walk(node[i]);
+                        }
+                    }
+                } else if (typeof node === 'object' && node !== null) {
+                    var keys = Object.keys(node);
+                    for (var k = 0; k < keys.length; k++) {
+                        var key = keys[k];
+                        if (typeof node[key] === 'string' && node[key] === OLD_SENTENCE) {
+                            node[key] = NEW_SENTENCE;
+                        } else if (typeof node[key] === 'object' && node[key] !== null) {
+                            walk(node[key]);
+                        }
+                    }
+                }
+            }
+            walk(data);
+        }
+
         async function loadUpgradeData() {
             try {
                 const response = await fetch('vcf-5.2-to-9.1-instance.json');
                 upgradeData = await response.json();
+                patchUpgradeDataForVersion(upgradeData);
                 console.log('Upgrade data loaded successfully');
             } catch (error) {
                 console.error('Error loading upgrade data:', error);

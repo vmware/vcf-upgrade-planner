@@ -423,7 +423,8 @@
                         "sub_bullets": [
                         "New VCF management services are added.",
                         "Scale out of VCF Management services or new nodes as upgrade to future versions take place.",
-                        "All IP Ranges must be on the VCF Management Network.",
+                        "The recommended allocation is 30 IP addresses. These can be added as Single IPv4 range in the Lifecycle section of the VCF Operations UI \u2014 they do not need to be continuous.",
+                        "All IP Ranges must be on the VCF Management Network or a Separate Dedicated Network.",
                         "An internal IP range is used by VCF services runtime, this IP range is 198.18.0.0/15, it is important to ensure this IP range does not overlap with the IP range of your management network, this internal network can be changed to 240.0.0.0/15 or 250.0.0.0/15 by using JSON specification file to deploy."
                         ]
                     }
