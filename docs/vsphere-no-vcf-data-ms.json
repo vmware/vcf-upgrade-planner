@@ -532,13 +532,13 @@
       ]
     },
     "vcenter_esx_prereq": {
-      "name": "Pre-Upgrade: Upgrade vCenter and ESX to 8.0u3",
+      "name": "Pre-Upgrade: Upgrade vCenter to 8.0 Update 3a and ESX to 8.0 Update 3",
       "notices": [
         {
           "type": "warning",
           "title": "Required Before Proceeding",
           "bullets": [
-            "Your current vCenter and/or ESX version must be upgraded to 8.0u3 before continuing with this upgrade path"
+            "Your vCenter must be at 8.0 Update 3a or later and your ESX hosts at 8.0 Update 3 or later before continuing"
           ]
         }
       ],

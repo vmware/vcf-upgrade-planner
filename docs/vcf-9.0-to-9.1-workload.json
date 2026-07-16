@@ -72,7 +72,7 @@
         "vcenter": {
             "name": "vCenter",
             "steps": [
-                "Upgrade vCenter to version using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
+                "Upgrade vCenter using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
             {

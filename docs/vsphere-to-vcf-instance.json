@@ -154,7 +154,7 @@
                 }
             ],
             "steps": [
-                "Break ELM After All vCenter Instances - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
+                "Break ELM after all vCenter instances are upgraded - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
             ]
         },
         "elm_break": {
@@ -181,7 +181,7 @@
                 "Upgrade vCenter using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
             ],
             "steps_with_nsx": [
-                "Upgrade vCenter to version using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
+                "Upgrade vCenter using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
             ],
             "notices": [
                 {
@@ -515,14 +515,14 @@
             ]
         },
       "vcenter_esx_prereq": {
-      "name": "Pre-Upgrade: Upgrade vCenter and ESX to 8.0u3",
+      "name": "Pre-Upgrade: Upgrade vCenter to 8.0 Update 3a and ESX to 8.0 Update 3",
       "notices": [
         {
           "type": "warning",
           "title": "Required Before Proceeding",
           "bullets": [
-            "Your current vCenter and/or ESX version must be upgraded to 8.0u3 before continuing with this upgrade path"
-           ]
+            "Your vCenter must be at 8.0 Update 3a or later and your ESX hosts at 8.0 Update 3 or later before continuing"
+        ]
         }
       ],
       "steps": [

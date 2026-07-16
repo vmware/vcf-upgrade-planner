@@ -161,7 +161,7 @@
         }
       ],
       "steps": [
-        "Break ELM After All vCenter Instances that were upgraded - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
+        "Break ELM after all vCenter instances are upgraded - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/fleet-management/what-is/points-to-consider-while-setting-up-vmware-cloud-foundation-sso/how-to-deactivate-enhanced-link-mode-in-vcenter-without-downtime.html' target='_blank'>View Documentation</a>)"
 
       ]
     },
@@ -1104,13 +1104,13 @@
       ]
     },
     "vcenter_esx_prereq": {
-      "name": "Pre-Upgrade: Upgrade vCenter and ESX to 8.0u3",
+      "name": "Pre-Upgrade: Upgrade vCenter to 8.0 Update 3a and ESX to 8.0 Update 3",
       "notices": [
         {
           "type": "warning",
           "title": "Required Before Proceeding",
           "bullets": [
-            "Your current vCenter and/or ESX version must be upgraded to 8.0u3 before continuing"
+            "Your vCenter must be at 8.0 Update 3a or later and your ESX hosts at 8.0 Update 3 or later before continuing"
           ]
         }
       ],

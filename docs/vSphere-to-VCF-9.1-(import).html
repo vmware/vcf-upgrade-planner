@@ -1756,7 +1756,9 @@
             
             phases.forEach(phase => {
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);                
-                if(phase.componentId === 'replication' || phase.componentId === 'srm' || phase.componentId === 'vsan_data_protection') {
+                 if (phase.componentId === 'nsx_prereq' || phase.componentId === 'vcenter_esx_prereq') {
+                    prereqPhases.push(phase);
+                } else if (phase.componentId === 'replication' || phase.componentId === 'srm' || phase.componentId === 'vsan_data_protection') {
                     drPhases.push(phase);
                 } else if (phase.componentId === 'avi') {
                     aviPhases.push(phase);
