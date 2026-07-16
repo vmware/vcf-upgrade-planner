@@ -818,7 +818,8 @@
           "bullets": [
             "The FQDN from the existing Automation instance is automatically transferred to the new VCF Automation instance.",
             "If your existing Automation instance uses an external load balancer, no changes in its configuration are required.",
-            "VCF Automation 8.18.x IP addresses of the existing nodes are automatically assigned as VIPs for the new instance."
+            "VCF Automation 8.18.x IP addresses of the existing nodes are automatically assigned as VIPs for the new instance.",
+            "VCF Automation must reside on the Management Cluster before VCF can perform an upgrade."
           ]
         },
         {
