@@ -1280,6 +1280,34 @@
             try {
                 const response = await fetch('vsphere-to-vcf-no-automation-data.json');
                 upgradeData = await response.json();
+                // Inject combination_warnings directly so it works regardless of JSON version on disk
+                if (!upgradeData.combination_warnings) {
+                    upgradeData.combination_warnings = [
+                        {
+                            conditions: ['srm', 'elm'],
+                            inject_into: 'elm_break',
+                            notice: {
+                                type: 'warning',
+                                title: 'SRM and ELM Configured Together',
+                                bullets: [
+                                    "Steps to reconfigure SRM - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/433175/what-actions-should-be-taken-for-vmware.html' target='_blank'>View Documentation</a>)."
+                                ]
+                            }
+                        },
+                         {
+                            conditions: ['srm', 'elm'],
+                            inject_into: 'elm_upgrade_ring',
+                            notice: {
+                                type: 'warning',
+                                title: 'SRM and ELM Configured Together',
+                                bullets: [
+                                    "Steps to reconfigure SRM - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/433175/what-actions-should-be-taken-for-vmware.html' target='_blank'>View Documentation</a>)."
+                                ]
+                            }
+                        }
+                    ];
+                    console.log('[CW-INJECT] combination_warnings injected into upgradeData (srm + elm_break)');
+                }
                 patchUpgradeDataForVersion(upgradeData);
                 console.log('Upgrade data loaded successfully');
             } catch (error) {
@@ -1435,6 +1463,7 @@
             selectedProducts['vsan_witness']  = document.getElementById('witnessCheck')?.checked || false;
             selectedProducts['vcha']          = document.getElementById('vchaCheck')?.checked || false;
             selectedProducts['auto_deploy']   = document.getElementById('autodeployCheck')?.checked || false;
+            selectedProducts['elm']          = elmSelected;
 
             // Store for use in generateUpgradePlan
             window.selectedAdvancedProducts = selectedProducts;
@@ -1466,6 +1495,24 @@
         function generateUpgradePlan() {
             const phases = [];
             const selectedProducts = window.selectedAdvancedProducts || {};
+            // Clear previously injected combination warnings
+            if (upgradeData && upgradeData.components) {
+                Object.values(upgradeData.components).forEach(c => { delete c._injectedWarnings; });
+            }
+            // Ensure elm_break state is captured (in case called directly)
+            const _elmBreakSelected = typeof elmSelected !== 'undefined' ? elmSelected : false;
+            if (_elmBreakSelected) selectedProducts['elm'] = true;
+            // --- Combination Warnings ---
+            if (upgradeData && upgradeData.combination_warnings) {
+                upgradeData.combination_warnings.forEach(cw => {
+                    const allSelected = cw.conditions.every(id => !!selectedProducts[id]);
+                    if (allSelected && cw.inject_into && upgradeData.components[cw.inject_into]) {
+                        const target = upgradeData.components[cw.inject_into];
+                        if (!target._injectedWarnings) target._injectedWarnings = [];
+                        target._injectedWarnings.push(cw.notice);
+                    }
+                });
+            }
             
             if (!upgradeData || !upgradeData.upgrade_order) {
                 console.error('No upgrade order defined in JSON');
@@ -2240,6 +2287,18 @@
                     }
 
 
+                    // Render combination warnings (main plan view)
+                    if (phase.data._injectedWarnings && phase.data._injectedWarnings.length > 0) {
+                        phase.data._injectedWarnings.forEach(notice => {
+                            html += `<div style="background: var(--card-bg); border-left: 4px solid #ffc107; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>⚠️ ${notice.title}</strong>`;
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += `<ul style="margin: 8px 0 0 20px;">`;
+                                notice.bullets.forEach(b => { html += `<li>${b}</li>`; });
+                                html += `</ul>`;
+                            }
+                            html += `</div>`;
+                        });
+                    }
                     if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
@@ -2464,6 +2523,18 @@
                         html += '</ul>';
                     }
 
+                    // Render combination warnings (print view)
+                    if (phase.data._injectedWarnings && phase.data._injectedWarnings.length > 0) {
+                        phase.data._injectedWarnings.forEach(notice => {
+                            html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>WARNING: ' + stripHtml(notice.title) + '</strong>';
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += '<ul style="margin: 8px 0 0 20px;">';
+                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                                html += '</ul>';
+                            }
+                            html += '</div>';
+                        });
+                    }
                      if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
@@ -2583,6 +2654,19 @@
                     }
                     
                       // Notices/Warnings
+                    // Render combination warnings (popup view)
+                    if (phase.data._injectedWarnings && phase.data._injectedWarnings.length > 0) {
+                        phase.data._injectedWarnings.forEach(notice => {
+                            html += `<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px; margin-top: 16px; border-radius: 4px;">`;
+                            html += `<strong>⚠️ ${notice.title}</strong>`;
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += `<ul style="margin: 8px 0 0 20px;">`;
+                                notice.bullets.forEach(b => { html += `<li>${b}</li>`; });
+                                html += `</ul>`;
+                            }
+                            html += `</div>`;
+                        });
+                    }
                     if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const noticeColor = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
@@ -2813,6 +2897,19 @@
                         html += '</ul>';
                     }
 
+                    // Render combination warnings (PDF export view)
+                    if (phase.data._injectedWarnings && phase.data._injectedWarnings.length > 0) {
+                        phase.data._injectedWarnings.forEach(notice => {
+                            html += '<div style="background: white; border-left: 4px solid #ffc107; padding: 12px; margin-top: 12px; border-radius: 4px;">';
+                            html += '<strong>WARNING: ' + stripHtml(notice.title) + '</strong>';
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += '<ul style="margin: 8px 0 0 20px;">';
+                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                                html += '</ul>';
+                            }
+                            html += '</div>';
+                        });
+                    }
                       if (phase.data.notices && phase.data.notices.length > 0) {
                         phase.data.notices.forEach(notice => {
                             const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';

@@ -23,6 +23,8 @@ MAX_DEEP_URLS = 1000 # Max sub-pages to deep-scrape per run
 # Manual URLs — add any external links here that are not referenced in the JSON files
 MANUAL_URLS = [
     'https://williamlam.com/2026/05/vcf-9-1-additional-ip-allocation-options-for-vcf-management-services-vcfms-in-vcf-installer-and-sddc-manager.html',
+    'https://knowledge.broadcom.com/external/article/433175/what-actions-should-be-taken-for-vmware.html',  # add this
+
 ]
 
 # Collects (url, reason) tuples for every link that fails during the run

@@ -259,6 +259,7 @@
         }
       ],
       "steps": [
+        "Deploy license server - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/manual-adding-vcf-components-post-deployment/add-license-server.html' target='_blank'>View Documentation</a>).", 
         "Registration of license server - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations.html' target='_blank'>View Documentation</a>)."
       ]
     },
