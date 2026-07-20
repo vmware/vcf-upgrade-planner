@@ -1428,10 +1428,10 @@
             const _ecn = document.getElementById('pathConstraintNote');
             if (_ecn) _ecn.remove();
             const _cnMap = {
-                instance: '<ul style="margin:4px 0 0 16px;padding:0;"><li>For <strong>Upgrade vSphere to VCF Instance</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed.</li><li>Ensure the selected <strong>Target Version</strong> is the same as or lower than the existing VCF Fleet version.</li></ul>',
-                import:   '<ul style="margin:4px 0 0 16px;padding:0;"><li>For <strong>Upgrade vSphere environment to Workload Domain</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed.</li><li>Ensure the selected <strong>Target Version</strong> is the same as or lower than the existing VCF Fleet version.</li></ul>',
+                instance: '<ul style="margin:4px 0 0 16px;padding:0;"><li>For <strong>Converge environment to VCF Instance</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed.</li><li>Ensure the selected <strong>Target Version</strong> is the same as or lower than the existing VCF Fleet version.</li></ul>',
+                import:   '<ul style="margin:4px 0 0 16px;padding:0;"><li>For <strong>Import to Workload Domain</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed.</li><li>Ensure the selected <strong>Target Version</strong> is the same as or lower than the existing VCF Fleet version.</li></ul>',
                 vvf:      'For <strong>Upgrade vSphere and Operations</strong>: NSX and VCF Automation are not supported in this path.',
-                fleet:    'For <strong>Upgrade vSphere environment to Create New VCF 9.1 Fleet</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed'
+                fleet:    'For <strong>Converge environment to Create New VCF 9.1 Fleet</strong>: only vCenter and ESX are needed. NSX is supported in path if deployed'
             };
             const _cnt = _cnMap[intent] || '';
             if (_cnt) {
