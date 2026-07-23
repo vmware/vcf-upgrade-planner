@@ -238,7 +238,7 @@
           "type": "info",
           "title": "Check HCL for Hardware support",
           "bullets": [
-            "Intel Skylake (Broadwell, Kabylake & Skylake) Processors no longer supported (deprecated in earlier releases), requires RPQ"
+            "The Intel Skylake-SP support has been revised, now supported in Deprecated Mode for VCF 9.1.x. - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/428874' target='_blank'>View Documentation</a>)."
           ]
         }
       ]
