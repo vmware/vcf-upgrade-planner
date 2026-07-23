@@ -974,6 +974,49 @@
         .g-sel-tag .g-rm { cursor:pointer; opacity:0.8; margin-left:2px; font-size:0.75rem; }
         .g-sel-tag .g-rm:hover { opacity:1; }
 
+        /* VxRail + Stretch Cluster unsupported banner */
+        .vxrail-stretch-banner {
+            display: none;
+            background: linear-gradient(135deg, #fde8e8 0%, #fff0f0 100%);
+            border-left: 4px solid #cc0000;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(204, 0, 0, 0.15);
+        }
+        [data-theme="dark"] .vxrail-stretch-banner {
+            background: linear-gradient(135deg, #2e1010 0%, #3a1515 100%);
+            border-left-color: #e05555;
+            box-shadow: 0 2px 6px rgba(224, 85, 85, 0.2);
+        }
+        .vxrail-stretch-banner .vsb-inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .vxrail-stretch-banner .vsb-icon {
+            font-size: 22px;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .vxrail-stretch-banner .vsb-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #b00000;
+        }
+        [data-theme="dark"] .vxrail-stretch-banner .vsb-title {
+            color: #e05555;
+        }
+        .vxrail-stretch-banner .vsb-msg {
+            margin: 4px 0 0 0;
+            font-size: 13.5px;
+            color: #5a2020;
+        }
+        [data-theme="dark"] .vxrail-stretch-banner .vsb-msg {
+            color: #c09090;
+        }
+
     </style>
     <script src="docs_inline.js"></script>
 </head>
@@ -1070,7 +1113,16 @@
                 <div style="margin-top:12px;"><button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">&#x21BA; Reset Selections</button></div>
             </div>
     
-        
+         <!-- VxRail + Stretch Cluster unsupported banner -->
+            <div id="vxrailStretchBanner" class="vxrail-stretch-banner">
+                <div class="vsb-inner">
+                    <div class="vsb-icon">&#9888;</div>
+                    <div>
+                        <div class="vsb-title">Not Supported</div>
+                        <p class="vsb-msg">VxRail does not support Stretched Cluster upgrades at this time.</p>
+                    </div>
+                </div>
+            </div>
 
             <div class="diagram-container" id="diagram">
 
@@ -1328,6 +1380,15 @@
 
             // Store for use in generateUpgradePlan
             window.selectedAdvancedProducts = selectedProducts;
+
+            // Banner: show when VxRail + vSAN Witness (stretch cluster) are both active
+            (function() {
+                var _witnessOn = !!(selectedProducts['vsan_witness']);
+                var _banner = document.getElementById('vxrailStretchBanner');
+                if (_banner) {
+                    _banner.style.display = (vxrailSelected && _witnessOn) ? 'block' : 'none';
+                }
+            })();
             
             const simpleRadio = document.getElementById('simpleRadio');
             deploymentType = simpleRadio && simpleRadio.checked ? 'simple' : 'ha';
