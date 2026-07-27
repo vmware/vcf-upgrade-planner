@@ -1415,21 +1415,6 @@
             
             
             const orderArray = upgradeData.upgrade_order;
-
-
-            // Inject pre-req step for VCF 5.2.0 / 5.2.1 upgrading to 9.1.0100
-            const needsPrereq = (vcfdetailVersion === '5.2.0' || vcfdetailVersion === '5.2.1')
-                && (window.targetVcf91Version === '9.1.0.0100');
-            if (needsPrereq && upgradeData.components['vcf_prereq']) {
-                phases.push({
-                    number: 1,
-                    title: upgradeData.components['vcf_prereq'].name,
-                    description: 'Required pre-upgrade step before proceeding to VCF ' + window.targetVcf91Version,
-                    data: upgradeData.components['vcf_prereq'],
-                    componentId: 'vcf_prereq'
-                });
-            }
-
             
 
             // Iterate through the selected upgrade order array to maintain strict sequence
@@ -1570,9 +1555,7 @@
                 const isPreInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'pre_infrastructure';
                 const isPostInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'post_infrastructure';
                 
-                if (phase.componentId === 'vcf_prereq') {
-                    prereqPhases.push(phase);
-                } else if (isPreInfraOptional) {
+                if (isPreInfraOptional) {
                     optionalPreInfraPhases.push(phase);
                 } else if (phase.componentId === 'nsx_federation') {
                     nsxfedPhases.push(phase);
@@ -1641,12 +1624,6 @@
             
             // Create a map of component groups to their step definitions
             const stepDefinitions = {
-                'vcf_prereq': {
-                    phases: prereqPhases,
-                    title: 'Pre-Upgrade: Upgrade VCF to 5.2.2 or 5.2.3',
-                    description: 'pre-upgrade step before proceeding to VCF ' + window.targetVcf91Version,
-                },
-
                 'drProducts': {
                     phases: replicationPhases,
                     title: 'Disaster Recovery Products',
@@ -1728,7 +1705,6 @@
             
             // Map component IDs to their step groups
             const componentToStepGroup = {
-                'vcf_prereq': 'vcf_prereq',
                 'replication': 'drProducts',
                 'srm': 'drProducts',
                 'vsan_data_protection': 'drProducts',
@@ -1748,15 +1724,6 @@
             };
             
 
-            // Insert vcf_prereq as the very first step if present
-            if (prereqPhases.length > 0) {
-                steps.push({
-                    number: 1,
-                    title: stepDefinitions['vcf_prereq'].title,
-                    description: stepDefinitions['vcf_prereq'].description,
-                    phases: prereqPhases
-                });
-            }
 
             // Track which step groups have been added
             const addedStepGroups = new Set();

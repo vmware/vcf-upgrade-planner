@@ -1499,8 +1499,9 @@
                 : upgradeData.upgrade_order;
 
             // Inject pre-req step for VCF 5.2.0 / 5.2.1 upgrading to 9.1.0100
-            const needsPrereq = (vcfdetailVersion === '5.2.0' || vcfdetailVersion === '5.2.1')
-                && (window.targetVcf91Version === '9.1.0.0100');
+            const needsPrereq =
+            ['5.2.0', '5.2.1'].includes(vcfdetailVersion) &&
+            ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'].includes(window.targetVcf91Version);
             if (needsPrereq && upgradeData.components['vcf_prereq']) {
                 phases.push({
                     number: 1,
