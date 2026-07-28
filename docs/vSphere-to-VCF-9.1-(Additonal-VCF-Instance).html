@@ -2264,6 +2264,56 @@
             }
         }
         
+          // Build a print-safe HTML/CSS diagram from allSteps.
+        // Mermaid v11 uses foreignObject for node text which is dropped when SVG
+        // is cloned into a blob window - so we build pure HTML instead.
+        function generatePrintDiagram() {
+            if (typeof allSteps === 'undefined' || !allSteps || allSteps.length === 0) return '';
+            var palette = ['#1b5e20','#006b7a','#1a2d40','#2e7d32','#004d57','#0d1a26'];
+            var phases = [];
+            allSteps.forEach(function(step) {
+                if (step.phases) {
+                    step.phases.forEach(function(p) {
+                        phases.push({ stepTitle: step.title || '', phaseTitle: p.title || step.title || '', phaseNum: p.number });
+                    });
+                } else {
+                    phases.push({ stepTitle: step.title || '', phaseTitle: step.title || '', phaseNum: step.number });
+                }
+            });
+            var rowSize = 5;
+            var rows = [];
+            for (var i = 0; i < phases.length; i += rowSize) { rows.push(phases.slice(i, i + rowSize)); }
+
+            var out = '<div style="margin-bottom:24px;padding:16px 16px 12px;background:#f0f2f5;border-radius:8px;border:1px solid #dee2e6;page-break-inside:avoid;">'
+                    + '<div style="font-size:0.95rem;font-weight:700;color:#1a2d40;margin-bottom:12px;">Upgrade Flow Diagram</div>';
+
+            rows.forEach(function(row, rowIdx) {
+                out += '<div style="display:flex;flex-wrap:nowrap;align-items:stretch;margin-bottom:8px;">';
+                if (rowIdx > 0) {
+                    out += '<div style="display:flex;align-items:center;padding:0 4px;color:#555;font-size:1rem;">&#8627;</div>';
+                }
+                row.forEach(function(item, idx) {
+                    var bg = palette[(rowIdx * rowSize + idx) % palette.length];
+                    var title = item.phaseTitle;
+                    var sub   = (item.stepTitle && item.stepTitle !== item.phaseTitle) ? item.stepTitle : '';
+                    out += '<div style="flex:1;min-width:90px;max-width:150px;background:' + bg + ';color:#fff;'
+                         + 'border-radius:5px;padding:7px 8px;font-size:0.68rem;line-height:1.3;'
+                         + 'display:flex;flex-direction:column;justify-content:center;word-break:break-word;print-color-adjust:exact;-webkit-print-color-adjust:exact;">'
+                         + '<div style="font-weight:700;">' + esc(title) + '</div>';
+                    if (sub) out += '<div style="opacity:0.85;margin-top:2px;">' + esc(sub) + '</div>';
+                    out += '</div>';
+                    if (idx < row.length - 1) {
+                        out += '<div style="display:flex;align-items:center;padding:0 3px;color:#555;font-size:0.9rem;">&#8594;</div>';
+                    }
+                });
+                out += '</div>';
+            });
+            out += '</div>';
+            return out;
+        }
+        function esc(s) {
+            return String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>');
+        }
 
         // Opens a clean standalone popup window with the upgrade plan content.
         // Captures the rendered Mermaid diagram SVG from the main page and
@@ -2277,66 +2327,8 @@
                 + '<p style="margin:6px 0 0; font-size:0.82rem; color:#a0b8cc;">Generated: ' + new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) + '</p>'
                 + '</div>';
             // Capture the rendered Mermaid SVG from the main page
-            var diagramSvg = '';
-            var diagramContainer = document.getElementById('diagramContainer');
-            if (diagramContainer) {
-                var svgEl = diagramContainer.querySelector('svg');
-                if (svgEl) {
-                    // Clone and make it print-safe (remove interactive attributes)
-                    var cloned = svgEl.cloneNode(true);
-                    cloned.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                    cloned.style.maxWidth = '100%';
-                    cloned.style.height = 'auto';
-                    cloned.removeAttribute('id');
-                    // Normalize arrow/edge stroke colors for white export background
-                    // 1. Inject override CSS into SVG's internal <style> block
-                    //    (Mermaid's internal CSS beats attribute-level changes)
-                    var svgStyle = cloned.querySelector('style');
-                    var arrowOverride = [
-                        '.edgePath path, .flowchart-link, path.path { stroke: #2c4a5e !important; stroke-width: 2px !important; }',
-                        '.edgePath .path { stroke: #2c4a5e !important; }',
-                        'marker path, marker polygon, marker polyline { fill: #2c4a5e !important; stroke: #2c4a5e !important; }',
-                        'text, tspan, .label { fill: #1a2332 !important; color: #1a2332 !important; }',
-                        '.nodeLabel, .edgeLabel { color: #1a2332 !important; background: #f0f2f5 !important; }',
-                        'rect, polygon { stroke: #2c4a5e !important; }'
-                    ].join('\n');
-                    if (svgStyle) {
-                        svgStyle.textContent += '\n' + arrowOverride;
-                    } else {
-                        var newStyle = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-                        newStyle.textContent = arrowOverride;
-                        cloned.insertBefore(newStyle, cloned.firstChild);
-                    }
-                    // 2. Also fix attributes and inline styles as a belt-and-suspenders backup
-                    cloned.querySelectorAll('path, polyline, line').forEach(function(el) {
-                        var s = el.getAttribute('stroke');
-                        var inlineS = el.style.stroke;
-                        if ((s && s !== 'none') || (inlineS && inlineS !== 'none' && inlineS !== '')) {
-                            el.setAttribute('stroke', '#2c4a5e');
-                            el.style.stroke = '#2c4a5e';
-                        }
-                    });
-                    cloned.querySelectorAll('marker path, marker polygon, marker polyline').forEach(function(el) {
-                        el.setAttribute('fill', '#2c4a5e');
-                        el.setAttribute('stroke', '#2c4a5e');
-                        el.style.fill = '#2c4a5e';
-                        el.style.stroke = '#2c4a5e';
-                    });
-                    cloned.querySelectorAll('[style]').forEach(function(el) {
-                        if (el.style.stroke && el.style.stroke !== 'none' && el.style.stroke !== '') {
-                            el.style.stroke = '#2c4a5e';
-                        }
-                    });
-                    cloned.querySelectorAll('text, tspan').forEach(function(el) {
-                        el.setAttribute('fill', '#1a2332');
-                        el.style.fill = '#1a2332';
-                    });
-                    diagramSvg = '<div style="margin-bottom:24px; padding:16px; background:#f0f2f5; border-radius:8px; border:1px solid #dee2e6; page-break-inside:avoid;">'
-                        + '<h3 style="color:#3d6680; margin:0 0 12px; font-size:1rem;">Upgrade Flow Diagram</h3>'
-                        + cloned.outerHTML
-                        + '</div>';
-                }
-            }
+            var diagramSvg = generatePrintDiagram();
+
 
             // Build the print document as a string first, then load it via a
             // Blob URL — this avoids document.write() and the associated

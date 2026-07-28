@@ -1017,6 +1017,49 @@
             color: #c09090;
         }
 
+        /* Patch-release info banner */
+        .patch-release-banner {
+            display: none;
+            background: linear-gradient(135deg, #ddeeff 0%, #eef6ff 100%);
+            border-left: 4px solid #0077bb;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 119, 187, 0.12);
+        }
+        [data-theme="dark"] .patch-release-banner {
+            background: linear-gradient(135deg, #0e2030 0%, #0a1a28 100%);
+            border-left-color: #4a9cc7;
+            box-shadow: 0 2px 6px rgba(74, 156, 199, 0.2);
+        }
+        .patch-release-banner .prb-inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .patch-release-banner .prb-icon {
+            font-size: 22px;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .patch-release-banner .prb-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #005588;
+        }
+        [data-theme="dark"] .patch-release-banner .prb-title {
+            color: #7bbedd;
+        }
+        .patch-release-banner .prb-msg {
+            margin: 4px 0 0 0;
+            font-size: 13.5px;
+            color: #1a3a55;
+        }
+        [data-theme="dark"] .patch-release-banner .prb-msg {
+            color: #8ab8d4;
+        }
+
     </style>
     <script src="docs_inline.js"></script>
 </head>
@@ -1113,6 +1156,22 @@
                 <div style="margin-top:12px;"><button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">&#x21BA; Reset Selections</button></div>
             </div>
     
+
+        <!-- Patch-release upgrade path banner -->
+            <div id="patchReleaseBanner" class="patch-release-banner">
+                <div class="prb-inner">
+                    <div class="prb-icon">&#128196;</div>
+                    <div>
+                        <div class="prb-title" id="patchReleaseBannerTitle">Patch Upgrade Path Selected</div>
+                        <p class="prb-msg" id="patchReleaseBannerMsg">
+                            Your selected target build requires upgrading to VCF 9.1.0 first, then applying the
+                            cumulative patch. An <strong>Apply Patches</strong> step has been automatically added
+                            at the end of your upgrade plan.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
          <!-- VxRail + Stretch Cluster unsupported banner -->
             <div id="vxrailStretchBanner" class="vxrail-stretch-banner">
                 <div class="vsb-inner">
@@ -1124,6 +1183,7 @@
                 </div>
             </div>
 
+          
             <div class="diagram-container" id="diagram">
 
         <!-- Upgrade Phases Section -->
@@ -1328,7 +1388,8 @@
            vcfVersion =  localStorage.getItem('vcf-version') || '5.2';
            vcfdetailVersion = localStorage.getItem('vcf-detailed-version');
            window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
-            // Read VxRail selection passed from index page
+           updatePatchReleaseBanner();
+           // Read VxRail selection passed from index page
            const _vxrailRaw = localStorage.getItem('vxrail-selected');
            vxrailSelected = _vxrailRaw === 'true';
            window.vxrailVersion = localStorage.getItem('vxrail-version') || '';
@@ -1428,6 +1489,26 @@
             }
             
             autoGenerateUpgradePlan();
+        }
+
+        function updatePatchReleaseBanner() {
+            var ver = window.targetVcf91Version || '';
+            var patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            var isPatch = patchBuilds.includes(ver);
+            var banner = document.getElementById('patchReleaseBanner');
+            if (!banner) return;
+            banner.style.display = isPatch ? 'block' : 'none';
+            if (isPatch) {
+                var titleEl = document.getElementById('patchReleaseBannerTitle');
+                var msgEl   = document.getElementById('patchReleaseBannerMsg');
+                if (titleEl) titleEl.textContent = 'Patch Upgrade Path: Target Build ' + ver;
+                if (msgEl) msgEl.innerHTML =
+                    'Your selected target build <strong>' + ver + '</strong> uses a two-path upgrade approach. ' +
+                    '<strong>vCenter, NSX, and ESX</strong> must first be upgraded to the <strong>VCF 9.1.0.0 base release</strong>, ' +
+                    'then patched to ' + ver + '. ' +
+                    'All other components (SDDC Manager, etc.) can upgrade directly to <strong>' + ver + '</strong>. ' +
+                    'An <strong>Apply ' + ver + ' Patches</strong> step has been automatically added at the end of your upgrade plan.';
+            }
         }
 
         function generateUpgradePlan() {
@@ -1878,7 +1959,135 @@
                     }
                 }
             });
-            
+
+             // Inject final "Apply Patches" step when a patch build is selected
+            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            if (_patchBuilds.includes(window.targetVcf91Version)) {
+
+                // ── Per-component patch coverage from compat-data ──────────────
+                // Each array lists every patch build that component has available.
+                // Effective version = highest available build <= selected build.
+                var _patchRank = { '9.1.0.0': 0, '9.1.0.0100': 1, '9.1.0.0200': 2, '9.1.0.0300': 3, '9.1.0.0400': 4 };
+                var _selRank = _patchRank[window.targetVcf91Version] || 0;
+
+                var _coverage = {
+                    'vCenter Server':              ['9.1.0.0100', '9.1.0.0200'],
+                    'ESX / vSphere':               ['9.1.0.0100', '9.1.0.0200'],
+                    'vSAN Witness':                ['9.1.0.0100', '9.1.0.0200'],
+                    'NSX Local Manager':           ['9.1.0.0100', '9.1.0.0200'],
+                    'NSX Global Manager':           ['9.1.0.0100', '9.1.0.0200'],
+                    'SDDC Manager':                ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                    'HCX':                         ['9.1.0.0100', '9.1.0.0200'],
+                    'vSphere Replication':         ['9.1.0.0100', '9.1.0.0200'],
+                    'VMware Live Recovery (VLR)':  ['9.1.0.0100', '9.1.0.0200'],
+                };
+                // Avi uses its own version scheme — map VCF patch build → Avi version string
+                var _aviVersionMap = {
+                    '9.1.0.0100': '32.1.1',
+                    '9.1.0.0200': '32.1.2'
+                };
+
+                // Compute effective version for a component using VCF patch build coverage list
+                function _effectiveVer(builds) {
+                    if (!builds || builds.length === 0) return null;
+                    var best = null, bestRank = -1;
+                    builds.forEach(function(b) {
+                        var r = _patchRank[b] !== undefined ? _patchRank[b] : -1;
+                        if (r <= _selRank && r > bestRank) { best = b; bestRank = r; }
+                    });
+                    return best;
+                }
+
+                // Build HTML version table for a group of components
+                function _buildVerTable(componentNames) {
+                    var rows = '';
+                    componentNames.forEach(function(name) {
+                        var verCell, note;
+                        // Special case: Avi Load Balancer — both 32.1.1 and 32.1.2 are compatible with any 9.1.0.x patch build
+                        if (name === 'Avi Load Balancer') {
+                            verCell = '<strong>32.1.1</strong> or <strong>32.1.2</strong>';
+                            note = 'Both versions are compatible with any 9.1.0.x patch build';
+                        } else {
+                            var builds = _coverage[name];
+                            var eff = _effectiveVer(builds);
+                            if (!builds || builds.length === 0) {
+                                verCell = '<em style="color:var(--text-secondary)">No patch available</em>';
+                                note = 'Remains at 9.1.0.0';
+                            } else if (!eff) {
+                                verCell = '<em style="color:var(--text-secondary)">No patch for this build</em>';
+                                note = 'Remains at 9.1.0.0';
+                            } else {
+                                verCell = '<strong>' + eff + '</strong>';
+                                note = eff === window.targetVcf91Version ? 'Matches selected build' : 'Latest available for this component';
+                            }
+                        }
+                        rows += '<tr style="border-bottom:1px solid var(--border-color)">'
+                              + '<td style="padding:7px 10px;color:var(--text-primary)">' + name + '</td>'
+                              + '<td style="padding:7px 10px;text-align:center">' + verCell + '</td>'
+                              + '<td style="padding:7px 10px;font-size:0.82rem;color:var(--text-secondary)">' + note + '</td>'
+                              + '</tr>';
+                    });
+                    return '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:10px">'
+                         + '<thead><tr style="background:var(--bg)">'
+                         + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Component</th>'
+                         + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Effective Patch Version</th>'
+                         + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Note</th>'
+                         + '</tr></thead><tbody>' + rows + '</tbody></table>';
+                }
+
+                var _pathAComponents = ['vCenter Server', 'ESX / vSphere', 'NSX Local Manager'];
+                // Core components always shown; optional ones only if user selected them
+                var _selProdsNow = window.selectedAdvancedProducts || {};
+                var _pathBComponents = ['SDDC Manager'];
+                if (_selProdsNow['hcx'])         _pathBComponents.push('HCX');
+                if (_selProdsNow['replication'])  _pathBComponents.push('vSphere Replication');
+                if (_selProdsNow['srm'])          _pathBComponents.push('VMware Live Recovery (VLR)');
+                if (_selProdsNow['avi'])          _pathBComponents.push('Avi Load Balancer');
+                if (_selProdsNow['vsan_witness'])    _pathBComponents.push('vSAN Witness')
+                if (_selProdsNow['nsx_federation'])     _pathBComponents.push('NSX Global Manager');
+
+                var _tableA = _buildVerTable(_pathAComponents);
+                var _tableB = _buildVerTable(_pathBComponents);
+
+                 steps.push({
+                    number: steps.length + 1,
+                    title: 'Listed Versions for ' + window.targetVcf91Version,
+                    description: 'Apply cumulative patch to reach target build ' + window.targetVcf91Version,
+                    phases: [
+                        {
+                            number: 1,
+                            title: 'vCenter, NSX & ESX: Effective Version',
+                            description: 'Reference table of effective builds for vCenter, NSX, and ESX.',
+                            componentId: 'vcf_patch_base',
+                            data: {
+                                notices: [{
+                                    type: 'info',
+                                    title: 'vCenter, NSX & ESX Component Versions — Selected Build: ' + window.targetVcf91Version,
+                                    bullets: [
+                                        'The table below shows the effective patch version for each component at your selected build. Components without a patch for this specific build reflect the highest available version.' + _tableA
+                                    ]
+                                }]
+                            }
+                        },
+                        ...(_pathBComponents.length > 0 ? [{
+                            number: 2,
+                            title: 'All Other Components: Effective Versions',
+                            description: 'Reference table of effective patch versions for components at selected build ' + window.targetVcf91Version + '. These components were patched directly during the upgrade process.',
+                            componentId: 'vcf_patch_direct',
+                            data: {
+                                notices: [{
+                                    type: 'info',
+                                    title: 'Component Patch Versions — Selected Build: ' + window.targetVcf91Version,
+                                    bullets: [
+                                        'The table below shows the effective patch version for each component at your selected build. Components without a patch for this specific build reflect the highest available version.' + _tableB
+                                    ]
+                                }]
+                            }
+                        }] : [])
+                    ]
+                });
+            }
+
             return steps;
         }
         
@@ -2036,9 +2245,57 @@
         }
         
 
-        // Opens a clean standalone popup window with the upgrade plan content.
-        // Captures the rendered Mermaid diagram SVG from the main page and
-        // prepends it, so the PDF export includes the visual flow diagram.
+        // Build a print-safe HTML/CSS diagram from allSteps.
+        // Mermaid v11 uses foreignObject for node text which is dropped when SVG
+        // is cloned into a blob window - so we build pure HTML instead.
+        function generatePrintDiagram() {
+            if (typeof allSteps === 'undefined' || !allSteps || allSteps.length === 0) return '';
+            var palette = ['#1b5e20','#006b7a','#1a2d40','#2e7d32','#004d57','#0d1a26'];
+            var phases = [];
+            allSteps.forEach(function(step) {
+                if (step.phases) {
+                    step.phases.forEach(function(p) {
+                        phases.push({ stepTitle: step.title || '', phaseTitle: p.title || step.title || '', phaseNum: p.number });
+                    });
+                } else {
+                    phases.push({ stepTitle: step.title || '', phaseTitle: step.title || '', phaseNum: step.number });
+                }
+            });
+            var rowSize = 5;
+            var rows = [];
+            for (var i = 0; i < phases.length; i += rowSize) { rows.push(phases.slice(i, i + rowSize)); }
+
+            var out = '<div style="margin-bottom:24px;padding:16px 16px 12px;background:#f0f2f5;border-radius:8px;border:1px solid #dee2e6;page-break-inside:avoid;">'
+                    + '<div style="font-size:0.95rem;font-weight:700;color:#1a2d40;margin-bottom:12px;">Upgrade Flow Diagram</div>';
+
+            rows.forEach(function(row, rowIdx) {
+                out += '<div style="display:flex;flex-wrap:nowrap;align-items:stretch;margin-bottom:8px;">';
+                if (rowIdx > 0) {
+                    out += '<div style="display:flex;align-items:center;padding:0 4px;color:#555;font-size:1rem;">&#8627;</div>';
+                }
+                row.forEach(function(item, idx) {
+                    var bg = palette[(rowIdx * rowSize + idx) % palette.length];
+                    var title = item.phaseTitle;
+                    var sub   = (item.stepTitle && item.stepTitle !== item.phaseTitle) ? item.stepTitle : '';
+                    out += '<div style="flex:1;min-width:90px;max-width:150px;background:' + bg + ';color:#fff;'
+                         + 'border-radius:5px;padding:7px 8px;font-size:0.68rem;line-height:1.3;'
+                         + 'display:flex;flex-direction:column;justify-content:center;word-break:break-word;print-color-adjust:exact;-webkit-print-color-adjust:exact;">'
+                         + '<div style="font-weight:700;">' + esc(title) + '</div>';
+                    if (sub) out += '<div style="opacity:0.85;margin-top:2px;">' + esc(sub) + '</div>';
+                    out += '</div>';
+                    if (idx < row.length - 1) {
+                        out += '<div style="display:flex;align-items:center;padding:0 3px;color:#555;font-size:0.9rem;">&#8594;</div>';
+                    }
+                });
+                out += '</div>';
+            });
+            out += '</div>';
+            return out;
+        }
+        function esc(s) {
+            return String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>');
+        }
+
         function _openPrintWindow(contentHtml) {
             // Capture page title from the visible h1
             var _h1El = document.querySelector('h1');
@@ -2048,66 +2305,8 @@
                 + '<p style="margin:6px 0 0; font-size:0.82rem; color:#a0b8cc;">Generated: ' + new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) + '</p>'
                 + '</div>';
             // Capture the rendered Mermaid SVG from the main page
-            var diagramSvg = '';
-            var diagramContainer = document.getElementById('diagramContainer');
-            if (diagramContainer) {
-                var svgEl = diagramContainer.querySelector('svg');
-                if (svgEl) {
-                    // Clone and make it print-safe (remove interactive attributes)
-                    var cloned = svgEl.cloneNode(true);
-                    cloned.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                    cloned.style.maxWidth = '100%';
-                    cloned.style.height = 'auto';
-                    cloned.removeAttribute('id');
-                    // Normalize arrow/edge stroke colors for white export background
-                    // 1. Inject override CSS into SVG's internal <style> block
-                    //    (Mermaid's internal CSS beats attribute-level changes)
-                    var svgStyle = cloned.querySelector('style');
-                    var arrowOverride = [
-                        '.edgePath path, .flowchart-link, path.path { stroke: #2c4a5e !important; stroke-width: 2px !important; }',
-                        '.edgePath .path { stroke: #2c4a5e !important; }',
-                        'marker path, marker polygon, marker polyline { fill: #2c4a5e !important; stroke: #2c4a5e !important; }',
-                        'text, tspan, .label { fill: #1a2332 !important; color: #1a2332 !important; }',
-                        '.nodeLabel, .edgeLabel { color: #1a2332 !important; background: #f0f2f5 !important; }',
-                        'rect, polygon { stroke: #2c4a5e !important; }'
-                    ].join('\n');
-                    if (svgStyle) {
-                        svgStyle.textContent += '\n' + arrowOverride;
-                    } else {
-                        var newStyle = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-                        newStyle.textContent = arrowOverride;
-                        cloned.insertBefore(newStyle, cloned.firstChild);
-                    }
-                    // 2. Also fix attributes and inline styles as a belt-and-suspenders backup
-                    cloned.querySelectorAll('path, polyline, line').forEach(function(el) {
-                        var s = el.getAttribute('stroke');
-                        var inlineS = el.style.stroke;
-                        if ((s && s !== 'none') || (inlineS && inlineS !== 'none' && inlineS !== '')) {
-                            el.setAttribute('stroke', '#2c4a5e');
-                            el.style.stroke = '#2c4a5e';
-                        }
-                    });
-                    cloned.querySelectorAll('marker path, marker polygon, marker polyline').forEach(function(el) {
-                        el.setAttribute('fill', '#2c4a5e');
-                        el.setAttribute('stroke', '#2c4a5e');
-                        el.style.fill = '#2c4a5e';
-                        el.style.stroke = '#2c4a5e';
-                    });
-                    cloned.querySelectorAll('[style]').forEach(function(el) {
-                        if (el.style.stroke && el.style.stroke !== 'none' && el.style.stroke !== '') {
-                            el.style.stroke = '#2c4a5e';
-                        }
-                    });
-                    cloned.querySelectorAll('text, tspan').forEach(function(el) {
-                        el.setAttribute('fill', '#1a2332');
-                        el.style.fill = '#1a2332';
-                    });
-                    diagramSvg = '<div style="margin-bottom:24px; padding:16px; background:#f0f2f5; border-radius:8px; border:1px solid #dee2e6; page-break-inside:avoid;">'
-                        + '<h3 style="color:#3d6680; margin:0 0 12px; font-size:1rem;">Upgrade Flow Diagram</h3>'
-                        + cloned.outerHTML
-                        + '</div>';
-                }
-            }
+            var diagramSvg = generatePrintDiagram();
+
 
             // Build the print document as a string first, then load it via a
             // Blob URL — this avoids document.write() and the associated
@@ -2160,7 +2359,7 @@
             let html = '<div style="padding: 20px;">';
             html += `<h2 style="color: #3d6680; margin-bottom: 20px;">Step ${step.number}: ${step.title}</h2>`;
             
-            step.phases.forEach(phase => {
+                step.phases.forEach(phase => {
                 html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px;">';
                 html += '<h3 style="color: #3d6680;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
                 html += '<p>' + phase.description + '</p>';
@@ -2248,6 +2447,8 @@
             });
             
             html += '</div>';
+             
+
             // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
             _openPrintWindow(html);
         }
@@ -2463,8 +2664,16 @@
             }
             
             html += '</div>';
-        
 
+            // Patch-release banner in PDF export
+            var _patchBuildsExport = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            if (_patchBuildsExport.includes(window.targetVcf91Version)) {
+                html += '<div style="background: #ddeeff; border-left: 4px solid #0077bb; padding: 14px 18px; margin-bottom: 20px; border-radius: 8px;">';
+                html += '<strong style="color: #005588; font-size: 14px;">&#128196; Patch Upgrade Path: Target Build ' + window.targetVcf91Version + '</strong>';
+                html += '<p style="margin: 6px 0 0; font-size: 13px; color: #1a3a55;">vCenter, NSX, and ESX must first upgrade to <strong>VCF 9.1.0.0</strong> (base release), then apply the patch. All other components can upgrade directly to their effective patch version. See the <strong>Apply ' + window.targetVcf91Version + ' Patches</strong> phase at the end of this export for full details.</p>';
+                html += '</div>';
+            }
+        
             // All phases
             phases.forEach(phase => {
                 html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
@@ -2559,6 +2768,37 @@
                 html += '</div>';
             });
             html += '</div>';
+
+            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            if (_patchBuildsExp2.includes(window.targetVcf91Version)) {
+                var _patchStep = (allSteps || []).find(function(s) { return s.phases && s.phases.some(function(p) { return p.componentId === 'vcf_patch_base' || p.componentId === 'vcf_patch_direct'; }); });
+                if (_patchStep) {
+                    html += '<div style="background: #ddeeff; border-left: 4px solid #0077bb; padding: 10px 18px; margin: 24px 0 8px; border-radius: 6px; page-break-before: always;">';
+                    html += '<h3 style="color: #005588; margin: 0;">Apply ' + window.targetVcf91Version + ' Patches</h3>';
+                    html += '</div>';
+                    _patchStep.phases.forEach(function(phase) {
+                        var borderColor = phase.componentId === 'vcf_patch_base' ? '#e6a800' : '#0077bb';
+                        html += '<div style="background: #f8fafb; border-left: 4px solid ' + borderColor + '; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
+                        html += '<h4 style="color: #1a2d40; margin-bottom: 8px;">' + phase.title + '</h4>';
+                        html += '<p style="color: #5a6778; margin-bottom: 12px;">' + phase.description + '</p>';
+                        if (phase.data && phase.data.notices) {
+                            phase.data.notices.forEach(function(notice) {
+                                var nColor = notice.type === 'warning' ? '#e6a800' : '#0077bb';
+                                var nLabel = notice.type === 'warning' ? 'WARNING' : 'INFO';
+                                html += '<div style="background: white; border-left: 4px solid ' + nColor + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
+                                html += '<strong>' + nLabel + ': ' + notice.title + '</strong>';
+                                if (notice.bullets && notice.bullets.length > 0) {
+                                    html += '<ul style="margin: 8px 0 0 20px;">';
+                                    notice.bullets.forEach(function(b) { html += '<li>' + b + '</li>'; });
+                                    html += '</ul>';
+                                }
+                                html += '</div>';
+                            });
+                        }
+                        html += '</div>';
+                    });
+                }
+            }
             
             // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
             _openPrintWindow(html);

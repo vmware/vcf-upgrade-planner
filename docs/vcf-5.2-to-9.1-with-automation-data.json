@@ -246,7 +246,7 @@
           "headers": ["Deployment Type", "Number Node", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["Simple", "1", "1", "1", "vcfops.rainpole.io"],
-            ["High Availability(HA)", "4", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io)"],
+            ["High Availability(HA)", "3", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io)"],
             ["Continuous Availability(CA)", "4", "4", "4", "(optional) vipops.sfo.rainpole.io, opsa01.sfo.rainpole.io,opsb01.sfo.rainpole.io,opsc01.sfo.rainpole.io,opsd01.sfo.rainpole.io"],
             ["Cloud proxy", "1", "1", "1", "vcfcxp.sfo.rainpole.io"]
 
