@@ -2040,7 +2040,7 @@
                 var _selRank = _patchRank[window.targetVcf91Version] || 0;
 
                 var _coverage = {
-                    'vCenter Server':              ['9.1.0.0100', '9.1.0.0200'],
+                    'vCenter Server':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
                     'ESX / vSphere':               ['9.1.0.0100', '9.1.0.0200'],
                     'vSAN Witness':                ['9.1.0.0100', '9.1.0.0200'],
                     'NSX Local Manager':           ['9.1.0.0100', '9.1.0.0200'],
@@ -2123,6 +2123,8 @@
                 if (_selProdsNow['vidb'] && !window.vidbIsEmbedded) _pathBComponents.push('Identity Broker');
                 if (_selProdsNow['vsan_witness'])    _pathBComponents.push('vSAN Witness')
                 if (_selProdsNow['nsx_federation'])     _pathBComponents.push('NSX Global Manager');
+                if (_selProdsNow['operations_orchestrator'])    _pathBComponents.push('VCF Operations orchestrator');
+
 
 
                 var _tableA = _buildVerTable(_pathAComponents);

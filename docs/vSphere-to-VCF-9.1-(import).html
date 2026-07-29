@@ -2133,6 +2133,133 @@
                 });
             });
             
+             // Inject final "Apply Patches" step when a patch build is selected
+            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            if (_patchBuilds.includes(window.targetVcf91Version)) {
+
+                // ── Per-component patch coverage from compat-data ──────────────
+                // Each array lists every patch build that component has available.
+                // Effective version = highest available build <= selected build.
+                var _patchRank = { '9.1.0.0': 0, '9.1.0.0100': 1, '9.1.0.0200': 2, '9.1.0.0300': 3, '9.1.0.0400': 4 };
+                var _selRank = _patchRank[window.targetVcf91Version] || 0;
+
+                var _coverage = {
+                    'vCenter Server':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],                     
+                    'ESX / vSphere':               ['9.1.0.0100', '9.1.0.0200'],
+                    'vSAN Witness':                ['9.1.0.0100', '9.1.0.0200'],
+                    'NSX Local Manager':           ['9.1.0.0100', '9.1.0.0200'],
+                    'NSX Global Manager':           ['9.1.0.0100', '9.1.0.0200'],
+                    'HCX':                         ['9.1.0.0100', '9.1.0.0200'],
+                    'vSphere Replication':         ['9.1.0.0100', '9.1.0.0200'],
+                    'VMware Live Recovery (VLR)':  ['9.1.0.0100', '9.1.0.0200'],
+                };
+                // Avi uses its own version scheme — map VCF patch build → Avi version string
+                var _aviVersionMap = {
+                    '9.1.0.0100': '32.1.1',
+                    '9.1.0.0200': '32.1.2'
+                };
+
+                // Compute effective version for a component using VCF patch build coverage list
+                function _effectiveVer(builds) {
+                    if (!builds || builds.length === 0) return null;
+                    var best = null, bestRank = -1;
+                    builds.forEach(function(b) {
+                        var r = _patchRank[b] !== undefined ? _patchRank[b] : -1;
+                        if (r <= _selRank && r > bestRank) { best = b; bestRank = r; }
+                    });
+                    return best;
+                }
+
+                // Build HTML version table for a group of components
+                function _buildVerTable(componentNames) {
+                    var rows = '';
+                    componentNames.forEach(function(name) {
+                        var verCell, note;
+                        // Special case: Avi Load Balancer — both 32.1.1 and 32.1.2 are compatible with any 9.1.0.x patch build
+                        if (name === 'Avi Load Balancer') {
+                            verCell = '<strong>32.1.1</strong> or <strong>32.1.2</strong>';
+                            note = 'Both versions are compatible with any 9.1.0.x patch build';
+                        } else {
+                            var builds = _coverage[name];
+                            var eff = _effectiveVer(builds);
+                            if (!builds || builds.length === 0) {
+                                verCell = '<em style="color:var(--text-secondary)">No patch available</em>';
+                                note = 'Remains at 9.1.0.0';
+                            } else if (!eff) {
+                                verCell = '<em style="color:var(--text-secondary)">No patch for this build</em>';
+                                note = 'Remains at 9.1.0.0';
+                            } else {
+                                verCell = '<strong>' + eff + '</strong>';
+                                note = eff === window.targetVcf91Version ? 'Matches selected build' : 'Latest available for this component';
+                            }
+                        }
+                        rows += '<tr style="border-bottom:1px solid var(--border-color)">'
+                              + '<td style="padding:7px 10px;color:var(--text-primary)">' + name + '</td>'
+                              + '<td style="padding:7px 10px;text-align:center">' + verCell + '</td>'
+                              + '<td style="padding:7px 10px;font-size:0.82rem;color:var(--text-secondary)">' + note + '</td>'
+                              + '</tr>';
+                    });
+                    return '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:10px">'
+                         + '<thead><tr style="background:var(--bg)">'
+                         + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Component</th>'
+                         + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Effective Patch Version</th>'
+                         + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Note</th>'
+                         + '</tr></thead><tbody>' + rows + '</tbody></table>';
+                }
+
+                var _pathAComponents = ['vCenter Server', 'ESX / vSphere', 'NSX Local Manager'];
+                // Core components always shown; optional ones only if user selected them
+                var _selProdsNow = window.selectedAdvancedProducts || {};
+                var _pathBComponents = [];
+                if (_selProdsNow['hcx'])         _pathBComponents.push('HCX');
+                if (_selProdsNow['replication'])  _pathBComponents.push('vSphere Replication');
+                if (_selProdsNow['srm'])          _pathBComponents.push('VMware Live Recovery (VLR)');
+                if (_selProdsNow['avi'])          _pathBComponents.push('Avi Load Balancer');
+                if (_selProdsNow['vsan_witness'])    _pathBComponents.push('vSAN Witness')
+                if (_selProdsNow['nsx_federation'])     _pathBComponents.push('NSX Global Manager');
+
+                var _tableA = _buildVerTable(_pathAComponents);
+                var _tableB = _buildVerTable(_pathBComponents);
+
+                 steps.push({
+                    number: steps.length + 1,
+                    title: 'Apply ' + window.targetVcf91Version + ' Patches',
+                    description: 'Apply cumulative patch to reach target build ' + window.targetVcf91Version,
+                    phases: [
+                        {
+                            number: 1,
+                            title: 'vCenter, NSX & ESX: Effective Version',
+                            description: 'Reference table of effective builds for vCenter, NSX, and ESX.',
+                            componentId: 'vcf_patch_base',
+                            data: {
+                                notices: [{
+                                    type: 'info',
+                                    title: 'vCenter, NSX & ESX Component Versions — Selected Build: ' + window.targetVcf91Version,
+                                    bullets: [
+                                        'The table below shows the effective patch version for each component at your selected build. Components without a patch for this specific build reflect the highest available version.' + _tableA
+                                    ]
+                                }]
+                            }
+                        },
+                        ...(_pathBComponents.length > 0 ? [{
+                            number: 2,
+                            title: 'All Other Components: Effective Versions',
+                            description: 'Reference table of effective patch versions for components at selected build ' + window.targetVcf91Version + '. These components were patched directly during the upgrade process.',
+                            componentId: 'vcf_patch_direct',
+                            data: {
+                                notices: [{
+                                    type: 'info',
+                                    title: 'Component Patch Versions — Selected Build: ' + window.targetVcf91Version,
+                                    bullets: [
+                                        'The table below shows the effective patch version for each component at your selected build. Components without a patch for this specific build reflect the highest available version.' + _tableB
+                                    ]
+                                }]
+                            }
+                        }] : [])
+                    ]
+                });
+            }
+            
             return steps;
         }
         

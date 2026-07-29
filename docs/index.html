@@ -1020,6 +1020,7 @@
                                 <option value="9.0.0">9.0.0</option>
                                 <option value="9.0.1">9.0.1</option>
                                 <option value="9.0.2">9.0.2</option>
+                                <option value="9.0.2.0100">9.0.2.0100</option>
                             </select>
                         </div>
                     </label>
@@ -1653,6 +1654,20 @@
                 }
             // ── VCF 9.0 selected ──────────────────────────────────────────────
             } else if (vcf90Checked && vcf90Version) {
+                 // ── Block: 9.0.2.0100 has no upgrade path ──────────────────
+                if (vcf90Version === '9.0.2.0100') {
+                    if (vcfTargetVersionGroup) vcfTargetVersionGroup.classList.add('hidden');
+                    const blockDiv = document.createElement('div');
+                    blockDiv.style.cssText = 'background:#fde8e8;border-left:4px solid #b8082a;padding:20px 24px;margin-bottom:20px;border-radius:8px;border:1px solid #f0b0b8;';
+                    blockDiv.innerHTML = '<h3 style="color:#7a0018;margin:0 0 10px;font-size:1.15rem;font-weight:700;">&#x1F6AB; No Upgrade Path Available</h3>' +
+                        '<p style="color:#7a0018;margin:0;line-height:1.6;">VCF <strong>9.0.2.0100</strong> currently has <strong>no supported upgrade path forward</strong>. ' +
+                        'There is no path to VCF 9.1 from this version at this time. ' +
+                        '<a href="https://interopmatrix.broadcom.com/Upgrade?productId=851&isHidePatch=false" target="_blank" rel="noopener" style="color:#7a0018;font-weight:600;text-decoration:underline;">Product Interoperability Matrix</a> ' +
+                        'for the latest guidance.</p>';
+                    vcfPathOptions.appendChild(blockDiv);
+                    vcfPathSelection.classList.remove('hidden');
+                    return;
+                }
                 const tgt90 = savedVcfTargetVer || '9.1.x';
                 if (vcfIntent === 'fleet') {
                     paths = [
