@@ -1335,16 +1335,16 @@
         }
 
         function loadSelectionsFromStorage() {
-            vcenterVersion = localStorage.getItem('vcenter-version') || '8.0u3';
-            esxVersion = localStorage.getItem('esx-version') || '8.0u3';
-            window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
+            vcenterVersion = (localStorage.getItem('vcenter-version') || '8.0u3').toLowerCase();
+            esxVersion = (localStorage.getItem('esx-version') || '8.0u3').toLowerCase();
+            window.targetVcf91Version = (localStorage.getItem('target-vcf91-version') || '9.1.0').toLowerCase();
             // Default to true if not set (so page works standalone)
             nsxSelected = localStorage.getItem('nsx-selected') === 'true';
-            nsxVersion = localStorage.getItem('nsx-version') || '4.2.x';
+            nsxVersion = (localStorage.getItem('nsx-version') || '4.2.x').toLowerCase();
             // nsxInEnvironment: true when NSX is present (any version) — used for badge display and import table selection
             nsxInEnvironment = nsxSelected;
             // NSX 9.1 is bundled within VCF — suppress standalone NSX upgrade phases but keep badge + _with_nsx tables
-            if (nsxVersion === '9.1.x') nsxSelected = false;
+            if (nsxVersion.startsWith('9.1')) nsxSelected = false;
             
             console.log('=== LOAD SELECTIONS DEBUG ===');
             console.log('localStorage nsx-selected:', localStorage.getItem('nsx-selected'));
@@ -1370,7 +1370,7 @@
         function updateDeploymentConfig() {
             // --- Deployment Type: Simple vs HA ---
             // Simple is only available for vSphere 9.1.x; 8.x environments must use HA
-            const is91 = (vcenterVersion === '9.1.x' || vcenterVersion === '9.0.x');
+            const is91 = (vcenterVersion.startsWith('9.1') || vcenterVersion.startsWith('9.0'));
             const simpleRadio  = document.getElementById('simpleRadio');
             const simpleWrapper = document.getElementById('simpleRadioWrapper');
             const typeNote     = document.getElementById('deploymentTypeNote');
@@ -1499,6 +1499,7 @@
 
         function generateUpgradePlan() {
             const phases = [];
+            const isImportOnly = vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k' || nsxVersion.startsWith('4.2.4');
             const selectedProducts = window.selectedAdvancedProducts || {};
             // Clear previously injected combination warnings
             if (upgradeData && upgradeData.components) {
@@ -1527,21 +1528,21 @@
     
 
             // NSX pre-upgrade for 4.1.x (after Ops prereq)
-            if (nsxSelected && nsxVersion === '4.1.x') {
+            if (nsxSelected && nsxVersion.startsWith('4.1') && !isImportOnly) {
                 const nsxPrereqData = upgradeData.components['nsx_prereq'] || null;
                 if (nsxPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade NSX to 4.2.x', description: 'Upgrade NSX to 4.2.x before proceeding with the upgrade path', data: nsxPrereqData, componentId: 'nsx_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
-            const vcNeedsPreUpgrade = vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2';
-            const esxNeedsPreUpgrade = esxVersion === '8.0u1' || esxVersion === '8.0u2';
-            if (vcNeedsPreUpgrade && esxNeedsPreUpgrade) {
+            const vcNeedsPreUpgrade = vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2');
+            const esxNeedsPreUpgrade = esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2');
+            if (!isImportOnly && vcNeedsPreUpgrade && esxNeedsPreUpgrade) {
                 const prereqData = upgradeData.components['vcenter_esx_prereq'] || null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade vCenter & ESX to 8.0u3', description: 'Upgrade both vCenter and ESX to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
-            } else if (vcNeedsPreUpgrade) {
+            } else if (!isImportOnly && vcNeedsPreUpgrade) {
                 const prereqData = upgradeData.components['vcenter_esx_prereq'] || null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade vCenter to 8.0u3', description: 'Upgrade vCenter to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
-            } else if (esxNeedsPreUpgrade) {
+            } else if (!isImportOnly && esxNeedsPreUpgrade) {
                 const prereqData = upgradeData.components['vcenter_esx_prereq'] || null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade ESX Hosts to 8.0u3', description: 'Upgrade ESX hosts to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
             }
@@ -1554,7 +1555,7 @@
 
             // For vSphere 8.x: vCenter must be upgraded AFTER import, not before.
             // For vSphere 9.1.x: vCenter is skipped entirely (already on target version).
-            const vcenterIs8x = vcenterVersion && vcenterVersion !== '9.1.x' && vcenterVersion !== '9.0.x';
+            const vcenterIs8x = vcenterVersion && !vcenterVersion.startsWith('9.1') && !vcenterVersion.startsWith('9.0');
             if (vcenterIs8x) {
                 const vcIdx = orderArray.indexOf('vcenter');
                 const impIdx = orderArray.indexOf('import');
@@ -1583,7 +1584,8 @@
                     phaseDescription = 'Remove vCenter High Availability configuration';
                 } else if (componentId === 'vcenter') {
                     // vCenter included unless already on 9.1.x (no upgrade needed, just import)
-                    shouldInclude = vcenterVersion !== '9.1.x';
+                    // 8.0u3j/8.0u3k: converge-only path
+                    shouldInclude = !vcenterVersion.startsWith('9.1') && !isImportOnly;
                     phaseTitle = componentData ? componentData.name : 'vCenter Server';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                      // Use NSX-optimized link when NSX is present in the environment
@@ -1669,7 +1671,7 @@
                     }
                 } else if (componentId === 'nsx') {
                     // NSX only if checkbox selected
-                    shouldInclude = nsxSelected;
+                    shouldInclude = nsxSelected && !isImportOnly;
                     phaseTitle = componentData ? componentData.name : 'NSX';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'vum_migration') {
@@ -1683,7 +1685,7 @@
                     phaseDescription = 'Migrate from Baseline to Image-based management';
                 } else if (componentId === 'vsan_witness') {
                     // vSAN Witness only if checkbox selected
-                    shouldInclude = witnessSelected;
+                    shouldInclude = witnessSelected && !isImportOnly;
                     phaseTitle = componentData ? componentData.name : 'vSAN Witness';
                     phaseDescription = 'Upgrade vSAN Witness Host';
                 } else if (componentId === 'supervisor') {
@@ -1693,13 +1695,14 @@
                     phaseDescription = 'Upgrade vSphere Supervisor';
                 } else if (componentId === 'esx') {
                     // ESX always included
-                    shouldInclude = esxVersion !== '9.1.x';
+                    // 8.0u3j/8.0u3k: converge-only path
+                    shouldInclude = !esxVersion.startsWith('9.1') && !isImportOnly;
                     phaseTitle = componentData ? componentData.name : 'ESX Hosts';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'nsx_edge') {
                     // NSX Edge/Finalize always included after ESX
                     // Title and description depend on whether NSX Edge Nodes checkbox is selected
-                    shouldInclude = nsxSelected;
+                    shouldInclude = nsxSelected && !isImportOnly;
                     phaseTitle = selectedProducts['nsx_edge'] === true
                         ? 'NSX Edge & NSX Finalize'
                         : 'NSX Finalize';
@@ -2001,7 +2004,7 @@
                 }
 
     
-            } else if (nsxVersion === '9.1.x') {
+            } else if (nsxVersion.startsWith('9.1')) {
                 // NSX already at 9.1.x: ELM → import first, then vCenter → vLCM → Witness → Supervisor
                 if (vchaPhases.length > 0) {
                     steps.push({ number: steps.length + 1, title: 'Remove vCenter High Availability', description: 'Remove vCHA configuration before conversion', phases: vchaPhases });
@@ -2145,7 +2148,7 @@
 
                 var _coverage = {
                     'vCenter Server':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],                     
-                    'ESX / vSphere':               ['9.1.0.0100', '9.1.0.0200'],
+                    'ESX':                         ['9.1.0.0100', '9.1.0.0200'],
                     'vSAN Witness':                ['9.1.0.0100', '9.1.0.0200'],
                     'NSX Local Manager':           ['9.1.0.0100', '9.1.0.0200'],
                     'NSX Global Manager':           ['9.1.0.0100', '9.1.0.0200'],
@@ -2196,18 +2199,16 @@
                         rows += '<tr style="border-bottom:1px solid var(--border-color)">'
                               + '<td style="padding:7px 10px;color:var(--text-primary)">' + name + '</td>'
                               + '<td style="padding:7px 10px;text-align:center">' + verCell + '</td>'
-                              + '<td style="padding:7px 10px;font-size:0.82rem;color:var(--text-secondary)">' + note + '</td>'
                               + '</tr>';
                     });
                     return '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:10px">'
                          + '<thead><tr style="background:var(--bg)">'
                          + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Component</th>'
                          + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Effective Patch Version</th>'
-                         + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Note</th>'
                          + '</tr></thead><tbody>' + rows + '</tbody></table>';
                 }
 
-                var _pathAComponents = ['vCenter Server', 'ESX / vSphere', 'NSX Local Manager'];
+                var _pathAComponents = ['vCenter Server', 'ESX', 'NSX Local Manager'];
                 // Core components always shown; optional ones only if user selected them
                 var _selProdsNow = window.selectedAdvancedProducts || {};
                 var _pathBComponents = [];
@@ -2221,9 +2222,12 @@
                 var _tableA = _buildVerTable(_pathAComponents);
                 var _tableB = _buildVerTable(_pathBComponents);
 
-                 steps.push({
+                const isImportOnly = vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k' || nsxVersion.startsWith('4.2.4');
+
+                if (!isImportOnly) {
+                steps.push({
                     number: steps.length + 1,
-                    title: 'Apply ' + window.targetVcf91Version + ' Patches',
+                    title: 'Listed Versions for ' + window.targetVcf91Version,
                     description: 'Apply cumulative patch to reach target build ' + window.targetVcf91Version,
                     phases: [
                         {
@@ -2255,10 +2259,83 @@
                                     ]
                                 }]
                             }
+                                        }] : [])
+                                    ]
+                            });
+                } else {
+                     var _pathBImport = _pathBComponents.filter(function(c) {
+                    if (c === 'NSX Global Manager' && _selProdsNow['nsx_federation']) return false;
+                    if (c === 'vSAN Witness' && witnessSelected) return false;
+                    return true;
+                });
+                var _tableBImport = _pathBImport.length > 0 ? _buildVerTable(_pathBImport) : null;
+                // Build a source-versions table from localStorage for the converge-only path
+                var _tableSource = (function() {
+                    var rows = [
+                        { name: 'vCenter Server',    ver: vcenterVersion },
+                        { name: 'ESX',     ver: esxVersion },
+                        { name: 'NSX Local Manager', ver: nsxVersion }
+                    ] 
+                    if (_selProdsNow['nsx_federation']) {
+                        rows.push({ name: 'NSX Global Manager', ver: nsxVersion});
+                    }
+                    if (witnessSelected) {
+                        rows.push({ name: 'vSAN Witness Host', ver: esxVersion});
+                    }
+                    var rowHtml = rows.map(function(r) {
+                        return '<tr style="border-bottom:1px solid var(--border-color)">'
+                            + '<td style="padding:7px 10px;color:var(--text-primary)">'   + r.name + '</td>'
+                            + '<td style="padding:7px 10px;text-align:center"><strong>'   + r.ver  + '</strong></td>'
+                            + '</tr>';
+                    }).join('');
+
+                    return '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:10px">'
+                        + '<thead><tr style="background:var(--bg)">'
+                        + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Component</th>'
+                        + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Your Current Version</th>'
+                        + '</tr></thead><tbody>' + rowHtml + '</tbody></table>';
+                    })();
+
+                steps.push({
+                number: steps.length + 1,
+                title: 'Listed Versions for ' + window.targetVcf91Version,
+                description: 'Apply cumulative patch to reach target build ' + window.targetVcf91Version,
+                phases: [
+                {
+                number: 1,
+                title: 'vCenter, NSX & ESX: Current Version',
+                description: 'Your selected vCenter, NSX and ESX versions are already at the import point — no patch required for these components.',
+                componentId: 'vcf_patch_base',
+                data: {
+                    notices: [{
+                        type: 'info',
+                        title: 'vCenter, NSX & ESX Component Versions — Selected Build: ' + window.targetVcf91Version,
+                        bullets: [
+                            'Upgrading from 9.1.x is not supported for this build' + _tableSource
+                        ]
+                    }]
+                }
+            },
+            ...(_pathBImport.length > 0 ? [{                
+                number: 2,
+                title: 'All Other Components: Effective Versions',
+                description: 'Reference table of effective patch versions for components at selected build ' + window.targetVcf91Version + '. These components were patched directly during the upgrade process.',
+                componentId: 'vcf_patch_direct',
+                data: {
+                    notices: [{
+                        type: 'info',
+                        title: 'Component Patch Versions — Selected Build: ' + window.targetVcf91Version,
+                        bullets: [
+                            'The table below shows the effective patch version for each component at your selected build. Components without a patch for this specific build reflect the highest available version.' + _tableBImport
+                        ]
+                    }]
+                }
                         }] : [])
                     ]
                 });
             }
+
+        }
             
             return steps;
         }
@@ -2581,6 +2658,9 @@
                                     html += '<li>' + stripHtml(b.text) + '<ul style="margin: 4px 0 0 20px;">';
                                     b.sub_bullets.forEach(sb => html += '<li>' + stripHtml(sb) + '</li>');
                                     html += '</ul></li>';
+                                } else if (phase.componentId === 'vcf_patch_base' || phase.componentId === 'vcf_patch_direct') {
+                                    // Patch version tables contain raw HTML — output directly without stripping
+                                    html += '<li>' + b + '</li>';
                                 } else {
                                     html += '<li>' + stripHtml(b) + '</li>';
                                 }
@@ -2656,6 +2736,7 @@
             
             html += '</div>';
             // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
+
             _openPrintWindow(html);
         }
 
@@ -2756,33 +2837,36 @@
         function getAllPhasesForExport() {
             // Regenerate ALL phases regardless of current progress
             const phases = [];
+            const isImportOnly = vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k';
 
 
             // NSX pre-upgrade for 4.1.x (after Ops prereq)
-            if (nsxSelected && nsxVersion === '4.1.x') {
+            if (nsxSelected && nsxVersion.startsWith('4.1') && !isImportOnly) {
                 const nsxPrereqData = upgradeData ? upgradeData.components['nsx_prereq'] : null;
                 if (nsxPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade NSX to 4.2.x', description: 'Upgrade NSX to 4.2.x before proceeding', data: nsxPrereqData, componentId: 'nsx_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
-            const vcNeedsPreUpgrade = vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2';
-            const esxNeedsPreUpgrade = esxVersion === '8.0u1' || esxVersion === '8.0u2';
-            if (vcNeedsPreUpgrade && esxNeedsPreUpgrade) {
+            const vcNeedsPreUpgrade = vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2');
+            const esxNeedsPreUpgrade = esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2');
+            if (!isImportOnly && vcNeedsPreUpgrade && esxNeedsPreUpgrade) {
                 const prereqData = upgradeData ? upgradeData.components['vcenter_esx_prereq'] : null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade vCenter & ESX to 8.0u3', description: 'Upgrade both vCenter and ESX to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
-            } else if (vcNeedsPreUpgrade) {
+            } else if (!isImportOnly && vcNeedsPreUpgrade) {
                 const prereqData = upgradeData ? upgradeData.components['vcenter_esx_prereq'] : null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade vCenter to 8.0u3', description: 'Upgrade vCenter to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
-            } else if (esxNeedsPreUpgrade) {
+            } else if (!isImportOnly && esxNeedsPreUpgrade) {
                 const prereqData = upgradeData ? upgradeData.components['vcenter_esx_prereq'] : null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade ESX Hosts to 8.0u3', description: 'Upgrade ESX hosts to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
             }
 
 
-            const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
-            const effVC = (vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2') ? '8.0u3' : vcenterVersion;
-            const vcDesc = effVC === '8.0u3' ? 'Upgrade vCenter' : 'Upgrade vCenter';
-            phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
+            if (!isImportOnly) {
+                const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
+                const effVC = (vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2')) ? '8.0u3' : vcenterVersion;
+                const vcDesc = effVC === '8.0u3' ? 'Upgrade vCenter' : 'Upgrade vCenter';
+                phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
+            }
 
             if (vlcmSelected) {
                 const vlcmData = upgradeData
@@ -2798,10 +2882,12 @@
                 phases.push({ number: phases.length + 1, title: 'vSAN Witness Host', description: 'Upgrade vSAN Witness Host', data: witnessData });
             }
 
-            const esxData = upgradeData ? upgradeData.components.esx : null;
-            const effESX = (esxVersion === '8.0u1' || esxVersion === '8.0u2') ? '8.0u3' : esxVersion;
-            const esxDesc = effESX === '8.0u3' ? 'Upgrade all ESX hosts' : 'Upgrade all ESX hosts';
-            phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: esxDesc, data: esxData, componentId: 'esx' });
+            if (!isImportOnly) {
+                const esxData = upgradeData ? upgradeData.components.esx : null;
+                const effESX = (esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2')) ? '8.0u3' : esxVersion;
+                const esxDesc = effESX === '8.0u3' ? 'Upgrade all ESX hosts' : 'Upgrade all ESX hosts';
+                phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: esxDesc, data: esxData, componentId: 'esx' });
+            }
 
             return phases;
         }
@@ -3018,6 +3104,38 @@
             html += '</div>';
             
             // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
+
+
+            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            if (_patchBuildsExp2.includes(window.targetVcf91Version)) {
+                var _patchStep = (allSteps || []).find(function(s) { return s.phases && s.phases.some(function(p) { return p.componentId === 'vcf_patch_base' || p.componentId === 'vcf_patch_direct'; }); });
+                if (_patchStep) {
+                    html += '<div style="background: #ddeeff; border-left: 4px solid #0077bb; padding: 10px 18px; margin: 24px 0 8px; border-radius: 6px; page-break-before: always;">';
+                    html += '<h3 style="color: #005588; margin: 0;">Apply ' + window.targetVcf91Version + ' Patches</h3>';
+                    html += '</div>';
+                    _patchStep.phases.forEach(function(phase) {
+                        var borderColor = phase.componentId === 'vcf_patch_base' ? '#e6a800' : '#0077bb';
+                        html += '<div style="background: #f8fafb; border-left: 4px solid ' + borderColor + '; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
+                        html += '<h4 style="color: #1a2d40; margin-bottom: 8px;">' + phase.title + '</h4>';
+                        html += '<p style="color: #5a6778; margin-bottom: 12px;">' + phase.description + '</p>';
+                        if (phase.data && phase.data.notices) {
+                            phase.data.notices.forEach(function(notice) {
+                                var nColor = notice.type === 'warning' ? '#e6a800' : '#0077bb';
+                                var nLabel = notice.type === 'warning' ? 'WARNING' : 'INFO';
+                                html += '<div style="background: white; border-left: 4px solid ' + nColor + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
+                                html += '<strong>' + nLabel + ': ' + notice.title + '</strong>';
+                                if (notice.bullets && notice.bullets.length > 0) {
+                                    html += '<ul style="margin: 8px 0 0 20px;">';
+                                    notice.bullets.forEach(function(b) { html += '<li>' + b + '</li>'; });
+                                    html += '</ul>';
+                                }
+                                html += '</div>';
+                            });
+                        }
+                        html += '</div>';
+                    });
+                }
+            }
             _openPrintWindow(html);
         }
 

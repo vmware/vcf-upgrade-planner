@@ -3,6 +3,7 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>VCF Upgrade Planner</title>
+    <!-- v2.3 2026-07-20: no-release advisory for patch targets without Supervisor/VKS builds -->
     <style>
         :root {
             --vmw-blue: #0088b5;
@@ -712,7 +713,152 @@
             color: var(--text-secondary);
             line-height: 1.55;
         }
-    </style>
+
+        /* ── Compat Checker ── */
+        .compat-section { margin-top: 48px; }
+        .compat-section .question-label::before { content: "🔍 "; }
+
+        .multiselect-wrapper { position: relative; }
+        .multiselect-box {
+            width: 100%;
+            min-height: 48px;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            cursor: pointer;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            transition: border-color 0.2s;
+            user-select: none;
+        }
+        .multiselect-box:hover, .multiselect-box.open { border-color: var(--vmw-blue); }
+        .multiselect-box.open { box-shadow: 0 0 0 3px rgba(0,136,181,0.12); border-radius: 8px 8px 0 0; }
+        .ms-placeholder { color: var(--text-secondary); font-size: 0.95rem; }
+        .ms-chip {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(0,136,181,0.12); color: var(--vmw-blue);
+            border-radius: 6px; padding: 3px 8px;
+            font-size: 0.82rem; font-weight: 600;
+            max-width: 100%; word-break: break-all;
+        }
+        .ms-chip-remove {
+            cursor: pointer; font-size: 0.9rem; line-height: 1;
+            color: var(--vmw-blue); opacity: 0.7;
+            background: none; border: none; padding: 0;
+        }
+        .ms-chip-remove:hover { opacity: 1; }
+        .ms-dropdown {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            background: var(--card-bg);
+            border: 2px solid var(--vmw-blue);
+            border-top: none; border-radius: 0 0 8px 8px;
+            max-height: 260px; overflow-y: auto;
+            z-index: 200;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .ms-dropdown.open { display: block; }
+        .ms-search {
+            width: 100%; padding: 10px 14px; border: none;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--card-bg); color: var(--text-primary);
+            font-size: 0.9rem; outline: none;
+        }
+        .ms-optgroup-label {
+            padding: 6px 14px 4px;
+            font-size: 0.75rem; font-weight: 700;
+            color: var(--vmw-blue); text-transform: uppercase;
+            letter-spacing: 0.06em; background: var(--card-bg);
+        }
+        .ms-option {
+            padding: 9px 14px 9px 28px; cursor: pointer;
+            font-size: 0.88rem; color: var(--text-primary);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .ms-option:hover { background: rgba(0,136,181,0.07); }
+        .ms-option.selected { background: rgba(0,136,181,0.1); font-weight: 600; }
+        .ms-option input[type=checkbox] { accent-color: var(--vmw-blue); width:15px; height:15px; flex-shrink:0; }
+        .ms-clear-btn {
+            margin-left: auto; flex-shrink: 0;
+            background: none; border: none; cursor: pointer;
+            color: var(--text-secondary); font-size: 1rem; padding: 0 4px;
+        }
+        .ms-clear-btn:hover { color: var(--pulse-red); }
+
+        .compat-form-row { display: grid; grid-template-columns: 1fr 48px 1fr; gap: 12px; align-items: start; margin-bottom: 24px; }
+        .compat-arrow { display: flex; align-items: center; justify-content: center; padding-top: 32px; color: var(--vmw-blue); font-size: 1.4rem; }
+
+        .compat-result-grid {
+            margin-top: 20px; border: 1px solid var(--border-color);
+            border-radius: 10px; overflow: hidden; font-size: 0.85rem;
+        }
+        .compat-result-grid table { width: 100%; border-collapse: collapse; }
+        .compat-result-grid th {
+            background: rgba(0,136,181,0.08); padding: 10px 14px;
+            text-align: left; font-weight: 600; color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color); font-size: 0.8rem;
+        }
+        .compat-result-grid td { padding: 9px 14px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); }
+        .compat-result-grid tr:last-child td { border-bottom: none; }
+        .cyes { color: #1a5c30; font-weight: 700; }
+        .cno  { color: var(--pulse-red); }
+        [data-theme="dark"] .cyes { color: #5dd98a; }
+
+        .compat-cta {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--vmw-blue); color: white;
+            font-size: 0.95rem; font-weight: 700;
+            padding: 12px 24px; border-radius: 8px; border: none;
+            cursor: pointer; text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,136,181,0.25);
+            transition: all 0.2s;
+        }
+        .compat-cta:hover { background: #006e93; transform: translateY(-2px); color: white; text-decoration: none; }
+        .compat-cta.disabled { background: var(--border-color); color: var(--text-secondary); pointer-events: none; box-shadow: none; }
+        .compat-hint { font-size: 0.83rem; color: var(--text-secondary); margin-top: 8px; }
+        .compat-data-badge { font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px; }
+
+        .compat-inline-result {
+            border-radius: 10px; padding: 16px 20px; margin-top: 16px;
+            border: 1px solid var(--border-color); display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .compat-inline-result.show { display: block; }
+        .compat-inline-result.ok  { background: #eaf7ee; border-color: #2e9e4f; }
+        .compat-inline-result.bad { background: var(--warning-bg); border-color: var(--warning-border); }
+        .compat-inline-result.unknown { background: rgba(0,136,181,0.06); border-color: var(--vmw-blue); }
+        [data-theme="dark"] .compat-inline-result.ok { background: #0e2b18; }
+
+        @media (max-width: 768px) {
+            .compat-form-row { grid-template-columns: 1fr; }
+            .compat-arrow { display: none; }
+        }
+    
+        .compat-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            padding: 8px 0;
+        }
+        .compat-card {
+            display: none;
+            flex-direction: column;
+            width: 240px;
+            min-width: 200px;
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 12px;
+        }
+        .compat-card.card-active {
+            display: flex;
+        }
+        .compat-card .upgrade-verdict { margin: 0; }
+        </style>
 </head>
 
 <body>
@@ -743,6 +889,7 @@
                 <div class="nav-item nav-hidden" id="navPath" onclick="scrollToElement('pathSelection')">
                     <span>🛤️</span> Upgrade Path
                 </div>
+                
             </div>
 
             <div class="sidebar-footer">
@@ -790,11 +937,6 @@
                         <div class="version-dropdown hidden" id="vcenterDropdown">
                             <select id="vcenter" onchange="handleVersionChange()">
                                 <option value="">-- Select Version --</option>
-                                <option value="8.0u1">8.0u1</option>
-                                <option value="8.0u2">8.0u2</option>
-                                <option value="8.0u3">8.0u3</option>
-                                <option value="9.0.x">9.0.x</option>
-                                <option value="9.1.x">9.1.x</option>
                             </select>
                         </div>
                     </label>
@@ -808,11 +950,6 @@
                         <div class="version-dropdown hidden" id="esxDropdown">
                             <select id="esx" onchange="handleVersionChange()">
                                 <option value="">-- Select Version --</option>
-                                <option value="8.0u1">8.0u1</option>
-                                <option value="8.0u2">8.0u2</option>
-                                <option value="8.0u3">8.0u3</option>
-                                <option value="9.0.x">9.0.x</option>
-                                <option value="9.1.x">9.1.x</option>
                             </select>
                         </div>
                     </label>
@@ -826,11 +963,6 @@
                         <div class="version-dropdown hidden" id="operationsDropdown">
                             <select id="operations">
                                 <option value="">-- Select Version --</option>
-                                <option value="8.16.x">8.16.x</option>
-                                <option value="8.17.x">8.17.x</option>
-                                <option value="8.18.x">8.18.x</option>
-                                <option value="9.0.x">9.0.x</option>
-                                <option value="9.1.x">9.1.x</option>
                             </select>
                         </div>
                     </label>
@@ -845,8 +977,6 @@
                         <div class="version-dropdown hidden" id="automationDropdown">
                             <select id="automation">
                                 <option value="">-- Select Version --</option>
-                                <option value="8.17.x">8.17.x</option>
-                                <option value="8.18.x">8.18.x</option>
                             </select>
                         </div>
                     </label>
@@ -860,10 +990,6 @@
                         <div class="version-dropdown hidden" id="nsxDropdown">
                             <select id="nsx" onchange="handleVersionChange()">
                                 <option value="">-- Select Version --</option>
-                                <option value="4.1.x">4.1.x</option>
-                                <option value="4.2.x">4.2.x</option>
-                                <option value="9.0.x">9.0.x</option>
-                                <option value="9.1.x">9.1.x</option>
                             </select>
                         </div>
                     </label>
@@ -889,6 +1015,32 @@
                     <label class="checkbox-label">
                         <input id="vcdCheck" onchange="updateAvailablePaths()" type="checkbox"/>
                         <span>VMware Cloud Director</span>
+                    </label>
+                </div>
+
+                <!-- Supervisor -->
+                <div class="checkbox-group" id="supervisorCheckboxGroup" style="display:none;">
+                    <label class="checkbox-label">
+                        <input id="supervisorCheck" onchange="toggleDropdown('supervisorCheck','supervisorDropdown');updateAvailablePaths();" type="checkbox"/>
+                        <span>vSphere Supervisor</span>
+                        <div class="version-dropdown hidden" id="supervisorDropdown">
+                            <select id="supervisorVer" onchange="updateAvailablePaths()">
+                                <option value="">-- Select Version --</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- VKS -->
+                <div class="checkbox-group" id="vksCheckboxGroup" style="display:none;">
+                    <label class="checkbox-label">
+                        <input id="vksCheck" onchange="toggleDropdown('vksCheck','vksDropdown');updateAvailablePaths();" type="checkbox"/>
+                        <span>vSphere Kubernetes Service (VKS)</span>
+                        <div class="version-dropdown hidden" id="vksDropdown">
+                            <select id="vksVer" onchange="updateAvailablePaths()">
+                                <option value="">-- Select Version --</option>
+                            </select>
+                        </div>
                     </label>
                 </div>
             </div>
@@ -954,13 +1106,38 @@
                         <label for="targetVcf91Version" style="font-size:1rem;font-weight:600;color:var(--vmw-gray);margin-bottom:8px;display:block;">Select Target VCF 9.1 Version:</label>
                         <select id="targetVcf91Version" onchange="updateAvailablePaths()" style="max-width:280px;">
                             <option value="">-- Select Version --</option>
-                            <option value="9.1.0">9.1.0</option>
+                            <option value="9.1.0.0">9.1.0.0</option>
                             <option value="9.1.0.0100">9.1.0.0100</option>
                             <option value="9.1.0.0200">9.1.0.0200</option>
                             <option value="9.1.0.0300">9.1.0.0300</option>
                             <option value="9.1.0.0400">9.1.0.0400</option>
 
                         </select>
+                    </div>
+                    <!-- Add-on Pre-check Banners -->
+                    <div id="addonPrecheckBanners" style="display:none;margin-bottom:16px;">
+                        <div style="font-size:0.85rem;font-weight:700;color:var(--vmw-gray);margin-bottom:10px;">
+                            ⚠️ Add-on Compatibility Pre-checks
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:12px;">
+                            <div id="constructFleet"    class="upgrade-verdict" style="display:none;margin:0;"><div class="verdict-title" id="constructFleetTitle"></div><div class="verdict-detail" id="constructFleetDetail"></div></div>
+                            <div id="constructWD"       class="upgrade-verdict" style="display:none;margin:0;"><div class="verdict-title" id="constructWDTitle"></div><div class="verdict-detail" id="constructWDDetail"></div></div>
+                            <div id="constructVVF"      class="upgrade-verdict" style="display:none;margin:0;"><div class="verdict-title" id="constructVVFTitle"></div><div class="verdict-detail" id="constructVVFDetail"></div></div>
+                            <div id="constructInstance" class="upgrade-verdict" style="display:none;margin:0;"><div class="verdict-title" id="constructInstanceTitle"></div><div class="verdict-detail" id="constructInstanceDetail"></div></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:12px;">
+                            <div id="addonCheckSupervisor" style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="addonCheckSupervisorTitle"></div><div class="verdict-detail" id="addonCheckSupervisorDetail"></div></div>
+                            <div id="addonCheckVKS"        style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="addonCheckVKSTitle"></div><div class="verdict-detail" id="addonCheckVKSDetail"></div></div>
+                            <div id="addonCheckSupVks"     style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="addonCheckSupVksTitle"></div><div class="verdict-detail" id="addonCheckSupVksDetail"></div></div>
+                        </div>
+                        <!-- Product vs Destination vCenter compatibility checks -->
+                        <div style="overflow-x:auto;margin-bottom:12px;"><div class="compat-cards-container" id="compatCheckRow">
+                            <div class="compat-card"><div id="addonCheckVCenter" style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="addonCheckVCenterTitle"></div><div class="verdict-detail" id="addonCheckVCenterDetail"></div></div></div>
+                            <div class="compat-card"><div id="addonCheckESXUpgrade" style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="addonCheckESXUpgradeTitle"></div><div class="verdict-detail" id="addonCheckESXUpgradeDetail"></div></div></div>
+                            <div class="compat-card"><div id="addonCheckNSXUpgrade" style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="addonCheckNSXUpgradeTitle"></div><div class="verdict-detail" id="addonCheckNSXUpgradeDetail"></div></div></div>
+                            <div class="compat-card"><div id="addonCheckOpsUpgrade" style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="addonCheckOpsUpgradeTitle"></div><div class="verdict-detail" id="addonCheckOpsUpgradeDetail"></div></div></div>
+                            <div class="compat-card"><div id="addonCheckAutoUpgrade" style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="addonCheckAutoUpgradeTitle"></div><div class="verdict-detail" id="addonCheckAutoUpgradeDetail"></div></div></div>
+                        </div></div>
                     </div>
                     <div class="path-options" id="pathOptions">
                         <!-- Paths will be dynamically added here -->
@@ -984,10 +1161,6 @@
                         <div class="version-dropdown hidden" id="vcf52Dropdown">
                             <select id="vcf52">
                                 <option value="">-- Select Version --</option>
-                                <option value="5.2.0">5.2.0</option>
-                                <option value="5.2.1">5.2.1</option>
-                                <option value="5.2.2">5.2.2</option>
-                                <option value="5.2.3">5.2.3</option>
                             </select>
                         </div>
                     </label>
@@ -1017,10 +1190,6 @@
                         <div class="version-dropdown hidden" id="vcf90Dropdown">
                             <select id="vcf90">
                                 <option value="">-- Select Version --</option>
-                                <option value="9.0.0">9.0.0</option>
-                                <option value="9.0.1">9.0.1</option>
-                                <option value="9.0.2">9.0.2</option>
-                                <option value="9.0.2.0100">9.0.2.0100</option>
                             </select>
                         </div>
                     </label>
@@ -1106,13 +1275,14 @@
                         <label for="vcfTargetVcf91Version" style="font-size:1rem;font-weight:600;color:var(--vmw-gray);margin-bottom:8px;display:block;">Select Target VCF 9.1 Version:</label>
                         <select id="vcfTargetVcf91Version" onchange="updateVCFPath()" style="max-width:280px;">
                             <option value="">-- Select Version --</option>
-                            <option value="9.1.0">9.1.0</option>
+                            <option value="9.1.0.0">9.1.0.0</option>
                             <option value="9.1.0.0100">9.1.0.0100</option>
                             <option value="9.1.0.0200">9.1.0.0200</option>
                             <option value="9.1.0.0300">9.1.0.0300</option>
                             <option value="9.1.0.0400">9.1.0.0400</option>
                         </select>
                     </div>
+                    <div id="vcfAddonPrecheckBanners" style="display:none;margin-bottom:16px;"><div style="font-size:0.85rem;font-weight:700;color:var(--vmw-gray);margin-bottom:10px;">⚠️ Add-on Compatibility Pre-checks</div><div style="overflow-x:auto;margin-bottom:12px;"><div class="compat-cards-container" id="vcfCompatCheckRow"><div class="compat-card"><div id="vcfCheckSddc" style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="vcfCheckSddcTitle"></div><div class="verdict-detail" id="vcfCheckSddcDetail"></div></div></div></div></div></div>
                     <div class="path-options" id="vcfPathOptions">
                         <!-- Paths will be dynamically added here -->
                     </div>
@@ -1184,7 +1354,7 @@
             // Trigger when vCenter AND ESX are already on 9.1.x (with or without Operations).
             // In this state NSX and Automation can only be upgraded via VCF Convert —
             // selecting them independently is not supported.
-            const infraOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
+            const infraOn91 = (vcenterVersion && vcenterVersion.startsWith('9.1')) && (esxVersion && esxVersion.startsWith('9.1'));
 
             if (infraOn91) {
 
@@ -1261,6 +1431,27 @@
             });
             const noteBox = document.getElementById('productNoteBox');
             if (noteBox) noteBox.style.display = '';
+
+            // For VCF conversion intents (fleet/instance), 9.0.x is not a valid source version
+            // for vCenter or ESX — hide those options so users cannot accidentally select them.
+            // Operations CAN still be at 9.0.x.
+            const _intent = localStorage.getItem('vsphere-intent') || '';
+            const _isVcfConvert = (_intent === 'fleet' || _intent === 'instance');
+            ['vcenter', 'esx'].forEach(function(selId) {
+                var sel = document.getElementById(selId);
+                if (!sel) return;
+                Array.from(sel.options).forEach(function(opt) {
+                    if (opt.value && opt.value.startsWith('9.0')) {
+                        opt.disabled = _isVcfConvert;
+                        opt.style.display = _isVcfConvert ? 'none' : '';
+                    }
+                });
+                // If a now-hidden 9.0 value is selected, clear the selection
+                if (_isVcfConvert && sel.value && sel.value.startsWith('9.0')) {
+                    sel.value = '';
+                    if (typeof handleVersionChange === 'function') handleVersionChange();
+                }
+            });
         }
 
         function toggleDropdown(checkboxId, dropdownId) {
@@ -1349,6 +1540,7 @@
         }
 
         function updateAvailablePaths() {
+                if (window.runConstructReadiness) window.runConstructReadiness();
             const intent = localStorage.getItem('vsphere-intent') || '';
 
             // Don't show destination until intent selected
@@ -1443,12 +1635,65 @@
                 pathOptions.appendChild(_cnel);
             }
 
-                        // ── Path sets by intent ──────────────────────────────────────────────
+            // ── Path sets by intent ──────────────────────────────────────────────
+            // ── Operations 8.18.7 block — no destination available ──────────────────
+            const _opsVersionVal = (document.getElementById('operations') ? document.getElementById('operations').value : '').toLowerCase();
+            if (document.getElementById('operationsCheck') && document.getElementById('operationsCheck').checked && _opsVersionVal === '8.18.7') {
+                const opsBlockDiv = document.createElement('div');
+                opsBlockDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                opsBlockDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; No Destination Available</h3>' +
+                    '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">VCF Operations <strong>8.18.7</strong> does not have a supported upgrade path to VCF 9.1. ' +
+                    'Please wait for a future release of VCF 9.1.x or deselect Operations to continue without it using existing operations and deploy a new VCF Operations.</p>';
+                pathOptions.appendChild(opsBlockDiv);
+                pathSelection.classList.remove('hidden');
+                if (targetVersionGroup) targetVersionGroup.classList.add('hidden');
+                return;
+            }
+
+            // ── Operations 9.0.2.0200 — blocked for 9.1.0.0 and 9.1.0.0100 ─────────
+            if (document.getElementById('operationsCheck') && document.getElementById('operationsCheck').checked && _opsVersionVal === '9.0.2.0200') {
+                if (savedTargetVer === '9.1.0.0' || savedTargetVer === '9.1.0.0100' || savedTargetVer === '9.1.0.0200' ) {
+                    const opsBlockDiv = document.createElement('div');
+                    opsBlockDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                    opsBlockDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; Destination Not Supported for VCF Operations 9.0.2.0200</h3>' +
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">VCF Operations <strong>9.0.2.0200</strong> cannot be upgraded to <strong>' + (savedTargetVer || '9.1.0.0/9.1.0.0100/9.1.0.0200') + '</strong>. ' +
+                        'Please select target version <strong>9.1.0.0300</strong>, or <strong>9.1.0.0400</strong> to proceed.</p>';
+                    pathOptions.appendChild(opsBlockDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                    return;
+                }
+            }
+
             let paths = [];
 
-            if (intent === 'fleet') {
+             if (intent === 'fleet') {
                 const automationSelected = document.getElementById('automationCheck') && document.getElementById('automationCheck').checked;
-                if (automationSelected) {
+                const nsxSelected = document.getElementById('nsxCheck') && document.getElementById('nsxCheck').checked;
+                const _vcFleet = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
+                if (_vcFleet.startsWith('8.0u3j') && !nsxSelected) {
+                    // 8.0u3j without NSX — no Convert/fleet destination available
+                    const noDestDiv = document.createElement('div');
+                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                    noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; No Destination Available</h3>' +
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">vCenter <strong>8.0U3j</strong> cannot be directly upgraded to VCF 9.1 via the fleet path. ' +
+                        'Please select NSX to use the Convert path if deployed</p>';
+                    pathOptions.appendChild(noDestDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                    return;
+                }  else if (_vcFleet.startsWith('8.0u3k') && !nsxSelected) {
+                    // 8.0u3k without NSX — no Convert/fleet destination available
+                    const noDestDiv = document.createElement('div');
+                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                    noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; No Destination Available</h3>' +
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">vCenter <strong>8.0U3k</strong> cannot be directly upgraded to VCF 9.1 via the fleet path. ' +
+                        'Please select NSX to use the Convert path if deployed</p>';
+                    pathOptions.appendChild(noDestDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                    return;
+                } else if (automationSelected) {
                     paths = [
                         { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Converge your vSphere environment into a VCF managed fleet with VCF Automation fully integrated from the start.', icon: '' }
                     ];
@@ -1459,19 +1704,60 @@
                     ];
                 }
             } else if (intent === 'instance') {
+                const nsxSelected = document.getElementById('nsxCheck') && document.getElementById('nsxCheck').checked;
+                const _vcInstance = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
+                if (_vcInstance.startsWith('8.0u3j') && !nsxSelected) {
+                    // 8.0u3j without NSX — no Convert/fleet destination available
+                    const noDestDiv = document.createElement('div');
+                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                    noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; No Destination Available</h3>' +
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">vCenter <strong>8.0U3j</strong> cannot be directly upgraded to VCF 9.1 via the Instance path. ' +
+                        'Please select NSX to use the Convert path if deployed</p>';
+                    pathOptions.appendChild(noDestDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                    return;
+                } if (_vcInstance.startsWith('8.0u3k') && !nsxSelected) {
+                    // 8.0u3k without NSX — no Convert/fleet destination available
+                    const noDestDiv = document.createElement('div');
+                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                    noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; No Destination Available</h3>' +
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">vCenter <strong>8.0U3k</strong> cannot be directly upgraded to VCF 9.1 via the Instance path. ' +
+                        'Please select NSX to use the Convert path if deployed</p>';
+                    pathOptions.appendChild(noDestDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                    return;
+                } else {
                 paths = [
                     { title: 'Upgrade vSphere environment to VCF Instance', desc: ' Converge your vSphere environment into a new VCF instance that joins your established VCF fleet.', icon: '' }
                 ];
+                }
             } else if (intent === 'import') {
                 paths = [
                     { title: 'Upgrade vSphere environment to VCF Workload Domain', desc: 'Import your vSphere environment as workload domain into an existing VCF instance.', icon: '' }
                 ];
             } else if (intent === 'vvf') {
-                paths = [
-                    { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Upgrade vSphere and VCF Operations to VVF 9.1. VCF Management Services are not included; you can add them later at your own pace.', icon: '' },
-                    { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)',    desc: 'Upgrade vSphere and VCF Operations to VVF 9.1 with VCF Management Services included for full lifecycle management capabilities.', icon: '' }
-                ];
+                  const vcenterVersion = document.getElementById('vcenter').value;
+                   const _vcVvf = vcenterVersion ? vcenterVersion.toLowerCase() : '';
+                if (_vcVvf.startsWith('8.0u3j')) {
+                    // 8.0U3j: VCF Management Services path not supported
+                    paths = [
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Upgrade vSphere and VCF Operations to VVF 9.1. VCF Management Services are not included; you can add them later at your own pace.', icon: '' }
+                    ];
+                } else if (_vcVvf.startsWith('8.0u3k')) {
+                    // 8.0U3k: VCF Management Services path not supported
+                    paths = [
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Upgrade vSphere and VCF Operations to VVF 9.1. VCF Management Services are not included; you can add them later at your own pace.', icon: '' }
+                    ];
+                } else {
+                    paths = [
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (without VCF Management Services)', desc: 'Upgrade vSphere and VCF Operations to VVF 9.1. VCF Management Services are not included; you can add them later at your own pace.', icon: '' },
+                        { title: 'vSphere and VCF Operations to VVF 9.1 (with VCF Management Services)',    desc: 'Upgrade vSphere and VCF Operations to VVF 9.1 with VCF Management Services included for full lifecycle management capabilities.', icon: '' }
+                    ];
+                }
             }
+
 
             // ── Render paths ─────────────────────────────────────────────────────
             if (paths.length > 0) {
@@ -1594,6 +1880,84 @@
             const vcfTargetVersionSelect = document.getElementById('vcfTargetVcf91Version');
             const savedVcfTargetVer = vcfTargetVersionSelect ? vcfTargetVersionSelect.value : '';
 
+            // VCF SDDC Manager upgrade compat check
+            (function() {
+                var banner = document.getElementById('vcfAddonPrecheckBanners');
+                var box    = document.getElementById('vcfCheckSddc');
+                var tEl    = document.getElementById('vcfCheckSddcTitle');
+                var dEl    = document.getElementById('vcfCheckSddcDetail');
+                if (!box) return;
+
+                var srcVer = '';
+                var vcf52Sel = document.getElementById('vcf52');
+                var vcf90Sel = document.getElementById('vcf90');
+                var vcf52Chk = document.getElementById('vcf52Check');
+                var vcf90Chk = document.getElementById('vcf90Check');
+                if (vcf52Chk && vcf52Chk.checked && vcf52Sel) srcVer = vcf52Sel.value;
+                else if (vcf90Chk && vcf90Chk.checked && vcf90Sel) srcVer = vcf90Sel.value;
+
+                if (!srcVer || !savedVcfTargetVer) {
+                    box.style.display = 'none';
+                    if (banner) banner.style.display = 'none';
+                    return;
+                }
+                if (banner) banner.style.display = '';
+
+                var _data  = window._compatData;
+                var compat = _data && _data.compatibility && _data.compatibility['sddc_manager_upgrade'];
+                var lbl    = 'VCF (SDDC Manager) ' + srcVer + ' → ' + savedVcfTargetVer;
+
+                if (!compat) {
+                    box.style.display = '';
+                    box.className = 'upgrade-verdict show unknown';
+                    tEl.innerHTML = '❓ ' + lbl + ' — No Data';
+                    dEl.innerHTML = '<em>No SDDC Manager upgrade data found. Run <code>refresh_compat.py</code>.</em>';
+                    return;
+                }
+
+                // Self-contained lookup — no cross-block function dependency
+                function vcfLookup(matrix, rowKey, colKey) {
+                    if (!matrix || !matrix[rowKey]) return undefined;
+                    var row = matrix[rowKey];
+                    if (row[colKey] !== undefined) return row[colKey];
+                    var m = colKey.match(/^(\d+\.\d+\.\d+\.)(\d+)$/);
+                    if (m) {
+                        var base = m[1], patch = parseInt(m[2], 10), best = null, bestP = -1;
+                        Object.keys(row).forEach(function(k) {
+                            var km = k.match(/^(\d+\.\d+\.\d+\.)(\d+)$/);
+                            if (km && km[1] === base) {
+                                var kp = parseInt(km[2], 10);
+                                if (kp <= patch && kp > bestP) { best = k; bestP = kp; }
+                            }
+                        });
+                        if (best) return row[best];
+                    }
+                    return undefined;
+                }
+
+                var raw    = vcfLookup(compat, srcVer, savedVcfTargetVer);
+                var status = (raw && typeof raw === 'object') ? raw.s : raw;
+                var note   = (raw && typeof raw === 'object') ? (raw.n || null) : null;
+
+                box.style.display = '';
+                if (status === 'yes') {
+                    box.className = 'upgrade-verdict verdict-ok';
+                    tEl.innerHTML = '✅ ' + lbl + ' — Upgrade Path Supported';
+                    dEl.innerHTML = '<em>VCF ' + srcVer + ' can be upgraded directly to ' + savedVcfTargetVer + '.</em>';
+                } else if (status === 'no') {
+                    box.className = 'upgrade-verdict verdict-warn';
+                    tEl.innerHTML = '🚫 ' + lbl + ' — Upgrade Path Not Supported';
+                    dEl.innerHTML = note
+                        ? ('<em>' + note + ' <a href="https://interopmatrix.broadcom.com/" target="_blank" rel="noopener">Broadcom Interoperability Matrix</a></em>')
+                        : ('<em>VCF <strong>' + srcVer + '</strong> cannot be upgraded directly to <strong>' + savedVcfTargetVer + '</strong>.</em>');
+                } else {
+                    box.className = 'upgrade-verdict show unknown';
+                    tEl.innerHTML = '❓ ' + lbl + ' — No Upgrade Path Data';
+                    dEl.innerHTML = '<em>No compatibility data found for VCF <strong>' + srcVer + '</strong> → <strong>' + savedVcfTargetVer + '</strong>.</em>';
+                }
+            })();
+            // end VCF compat check
+
             const vcf52Checked = document.getElementById('vcf52Check').checked;
             const vcf90Checked = document.getElementById('vcf90Check').checked;
             const vcf91Checked = document.getElementById('vcf91Check') ? document.getElementById('vcf91Check').checked : false;
@@ -1636,6 +2000,21 @@
                 return;
             }
 
+            if (vcf52Checked && vcf52Version) {
+                // ── VCF 5.2.4 block — no 9.1 destination available ──────────
+                if (vcf52Version.toLowerCase().startsWith('5.2.4')) {
+                    const vcf524BlockDiv = document.createElement('div');
+                    vcf524BlockDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                    vcf524BlockDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; No Destination Available</h3>' +
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">VCF <strong>' + vcf52Version + '</strong> does not have a supported upgrade path to VCF 9.1. ' +
+                        'Please wait for a future release of VCF 9.1.x</p>';
+                    vcfPathOptions.appendChild(vcf524BlockDiv);
+                    vcfPathSelection.classList.remove('hidden');
+                    if (vcfTargetVersionGroup) vcfTargetVersionGroup.classList.add('hidden');
+                    return;
+                }
+            }
+
             const vcfIntent = localStorage.getItem('vcf-intent') || 'fleet';
 
             // ── VCF 5.2 selected ──────────────────────────────────────────────
@@ -1654,20 +2033,6 @@
                 }
             // ── VCF 9.0 selected ──────────────────────────────────────────────
             } else if (vcf90Checked && vcf90Version) {
-                 // ── Block: 9.0.2.0100 has no upgrade path ──────────────────
-                if (vcf90Version === '9.0.2.0100') {
-                    if (vcfTargetVersionGroup) vcfTargetVersionGroup.classList.add('hidden');
-                    const blockDiv = document.createElement('div');
-                    blockDiv.style.cssText = 'background:#fde8e8;border-left:4px solid #b8082a;padding:20px 24px;margin-bottom:20px;border-radius:8px;border:1px solid #f0b0b8;';
-                    blockDiv.innerHTML = '<h3 style="color:#7a0018;margin:0 0 10px;font-size:1.15rem;font-weight:700;">&#x1F6AB; No Upgrade Path Available</h3>' +
-                        '<p style="color:#7a0018;margin:0;line-height:1.6;">VCF <strong>9.0.2.0100</strong> currently has <strong>no supported upgrade path forward</strong>. ' +
-                        'There is no path to VCF 9.1 from this version at this time. ' +
-                        '<a href="https://interopmatrix.broadcom.com/Upgrade?productId=851&isHidePatch=false" target="_blank" rel="noopener" style="color:#7a0018;font-weight:600;text-decoration:underline;">Product Interoperability Matrix</a> ' +
-                        'for the latest guidance.</p>';
-                    vcfPathOptions.appendChild(blockDiv);
-                    vcfPathSelection.classList.remove('hidden');
-                    return;
-                }
                 const tgt90 = savedVcfTargetVer || '9.1.x';
                 if (vcfIntent === 'fleet') {
                     paths = [
@@ -1772,7 +2137,7 @@
 
                 // If vCenter + ESX are already on 9.1.x, Operations is already deployed —
                 // force operations-selected=true so sub-pages use the correct convert_with_ops tables
-                const infraAlreadyOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
+                const infraAlreadyOn91 = (vcenterVersion && vcenterVersion.startsWith('9.1')) && (esxVersion && esxVersion.startsWith('9.1'));
                 const effectiveOperationsSelected = infraAlreadyOn91 ? true : operationsSelected;
 
                 localStorage.setItem('vcenter-version', vcenterVersion);
@@ -1800,7 +2165,7 @@
 
                 // If vCenter + ESX are already on 9.1.x, Operations is already deployed —
                 // force operations-selected=true so sub-pages use the correct convert_with_ops tables
-                const infraAlreadyOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
+                const infraAlreadyOn91 = (vcenterVersion && vcenterVersion.startsWith('9.1')) && (esxVersion && esxVersion.startsWith('9.1'));
                 const effectiveOperationsSelected = infraAlreadyOn91 ? true : operationsSelected;
 
                 localStorage.setItem('vcenter-version', vcenterVersion);
@@ -1908,7 +2273,7 @@
 
                 // If vCenter + ESX are already on 9.1.x, Operations is already deployed —
                 // force operations-selected=true so sub-pages use the correct convert_with_ops tables
-                const infraAlreadyOn91 = vcenterVersion === '9.1.x' && esxVersion === '9.1.x';
+                const infraAlreadyOn91 = (vcenterVersion && vcenterVersion.startsWith('9.1')) && (esxVersion && esxVersion.startsWith('9.1'));
 
                 localStorage.setItem('vcenter-version', vcenterVersion);
                 localStorage.setItem('esx-version', esxVersion);
@@ -2354,10 +2719,859 @@
             if (vcf91Select) vcf91Select.addEventListener('change', updateVCFPath);
 
         });
+
+        // ── Data loader ──────────────────────────────────────────────────────────
+        (function() {
+            var DATA_FILE = 'compat-data.json';
+            function loadCompatData() {
+                fetch(DATA_FILE)
+                    .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
+                    .then(function(data) {
+                        window._compatData = data;
+                        var badge = document.getElementById('compatDataBadge');
+                        if (badge) badge.innerHTML =
+                            '📄 Local data — last updated ' + (data._meta && data._meta.last_updated || 'unknown') +
+                            ' &nbsp;<button onclick="window.compatRefresh && window.compatRefresh()" style="font-size:0.75rem;padding:2px 8px;border-radius:6px;border:1px solid var(--vmw-blue);background:transparent;color:var(--vmw-blue);cursor:pointer;font-weight:600;">↻ Refresh from Broadcom</button>';
+                    })
+                    .catch(function(e){ console.warn('compat-data.json load failed:', e); });
+            }
+            window.compatRefresh = loadCompatData;
+            document.addEventListener('DOMContentLoaded', loadCompatData);
+        })();
     </script>
             </div>
         </div>
     </div>
 
 
-</body></html>
+
+    <script>
+        // ── Addon Version Dropdowns + Construct Readiness ────────────────────────
+        (function() {
+
+            var CONSTRUCT_DEFS = [
+                { id: 'Fleet',    label: 'VCF Fleet',               minMajor: 9,
+                  readyMsg:   'Target vCenter <strong>{VER}</strong> meets the <strong>9.x</strong> minimum for VCF Fleet. Ensure target ≤ existing VCF Fleet version.',
+                  blockedMsg: 'Target vCenter <strong>{VER}</strong> does NOT meet the <strong>9.x</strong> minimum for VCF Fleet.' },
+                { id: 'WD',       label: 'Workload Domain',          minMajor: 8,
+                  readyMsg:   'Target vCenter <strong>{VER}</strong> meets the <strong>8.x</strong> minimum for Workload Domain. Ensure target ≤ existing VCF Fleet version.',
+                  blockedMsg: 'Target vCenter <strong>{VER}</strong> does NOT meet the <strong>8.x</strong> minimum for Workload Domain.' },
+                { id: 'VVF',      label: 'VVF (vSphere Foundation)', minMajor: 8,
+                  readyMsg:   'Target vCenter <strong>{VER}</strong> meets the <strong>8.x</strong> minimum for VVF.',
+                  blockedMsg: 'Target vCenter <strong>{VER}</strong> does NOT meet the <strong>8.x</strong> minimum for VVF.' },
+                { id: 'Instance', label: 'VCF Instance',             minMajor: 9,
+                  readyMsg:   'Target vCenter <strong>{VER}</strong> meets the <strong>9.x</strong> minimum for VCF Instance.',
+                  blockedMsg: 'Target vCenter <strong>{VER}</strong> does NOT meet the <strong>9.x</strong> minimum for VCF Instance.' }
+            ];
+
+            // intent card id -> construct card id
+            var INTENT_CONSTRUCT_MAP = { vvf: 'VVF', fleet: 'Fleet', instance: 'Instance', import: 'WD' };
+
+            function extractMajor(ver) {
+                if (!ver) return null;
+                var m = ver.match(/(\d+)\./);
+                if (m) return parseInt(m[1], 10);
+                var m2 = ver.match(/(\d+)/);
+                return m2 ? parseInt(m2[1], 10) : null;
+            }
+
+            function abbrev(v) {
+                return v && v.length > 28 ? v.substring(0, 14) + '…' + v.substring(v.length - 10) : (v || '');
+            }
+
+              function parseVerKey(s) {
+                // Parses "8.0u3b" -> [8,0,3,2] (letter suffix -> char code offset from 'a')
+                // Parses "8.0u3"  -> [8,0,3,0]
+                // Parses "9.1.0.0200" -> [9,1,0,200]
+                var parts = [];
+                var str = (s || '').toLowerCase();
+                str.split('.').forEach(function(seg) {
+                    var uIdx = seg.indexOf('u');
+                    if (uIdx > -1) {
+                        parts.push(parseInt(seg.slice(0, uIdx), 10) || 0);
+                        var rest = seg.slice(uIdx + 1);
+                        var numPart = parseInt(rest, 10) || 0;
+                        parts.push(numPart);
+                        // trailing letter suffix e.g. "3b" -> letter offset
+                        var letterMatch = rest.match(/[a-z]+$/i);
+                        parts.push(letterMatch ? letterMatch[0].charCodeAt(0) - 96 : 0);
+                    } else {
+                        parts.push(parseInt(seg, 10) || 0);
+                    }
+                });
+                return parts;
+            }
+
+            function populateSorted(selId, versions) {
+                var sel = document.getElementById(selId);
+                if (!sel || !versions || !versions.length) return;
+                var sorted = versions.slice().sort(function(a, b) { return (a.ga_date || 0) - (b.ga_date || 0); });
+                var groups = {}, order = [];
+                sorted.forEach(function(v) {
+                    var g = v.group || v.value;
+                    if (!groups[g]) { groups[g] = []; order.push(g); }
+                    groups[g].push(v);
+                });
+                 Object.keys(groups).forEach(function(g) {
+                    groups[g].sort(function(a, b) {
+                        var pa = parseVerKey(a.value);
+                        var pb = parseVerKey(b.value);
+                        for (var i = 0; i < Math.max(pa.length, pb.length); i++) {
+                            var d = (pa[i] || 0) - (pb[i] || 0);
+                            if (d !== 0) return d;
+                        }
+                        return 0;
+                    });
+                });
+                 function parseGrpVer(g) {
+                    // Handles: "8.0", "8.0u1", "8.0u3j", "9.1", "5.2.4" etc.
+                    var parts = [];
+                    g.split('.').forEach(function(seg) {
+                        var uIdx = seg.toLowerCase().indexOf('u');
+                        if (uIdx > -1) {
+                            parts.push(parseInt(seg.slice(0, uIdx), 10) || 0);
+                            parts.push(parseInt(seg.slice(uIdx + 1), 10) || 0);
+                        } else {
+                            parts.push(parseInt(seg, 10) || 0);
+                        }
+                    });
+                    return parts;
+                }
+                // Sort groups by semantic version ascending (e.g. 4.1 -> 4.2 -> 9.0 -> 9.1)
+                order.sort(function(a, b) {
+                    var pa = parseGrpVer(a);
+                    var pb = parseGrpVer(b);
+                    for (var i = 0; i < Math.max(pa.length, pb.length); i++) {
+                        var d = (pa[i] || 0) - (pb[i] || 0);
+                        if (d !== 0) return d;
+                    }
+                    return 0;
+                });
+                order.forEach(function(g) {
+                    var grp = document.createElement('optgroup');
+                    grp.label = g;
+                    groups[g].forEach(function(v) {
+                        var o = document.createElement('option');
+                        o.value = v.value;
+                        o.textContent = v.label || v.value;
+                        grp.appendChild(o);
+                    });
+                    sel.appendChild(grp);
+                });
+            }
+
+            function populateAddonVersionDropdowns(data) {
+                // Supervisor / VKS (existing)
+                populateSorted('supervisorVer', (data.versions && data.versions['vsphere_supervisor']) || []);
+                populateSorted('vksVer',        (data.versions && data.versions['vks'])               || []);
+
+                // ── Main product dropdowns ── pulled from compat-data ───────
+                // Exclude 6.7.x and 7.x versions for vCenter and ESX
+                var vcenterVers = (data.versions && data.versions['vcenter'] || []).filter(function(v){
+                    return !v.group.startsWith('6.7') && !v.group.startsWith('7.');
+                });
+                var esxVers = (data.versions && data.versions['esx'] || []).filter(function(v){
+                    return !v.group.startsWith('6.7') && !v.group.startsWith('7.');
+                });
+                populateSorted('vcenter', vcenterVers);
+                populateSorted('esx',     esxVers);
+                // Exclude Operations and Automation versions below 8.17
+                function minVer817(v) {
+                    var m = v.group.match(/^(\d+)\.(\d+)/);
+                    if (!m) return true;
+                    var maj = parseInt(m[1], 10), min = parseInt(m[2], 10);
+                    return maj > 8 || (maj === 8 && min >= 17);
+                }
+                populateSorted('operations', (data.versions && data.versions['operations'] || []).filter(minVer817));
+                populateSorted('automation', (data.versions && data.versions['automation'] || []).filter(function(v){
+                    return minVer817(v) && !v.group.toLowerCase().startsWith('9.');
+                }));
+                // Exclude NSX versions below 4.1
+                var nsxVers = (data.versions && data.versions['nsx'] || []).filter(function(v) {
+                    var m = v.group.match(/^(\d+)\.(\d+)/);
+                    if (!m) return true;
+                    var maj = parseInt(m[1], 10), min = parseInt(m[2], 10);
+                    return maj > 4 || (maj === 4 && min >= 1);
+                });
+                populateSorted('nsx', nsxVers);
+
+                // VCF 5.2 and 9.0 come from the sddc_manager version list filtered by group
+                var sddcVers = (data.versions && data.versions['sddc_manager']) || [];
+                populateSorted('vcf52', sddcVers.filter(function(v){ return v.group === '5.2'; }));
+                populateSorted('vcf90', sddcVers.filter(function(v){ return v.group === '9.0'; }));
+            }
+
+            window.runConstructReadiness = function() {
+                var toVer = document.getElementById('targetVcf91Version')
+                            ? document.getElementById('targetVcf91Version').value : '';
+                var sec   = document.getElementById('addonPrecheckBanners');
+                if (!sec) return;
+
+                if (!toVer) { sec.style.display = 'none'; return; }
+                sec.style.display = '';
+
+                var toMajor      = extractMajor(toVer);
+                var tl           = abbrev(toVer);
+                var intent       = localStorage.getItem('vsphere-intent') || '';
+                var activeId     = INTENT_CONSTRUCT_MAP[intent] || null;
+
+                // Show only the one construct card that matches the selected intent
+                CONSTRUCT_DEFS.forEach(function(def) {
+                    var box    = document.getElementById('construct' + def.id);
+                    var tEl    = document.getElementById('construct' + def.id + 'Title');
+                    var dEl    = document.getElementById('construct' + def.id + 'Detail');
+                    if (!box) return;
+
+                    if (activeId && def.id !== activeId) {
+                        box.style.display = 'none';
+                        return;
+                    }
+
+                    var ready = toMajor !== null && toMajor >= def.minMajor;
+                    box.style.display = '';
+                    box.className = 'upgrade-verdict show ' + (ready ? 'safe' : 'blocked');
+                    box.style.cssText = 'margin:0;';
+                    if (tEl) tEl.innerHTML = (ready ? '✅ ' : '🚫 ') + def.label;
+                    if (dEl) dEl.innerHTML = '';
+                });
+
+                // Supervisor vs VCF 9.1 target
+                (function() {
+                    var chk    = document.getElementById('supervisorCheck');
+                    var verSel = document.getElementById('supervisorVer');
+                    var ver    = verSel ? verSel.value : '';
+                    var box    = document.getElementById('addonCheckSupervisor');
+                    var tEl    = document.getElementById('addonCheckSupervisorTitle');
+                    var dEl    = document.getElementById('addonCheckSupervisorDetail');
+                    if (!box) return;
+                    if (!chk || !chk.checked || !ver) { box.style.display = 'none'; return; }
+                    box.style.display = '';
+                    // Convert target version to vsc tag: "9.1.0" -> "vsc9.1.0.0", "9.1.0.0100" -> "vsc9.1.0.0100"
+                    var parts = toVer ? toVer.split('.') : [];
+                    var vscTag = parts.length === 3 ? 'vsc' + toVer + '.0' : 'vsc' + toVer;
+                    var compatible = toVer ? ver.indexOf(vscTag) !== -1 : false;
+                    var vl = abbrev(ver);
+                    // Check if ANY supervisor version exists for this VCF target
+                    var data2 = window._compatData;
+                    var allSupVers2 = (data2 && data2.versions && data2.versions['vsphere_supervisor']) || [];
+                    var anyForTarget = allSupVers2.some(function(v){ return v.value.indexOf(vscTag) !== -1; });
+                    if (!toVer) {
+                        box.className = 'upgrade-verdict show unknown';
+                        if (tEl) tEl.innerHTML = '\u2753 Supervisor \u2014 Select a Destination First';
+                        if (dEl) dEl.innerHTML = 'Pick a VCF 9.1 destination version above to check Supervisor compatibility.';
+                    } else if (!anyForTarget) {
+                        // No release for this specific patch — check if selected supervisor
+                        // is certified for *any* 9.1.0.x patch before saying 'no upgrade needed'.
+                        var vcfBaseParts = toVer.split('.');
+                        var vsc91Base = 'vsc' + vcfBaseParts[0] + '.' + vcfBaseParts[1] + '.' + vcfBaseParts[2] + '.';
+                        var certifiedForBase = ver.indexOf(vsc91Base) !== -1;
+                        if (!certifiedForBase) {
+                            box.className = 'upgrade-verdict show blocked';
+                            // Find the latest vscTag that actually has a supervisor release
+                            var latestVscTag = vscTag;
+                            if (allSupVers2.length > 0) {
+                                var matchingTags = allSupVers2.map(function(v){
+                                    var m = v.value.match(/vsc(\d+\.\d+\.\d+\.\d+)/);
+                                    return m ? m[0] : null;
+                                }).filter(Boolean);
+                                if (matchingTags.length > 0) latestVscTag = matchingTags.sort().pop();
+                            }
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab Supervisor \u2014 Not Compatible with VCF ' + tl;
+                            if (dEl) dEl.innerHTML = 'Supervisor <strong>' + vl + '</strong> is not certified for VCF <strong>' + (vcfBaseParts[0] + '.' + vcfBaseParts[1]) + '</strong>. vCenter only goes to 9.1.0.0200 \u2014 select a Supervisor version ending in <code>' + latestVscTag + '</code>.';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2139\ufe0f Supervisor \u2014 No New Release for VCF ' + tl;
+                            if (dEl) dEl.innerHTML = 'No new Supervisor release exists for VCF <strong>' + tl + '</strong>. vCenter only goes to 9.1.0.0200, so your Supervisor certified for VCF <strong>9.1.0.0200</strong> is valid for this patch \u2014 no upgrade required.';
+                        }
+                    } else if (compatible) {
+                        box.className = 'upgrade-verdict show safe';
+                        if (tEl) tEl.innerHTML = '\u2705 Supervisor \u2014 Compatible with VCF ' + tl;
+                        if (dEl) dEl.innerHTML = 'Supervisor <strong>' + vl + '</strong> is built for VCF <strong>' + tl + '</strong>.';
+                    } else {
+                        box.className = 'upgrade-verdict show blocked';
+                        if (tEl) tEl.innerHTML = '\ud83d\udeab Supervisor \u2014 Not Compatible with VCF ' + tl;
+                        if (dEl) dEl.innerHTML = 'Supervisor <strong>' + vl + '</strong> is not certified for VCF <strong>' + tl + '</strong>. Select a Supervisor version ending in <code>' + vscTag + '</code>.';
+                    }
+                })();
+
+                // VKS vs VCF 9.1 target (transitive via supervisor_vks)
+                (function() {
+                    var chk    = document.getElementById('vksCheck');
+                    var verSel = document.getElementById('vksVer');
+                    var ver    = verSel ? verSel.value : '';
+                    var box    = document.getElementById('addonCheckVKS');
+                    var tEl    = document.getElementById('addonCheckVKSTitle');
+                    var dEl    = document.getElementById('addonCheckVKSDetail');
+                    if (!box) return;
+                    if (!chk || !chk.checked || !ver) { box.style.display = 'none'; return; }
+                    box.style.display = '';
+                    var data   = window._compatData;
+                    var vl = abbrev(ver);
+                    if (!toVer) {
+                        box.className = 'upgrade-verdict show unknown';
+                        if (tEl) tEl.innerHTML = '\u2753 VKS \u2014 Select a Destination First';
+                        if (dEl) dEl.innerHTML = 'Pick a VCF 9.1 destination version above to check VKS compatibility.';
+                        return;
+                    }
+                    // Find which Supervisor versions support toVer
+                    var parts  = toVer.split('.');
+                    var vscTag = parts.length === 3 ? 'vsc' + toVer + '.0' : 'vsc' + toVer;
+                    var supVers = (data && data.versions && data.versions['vsphere_supervisor']) || [];
+                    var compatSupVers = supVers.filter(function(v){ return v.value.indexOf(vscTag) !== -1; }).map(function(v){ return v.value; });
+                    // Check if selected VKS ver is supported by any of those Supervisor versions
+                    var svCompat = (data && data.compatibility && data.compatibility['supervisor_vks']) || {};
+                    var compatible = compatSupVers.some(function(sv){ return (svCompat[sv] || {})[ver] === 'yes'; });
+                    if (compatible) {
+                        box.className = 'upgrade-verdict show safe';
+                        if (tEl) tEl.innerHTML = '\u2705 VKS \u2014 Compatible with VCF ' + tl;
+                        if (dEl) dEl.innerHTML = 'VKS <strong>' + vl + '</strong> is supported by a Supervisor version certified for VCF <strong>' + tl + '</strong>.';
+                    } else if (compatSupVers.length === 0) {
+                        // No supervisor release for this specific patch — check if selected supervisor
+                        // is certified for *any* 9.1.0.x patch before saying 'no upgrade needed'.
+                        var vcfBasePartsVks = toVer.split('.');
+                        var vsc91BaseVks = 'vsc' + vcfBasePartsVks[0] + '.' + vcfBasePartsVks[1] + '.' + vcfBasePartsVks[2] + '.';
+                        var supVer2 = document.getElementById('supervisorVer') ? document.getElementById('supervisorVer').value : '';
+                        var supCertifiedForBase = supVer2.indexOf(vsc91BaseVks) !== -1;
+                        if (!supCertifiedForBase) {
+                            box.className = 'upgrade-verdict show blocked';
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab VKS \u2014 Not Compatible with VCF ' + tl;
+                            if (dEl) dEl.innerHTML = 'Your current Supervisor is not certified for VCF <strong>' + (vcfBasePartsVks[0] + '.' + vcfBasePartsVks[1]) + '</strong>. vCenter only goes to 9.1.0.0200 \u2014 VKS <strong>' + vl + '</strong> cannot be validated until a compatible Supervisor (certified for <code>vsc9.1.0.0200</code>) is selected.';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2139\ufe0f VKS \u2014 No New Release for VCF ' + tl;
+                            if (dEl) dEl.innerHTML = 'No new Supervisor or VKS release exists for VCF <strong>' + tl + '</strong>. vCenter only goes to 9.1.0.0200, so your Supervisor and VKS certified for VCF <strong>9.1.0.0200</strong> are valid for this patch \u2014 no upgrade required.';
+                        }
+                    } else {
+                        box.className = 'upgrade-verdict show blocked';
+                        if (tEl) tEl.innerHTML = '\ud83d\udeab VKS \u2014 Not Compatible with VCF ' + tl;
+                        if (dEl) dEl.innerHTML = 'VKS <strong>' + vl + '</strong> is not supported by any Supervisor version certified for VCF <strong>' + tl + '</strong>. Check the Broadcom Matrix for a compatible VKS version.';
+                    }
+                })();
+
+                // Supervisor vs VKS mutual compatibility
+                (function() {
+                    var supChk    = document.getElementById('supervisorCheck');
+                    var vksChk    = document.getElementById('vksCheck');
+                    var supVer    = document.getElementById('supervisorVer') ? document.getElementById('supervisorVer').value : '';
+                    var vksVer    = document.getElementById('vksVer')        ? document.getElementById('vksVer').value        : '';
+                    var box       = document.getElementById('addonCheckSupVks');
+                    var tEl       = document.getElementById('addonCheckSupVksTitle');
+                    var dEl       = document.getElementById('addonCheckSupVksDetail');
+                    if (!box) return;
+                    if (!supChk || !supChk.checked || !vksChk || !vksChk.checked || !supVer || !vksVer) {
+                        box.style.display = 'none'; return;
+                    }
+                    box.style.display = '';
+                    var data   = window._compatData;
+                    var svCompat = (data && data.compatibility && data.compatibility['supervisor_vks']) || {};
+                    var status   = (svCompat[supVer] || {})[vksVer];
+                    var sl = abbrev(supVer), vl2 = abbrev(vksVer);
+                    if (status === 'yes') {
+                        box.className = 'upgrade-verdict show safe';
+                        if (tEl) tEl.innerHTML = '\u2705 Supervisor \u21d4 VKS Compatible';
+                        if (dEl) dEl.innerHTML = 'Supervisor <strong>' + sl + '</strong> and VKS <strong>' + vl2 + '</strong> are <strong>compatible</strong> per the Broadcom Interoperability Matrix.';
+                    } else if (status === 'no') {
+                        box.className = 'upgrade-verdict show blocked';
+                        if (tEl) tEl.innerHTML = '\ud83d\udeab Supervisor \u21d4 VKS Not Compatible';
+                        if (dEl) dEl.innerHTML = 'Supervisor <strong>' + sl + '</strong> and VKS <strong>' + vl2 + '</strong> are <strong>not compatible</strong>. Check the Broadcom Matrix for supported version combinations.';
+                    } else {
+                        box.className = 'upgrade-verdict show unknown';
+                        if (tEl) tEl.innerHTML = '\u2753 Supervisor \u21d4 VKS \u2014 No Data';
+                        if (dEl) dEl.innerHTML = 'No local compatibility data for this Supervisor + VKS combination. Run <code>refresh_compat.py</code> or verify on the Broadcom Matrix.';
+                    }
+                })();
+
+                // ── Product vs destination-vCenter compatibility checks ────────────────
+                (function() {
+                    var data = window._compatData;
+                    if (!toVer) {
+                        ['addonCheckESX','addonCheckNSX','addonCheckOps','addonCheckAuto'].forEach(function(id) {
+                            var b = document.getElementById(id); if (b) b.style.display = 'none';
+                        });
+                        return;
+                    }
+
+                    // Helper: look up compatibility and render into a banner slot
+                    // Read compat value: supports plain "yes"/"no" OR {s, n} object from refresh_compat.py
+                    function compatVal(v) {
+                        if (!v) return { status: undefined, note: null };
+                        if (typeof v === 'object') return { status: v.s, note: v.n || null };
+                        return { status: v, note: null };
+                    }
+
+                    // Find the best column key for a target version in a compat matrix.
+                    // 1. Exact match  2. Nearest patch <= targetVer (numeric)  3. Prefix fallback
+                    // Returns { key, fallbackNote }
+                    function findBestCompatKey(compat, targetVer) {
+                        if (!compat) return { key: null, fallbackNote: null };
+                        if (compat[targetVer] !== undefined) return { key: targetVer, fallbackNote: null };
+                        var keys = Object.keys(compat);
+                        function parsePatch(ver) {
+                            var m = ver.match(/^(\d+\.\d+\.\d+\.\d)(\d+)$/);
+                            return m ? { base: m[1], patch: parseInt(m[2], 10) } : null;
+                        }
+                        var tvp = parsePatch(targetVer);
+                        var best = null, bestPatch = -1, fallbackNote = null;
+                        if (tvp) {
+                            keys.forEach(function(k) {
+                                var kp = parsePatch(k);
+                                if (kp && kp.base === tvp.base && kp.patch <= tvp.patch && kp.patch > bestPatch) {
+                                    best = k; bestPatch = kp.patch;
+                                }
+                            });
+                            if (best && best !== targetVer) {
+                                fallbackNote = 'No patch data exists for ' + targetVer + ' — showing compatibility for ' + best + ' (nearest available patch).';
+                            }
+                        }
+                        if (!best) {
+                            var bestLen = 0;
+                            keys.forEach(function(k) {
+                                if (targetVer.startsWith(k) || k.startsWith(targetVer)) {
+                                    if (k.length > bestLen) { best = k; bestLen = k.length; }
+                                }
+                            });
+                        }
+                        return { key: best, fallbackNote: fallbackNote };
+                    }
+
+                    function renderProductCheck(boxId, titleId, detailId, checkId, verSelId, pairId, label) {
+                        var box  = document.getElementById(boxId);
+                        var tEl  = document.getElementById(titleId);
+                        var dEl  = document.getElementById(detailId);
+                        var chk  = document.getElementById(checkId);
+                        var vSel = document.getElementById(verSelId);
+                        var ver  = vSel ? vSel.value : '';
+                        if (!box) return;
+                        if (!chk || !chk.checked || !ver) { box.style.display = 'none'; return; }
+
+                        box.style.display = '';
+                        var compat  = data && data.compatibility && data.compatibility[pairId];
+                        var colRes  = findBestCompatKey(compat, toVer);
+                        var colKey  = colRes.key;
+                        var colFallbackNote = colRes.fallbackNote;
+
+                        var vl  = abbrev(ver);
+                        var tvl = abbrev(toVer);
+
+                        if (!compat || !colKey) {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 ' + label + ' \u2014 No Local Data';
+                            if (dEl) dEl.innerHTML = 'No compatibility data found for <strong>' + label + '</strong> vs vCenter <strong>' + tvl + '</strong>. Run <code>refresh_compat.py</code> or check the Broadcom Interoperability Matrix.';
+                            return;
+                        }
+
+                        var rowData  = compat[colKey];
+                        var raw      = rowData ? rowData[ver] : undefined;
+                        var cv       = compatVal(raw);
+                        var noteHtml = cv.note ? '<br><em style="font-size:0.85em;opacity:0.85;">' + cv.note + '</em>' : '';
+                        if (colFallbackNote) noteHtml += '<br><em style="font-size:0.82em;opacity:0.7;">ℹ️ ' + colFallbackNote + '</em>';
+
+                        if (cv.status === 'yes') {
+                            box.className = 'upgrade-verdict show safe';
+                            if (tEl) tEl.innerHTML = '\u2705 ' + label + ' \u2014 Compatible with vCenter ' + tvl;
+                            if (dEl) dEl.innerHTML = label + ' <strong>' + vl + '</strong> is <strong>compatible</strong> with destination vCenter <strong>' + tvl + '</strong>.' + noteHtml;
+                        } else if (cv.status === 'no') {
+                            box.className = 'upgrade-verdict show blocked';
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab ' + label + ' \u2014 Not Compatible with vCenter ' + tvl;
+                            if (dEl) dEl.innerHTML = label + ' <strong>' + vl + '</strong> is <strong>not compatible</strong> with destination vCenter <strong>' + tvl + '</strong>.' + noteHtml + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 ' + label + ' \u2014 No Data for vCenter ' + tvl;
+                            if (dEl) dEl.innerHTML = 'No compatibility entry for ' + label + ' <strong>' + vl + '</strong> vs vCenter <strong>' + tvl + '</strong>. Run <code>refresh_compat.py</code> to pull latest data.';
+                        }
+                    }
+
+                    // vCenter upgrade path check: col=currentVcenter, row=destinationVcenter
+                    (function() {
+                        var box  = document.getElementById('addonCheckVCenter');
+                        var tEl  = document.getElementById('addonCheckVCenterTitle');
+                        var dEl  = document.getElementById('addonCheckVCenterDetail');
+                        var chk  = document.getElementById('vcenterCheck');
+                        var vSel = document.getElementById('vcenter');
+                        var curVer = vSel ? vSel.value : '';
+                        if (!box) return;
+                        if (!chk || !chk.checked || !curVer) { box.style.display = 'none'; return; }
+                        box.style.display = '';
+                        var compat = data && data.compatibility && data.compatibility['vcenter_upgrade'];
+                        var tvl = abbrev(toVer);
+                        var cvl = abbrev(curVer);
+                        // Find best col key matching current vCenter version
+                        var vcColRes = findBestCompatKey(compat, curVer);
+                        var colKey   = vcColRes.key;
+                        if (!compat || !colKey) {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 vCenter \u2014 No Upgrade Path Data';
+                            if (dEl) dEl.innerHTML = 'No upgrade path data found for vCenter <strong>' + cvl + '</strong> to <strong>' + tvl + '</strong>. Run <code>refresh_compat.py</code> or check the <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener">Broadcom Interoperability Matrix</a>.';
+                            return;
+                        }
+                        var toVerRes  = findBestCompatKey(compat[colKey] ? {'_wrap': compat[colKey]} : null, toVer);
+                        var effectiveToVer = toVerRes.key || toVer;
+                        var raw2      = compat[colKey] ? compat[colKey][effectiveToVer] : undefined;
+                        var cv2       = compatVal(raw2);
+                        var noteHtml2 = cv2.note ? '<br><em style="font-size:0.85em;opacity:0.85;">' + cv2.note + '</em>' : '';
+                        // findBestCompatKey doesn't work on nested obj directly; do inline fallback for toVer
+                        (function() {
+                            if (!compat[colKey] || compat[colKey][toVer] !== undefined) return;
+                            function parsePatch(ver) {
+                                var m = ver.match(/^(\d+\.\d+\.\d+\.\d)(\d+)$/);
+                                return m ? { base: m[1], patch: parseInt(m[2], 10) } : null;
+                            }
+                            var tvp = parsePatch(toVer), best = null, bestPatch = -1;
+                            if (tvp) {
+                                Object.keys(compat[colKey]).forEach(function(k) {
+                                    var kp = parsePatch(k);
+                                    if (kp && kp.base === tvp.base && kp.patch <= tvp.patch && kp.patch > bestPatch) {
+                                        best = k; bestPatch = kp.patch;
+                                    }
+                                });
+                            }
+                            if (best) {
+                                raw2 = compat[colKey][best];
+                                cv2 = compatVal(raw2);
+                                noteHtml2 = cv2.note ? '<br><em style="font-size:0.85em;opacity:0.85;">' + cv2.note + '</em>' : '';
+                                noteHtml2 += '<br><em style="font-size:0.82em;opacity:0.7;">ℹ️ No patch data exists for ' + toVer + ' — showing compatibility for ' + best + ' (nearest available patch).</em>';
+                            }
+                        })();
+                        if (cv2.status === 'yes') {
+                            box.className = 'upgrade-verdict show safe';
+                            if (tEl) tEl.innerHTML = '\u2705 vCenter \u2014 Upgrade Path Supported';
+                            if (dEl) dEl.innerHTML = 'vCenter <strong>' + cvl + '</strong> \u2192 <strong>' + tvl + '</strong> is a <strong>supported upgrade path</strong>.' + noteHtml2;
+                        } else if (cv2.status === 'no') {
+                            box.className = 'upgrade-verdict show blocked';
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab vCenter \u2014 Upgrade Path Not Supported';
+                            if (dEl) dEl.innerHTML = 'vCenter <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml2 + (noteHtml2 ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 vCenter \u2014 No Data for this Upgrade Path';
+                            if (dEl) dEl.innerHTML = 'No upgrade path entry for vCenter <strong>' + cvl + '</strong> to <strong>' + tvl + '</strong>. Run <code>refresh_compat.py</code> to pull latest data.';
+                        }
+                    })();
+
+                    renderProductCheck('addonCheckESX',  'addonCheckESXTitle',  'addonCheckESXDetail',  'esxCheck',        'esx',        'vcenter_esx',        'ESX');
+
+                    // ESX upgrade path check (esx_upgrade): can ESX be upgraded to the target version?
+                    (function() {
+                        var box  = document.getElementById('addonCheckESXUpgrade');
+                        var tEl  = document.getElementById('addonCheckESXUpgradeTitle');
+                        var dEl  = document.getElementById('addonCheckESXUpgradeDetail');
+                        var chk  = document.getElementById('esxCheck');
+                        var vSel = document.getElementById('esx');
+                        if (!box) return;
+                        if (!chk || !chk.checked || !vSel || !vSel.value) { box.style.display = 'none'; return; }
+                        var curVer = vSel.value;
+                        box.style.display = '';
+                        var compat = data && data.compatibility && data.compatibility['esx_upgrade'];
+                        var cvl = abbrev(curVer);
+                        var tvl = abbrev(toVer);
+                        var colRes = findBestCompatKey(compat, curVer);
+                        var colKey = colRes.key;
+                        if (!compat || !colKey) {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 ESX \u2014 No Upgrade Path Data';
+                            if (dEl) dEl.innerHTML = 'No upgrade path data found for ESX <strong>' + cvl + '</strong>. Run <code>refresh_compat.py</code> or check the <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener">Broadcom Interoperability Matrix</a>.';
+                            return;
+                        }
+                        // Find best toVer match within esx_upgrade[colKey]
+                        var toMap = compat[colKey];
+                        var toRes = { key: toVer, fallbackNote: null };
+                        if (toMap && toMap[toVer] === undefined) {
+                            // inline patch fallback for toVer
+                            function parsePatch(ver) {
+                                var m = ver.match(/^(\d+\.\d+\.\d+\.\d)(\d+)$/);
+                                return m ? { base: m[1], patch: parseInt(m[2], 10) } : null;
+                            }
+                            var tvp = parsePatch(toVer), best = null, bestPatch = -1;
+                            if (tvp) {
+                                Object.keys(toMap).forEach(function(k) {
+                                    var kp = parsePatch(k);
+                                    if (kp && kp.base === tvp.base && kp.patch <= tvp.patch && kp.patch > bestPatch) {
+                                        best = k; bestPatch = kp.patch;
+                                    }
+                                });
+                            }
+                            if (best) toRes = { key: best, fallbackNote: 'No patch data for ' + toVer + ' \u2014 showing result for ' + best + '.' };
+                        }
+                        var raw      = toMap ? toMap[toRes.key] : undefined;
+                        var cv       = compatVal(raw);
+                        var noteHtml = cv.note ? '<br><em style="font-size:0.85em;opacity:0.85;">' + cv.note + '</em>' : '';
+                        if (toRes.fallbackNote) noteHtml += '<br><em style="font-size:0.82em;opacity:0.7;">\u2139\ufe0f ' + toRes.fallbackNote + '</em>';
+                        if (cv.status === 'yes') {
+                            box.className = 'upgrade-verdict show safe';
+                            if (tEl) tEl.innerHTML = '\u2705 ESX \u2014 Upgrade Path Supported';
+                            if (dEl) dEl.innerHTML = 'ESX <strong>' + cvl + '</strong> \u2192 <strong>' + tvl + '</strong> is a <strong>supported upgrade path</strong>.' + noteHtml;
+                        } else if (cv.status === 'no') {
+                            box.className = 'upgrade-verdict show blocked';
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab ESX \u2014 Upgrade Path Not Supported';
+                            if (dEl) dEl.innerHTML = 'ESX <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 ESX \u2014 No Upgrade Path Data for ' + tvl;
+                            if (dEl) dEl.innerHTML = 'No upgrade path entry for ESX <strong>' + cvl + '</strong> to <strong>' + tvl + '</strong>. Run <code>refresh_compat.py</code> to pull latest data.';
+                        }
+                    })();
+                    renderProductCheck('addonCheckNSX',  'addonCheckNSXTitle',  'addonCheckNSXDetail',  'nsxCheck',        'nsx',        'vcenter_nsx',        'NSX');
+                    renderProductCheck('addonCheckOps',  'addonCheckOpsTitle',  'addonCheckOpsDetail',  'operationsCheck', 'operations', 'vcenter_operations', 'VCF Operations');
+                    renderProductCheck('addonCheckAuto', 'addonCheckAutoTitle', 'addonCheckAutoDetail', 'automationCheck', 'automation', 'vcenter_automation', 'VCF Automation');
+                    // VCF Automation upgrade path check (automation_upgrade)
+                    (function() {
+                        var box  = document.getElementById('addonCheckAutoUpgrade');
+                        var tEl  = document.getElementById('addonCheckAutoUpgradeTitle');
+                        var dEl  = document.getElementById('addonCheckAutoUpgradeDetail');
+                        var chk  = document.getElementById('automationCheck');
+                        var vSel = document.getElementById('automation');
+                        if (!box) return;
+                        if (!chk || !chk.checked || !vSel || !vSel.value) { box.style.display = 'none'; return; }
+                        var curVer = vSel.value;
+                        box.style.display = '';
+                        var compat = data && data.compatibility && data.compatibility['automation_upgrade'];
+                        var cvl = abbrev(curVer);
+                        var tvl = abbrev(toVer);
+                        var colRes = findBestCompatKey(compat, curVer);
+                        var colKey = colRes.key;
+                        if (!compat || !colKey) {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 VCF Automation \u2014 No Upgrade Path Data';
+                            if (dEl) dEl.innerHTML = 'No upgrade path data found for VCF Automation <strong>' + cvl + '</strong>. Run <code>refresh_compat.py</code> or check the <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener">Broadcom Interoperability Matrix</a>.';
+                            return;
+                        }
+                        var toMap = compat[colKey];
+                        var effectiveTo = toVer;
+                        var fallbackNote = null;
+                        if (toMap && toMap[toVer] === undefined) {
+                            function parsePatch(ver) {
+                                var m = ver.match(/^(\d+\.\d+\.\d+\.\d)(\d+)$/);
+                                return m ? { base: m[1], patch: parseInt(m[2], 10) } : null;
+                            }
+                            var tvp = parsePatch(toVer), best = null, bestPatch = -1;
+                            if (tvp) {
+                                Object.keys(toMap).forEach(function(k) {
+                                    var kp = parsePatch(k);
+                                    if (kp && kp.base === tvp.base && kp.patch <= tvp.patch && kp.patch > bestPatch) {
+                                        best = k; bestPatch = kp.patch;
+                                    }
+                                });
+                            }
+                            if (best) { effectiveTo = best; fallbackNote = 'No patch data for ' + toVer + ' \u2014 showing result for ' + best + '.'; }
+                        }
+                        var raw      = toMap ? toMap[effectiveTo] : undefined;
+                        var cv       = compatVal(raw);
+                        var noteHtml = cv.note ? '<br><em style="font-size:0.85em;opacity:0.85;">' + cv.note + '</em>' : '';
+                        if (fallbackNote) noteHtml += '<br><em style="font-size:0.82em;opacity:0.7;">\u2139\ufe0f ' + fallbackNote + '</em>';
+                        if (cv.status === 'yes') {
+                            box.className = 'upgrade-verdict show safe';
+                            if (tEl) tEl.innerHTML = '\u2705 VCF Automation \u2014 Upgrade Path Supported';
+                            if (dEl) dEl.innerHTML = 'VCF Automation <strong>' + cvl + '</strong> \u2192 <strong>' + tvl + '</strong> is a <strong>supported upgrade path</strong>.' + noteHtml;
+                        } else if (cv.status === 'no') {
+                            box.className = 'upgrade-verdict show blocked';
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab VCF Automation \u2014 Upgrade Path Not Supported';
+                            if (dEl) dEl.innerHTML = 'VCF Automation <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 VCF Automation \u2014 No Upgrade Path Data for ' + tvl;
+                            if (dEl) dEl.innerHTML = 'No upgrade path entry for VCF Automation <strong>' + cvl + '</strong> to <strong>' + tvl + '</strong>. Run <code>refresh_compat.py</code> to pull latest data.';
+                        }
+                    })();
+                    // NSX upgrade path check (nsx_upgrade)
+                    (function() {
+                        var box  = document.getElementById('addonCheckNSXUpgrade');
+                        var tEl  = document.getElementById('addonCheckNSXUpgradeTitle');
+                        var dEl  = document.getElementById('addonCheckNSXUpgradeDetail');
+                        var chk  = document.getElementById('nsxCheck');
+                        var vSel = document.getElementById('nsx');
+                        if (!box) return;
+                        if (!chk || !chk.checked || !vSel || !vSel.value) { box.style.display = 'none'; return; }
+                        var curVer = vSel.value;
+                        box.style.display = '';
+                        var compat = data && data.compatibility && data.compatibility['nsx_upgrade'];
+                        var cvl = abbrev(curVer);
+                        var tvl = abbrev(toVer);
+                        var colRes = findBestCompatKey(compat, curVer);
+                        var colKey = colRes.key;
+                        if (!compat || !colKey) {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 NSX \u2014 No Upgrade Path Data';
+                            if (dEl) dEl.innerHTML = 'No upgrade path data found for NSX <strong>' + cvl + '</strong>. Run <code>refresh_compat.py</code> or check the <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener">Broadcom Interoperability Matrix</a>.';
+                            return;
+                        }
+                        var toMap = compat[colKey];
+                        var effectiveTo = toVer;
+                        var fallbackNote = null;
+                        if (toMap && toMap[toVer] === undefined) {
+                            function parsePatch(ver) {
+                                var m = ver.match(/^(\d+\.\d+\.\d+\.\d)(\d+)$/);
+                                return m ? { base: m[1], patch: parseInt(m[2], 10) } : null;
+                            }
+                            var tvp = parsePatch(toVer), best = null, bestPatch = -1;
+                            if (tvp) {
+                                Object.keys(toMap).forEach(function(k) {
+                                    var kp = parsePatch(k);
+                                    if (kp && kp.base === tvp.base && kp.patch <= tvp.patch && kp.patch > bestPatch) {
+                                        best = k; bestPatch = kp.patch;
+                                    }
+                                });
+                            }
+                            if (best) { effectiveTo = best; fallbackNote = 'No patch data for ' + toVer + ' \u2014 showing result for ' + best + '.'; }
+                        }
+                        var raw      = toMap ? toMap[effectiveTo] : undefined;
+                        var cv       = compatVal(raw);
+                        var noteHtml = cv.note ? '<br><em style="font-size:0.85em;opacity:0.85;">' + cv.note + '</em>' : '';
+                        if (fallbackNote) noteHtml += '<br><em style="font-size:0.82em;opacity:0.7;">\u2139\ufe0f ' + fallbackNote + '</em>';
+                        if (cv.status === 'yes') {
+                            box.className = 'upgrade-verdict show safe';
+                            if (tEl) tEl.innerHTML = '\u2705 NSX \u2014 Upgrade Path Supported';
+                            if (dEl) dEl.innerHTML = 'NSX <strong>' + cvl + '</strong> \u2192 <strong>' + tvl + '</strong> is a <strong>supported upgrade path</strong>.' + noteHtml;
+                        } else if (cv.status === 'no') {
+                            box.className = 'upgrade-verdict show blocked';
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab NSX \u2014 Upgrade Path Not Supported';
+                            if (dEl) dEl.innerHTML = 'NSX <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 NSX \u2014 No Upgrade Path Data for ' + tvl;
+                            if (dEl) dEl.innerHTML = 'No upgrade path entry for NSX <strong>' + cvl + '</strong> to <strong>' + tvl + '</strong>. Run <code>refresh_compat.py</code> to pull latest data.';
+                        }
+                    })();
+                    // VCF Operations upgrade path check (operations_upgrade)
+                    (function() {
+                        var box  = document.getElementById('addonCheckOpsUpgrade');
+                        var tEl  = document.getElementById('addonCheckOpsUpgradeTitle');
+                        var dEl  = document.getElementById('addonCheckOpsUpgradeDetail');
+                        var chk  = document.getElementById('operationsCheck');
+                        var vSel = document.getElementById('operations');
+                        if (!box) return;
+                        if (!chk || !chk.checked || !vSel || !vSel.value) { box.style.display = 'none'; return; }
+                        var curVer = vSel.value;
+                        box.style.display = '';
+                        var compat = data && data.compatibility && data.compatibility['operations_upgrade'];
+                        var cvl = abbrev(curVer);
+                        var tvl = abbrev(toVer);
+                        var colRes = findBestCompatKey(compat, curVer);
+                        var colKey = colRes.key;
+                        if (!compat || !colKey) {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 VCF Operations \u2014 No Upgrade Path Data';
+                            if (dEl) dEl.innerHTML = 'No upgrade path data found for VCF Operations <strong>' + cvl + '</strong>. Run <code>refresh_compat.py</code> or check the <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener">Broadcom Interoperability Matrix</a>.';
+                            return;
+                        }
+                        var toMap = compat[colKey];
+                        var effectiveTo = toVer;
+                        var fallbackNote = null;
+                        if (toMap && toMap[toVer] === undefined) {
+                            function parsePatch(ver) {
+                                var m = ver.match(/^(\d+\.\d+\.\d+\.\d)(\d+)$/);
+                                return m ? { base: m[1], patch: parseInt(m[2], 10) } : null;
+                            }
+                            var tvp = parsePatch(toVer), best = null, bestPatch = -1;
+                            if (tvp) {
+                                Object.keys(toMap).forEach(function(k) {
+                                    var kp = parsePatch(k);
+                                    if (kp && kp.base === tvp.base && kp.patch <= tvp.patch && kp.patch > bestPatch) {
+                                        best = k; bestPatch = kp.patch;
+                                    }
+                                });
+                            }
+                            if (best) { effectiveTo = best; fallbackNote = 'No patch data for ' + toVer + ' \u2014 showing result for ' + best + '.'; }
+                        }
+                        var raw      = toMap ? toMap[effectiveTo] : undefined;
+                        var cv       = compatVal(raw);
+                        var noteHtml = cv.note ? '<br><em style="font-size:0.85em;opacity:0.85;">' + cv.note + '</em>' : '';
+                        if (fallbackNote) noteHtml += '<br><em style="font-size:0.82em;opacity:0.7;">\u2139\ufe0f ' + fallbackNote + '</em>';
+                        if (cv.status === 'yes') {
+                            box.className = 'upgrade-verdict show safe';
+                            if (tEl) tEl.innerHTML = '\u2705 VCF Operations \u2014 Upgrade Path Supported';
+                            if (dEl) dEl.innerHTML = 'VCF Operations <strong>' + cvl + '</strong> \u2192 <strong>' + tvl + '</strong> is a <strong>supported upgrade path</strong>.' + noteHtml;
+                        } else if (cv.status === 'no') {
+                            box.className = 'upgrade-verdict show blocked';
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab VCF Operations \u2014 Upgrade Path Not Supported';
+                            if (dEl) dEl.innerHTML = 'VCF Operations <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 VCF Operations \u2014 No Upgrade Path Data for ' + tvl;
+                            if (dEl) dEl.innerHTML = 'No upgrade path entry for VCF Operations <strong>' + cvl + '</strong> to <strong>' + tvl + '</strong>. Run <code>refresh_compat.py</code> to pull latest data.';
+                        }
+                    })();
+
+                    // Supervisor <-> VKS cross-compat check
+                    (function() {
+                        var box  = document.getElementById('addonCheckSupVks');
+                        var tEl  = document.getElementById('addonCheckSupVksTitle');
+                        var dEl  = document.getElementById('addonCheckSupVksDetail');
+                        var supChk = document.getElementById('supervisorCheck');
+                        var vksChk = document.getElementById('vksCheck');
+                        var supSel = document.getElementById('supervisorVer');
+                        var vksSel = document.getElementById('vksVer');
+                        if (!box) return;
+                        // Only show when both are checked and have a version selected
+                        if (!supChk || !supChk.checked || !vksChk || !vksChk.checked || !supSel || !vksSel) {
+                            box.style.display = 'none'; return;
+                        }
+                        var supVer = supSel.value;
+                        var vksVer = vksSel.value;
+                        if (!supVer || !vksVer) { box.style.display = 'none'; return; }
+                        box.style.display = '';
+                        var compat = data && data.compatibility && data.compatibility['supervisor_vks'];
+                        var supVl  = abbrev(supVer);
+                        var vksVl  = abbrev(vksVer);
+                        if (!compat || !compat[supVer]) {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 Supervisor \u2194 VKS \u2014 No Data';
+                            if (dEl) dEl.innerHTML = 'No compatibility data found for Supervisor <strong>' + supVl + '</strong> vs VKS <strong>' + vksVl + '</strong>. Run <code>refresh_compat.py</code> or check the <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener">Broadcom Interoperability Matrix</a>.';
+                            return;
+                        }
+                        var raw      = compat[supVer][vksVer];
+                        var cv       = compatVal(raw);
+                        var noteHtml = cv.note ? '<br><em style="font-size:0.85em;opacity:0.85;">' + cv.note + '</em>' : '';
+                        if (cv.status === 'yes') {
+                            box.className = 'upgrade-verdict show safe';
+                            if (tEl) tEl.innerHTML = '\u2705 Supervisor \u2194 VKS \u2014 Compatible';
+                            if (dEl) dEl.innerHTML = 'Supervisor <strong>' + supVl + '</strong> is <strong>compatible</strong> with VKS <strong>' + vksVl + '</strong>.' + noteHtml;
+                        } else if (cv.status === 'no') {
+                            box.className = 'upgrade-verdict show blocked';
+                            if (tEl) tEl.innerHTML = '\ud83d\udeab Supervisor \u2194 VKS \u2014 Not Compatible';
+                            if (dEl) dEl.innerHTML = 'Supervisor <strong>' + supVl + '</strong> is <strong>not compatible</strong> with VKS <strong>' + vksVl + '</strong>.' + noteHtml + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                        } else {
+                            box.className = 'upgrade-verdict show unknown';
+                            if (tEl) tEl.innerHTML = '\u2753 Supervisor \u2194 VKS \u2014 No Data for this Combination';
+                            if (dEl) dEl.innerHTML = 'No compatibility entry for Supervisor <strong>' + supVl + '</strong> vs VKS <strong>' + vksVl + '</strong>. Run <code>refresh_compat.py</code> to pull latest data.';
+                        }
+                    })();
+                })();
+            };
+
+            // Hook into compat data load
+            var _origLoad = window.loadCompatData;
+            function hookDataLoad() {
+                var data = window._compatData;
+                if (data) {
+                    populateAddonVersionDropdowns(data);
+                } else {
+                    setTimeout(hookDataLoad, 100);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', hookDataLoad);
+
+        })();
+    </script>
+<script>
+(function() {
+    var verdictIds = [
+        'addonCheckVCenter','addonCheckESXUpgrade','addonCheckNSXUpgrade',
+        'addonCheckOpsUpgrade','addonCheckAutoUpgrade','vcfCheckSddc'
+    ];
+    function syncCard(el) {
+        var card = el.closest('.compat-card');
+        if (!card) return;
+        card.classList.toggle('card-active', el.style.display !== 'none');
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        verdictIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            syncCard(el);
+            new MutationObserver(function() { syncCard(el); })
+                .observe(el, { attributes: true, attributeFilter: ['style'] });
+        });
+    });
+})();
+</script>
+</body>
+</html>

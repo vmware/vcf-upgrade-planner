@@ -1284,13 +1284,13 @@
         }
 
         function loadSelectionsFromStorage() {
-            vcenterVersion = localStorage.getItem('vcenter-version') || '8.0u3';
-            esxVersion = localStorage.getItem('esx-version') || '8.0u3';
-            window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
+            vcenterVersion = (localStorage.getItem('vcenter-version') || '8.0u3').toLowerCase();
+            esxVersion = (localStorage.getItem('esx-version') || '8.0u3').toLowerCase();
+            window.targetVcf91Version = (localStorage.getItem('target-vcf91-version') || '9.1.0').toLowerCase();
             operationsSelected = localStorage.getItem('operations-selected') === 'true';
-            operationsVersion = localStorage.getItem('operations-version') || '8.18.x';
+            operationsVersion = (localStorage.getItem('operations-version') || '8.18.0').toLowerCase();
             vxrailSelected = localStorage.getItem('vxrail-selected') === 'true';
-            vxrailVersion = localStorage.getItem('vxrail-version') || '8.0.x';
+            vxrailVersion = (localStorage.getItem('vxrail-version') || '8.0.0').toLowerCase();
         }
 
         function displaySelectedSummary() {
@@ -1357,6 +1357,8 @@
         function generateUpgradePlan() {
             const phases = [];
             const selectedProducts = window.selectedAdvancedProducts || {};
+            const vCenterblockupgrade = vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k';
+
             
             if (!upgradeData || !upgradeData.upgrade_order) {
                 console.error('No upgrade order defined in JSON');
@@ -1364,14 +1366,14 @@
             }
 
             // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
-            if (operationsSelected && (operationsVersion === '8.16.x' || operationsVersion === '8.17.x')) {
+            if (operationsSelected && (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17'))) {
                 const opsPrereqData = upgradeData.components['operations_prereq'] || null;
                 if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
-            const vcNeedsPreUpgrade = vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2';
-            const esxNeedsPreUpgrade = esxVersion === '8.0u1' || esxVersion === '8.0u2';
+            const vcNeedsPreUpgrade = vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2');
+            const esxNeedsPreUpgrade = esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2');
             if (vcNeedsPreUpgrade && esxNeedsPreUpgrade) {
                 const prereqData = upgradeData.components['vcenter_esx_prereq'] || null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade vCenter & ESX to 8.0u3', description: 'Upgrade both vCenter and ESX to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
@@ -1397,12 +1399,12 @@
                     // Only include if Operations is already deployed AND needs upgrading.
                     // If not selected (not deployed), skip — the VCF Installer deploys it automatically.
                     // If already on 9.1.x, skip — no upgrade needed.
-                    if (!operationsSelected || operationsVersion === '9.1.x') {
+                    if (operationsSelected && operationsVersion.startsWith('9.1')) {
                         shouldInclude = false;
                     } else {
                         shouldInclude = true;
                         // Customer HAS Operations — upgrade it
-                        const effOpsVer = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
+                        const effOpsVer = (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17')) ? '8.18.0' : operationsVersion;
                         if (effOpsVer === '8.18.x') {
                             phaseTitle = 'Upgrade VCF Operations';
                             phaseDescription = 'Upgrade VCF Operations';
@@ -1414,7 +1416,8 @@
                     }
                 } else if (componentId === 'vcenter') {
                     // vCenter included unless already on 9.1.x (no upgrade needed)
-                    shouldInclude = vcenterVersion !== '9.1.x';
+                    // 8.0u3j/8.0u3k: no vCenter upgrade — other products still ok
+                    shouldInclude = !vcenterVersion.startsWith('9.1') && !vCenterblockupgrade;
                     phaseTitle = componentData ? componentData.name : 'vCenter Server';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 }  else if (componentId === 'vxrail') {
@@ -1424,7 +1427,8 @@
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'esx') {
                     // ESX only if VxRail is NOT selected
-                    shouldInclude = !vxrailSelected;
+                    // 8.0u3j/8.0u3k: no ESX upgrade allowed
+                    shouldInclude = !vxrailSelected && !vCenterblockupgrade;
                     phaseTitle = componentData ? componentData.name : 'ESX Hosts';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'elm') {
@@ -1741,7 +1745,7 @@
 
                 var _coverage = {
                     'vCenter Server':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                    'ESX / vSphere':               ['9.1.0.0100', '9.1.0.0200'],
+                    'ESX':                         ['9.1.0.0100', '9.1.0.0200'],
                     'vSAN Witness':                ['9.1.0.0100', '9.1.0.0200'],
                     'VCF Operations':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
                     'VCF Operations orchestrator':  ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
@@ -1803,10 +1807,10 @@
                          + '</tr></thead><tbody>' + rows + '</tbody></table>';
                 }
 
-                var _pathAComponents = ['vCenter Server', 'ESX / vSphere'];
+                var _pathAComponents = ['vCenter Server', 'ESX'];
                 // Core components always shown; optional ones only if user selected them
                 var _selProdsNow = window.selectedAdvancedProducts || {};
-                var _pathBComponents = [];
+                var _pathBComponents = ['VCF Operations'];
                 if (_selProdsNow['replication'])  _pathBComponents.push('vSphere Replication');
                 if (_selProdsNow['srm'])          _pathBComponents.push('VMware Live Recovery (VLR)');
                 if (_selProdsNow['avi'])          _pathBComponents.push('Avi Load Balancer');
@@ -1825,8 +1829,8 @@
                     phases: [
                         {
                             number: 1,
-                            title: 'vCenter, ESX: Effective Version',
-                            description: 'Reference table of effective builds for vCenter, NSX, and ESX.',
+                            title: 'vCenter, NSX & ESX: Effective Version',
+                            description: 'Reference table of effective builds for vCenter and ESX.',
                             componentId: 'vcf_patch_base',
                             data: {
                                 notices: [{
@@ -1852,9 +1856,10 @@
                                     ]
                                 }]
                             }
-                        }] : [])
-                    ]
-                });
+                                        }] : [])
+                                    ]
+                            });
+              
             }
 
             return steps;
@@ -2139,7 +2144,13 @@
                             html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += '<ul>';
-                                notice.bullets.forEach(b => html += '<li>' + stripHtml(b) + '</li>');
+                                notice.bullets.forEach(b => {
+                                    if (phase.componentId === 'vcf_patch_base' || phase.componentId === 'vcf_patch_direct') {
+                                        html += '<li>' + b + '</li>';
+                                    } else {
+                                        html += '<li>' + stripHtml(b) + '</li>';
+                                    }
+                                });
                                 html += '</ul>';
                             }
                             html += '</div>';
@@ -2212,6 +2223,7 @@
             
             html += '</div>';
             // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
+
             _openPrintWindow(html);
         }
 
@@ -2294,16 +2306,15 @@
         function getAllPhasesForExport() {
             // Regenerate ALL phases regardless of current progress
             const phases = [];
-
             // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
-            if (operationsSelected && (operationsVersion === '8.16.x' || operationsVersion === '8.17.x')) {
+            if (operationsSelected && (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17'))) {
                 const opsPrereqData = upgradeData ? upgradeData.components['operations_prereq'] : null;
                 if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
-            const vcNeedsPreUpgrade = vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2';
-            const esxNeedsPreUpgrade = esxVersion === '8.0u1' || esxVersion === '8.0u2';
+            const vcNeedsPreUpgrade = vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2');
+            const esxNeedsPreUpgrade = esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2');
             if (vcNeedsPreUpgrade && esxNeedsPreUpgrade) {
                 const prereqData = upgradeData ? upgradeData.components['vcenter_esx_prereq'] : null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade vCenter & ESX to 8.0u3', description: 'Upgrade both vCenter and ESX to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
@@ -2316,9 +2327,9 @@
             }
 
             // Operations — included unless already on 9.1.x; install if not currently deployed
-            if (operationsSelected && operationsVersion !== '9.1.x') {
+            if (operationsSelected && !operationsVersion.startsWith('9.1')) {
                 const opsData = upgradeData ? upgradeData.components.operations : null;
-                const effOpsVersion = (operationsVersion === '8.16.x' || operationsVersion === '8.17.x') ? '8.18.x' : operationsVersion;
+                const effOpsVersion = (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17')) ? '8.18.0' : operationsVersion;
                 const opsDesc = effOpsVersion === '8.18.x'
                     ? 'Upgrade VCF Operations'
                     : 'Upgrade VCF Operations';
@@ -2327,16 +2338,17 @@
                 const opsInstallData = upgradeData ? upgradeData.components.operations_install : null;
                 phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations (new installation)', data: opsInstallData, componentId: 'operations_install' });
             }
-            // operationsSelected && operationsVersion === '9.1.x': already at target, skip upgrade phase
+            // operationsSelected && operationsVersion.startsWith('9.1'): already at target, skip upgrade phase
 
             // License Server — always included alongside Operations
             const licenseData = upgradeData ? upgradeData.components.license : null;
             phases.push({ number: phases.length + 1, title: 'License Server', description: 'Deploy License Server', data: licenseData, componentId: 'license' });
 
             // vCenter — included unless already on 9.1.x (no upgrade needed)
-            if (vcenterVersion !== '9.1.x') {
+            // 8.0u3j/8.0u3k: no vCenter/ESX upgrade
+            if (!vcenterVersion.startsWith('9.1')) {
                 const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
-                const effVC = (vcenterVersion === '8.0u1' || vcenterVersion === '8.0u2') ? '8.0u3' : vcenterVersion;
+                const effVC = (vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2')) ? '8.0u3' : vcenterVersion;
                 const vcDesc = effVC === '8' ? 'Upgrade vCenter' : 'Upgrade vCenter';
                 phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
             }
@@ -2354,7 +2366,7 @@
             // ESX — always included (unless VxRail)
             if (!vxrailSelected) {
                 const esxData = upgradeData ? upgradeData.components.esx : null;
-                const effESX = (esxVersion === '8.0u1' || esxVersion === '8.0u2') ? '8.0u3' : esxVersion;
+                const effESX = (esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2')) ? '8.0u3' : esxVersion;
                 const esxDesc = effESX === '8' ? 'Upgrade all ESX hosts from 8.x to 9.1.x' : 'Upgrade all ESX hosts from 9.0.x to 9.1.x';
                 phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: esxDesc, data: esxData, componentId: 'esx' });
             } else {
@@ -2562,6 +2574,38 @@
             html += '</div>';
             
             // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
+
+
+            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            if (_patchBuildsExp2.includes(window.targetVcf91Version)) {
+                var _patchStep = (allSteps || []).find(function(s) { return s.phases && s.phases.some(function(p) { return p.componentId === 'vcf_patch_base' || p.componentId === 'vcf_patch_direct'; }); });
+                if (_patchStep) {
+                    html += '<div style="background: #ddeeff; border-left: 4px solid #0077bb; padding: 10px 18px; margin: 24px 0 8px; border-radius: 6px; page-break-before: always;">';
+                    html += '<h3 style="color: #005588; margin: 0;">Apply ' + window.targetVcf91Version + ' Patches</h3>';
+                    html += '</div>';
+                    _patchStep.phases.forEach(function(phase) {
+                        var borderColor = phase.componentId === 'vcf_patch_base' ? '#e6a800' : '#0077bb';
+                        html += '<div style="background: #f8fafb; border-left: 4px solid ' + borderColor + '; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
+                        html += '<h4 style="color: #1a2d40; margin-bottom: 8px;">' + phase.title + '</h4>';
+                        html += '<p style="color: #5a6778; margin-bottom: 12px;">' + phase.description + '</p>';
+                        if (phase.data && phase.data.notices) {
+                            phase.data.notices.forEach(function(notice) {
+                                var nColor = notice.type === 'warning' ? '#e6a800' : '#0077bb';
+                                var nLabel = notice.type === 'warning' ? 'WARNING' : 'INFO';
+                                html += '<div style="background: white; border-left: 4px solid ' + nColor + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
+                                html += '<strong>' + nLabel + ': ' + notice.title + '</strong>';
+                                if (notice.bullets && notice.bullets.length > 0) {
+                                    html += '<ul style="margin: 8px 0 0 20px;">';
+                                    notice.bullets.forEach(function(b) { html += '<li>' + b + '</li>'; });
+                                    html += '</ul>';
+                                }
+                                html += '</div>';
+                            });
+                        }
+                        html += '</div>';
+                    });
+                }
+            }
             _openPrintWindow(html);
         }
 

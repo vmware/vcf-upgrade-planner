@@ -351,7 +351,6 @@
                     "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
                     "rows": [
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
-                        ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
                         ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
                         ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"]
                     ]
