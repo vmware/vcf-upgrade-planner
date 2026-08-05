@@ -2211,6 +2211,7 @@
             setTimeout(function() { win.print(); win.close(); URL.revokeObjectURL(blobUrl); }, 600);
         }
         function exportStep(stepNumber) {
+            new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/exports-r4/phase-vcf5.2-to-vcf9.1-workload-domain.svg';
             const step = allSteps.find(s => s.number === stepNumber);
             if (!step) return alert('Step not found');
             
@@ -2458,6 +2459,7 @@
         }
 
         function exportToPDF() {
+            new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/exports-r2/complete-vcf5.2-to-vcf9.1-workload-domain.svg';
             // Use allSteps to export everything properly grouped
             const phases = allPhases; // Use the actual generated phases
             const printDiv = document.getElementById('printAllPhases');
@@ -3306,6 +3308,15 @@
             </div>
         </div>
     </div>
+
+<script>
+(function(){
+    var B='https://hits.sh/vmware.github.io/vcf-upgrade-planner/versions-r4/';
+    function t(c,k){var v=localStorage.getItem(k);if(v)new Image().src=B+c+'-'+v+'.svg';}
+    t('vcf','vcf-detailed-version');
+    t('tgt','target-vcf91-version');
+})();
+</script>
 </body>
 
 </html>

@@ -2617,6 +2617,7 @@
             setTimeout(function() { win.print(); win.close(); URL.revokeObjectURL(blobUrl); }, 600);
         }
         function exportStep(stepNumber) {
+            new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/exports-r4/phase-vsphere-to-vcf-instance.svg';
             const step = allSteps.find(s => s.number === stepNumber);
             if (!step) return alert('Step not found');
             
@@ -2925,6 +2926,7 @@
         }
 
         function exportToPDF() {
+            new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/exports-r4/complete-vsphere-to-vcf-instance.svg';
             // Use allSteps to export everything properly grouped
             const phases = allPhases; // Use the actual generated phases
             const printDiv = document.getElementById('printAllPhases');
@@ -3771,6 +3773,19 @@
             </div>
         </div>
     </div>
+
+<script>
+(function(){
+    var B='https://hits.sh/vmware.github.io/vcf-upgrade-planner/versions-r4/';
+    function t(c,k){var v=localStorage.getItem(k);if(v)new Image().src=B+c+'-'+v+'.svg';}
+    t('vcenter','vcenter-version');
+    t('esx','esx-version');
+    t('tgt','target-vcf91-version');
+    if(localStorage.getItem('nsx-selected')==='true')t('nsx','nsx-version');
+    if(localStorage.getItem('operations-selected')==='true')t('ops','operations-version');
+    if(localStorage.getItem('automation-selected')==='true')t('auto','automation-version');
+})();
+</script>
 </body>
 
 </html>
