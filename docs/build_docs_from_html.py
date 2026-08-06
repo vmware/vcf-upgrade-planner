@@ -213,6 +213,35 @@ def extract_urls_from_json(json_path):
     print(f"🔗 Found {len(doc_urls)} unique documentation URLs in JSON data")
     return sorted(doc_urls)
 
+def decode_cf_emails(html):
+    """Decode Cloudflare-obfuscated email addresses in HTML.
+
+    Cloudflare replaces plain-text addresses (including non-standard ones like
+    admin@vsp.local) with:
+        <a class="__cf_email__" data-cfemail="<hex>" href="...cdn-cgi...">[email protected]</a>
+
+    The encoding is a simple XOR: the first byte is the key; every subsequent
+    byte is XOR'd with it to recover the original character.
+    """
+    pattern = re.compile(
+        r'<a[^>]+class="__cf_email__"[^>]+data-cfemail="([0-9a-fA-F]+)"[^>]*>.*?</a>',
+        re.IGNORECASE | re.DOTALL,
+    )
+
+    def _decode(m):
+        encoded = m.group(1)
+        try:
+            key = int(encoded[:2], 16)
+            return ''.join(
+                chr(int(encoded[i:i+2], 16) ^ key)
+                for i in range(2, len(encoded), 2)
+            )
+        except Exception:
+            return m.group(0)  # leave unchanged if decoding fails
+
+    return pattern.sub(_decode, html)
+
+
 def scrape_documentation(url):
     """Scrape documentation content from a URL"""
     print(f"  🔄 Fetching: {url}")
@@ -407,7 +436,10 @@ def scrape_documentation(url):
 
         # Get cleaned HTML
         content_html = str(main_content)
-        
+
+        # Decode Cloudflare-obfuscated email addresses (e.g. admin@vsp.local)
+        content_html = decode_cf_emails(content_html)
+
         # Truncate if too large
         if len(content_html) > MAX_CONTENT_SIZE:
             content_html = content_html[:MAX_CONTENT_SIZE] + '<p><em>... (content truncated for PDF)</em></p>'

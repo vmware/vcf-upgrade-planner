@@ -153,7 +153,7 @@
         "operations": {
             "name": "VCF Operations Upgrade",
             "steps": [
-                "Upgrade VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+                "Upgrade VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
             ],
              "notices": [
                 {
@@ -195,7 +195,7 @@
                 }
             ],
             "steps": [
-                "Deploy License Server - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
+                "Deploy License Server - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-backup-and-restore.html' target='_blank'>View Documentation</a>)."
             ],
                 "notices": [
                 {
