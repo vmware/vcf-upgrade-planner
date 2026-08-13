@@ -1591,6 +1591,9 @@
                      // Use NSX-optimized link when NSX is present in the environment
                     if (nsxInEnvironment && componentData && componentData.steps_with_nsx) {
                         componentData = Object.assign({}, componentData, { steps: componentData.steps_with_nsx });
+                    } else if (elmSelected && componentData && componentData.steps_with_elm) {
+                        // Use ELM-specific vCenter upgrade link when ELM is selected (no NSX)
+                        componentData = Object.assign({}, componentData, { steps: componentData.steps_with_elm });
                     }
                 } else if (componentId === 'elm_break') {
                     // ELM Break only if checkbox selected (break AFTER vCenter, BEFORE import)
@@ -2030,6 +2033,7 @@
             } else {
                 // If NSX is NOT selected: vCHA → vCenter → ELM → vLCM → import → Witness/supervisor
 
+                const _elmSelectedNoNsx = elmPhases.length > 0;
             
                 if (vchaPhases.length > 0) {
                     steps.push({
@@ -2040,7 +2044,18 @@
                     });
                 }
                 
-                if (elmPhases.length > 0) {
+                
+                // When ELM is selected (no NSX), vCenter upgrade is done BEFORE import
+                if (_elmSelectedNoNsx && vcenterPhases.length > 0) {
+                    steps.push({
+                        number: steps.length + 1,
+                        title: 'vCenter Upgrade',
+                        description: 'Upgrade vCenter Server',
+                        phases: vcenterPhases
+                    });
+                }
+
+                 if (elmPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
                         title: 'Break Enhanced Linked Mode',
@@ -2067,8 +2082,8 @@
                     });
                 }
 
-                // vCenter upgrade comes AFTER import for 8.x; skipped entirely for 9.1.x
-                if (vcenterPhases.length > 0) {
+                // When ELM is NOT selected (no NSX), vCenter upgrade stays AFTER import
+                if (!_elmSelectedNoNsx && vcenterPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
                         title: 'vCenter Upgrade',
@@ -2076,7 +2091,6 @@
                         phases: vcenterPhases
                     });
                 }
-
 
                 if (witnessPhases.length > 0) {
                     steps.push({

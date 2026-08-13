@@ -171,6 +171,9 @@
             "steps": [
                 "Upgrade vCenter using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
             ],
+            "steps_with_elm": [
+                "Upgrade vCenter - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
+            ],
             "steps_with_nsx": [
                 "Upgrade vCenter using VCF Operations through Fleet Management- All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
             ],
@@ -247,6 +250,13 @@
         "import_with_vsphere_only": {
             "name": "Import to VCF",
             "notices": [
+                 {
+                    "type": "warning",
+                    "title": "NSX 4.2.4.x to 9.1.x",
+                    "bullets": [
+                        "There is a interop when NSX 4.2.4.x is deployed as part of the import - Guidance can be followed to solve this issue (<a href='https://knowledge.broadcom.com/external/article/429205/overriding-version-of-nsx-manager-while.html' target='_blank'>View Documentation</a>)."
+                    ]
+                },
                 {
                     "type": "info",
                     "title": "Shared NSX Manager Across vCenters",
