@@ -1,0 +1,36 @@
+name: Refresh Compatibility Data
+
+on:
+  schedule:
+    # Run every Sunday at 00:00 UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: arc-runners-kubernetes
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run refresh script
+        run: |
+          python3 docs/refresh_compat.py
+
+      - name: Commit and push changes if updated
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if git status --porcelain | grep -q 'docs/compat-data.json'; then
+            echo "Changes detected in compat-data.json. Committing..."
+            git add docs/compat-data.json
+            git commit -m "chore: refresh interoperability matrix data [skip ci]"
+            git push
+          else
+            echo "No changes in compat-data.json."
+          fi

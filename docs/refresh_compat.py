@@ -13,32 +13,16 @@ Usage:
     python3 refresh_compat.py --dry-run  # preview only
 
 Requirements:
-    pip install requests
+    Python 3 standard library (no pip packages required).
 
 Authentication:
-    The API uses an x-auth-key header. Grab it from DevTools:
+    The script automatically extracts the public x-auth-key embedded in the
+    Broadcom Interoperability Matrix web application (https://interopmatrix.broadcom.com).
+    No manual login or token extraction is required!
 
-    OPTION A - Environment variable:
+    Optional overrides:
         export BROADCOM_AUTH_KEY="N31mVcQkL..."
         python3 refresh_compat.py
-
-    OPTION B - Key file:
-        echo "N31mVcQkL..." > ~/.broadcom_auth_key
-        python3 refresh_compat.py
-
-    OPTION C - Interactive paste (prompted if nothing else found):
-        python3 refresh_compat.py
-
-    HOW TO GET YOUR X-Auth-Key (30 seconds):
-        1. Open https://interopmatrix.broadcom.com in Chrome/Firefox
-        2. Log in with MFA as normal
-        3. Open DevTools -> Network tab (F12 or Cmd+Opt+I)
-        4. In filter box type: interop.esp
-        5. Click any dropdown on the page to trigger a request
-        6. Click one of the requests -> Headers tab -> Request Headers
-        7. Find "x-auth-key" and copy its full value
-
-    Keys typically expire after ~30 hours.
 """
 
 import json
@@ -47,12 +31,10 @@ import re
 import sys
 import socket
 import datetime
-
-try:
-    import requests
-except ImportError:
-    print("Missing dependency: pip install requests")
-    sys.exit(1)
+import urllib.request
+import urllib.parse
+import urllib.error
+import ssl
 
 # -- Config -----------------------------------------------------------------
 API_PRODUCTS = "https://interop.esp.spespg1.vmw.saas.broadcom.com/external/products"
@@ -61,20 +43,107 @@ TOKEN_FILE   = os.path.expanduser("~/.broadcom_auth_key")
 DRY_RUN      = "--dry-run" in sys.argv
 DEBUG        = "--debug"   in sys.argv   # saves raw API responses to debug_*.json
 
+
+# -- Standard Library HTTP Helper (replacing requests) -----------------------
+class HTTPResponse:
+    def __init__(self, status_code, body):
+        self.status_code = status_code
+        self.text = body
+
+    def json(self):
+        return json.loads(self.text)
+
+    def raise_for_status(self):
+        if 400 <= self.status_code < 600:
+            raise urllib.error.HTTPError(None, self.status_code, f"HTTP {self.status_code} Error", {}, None)
+
+
+def _http_request(url, method="GET", headers=None, params=None, json_data=None, timeout=60):
+    if params:
+        url += ("&" if "?" in url else "?") + urllib.parse.urlencode(params)
+
+    hdrs = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+    }
+    if headers:
+        hdrs.update(headers)
+
+    data = None
+    if json_data is not None:
+        data = json.dumps(json_data).encode("utf-8")
+        hdrs["Content-Type"] = "application/json"
+
+    req = urllib.request.Request(url, data=data, headers=hdrs, method=method)
+    ctx = ssl.create_default_context()
+
+    try:
+        with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
+            body = resp.read().decode("utf-8", errors="replace")
+            return HTTPResponse(resp.status, body)
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace") if e.fp else ""
+        return HTTPResponse(e.code, body)
+
+
 # -- Auth -------------------------------------------------------------------
+def fetch_public_broadcom_key():
+    """Dynamically extract the public x-auth-key embedded in Broadcom Interoperability Matrix web app."""
+    print("Attempting to auto-fetch public x-auth-key from interopmatrix.broadcom.com...")
+    sys.stdout.flush()
+    try:
+        r = _http_request("https://interopmatrix.broadcom.com/", method="GET", timeout=15)
+        r.raise_for_status()
+
+        js_files = re.findall(r'src=[\"\']([^\"\']+\.js)[\"\']', r.text)
+        js_files.sort(key=lambda x: 0 if "main" in x else 1)
+
+        for js_file in js_files:
+            js_url = js_file if js_file.startswith("http") else f"https://interopmatrix.broadcom.com/{js_file.lstrip('/')}"
+            js_r = _http_request(js_url, method="GET", timeout=15)
+            if js_r.status_code == 200:
+                match = re.search(r'[\"\']X-Auth-Key[\"\']\s*:\s*[\"\']([^\"\']+)[\"\']', js_r.text, re.IGNORECASE)
+                if match:
+                    key = match.group(1).strip()
+                    print(f"  Successfully extracted public x-auth-key ({len(key)} chars)")
+                    return key
+    except Exception as e:
+        print(f"  Notice: Could not auto-fetch public key: {e}")
+    return None
+
+
 def get_key():
-    """Resolve x-auth-key in priority: env var > file > interactive paste."""
+    """Resolve x-auth-key in priority: env var > auto-fetched public key > key file > interactive paste."""
+    # 1. Environment variable
     key = os.environ.get("BROADCOM_AUTH_KEY", "").strip()
     if key:
         print("Using x-auth-key from BROADCOM_AUTH_KEY env var")
-        return _validate_key(key)
+        if _validate_key(key, raise_on_error=False):
+            return key
+        print("Key from BROADCOM_AUTH_KEY was invalid, trying next source...")
 
+    # 2. Auto-fetch public key from Broadcom site
+    pub_key = fetch_public_broadcom_key()
+    if pub_key:
+        print("Validating auto-fetched public key...")
+        if _validate_key(pub_key, raise_on_error=False):
+            return pub_key
+        print("Auto-fetched public key was invalid, trying next source...")
+
+    # 3. Key file
     if os.path.exists(TOKEN_FILE):
         with open(TOKEN_FILE) as f:
             key = f.read().strip()
         if key:
             print(f"Using x-auth-key from {TOKEN_FILE}")
-            return _validate_key(key)
+            if _validate_key(key, raise_on_error=False):
+                return key
+            print("Key from TOKEN_FILE was invalid, falling back...")
+
+    # 4. Interactive prompt (only if stdin is interactive)
+    if not sys.stdin.isatty():
+        print("\nERROR: Could not obtain a valid x-auth-key in non-interactive environment.")
+        sys.exit(1)
 
     print("""
 +----------------------------------------------------------+
@@ -102,28 +171,29 @@ To skip this prompt next time:
     print(f"Key received ({len(key)} characters) -- validating...")
     sys.stdout.flush()
 
-    save = input("Save key to ~/.broadcom_auth_key for next run? [y/N]: ").strip().lower()
-    if save == "y":
-        with open(TOKEN_FILE, "w") as f:
-            f.write(key)
-        os.chmod(TOKEN_FILE, 0o600)
-        print(f"Key saved to {TOKEN_FILE}")
+    if _validate_key(key, raise_on_error=True):
+        save = input("Save key to ~/.broadcom_auth_key for next run? [y/N]: ").strip().lower()
+        if save == "y":
+            with open(TOKEN_FILE, "w") as f:
+                f.write(key)
+            os.chmod(TOKEN_FILE, 0o600)
+            print(f"Key saved to {TOKEN_FILE}")
+        return key
+    sys.exit(1)
 
-    return _validate_key(key)
 
+def _validate_key(key, raise_on_error=True):
+    def _fail(msg):
+        print(f"ERROR: {msg}")
+        if raise_on_error:
+            sys.exit(1)
+        return False
 
-def _validate_key(key):
     # Sanity checks
     if key.startswith("eyJ") and key.count(".") == 2:
-        print()
-        print("ERROR: That looks like a JWT Bearer token.")
-        print("   The interop API uses x-auth-key, not Authorization: Bearer.")
-        print("   In DevTools look for the header named 'x-auth-key'.")
-        print()
-        sys.exit(1)
+        return _fail("Key looks like a JWT Bearer token, expected x-auth-key.")
     if len(key) < 10:
-        print("ERROR: Key too short -- copy the full x-auth-key value.")
-        sys.exit(1)
+        return _fail("Key too short -- invalid x-auth-key format.")
 
     # DNS check
     host = "interop.esp.spespg1.vmw.saas.broadcom.com"
@@ -134,9 +204,7 @@ def _validate_key(key):
         socket.getaddrinfo(host, 443)
         print("  DNS resolved OK")
     except socket.gaierror:
-        print(f"ERROR: Cannot resolve {host}")
-        print("  -> Connect to Broadcom VPN and try again.")
-        sys.exit(1)
+        return _fail(f"Cannot resolve {host} -- check network connection.")
     finally:
         socket.setdefaulttimeout(None)
 
@@ -144,30 +212,18 @@ def _validate_key(key):
     print(f"Calling API to validate key...")
     sys.stdout.flush()
     try:
-        r = requests.get(API_PRODUCTS, headers={"x-auth-key": key, "Accept": "application/json"},
-                         params={"size": 1}, timeout=20)
+        r = _http_request(API_PRODUCTS, headers={"x-auth-key": key, "Accept": "application/json"},
+                          params={"size": 1}, timeout=20)
         print(f"  HTTP {r.status_code}")
-        if r.status_code == 401:
-            print("ERROR: Key rejected (401) -- it may have expired.")
-            if os.path.exists(TOKEN_FILE):
-                os.remove(TOKEN_FILE)
-            sys.exit(1)
-        if r.status_code == 403:
-            print("ERROR: Key rejected (403 Forbidden).")
-            sys.exit(1)
+        if r.status_code in (401, 403):
+            return _fail(f"Key rejected ({r.status_code}) -- it may have expired.")
         r.raise_for_status()
         print("Key valid -- API accessible")
         sys.stdout.flush()
-        return key
-    except requests.exceptions.Timeout:
-        print("ERROR: Request timed out -- check VPN/network.")
-        sys.exit(1)
-    except requests.exceptions.ConnectionError as e:
-        print(f"ERROR: Connection failed: {e}")
-        sys.exit(1)
+        return True
     except Exception as e:
-        print(f"WARNING: Unexpected error: {e} -- continuing anyway")
-        return key
+        print(f"WARNING: Unexpected error validating key: {e}")
+        return True
 
 
 # -- API helpers ------------------------------------------------------------
@@ -175,9 +231,9 @@ def fetch_all_products(key):
     """Fetch all products (with embedded releases) from the API."""
     print("Fetching all products from API...")
     sys.stdout.flush()
-    r = requests.get(API_PRODUCTS,
-                     headers={"x-auth-key": key, "Accept": "application/json"},
-                     timeout=60)
+    r = _http_request(API_PRODUCTS,
+                      headers={"x-auth-key": key, "Accept": "application/json"},
+                      timeout=60)
     r.raise_for_status()
     products = r.json()
     if not isinstance(products, list):
@@ -186,12 +242,17 @@ def fetch_all_products(key):
     return products
 
 
-def find_product(all_products, name_fragment):
+def find_product(all_products, name_fragment, known_pid=None):
     """
-    Find best matching product by name. Returns (id, name, releases) or (None, None, []).
-    Prefers exact substring match over partial; picks longest matching name to avoid
+    Find best matching product by ID or name. Returns (id, name, releases) or (None, None, []).
+    Checks known_pid first, then matches by substring; picks shortest matching name to avoid
     grabbing wrong products (e.g. 'ESX' matching 'VMware ESXi' vs 'VMware ESX').
     """
+    if known_pid is not None:
+        for p in all_products:
+            if p.get("id") == known_pid or str(p.get("id")) == str(known_pid):
+                return p["id"], p["name"], p.get("releases", [])
+
     fragment_lower = name_fragment.lower()
     candidates = [p for p in all_products if fragment_lower in p.get("name", "").lower()]
     if not candidates:
@@ -273,11 +334,9 @@ def _extract_note(rel, footnote_lookup=None):
       - footnotes as a list of {text, description, …} objects
       - footnoteRefs / footnoteIds referencing a top-level footnote_lookup dict
     """
-    import re as _re
-
     def _clean(s):
-        s = _re.sub(r'<[^>]+>', ' ', s)
-        return _re.sub(r'\s+', ' ', s).strip()
+        s = re.sub(r'<[^>]+>', ' ', s)
+        return re.sub(r'\s+', ' ', s).strip()
 
     # Direct string fields — 'footnotes' is a plain string in the upgrade path API
     for field in ("footnotes", "comment", "notes", "note", "notesHtml", "noteHtml",
@@ -334,7 +393,7 @@ def fetch_upgrade_path(key, pid):
     """
     BASE        = API_PRODUCTS.rsplit("/products", 1)[0]
     UPGRADE_URL = BASE + "/upgrades"
-    hdrs = {"x-auth-key": key, "Accept": "application/json", "Content-Type": "application/json"}
+    hdrs = {"x-auth-key": key, "Accept": "application/json"}
 
     body = {
         "product_id":          int(pid),
@@ -344,15 +403,12 @@ def fetch_upgrade_path(key, pid):
     }
 
     try:
-        resp = requests.post(UPGRADE_URL, headers=hdrs, json=body, timeout=60)
+        resp = _http_request(UPGRADE_URL, method="POST", headers=hdrs, json_data=body, timeout=60)
         print(f"    [upgradePath] HTTP {resp.status_code}")
         if resp.status_code != 200:
             print(f"    [upgradePath] error body: {resp.text[:300]}")
         resp.raise_for_status()
         data = resp.json()
-    except requests.exceptions.HTTPError as e:
-        print(f"    WARNING: upgrade path fetch failed: {e}")
-        return {}
     except Exception as e:
         print(f"    WARNING: upgrade path fetch error: {e}")
         return {}
@@ -363,32 +419,10 @@ def fetch_upgrade_path(key, pid):
         with open(debug_file, "w") as _df:
             json.dump(data, _df, indent=2)
         print(f"    [DEBUG] raw response saved -> {debug_file}")
-        print(f"    [DEBUG] top-level keys: {list(data.keys())}")
-        for _entry in data.get("upgradeProducts", [])[:1]:
-            print(f"    [DEBUG] upgradeProduct keys: {list(_entry.keys())}")
-            for _rel in _entry.get("releases", [])[:2]:
-                print(f"    [DEBUG] release keys: {list(_rel.keys())}")
-                print(f"    [DEBUG] release sample: {_rel}")
-            break
 
-    # Response structure (from DevTools):
-    # {
-    #   "id": "2", "name": "VMware vCenter",
-    #   "upgradeProducts": [
-    #     {
-    #       "version": "9.1.0.0100",   <-- FROM version
-    #       "releases": [              <-- TO versions
-    #         { "version": "9.1.0.0200", "status": 1, ... },
-    #         ...
-    #       ]
-    #     }, ...
-    #   ]
-    # }
     matrix = {}
     upgrade_products = data.get("upgradeProducts", []) if isinstance(data, dict) else []
 
-    # Build a footnote lookup from the top-level "footnotes" array.
-    # Shape observed: [{"id": "1", "text": "Back-in-time issue..."}, …]
     footnote_lookup = {}
     for fn in data.get("footnotes", []) if isinstance(data, dict) else []:
         if not isinstance(fn, dict):
@@ -418,6 +452,7 @@ def fetch_upgrade_path(key, pid):
 
     return matrix
 
+
 def fetch_compat_matrix(key, col_pid, row_pid):
     """
     POST to /products/interoperabilityMatrix with all releases (empty arrays).
@@ -439,37 +474,23 @@ def fetch_compat_matrix(key, col_pid, row_pid):
         "col": f"{col_pid},",
         "row": f"{row_pid},",
     }
-    hdrs = {"x-auth-key": key, "Accept": "application/json", "Content-Type": "application/json"}
+    hdrs = {"x-auth-key": key, "Accept": "application/json"}
     try:
-        resp = requests.post(INTEROP_URL, headers=hdrs, json=body, timeout=60)
+        resp = _http_request(INTEROP_URL, method="POST", headers=hdrs, json_data=body, timeout=60)
         resp.raise_for_status()
         data = resp.json()
     except Exception as e:
         print(f"    WARNING: compat matrix fetch failed: {e}")
         return {}
 
-    # --debug: dump raw response so we can confirm exact field names
     if DEBUG:
         debug_file = f"debug_interop_{col_pid}_{row_pid}.json"
         with open(debug_file, "w") as _df:
             json.dump(data, _df, indent=2)
         print(f"    [DEBUG] raw response saved -> {debug_file}")
-        if isinstance(data, dict):
-            print(f"    [DEBUG] top-level keys: {list(data.keys())}")
-            for _pname, _rels in list(data.items())[:1]:
-                if isinstance(_rels, list) and _rels:
-                    _r = _rels[0]
-                    print(f"    [DEBUG] col-release keys: {list(_r.keys())}")
-                    _rpm = _r.get("rowProdReleaseMap", {})
-                    for _, _rrows in list(_rpm.items())[:1]:
-                        if _rrows:
-                            print(f"    [DEBUG] row-release keys: {list(_rrows[0].keys())}")
-                            print(f"    [DEBUG] row-release sample: {_rrows[0]}")
-                        break
 
     matrix = {}
 
-    # Build top-level footnote lookup if present
     footnote_lookup = {}
     if isinstance(data, dict):
         for fn in data.get("footnotes", []):
@@ -480,7 +501,6 @@ def fetch_compat_matrix(key, col_pid, row_pid):
             if fid and text:
                 footnote_lookup[fid] = text
 
-    # Response: { product_name: [ { version, rowProdReleaseMap: {"0": [{version, status}]} } ] }
     iterable = data.items() if isinstance(data, dict) else []
     for prod_name, col_releases in iterable:
         if prod_name in ("footnotes",):
@@ -508,8 +528,6 @@ def fetch_compat_matrix(key, col_pid, row_pid):
 def probe_upgrade_path():
     """
     --probe: fetch and print the raw vCenter upgrade path API response.
-    Useful for inspecting what fields the API actually returns so you can
-    confirm _extract_note() is targeting the right keys.
     Saves output to debug_probe_vcenter.json.
     """
     print("=== PROBE MODE: vCenter Upgrade Path ===")
@@ -523,11 +541,11 @@ def probe_upgrade_path():
 
     BASE        = API_PRODUCTS.rsplit("/products", 1)[0]
     UPGRADE_URL = BASE + "/upgrades"
-    hdrs = {"x-auth-key": key, "Accept": "application/json", "Content-Type": "application/json"}
+    hdrs = {"x-auth-key": key, "Accept": "application/json"}
     body = {"product_id": int(pid), "isHidePatch": False,
             "isHideGenSupported": True, "isHideTechSupported": True}
 
-    resp = requests.post(UPGRADE_URL, headers=hdrs, json=body, timeout=60)
+    resp = _http_request(UPGRADE_URL, method="POST", headers=hdrs, json_data=body, timeout=60)
     print(f"HTTP {resp.status_code}")
     resp.raise_for_status()
     data = resp.json()
@@ -536,27 +554,6 @@ def probe_upgrade_path():
     with open(out_file, "w") as f:
         json.dump(data, f, indent=2)
     print(f"Full response saved to {out_file}")
-
-    # Print key structural info
-    if isinstance(data, dict):
-        print(f"\nTop-level keys: {list(data.keys())}")
-        footnotes = data.get("footnotes", [])
-        print(f"Top-level footnotes count: {len(footnotes)}")
-        for fn in footnotes[:3]:
-            print(f"  footnote sample: {fn}")
-
-        for entry in data.get("upgradeProducts", [])[:2]:
-            from_ver = entry.get("version", "?")
-            print(f"\nFrom version: {from_ver}")
-            print(f"  entry keys: {list(entry.keys())}")
-            for rel in entry.get("releases", [])[:3]:
-                print(f"  -> to: {rel.get('version','?')}  status: {rel.get('status')}  keys: {list(rel.keys())}")
-                # Show any non-standard fields that might carry note text
-                extra = {k: v for k, v in rel.items()
-                         if k not in ("version", "status", "id", "dummy", "gaDate", "releaseDate")}
-                if extra:
-                    print(f"     extra fields: {extra}")
-    print("\nDone. Review debug_probe_vcenter.json for full details.")
     sys.exit(0)
 
 
@@ -568,7 +565,6 @@ def main():
     print(f"  {'DRY RUN -- no file will be written' if DRY_RUN else 'Live run -- will update compat-data.json'}")
     print("=" * 60)
 
-    # Load existing data
     if not os.path.exists(DATA_FILE):
         print(f"ERROR: {DATA_FILE} not found.")
         print("  Make sure refresh_compat.py is in the same folder as compat-data.json")
@@ -587,8 +583,9 @@ def main():
 
     for prod_key, prod_info in products_meta.items():
         bname = prod_info.get("broadcom_name", prod_key)
-        print(f"  {prod_key} -> searching for '{bname}'")
-        pid, full_name, releases = find_product(all_products, bname)
+        known_pid = prod_info.get("broadcom_product_id")
+        print(f"  {prod_key} -> searching for '{bname}' (known_id={known_pid})")
+        pid, full_name, releases = find_product(all_products, bname, known_pid=known_pid)
 
         if not pid:
             print(f"    WARNING: Not found in API -- skipping")
@@ -621,8 +618,6 @@ def main():
             print(f"    SKIP -- missing product IDs (col={col_pid}, row={row_pid})")
             continue
 
-        # Same-product pairs (upgrade path): use the upgradePath endpoint.
-        # Different-product pairs: use the interoperabilityMatrix endpoint.
         is_upgrade_pair = (col_key == row_key) or pair.get("_upgrade", False)
 
         if is_upgrade_pair:
@@ -645,8 +640,9 @@ def main():
     data["compatibility"] = compat_out
     if "_meta" not in data:
         data["_meta"] = {}
-    data["_meta"]["last_updated"]    = datetime.date.today().isoformat()
-    data["_meta"]["refresh_source"]  = "broadcom_api"
+    data["_meta"]["last_updated"]       = datetime.date.today().isoformat()
+    data["_meta"]["refresh_source"]     = "broadcom_api"
+    data["_meta"]["update_instructions"] = "Run `python3 refresh_compat.py` to pull latest data from Broadcom API, or let the GitHub Workflow refresh-compat.yml update it automatically."
 
     if DRY_RUN:
         print("[DRY RUN] Would write:")
