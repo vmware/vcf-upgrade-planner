@@ -1,30 +1,10 @@
-] <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VCF 9.0 to VCF 9.1 - (VCF Automation not included)</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-    <script>
-        (function() {
-            var savedTheme = localStorage.getItem('theme') || 'light';
-            var mermaidTheme = savedTheme === 'dark' ? 'dark' : 'neutral';
-            mermaid.initialize({
-                startOnLoad: true,
-                theme: mermaidTheme,
-                themeVariables: savedTheme === 'dark' ? {
-                    edgeLabelBackground: '#1e2730',
-                    lineColor: '#7aa8c0',
-                    mainBkg: '#1e2730',
-                    nodeBorder: '#38424e',
-                    clusterBkg: '#1e2730',
-                    titleColor: '#c8d0d8',
-                    arrowheadColor: '#7aa8c0'
-                } : {}
-            });
-        })();
-    </script>
     <style>
         :root {
             --vmw-blue: #0088b5;
@@ -513,10 +493,7 @@
             .sidebar,
             .main-wrapper > *:not(.container),
             .btn, .btn-export, .export-bar,
-            #phaseContainer,
-            #diagram,
-            #diagramContainer,
-            .diagram-container { display: none !important; }
+            #diagram { display: none !important; }
 
             /* Reset layout */
             .main-wrapper { margin-left: 0 !important; padding: 0 !important; }
@@ -579,32 +556,6 @@
         [data-theme="dark"] .diagram-container {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-        }
-
-        /* Mermaid arrow/edge visibility in dark mode */
-        [data-theme="dark"] .mermaid svg .edge-pattern-basic,
-        [data-theme="dark"] .mermaid svg .flowchart-link,
-        [data-theme="dark"] .mermaid svg path.path,
-        [data-theme="dark"] .mermaid svg .edgePath path,
-        [data-theme="dark"] .mermaid svg .edgePath .path {
-            stroke: #7aa8c0 !important;
-            stroke-width: 2px !important;
-        }
-
-        [data-theme="dark"] .mermaid svg marker path,
-        [data-theme="dark"] .mermaid svg marker polygon,
-        [data-theme="dark"] .mermaid svg defs marker path {
-            fill: #7aa8c0 !important;
-            stroke: #7aa8c0 !important;
-        }
-
-        [data-theme="dark"] .mermaid svg .label {
-            color: #c8d0d8 !important;
-        }
-
-        [data-theme="dark"] .mermaid svg .edgeLabel {
-            background: #1e2730 !important;
-            color: #c8d0d8 !important;
         }
 
         #diagramContainer {
@@ -976,6 +927,7 @@
 
     </style>
     <script src="docs_inline.js"></script>
+    <script src="diagram.js"></script>
 </head>
 
 <body>
@@ -1162,13 +1114,6 @@
                 </div>
             
             <div class="diagram-container" id="diagram">
-                <div class="diagram-zoom-controls">
-                    <span style="font-size:0.82rem;color:var(--text-secondary);margin-right:4px;">Zoom:</span>
-                    <button class="diagram-zoom-btn" onclick="diagramZoom(-0.15)" title="Zoom out">&#x2212;</button>
-                    <span class="diagram-zoom-label" id="diagramZoomLabel">100%</span>
-                    <button class="diagram-zoom-btn" onclick="diagramZoom(+0.15)" title="Zoom in">&#x2B;</button>
-                    <button class="diagram-zoom-reset" onclick="diagramZoomReset()">Reset</button>
-                </div>
                 <div id="diagramContainer">
                     <!-- Mermaid diagram will be generated here -->
                 </div>
@@ -2801,202 +2746,10 @@
         }
 
 
-        // Zoom controls for the upgrade flow diagram
-        var _dZoom = 1.0;
-        function diagramZoom(delta) {
-            _dZoom = Math.min(5.0, Math.max(0.3, _dZoom + delta));
-            var svg = document.querySelector('#diagramContainer svg');
-            if (svg) {
-                var nw = parseFloat(svg.dataset.nw) || svg.getBoundingClientRect().width;
-                var nh = parseFloat(svg.dataset.nh) || svg.getBoundingClientRect().height;
-                if (!svg.dataset.nw) { svg.dataset.nw = nw; svg.dataset.nh = nh; }
-                svg.style.width  = (nw * _dZoom) + 'px';
-                svg.style.height = (nh * _dZoom) + 'px';
-                svg.style.maxWidth = 'none';
-            }
-            var label = document.getElementById('diagramZoomLabel');
-            if (label) label.textContent = Math.round(_dZoom * 100) + '%';
-        }
-        function diagramZoomReset() {
-            _dZoom = 1.0;
-            var svg = document.querySelector('#diagramContainer svg');
-            if (svg) {
-                svg.style.width  = (parseFloat(svg.dataset.nw) || 'auto') + 'px';
-                svg.style.height = (parseFloat(svg.dataset.nh) || 'auto') + 'px';
-                svg.style.maxWidth = 'none';
-            }
-            var label = document.getElementById('diagramZoomLabel');
-            if (label) label.textContent = '100%';
-        }
-
-        function generateDiagram() {
-            let diagram = '%%{init: {"flowchart": {"nodeSpacing": 60, "rankSpacing": 90}} }%%\ngraph LR\n    Start["Start<br/>Upgrade"]';
-            
-            // Build diagram with phases as subgraphs containing steps
-            allSteps.forEach((step, stepIndex) => {
-                const phaseId = `Phase${step.number}`;
-                const isCurrentPhase = stepIndex === currentStepIndex;
-                const isCompletedPhase = stepIndex < currentStepIndex;
-                
-                // Check if this phase has a safe stopping point
-                const hasSafeStop = step.phases.some(phase => phase.data && phase.data.safe_stopping_point);
-                // ONLY show icon if this is the CURRENT phase AND it's a safe stop
-                const safeStopIcon = (hasSafeStop && isCurrentPhase) ? '⏸️ ' : '';
-                
-                // Start subgraph for this phase
-                diagram += `\n    subgraph ${phaseId}["${safeStopIcon}Phase ${step.number}: ${step.title}"]`;
-                
-                // Add each step within the phase
-                step.phases.forEach((phase, phaseIdx) => {
-                    const stepNodeId = `P${step.number}S${phaseIdx + 1}`;
-                    const safeStopIcon = (phase.data && phase.data.safe_stopping_point) ? '' : '';
-                    const stepLabel = `Step ${phaseIdx + 1}: ${safeStopIcon}${phase.title}`;
-                    diagram += `\n        ${stepNodeId}["${stepLabel}"]`;
-                });
-                
-                diagram += `\n    end`;
-            });
-            
-            // Connect phases in sequence
-            diagram += `\n    Start`;
-            allSteps.forEach((step, index) => {
-                diagram += ` --> Phase${step.number}`;
-            });
-            diagram += ` --> End["Complete"]`;
-            
-            diagram += '\n    ';
-            
-            // Add styles
-            diagram += 'style Start fill:#dde2e8,stroke:#6c757d,stroke-width:3px,color:#3a4450\n    ';
-            
-            // Style phases based on status
-            allSteps.forEach((step, index) => {
-                const phaseId = `Phase${step.number}`;
-                const hasSafeStop = step.phases.some(phase => phase.data && phase.data.safe_stopping_point);
-                const isCurrentPhase = index === currentStepIndex;
-                
-                if (isCurrentPhase && hasSafeStop) {
-                    // Current phase at safe stop - purple/violet
-                    diagram += `style ${phaseId} fill:#d4c8e0,stroke:#6b3999,stroke-width:4px,color:#1a0a2e\n    `;
-                } else if (index === currentStepIndex) {
-                    // Current phase (no safe stop) - blue background
-                    diagram += `style ${phaseId} fill:#3d6680,stroke:#2c4f66,stroke-width:4px,color:#e8f0f6\n    `;
-                } else if (index < currentStepIndex) {
-                    // Completed phase - green background
-                    diagram += `style ${phaseId} fill:#2e7d4f,stroke:#1d5c38,stroke-width:3px,color:#d8f0e4\n    `;
-                } else {
-                    // Future phase - light gray background
-                    diagram += `style ${phaseId} fill:#dde2e8,stroke:#9aa0a8,stroke-width:2px,color:#3a4450\n    `;
-                }
-                
-                // Style individual steps within phases
-                step.phases.forEach((phase, phaseIdx) => {
-                    const stepNodeId = `P${step.number}S${phaseIdx + 1}`;
-                    
-                    if (index === currentStepIndex) {
-                        // Steps in current phase - darker blue
-                        diagram += `style ${stepNodeId} fill:#6a9db5,stroke:#3d6680,stroke-width:2px,color:#0d1e28\n    `;
-                    } else if (index < currentStepIndex) {
-                        // Steps in completed phase - darker green
-                        diagram += `style ${stepNodeId} fill:#3a9e60,stroke:#2e7d4f,stroke-width:2px,color:#d8f0e4\n    `;
-                    } else {
-                        // Steps in future phase - white
-                        diagram += `style ${stepNodeId} fill:#eaecf0,stroke:#8a9099,stroke-width:1px,color:#3a4450\n    `;
-                    }
-                });
-            });
-            
-            diagram += 'style End fill:#2e7d4f,stroke:#1d5c38,stroke-width:3px,color:#d8f0e4,color:#000';
-            
-            const container = document.getElementById('diagramContainer');
-            container.innerHTML = `<pre class="mermaid">${diagram}</pre>`;
-            
-            mermaid.contentLoaded();
-            // Strip Mermaid's forced max-width:100% so the diagram renders at its
-            // natural size and the container can scroll horizontally.
-            setTimeout(function() {
-                var svg = container.querySelector('svg');
-                if (svg) {
-                    svg.style.maxWidth = 'none';
-                    svg.style.width = 'auto';
-                    svg.style.minWidth = '700px';
-                    // Store natural dimensions for zoom calculations
-                    var r = svg.getBoundingClientRect();
-                    svg.dataset.nw = r.width;
-                    svg.dataset.nh = r.height;
-                }
-            }, 700);
-        }
-
-        // Dark Mode Toggle
-        function toggleDarkMode() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Update toggle switch
-            const toggle = document.getElementById('themeToggle');
-            if (newTheme === 'dark') {
-                toggle.classList.add('active');
-            } else {
-                toggle.classList.remove('active');
-            }
-            
-            // Regenerate diagram with new theme colors
-            if (typeof generateDiagram === 'function') {
-                generateDiagram();
-            }
-        }
-
-        // Load saved theme on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            
-            // Update toggle switch if dark mode is active
-            const toggle = document.getElementById('themeToggle');
-            if (savedTheme === 'dark') {
-                toggle.classList.add('active');
-            }
-        });
-
-        // Sidebar navigation function
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-            
-            // Update active nav item
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-    </script>
-    <script>
-        // Zoom functionality
-        let currentZoom = 1.0;
         
-        function zoomDiagram(factor) {
-            currentZoom *= factor;
-            const wrapper = document.getElementById('mermaidWrapper');
-            if (wrapper) {
-                wrapper.style.transform = `scale(${currentZoom})`;
-            }
-        }
-        
-        function resetZoom() {
-            currentZoom = 1.0;
-            const wrapper = document.getElementById('mermaidWrapper');
-            if (wrapper) {
-                wrapper.style.transform = 'scale(1)';
-            }
-        }
 
-        // Dark Mode Toggle
+        
+    // Dark Mode Toggle
         function toggleDarkMode() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
