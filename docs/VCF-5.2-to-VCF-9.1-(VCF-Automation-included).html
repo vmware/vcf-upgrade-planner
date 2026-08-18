@@ -1103,48 +1103,6 @@
             color: #c09090;
         }
 
-        /* Patch-release info banner */
-        .patch-release-banner {
-            display: none;
-            background: linear-gradient(135deg, #ddeeff 0%, #eef6ff 100%);
-            border-left: 4px solid #0077bb;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 119, 187, 0.12);
-        }
-        [data-theme="dark"] .patch-release-banner {
-            background: linear-gradient(135deg, #0e2030 0%, #0a1a28 100%);
-            border-left-color: #4a9cc7;
-            box-shadow: 0 2px 6px rgba(74, 156, 199, 0.2);
-        }
-        .patch-release-banner .prb-inner {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-        .patch-release-banner .prb-icon {
-            font-size: 22px;
-            line-height: 1;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-        .patch-release-banner .prb-title {
-            font-weight: 700;
-            font-size: 15px;
-            color: #005588;
-        }
-        [data-theme="dark"] .patch-release-banner .prb-title {
-            color: #7bbedd;
-        }
-        .patch-release-banner .prb-msg {
-            margin: 4px 0 0 0;
-            font-size: 13.5px;
-            color: #1a3a55;
-        }
-        [data-theme="dark"] .patch-release-banner .prb-msg {
-            color: #8ab8d4;
-        }
 
     </style>
     <script src="docs_inline.js"></script>
@@ -1283,20 +1241,6 @@
                     </p>
                 </div>
 
-            <!-- Patch-release upgrade path banner -->
-            <div id="patchReleaseBanner" class="patch-release-banner">
-                <div class="prb-inner">
-                    <div class="prb-icon">&#128196;</div>
-                    <div>
-                        <div class="prb-title" id="patchReleaseBannerTitle">Patch Upgrade Path Selected</div>
-                        <p class="prb-msg" id="patchReleaseBannerMsg">
-                            Your selected target build requires upgrading to VCF 9.1.0 first, then applying the
-                            cumulative patch. An <strong>Apply Patches</strong> step has been automatically added
-                            at the end of your upgrade plan.
-                        </p>
-                    </div>
-                </div>
-            </div>
 
            <!-- VxRail + Stretch Cluster unsupported banner -->
             <div id="vxrailStretchBanner" class="vxrail-stretch-banner">
@@ -1507,7 +1451,6 @@
            vcfVersion =  localStorage.getItem('vcf-version') || '5.2';
            vcfdetailVersion = localStorage.getItem('vcf-detailed-version');
            window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
-           updatePatchReleaseBanner();
             // Read VxRail selection passed from index page
            const _vxrailRaw = localStorage.getItem('vxrail-selected');
            vxrailSelected = _vxrailRaw === 'true';
@@ -1548,25 +1491,6 @@
             autoGenerateUpgradePlan();
         }
 
-        function updatePatchReleaseBanner() {
-            var ver = window.targetVcf91Version || '';
-            var patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
-            var isPatch = patchBuilds.includes(ver);
-            var banner = document.getElementById('patchReleaseBanner');
-            if (!banner) return;
-            banner.style.display = isPatch ? 'block' : 'none';
-            if (isPatch) {
-                var titleEl = document.getElementById('patchReleaseBannerTitle');
-                var msgEl   = document.getElementById('patchReleaseBannerMsg');
-                if (titleEl) titleEl.textContent = 'Patch Upgrade Path: Target Build ' + ver;
-                if (msgEl) msgEl.innerHTML =
-                    'Your selected target build <strong>' + ver + '</strong> uses a two-path upgrade approach. ' +
-                    '<strong>vCenter, NSX, and ESX</strong> must first be upgraded to the <strong>VCF 9.1.0.0 base release</strong>, ' +
-                    'then patched to ' + ver + '. ' +
-                    'All other components (SDDC Manager, Operations, Automation, etc.) can upgrade directly to <strong>' + ver + '</strong>. ' +
-                    'An <strong>Apply ' + ver + ' Patches</strong> step has been automatically added at the end of your upgrade plan.';
-            }
-        }
 
 
         function autoGenerateUpgradePlan() {
