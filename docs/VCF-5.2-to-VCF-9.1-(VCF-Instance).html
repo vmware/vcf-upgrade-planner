@@ -131,6 +131,124 @@
             min-height: 100vh;
         }
 
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .top-nav-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .main-wrapper.sidebar-collapsed .top-nav-bar {
+            display: flex;
+        }
+
+        .top-nav-bar .back-link {
+            display: inline-flex;
+        }
+
+        .sidebar-header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .sidebar-hide-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #dde8f0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .sidebar-hide-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar .back-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.2s ease;
+        }
+
+        .sidebar .back-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .top-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sidebar-toggle-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: var(--bg);
+            border-color: var(--vmw-blue);
+            color: var(--vmw-blue);
+        }
+
+        [data-theme="dark"] .sidebar-toggle-btn {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .sidebar-toggle-btn:hover {
+            border-color: #58D3FF;
+            color: #58D3FF;
+        }
+
         .sidebar {
             width: 280px;
             background: #1e2d3d;
@@ -247,16 +365,32 @@
         .main-wrapper {
             margin-left: 280px;
             flex: 1;
-            padding: 32px 20px;
+            min-width: 0;
+            max-width: 100%;
+            padding: 24px 28px;
+            transition: margin-left 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .main-wrapper.sidebar-collapsed {
+            margin-left: 0;
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1720px;
             margin: 0 auto;
             background: var(--card-bg);
-            padding: 48px;
+            padding: 32px 36px;
             border-radius: 16px;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .main-wrapper.sidebar-collapsed .container {
+            max-width: 100%;
         }
 
         [data-theme="dark"] .container {
@@ -559,8 +693,10 @@
         }
 
         #diagramContainer {
-            display: inline-block;
-            min-width: 100%;
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             transform-origin: top left;
         }
 
@@ -917,7 +1053,7 @@
         /* ---- Option G grouped chip styles ---- */
         .g-group-title { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1674b1; border-left:3px solid #1674b1; padding-left:7px; margin:14px 0 7px; display:flex; align-items:center; gap:6px; background:rgba(22,116,177,0.07); border-radius:0 4px 4px 0; padding-top:4px; padding-bottom:4px; }
         .g-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
-        .g-chip { padding:6px 13px; border-radius:20px; border:1.5px solid var(--border-color); background:var(--card-bg); cursor:pointer; font-size:0.84rem; font-weight:500; color:var(--text-secondary); transition:all 0.15s; user-select:none; }
+        .g-chip { padding:6px 13px; border-radius:20px; border:1px solid var(--border-color); background:var(--card-bg); cursor:pointer; font-size:0.84rem; font-weight:500; color:var(--text-secondary); transition:all 0.15s; user-select:none; }
         .g-chip:hover { border-color:var(--vmw-blue); color:var(--vmw-blue); }
         .g-chip.g-selected { background:var(--vmw-blue); border-color:var(--vmw-blue); color:white; font-weight:600; }
         .g-empty { font-size:0.84rem; color:var(--vmw-gray); font-style:italic; padding:6px 0; }
@@ -1021,11 +1157,13 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <span style="font-size: 1.5rem;"></span>
-                    <h1></h1>
+                <div class="sidebar-header-top">
+                    <a href="index.html" class="back-link">← Back to Start</a>
+                    <button class="sidebar-hide-btn" onclick="toggleSidebar()" title="Hide Sidebar" aria-label="Hide Sidebar">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 9-3 3 3 3"/></svg>
+                        <span>Hide Sidebar</span>
+                    </button>
                 </div>
-                <a href="index.html" class="back-link">← Back to Start</a>
             </div>
 
              <div class="sidebar-nav">
@@ -1057,6 +1195,15 @@
         <!-- Main Content Wrapper -->
         <div class="main-wrapper">
             <div class="container">
+                <div class="top-nav-bar">
+                    <div class="top-nav-left">
+                        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m10 9 3 3-3 3"/></svg>
+                            <span id="sidebarToggleText">Show Sidebar</span>
+                        </button>
+                        <a href="index.html" class="back-link">← Back to Start</a>
+                    </div>
+                </div>
                 <header id="environment">
                     <h1>VCF 5.2 to VCF 9.1 - (Upgrade VCF Instance)</h1>
                 </header>
@@ -1065,7 +1212,7 @@
             <h2>🖥️ Current Environment</h2>
             
             <!-- Part 1: Summary -->
-            <div style="background: var(--card-bg); border-left: 4px solid var(--vmw-blue); border-radius: 6px; padding: 16px; margin-bottom: 24px; border: 1px solid var(--border-color);">
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
                 <h3 style="color: var(--vmw-blue); margin-bottom: 12px; font-size: 1.1rem;">✅ Selected Components</h3>
                 <div id="selectedSummary">
                     <!-- Will be populated dynamically -->
@@ -1097,7 +1244,7 @@
             </div>
 
                         <!-- Optional Components Chip Picker (replaces Advanced Products toggle) -->
-            <div style="margin-bottom:20px; padding:20px; background:var(--card-bg); border-radius:12px; border:1px solid var(--border-color); border-left:4px solid var(--vmw-blue);">
+            <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); border-radius: 12px;">
                 <h3 style="color:var(--text-primary); margin-bottom:12px; font-size:16px;">&#x1F9E9; Optional Components & Features</h3>
                 <p style="margin-bottom:14px; color:var(--text-secondary); font-size:0.9rem;">Select any additional components or features &mdash; your plan updates automatically.</p>
                 <input type="checkbox" id="supervisorCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
@@ -1134,9 +1281,7 @@
                     </div>
                 </div>
             </div>
-
-          
-            <div class="diagram-container" id="diagram">
+        </div>
 
         <!-- Upgrade Phases Section -->
         <div id="phases" class="section" style="opacity: 1;">
@@ -1147,12 +1292,12 @@
                         <span id="phaseCounter"></span> • Updates automatically as you select components above
                     </p>
                 </div>
-                <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0;">
-                    📄 Export Complete Plan
-                </button>
+                        <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0;">
+                            📄 Export Complete Plan
+                        </button>
             </div>
              <!-- Safe Stopping Point Info Banner -->
-                <div style="background: linear-gradient(135deg, #E1D5E7 0%, #F3E8FA 100%); border-left: 4px solid #7C3AED; padding: 16px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);">
+                <div style="background: linear-gradient(135deg, #E1D5E7 0%, #F3E8FA 100%); border: 1px solid rgba(124, 58, 237, 0.25); border-left: 4px solid #7C3AED; padding: 16px 20px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div>
                             <strong style="color: #7C3AED; font-size: 16px;">Safe Stopping Points</strong>
@@ -1180,13 +1325,12 @@
         <div id="export" style="margin-top: 40px; text-align: center;">
             <!-- Export button already in phases section -->
         </div>
-
         </div>
-            </div>
+        </div>
         </div>
     </div>
 
-    <script>
+<script>
         // Variables to store selections
         let vlcmSelected = false;
         let witnessSelected = false;
@@ -2063,7 +2207,7 @@
             html += `<span style="font-size: 1.2rem; font-weight: bold;">Phase ${step.number} of ${allSteps.length}: ${step.title}</span>`;
             html += `<button onclick="exportStep(${step.number})" style="background: white; color: var(--vmw-blue); border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">📄 Export Current Phase</button>`;
             html += `</div>`;
-            html += `<div style="border: 2px solid var(--vmw-blue); border-top: none; padding: 20px; border-radius: 0 0 8px 8px; background: var(--card-bg);">`;
+            html += `<div style="border: 1px solid var(--border-color); border-top: none; padding: 20px; border-radius: 0 0 12px 12px; background: var(--card-bg);">`;
            // html += `<p style="color: var(--text-secondary); margin-bottom: 20px;">${step.description}</p>`;
             
             // Sort phases by their original phase number to maintain order
@@ -2071,7 +2215,7 @@
             
             // Steps
             sortedPhases.forEach((phase, phaseIdx) => {
-                html += `<div style="background: var(--card-bg); border: 2px solid var(--vmw-blue); padding: 15px; margin: 10px 0; border-radius: 6px;">`;
+                html += `<div style="background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); padding: 16px 20px; margin: 12px 0; border-radius: 8px;">`;
                 html += `<h4 style="margin: 0 0 10px 0; color: var(--vmw-blue);">Step ${phaseIdx + 1}: ${phase.title}</h4>`;
                 html += `<p style="margin-bottom: 10px; color: var(--text-primary);">${phase.description}</p>`;
                 
@@ -2083,7 +2227,7 @@
                     }
                     if (phase.data.tables && phase.data.tables.length > 0) {
                         phase.data.tables.forEach(table => {
-                            html += `<div style="margin-top: 15px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;">`;
+                            html += `<div style="margin-top: 15px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">`;
                             html += `<div style="background: var(--vmw-blue); color: #dde8f0; padding: 10px; font-weight: 600;">${table.title}</div>`;
                             if (table.description) {
                                 html += `<div style="padding: 10px; background: var(--bg); font-size: 0.85rem; color: var(--text-secondary);">${table.description}</div>`;
@@ -2108,7 +2252,7 @@
 
                     if (phase.data._injectedWarnings && phase.data._injectedWarnings.length > 0) {
                         phase.data._injectedWarnings.forEach(notice => {
-                            html += `<div style="background: var(--card-bg); border-left: 4px solid #ffc107; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>⚠️ ${notice.title}</strong>`;
+                            html += `<div style="background: var(--card-bg); border: 1px solid var(--warning-border, rgba(255, 193, 7, 0.4)); border-left: 4px solid #ffc107; padding: 12px 16px; margin-top: 12px; border-radius: 8px; font-size: 0.9rem; color: var(--text-primary);"><strong>⚠️ ${notice.title}</strong>`;
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += `<ul style="margin: 8px 0 0 20px;">`;
                                 notice.bullets.forEach(b => { html += `<li>${b}</li>`; });
@@ -2121,7 +2265,7 @@
                         phase.data.notices.forEach(notice => {
                             const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
                             const icon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
-                            html += `<div style="background: var(--card-bg); border-left: 4px solid ${color}; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; color: var(--text-primary);"><strong>${icon} ${notice.title}</strong>`;
+                            html += `<div style="background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid ${color}; padding: 12px 16px; margin-top: 12px; border-radius: 8px; font-size: 0.9rem; color: var(--text-primary);"><strong>${icon} ${notice.title}</strong>`;
                            if (notice.bullets && notice.bullets.length > 0) {
                                 html += `<ul style="margin: 8px 0 0 20px;">`;
                                 notice.bullets.forEach(bullet => {
@@ -3170,9 +3314,6 @@
 
         function resetDropdowns() { gReset(); }
     </script>
-            </div>
-        </div>
-    </div>
     <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
         <div class="doc-modal-content">
                         <div class="doc-modal-header">
@@ -3197,7 +3338,6 @@
             </div>
         </div>
     </div>
-
 <script>
 (function(){
     var B='https://hits.sh/vmware.github.io/vcf-upgrade-planner/versions-r4/';
@@ -3206,6 +3346,32 @@
     t('tgt','target-vcf91-version');
 })();
 </script>
-</body>
+<script>
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainWrapper = document.querySelector('.main-wrapper');
+    const toggleBtn = document.getElementById('sidebarToggleBtn');
+    const toggleText = document.getElementById('sidebarToggleText');
+    const toggleIcon = toggleBtn ? toggleBtn.querySelector('svg') : null;
+    if (!sidebar) return;
 
+    const isCollapsed = sidebar.classList.toggle('collapsed');
+    if (mainWrapper) mainWrapper.classList.toggle('sidebar-collapsed', isCollapsed);
+
+    if (toggleText) toggleText.textContent = isCollapsed ? 'Show Sidebar' : 'Hide Sidebar';
+    if (toggleIcon) {
+        toggleIcon.innerHTML = isCollapsed
+            ? '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m12 9 3 3-3 3"/>'
+            : '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m10 9 3 3-3 3"/>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        localStorage.removeItem('sidebarCollapsed');
+    } catch (e) {}
+});
+
+</script>
+</body>
 </html>
