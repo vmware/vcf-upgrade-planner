@@ -517,8 +517,8 @@
           "description": "Prepare the following IP addresses and DNS entries before deployment:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
-            ["Node IP pool", "4", "0", "N/A"],
-            ["Service IP pool", "4", "0", "N/A"]
+            ["Management", "1", "1", "licensehub20.sfo.rainpole.io"],
+            ["IP pool", "2", "1", "licensehub-kafka.sfo.rainpole.io"]
             ]
         },
         {
@@ -526,11 +526,7 @@
             "description": "Size requirements for all nodes license hub",
             "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
             "rows": [
-                ["Installer", "Default", "1", "4", "6gb", "400gb"],
-                ["License Hub Controller", "Default", "1", "2", "8gb", "155gb"],
-                ["License Hub Worker", "Default", "1", "4", "16gb", "255gb"],
-                ["Content library", "Default", "N/A", "N/A", "N/A", "50gb"],
-                ["Persistent Volume Claim (PVC)", "Default", "N/A", "N/A", "N/A", "50gb"]
+                ["license server", "Default", "1", "6", "12gb", "256gb"]
                 ]
         }
       ],
@@ -539,17 +535,16 @@
           "type": "info",
           "title": "IP Requirements",
           "bullets": [
-            "A License Hub must be deployed within your environment if does not already exist, or AVI and NSX must have outbound internet access for direct license validation.",
-            "If internet access is not available, deploy a License Hub before proceeding.",
-            "A License Hub instance requires a single subnet with two separate IP pools: one for the controller and worker nodes, and another for License Hub services.",
-            "Node IP pool: 4 contiguous IP addresses",
-            "Service IP pool: 4 contiguous IP addresses"
+            "Management IP address for the appliance (for example, 172.16.111.39)",
+            "One IP address pool with two contiguous IP addresses (for example, 172.16.111.40 - 172.16.111.41). It is not required that the management IP address and the IP address pool be on the same subnet as long as they are reachable.",
+            "One FQDN for the appliance. This FQDN must map to the management IP address of the appliance (for example, licensehub20.example.com maps to 172.16.111.39).",
+            "One FQDN for Kafka. This FQDN must map to the second IP address of the IP address pool (for example, licensehub-kafka.example.com maps to 172.16.111.41)."
           ]
         }
       ],
       "steps": [
-        "Deploy license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/security-services-platform/5-1/licensing-overview/deploying-license-hub.html' target='_blank'>View Documentation</a>).",
-        "Details of license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/design-blueprints-for/security-modernization/vdefend-lateral-security/security-services-platform-for-vmware-cloud-foundation/license-hub-for-vdefend-and-avi/license-hub-for-vmware-vdefend-and-vmware-avi-load-balancer.html' target='_blank'>View Documentation</a>)."
+        "Overview license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/license-hub/2-0/license-hub-overview.html' target='_blank'>View Documentation</a>).",
+        "Deploy license hub - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/license-hub/2-0/license-hub-appliance.html' target='_blank'>View Documentation</a>)."
       ]
     },
      "vsan_data_protection": {

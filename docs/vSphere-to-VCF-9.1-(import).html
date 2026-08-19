@@ -1841,7 +1841,9 @@
             // Update counter
             const counter = document.getElementById('phaseCounter');
             if (counter) {
-                counter.textContent = `${steps.length} step${steps.length !== 1 ? 's' : ''}, ${phases.length} phase${phases.length !== 1 ? 's' : ''}`;
+                const totalPhases = allSteps.length;
+                const totalSteps = allSteps.reduce((sum, step) => sum + (step.phases ? step.phases.length : 0), 0);
+                counter.textContent = `${totalSteps} step${totalSteps !== 1 ? 's' : ''}, ${totalPhases} phase${totalPhases !== 1 ? 's' : ''}`;
             }
             
             // Even if no steps, show a helpful message
