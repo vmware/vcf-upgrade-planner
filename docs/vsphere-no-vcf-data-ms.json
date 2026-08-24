@@ -102,13 +102,23 @@
           "bullets": [
             "Replace Integrated Windows Authentication configured with another IDP configuration"
           ]
-        }
-      ]
+        },
+      {
+        "type": "warning",
+        "title": "If RDU Upgrade Fails - Rollback Steps",
+        "bullets": [
+          "1. Shutdown target vCenter.",
+          "2. Run script to stop the RDU - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/311902/' target='_blank'>View Documentation</a>).",
+          "3. Roll back the precheck change on the 8.0 vCenter for Workspace ONE broker - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/443558' target='_blank'>View Documentation</a>).",
+          "4. Reboot vCenter."
+        ]
+      }
+    ]
     },
     "esx": {
       "name": "ESX",
       "steps": [
-        "Upgrade ESX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/esx-upgrade.html' target='_blank'>View Documentation</a>).",
+        "Upgrade ESX - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/managing-host-and-cluster-lifecycle/using-images-to-install-and-update-esxi-hosts-and-clusters/working-with-images.html' target='_blank'>View Documentation</a>).",
         "Upgrade Virtual Distributed Switch - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html' target='_blank'>View Documentation</a>).",
         "Upgrade VMware Tools - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vmtools_001&appid=vmtools-13-1&language=&format=rendered' target='_blank'>View Documentation</a>).",
         "Virtual machines compatibility - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vsphclient_076&appid=vsphere-9-1&language=&format=rendered' target='_blank'>View Documentation</a>).",

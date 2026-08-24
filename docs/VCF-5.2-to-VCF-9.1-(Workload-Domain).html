@@ -2880,19 +2880,25 @@
 
             if (externalLink) externalLink.href = originalUrl || url;
 
-            // Populate sub-pages sidebar
+                        // Populate sub-pages sidebar
             const sidebar = document.getElementById('docSubpagesSidebar');
             const spList = document.getElementById('docSubpagesList');
             if (sidebar && spList) {
-                const subpages = docData.subpages || [];
-                spList.innerHTML = '';
-                if (subpages.length > 0) {
-                    subpages.forEach(function(sp) {
+                function renderSubpagesList(list) {
+                    spList.innerHTML = '';
+                    if (!list || list.length === 0) {
+                        sidebar.classList.remove('has-pages');
+                        return;
+                    }
+                    list.forEach(function(sp) {
                         const li = document.createElement('li');
                         const a = document.createElement('a');
                         a.textContent = sp.label;
                         a.href = sp.url;
                         a.title = sp.url;
+                        if (sp.url === cleanUrl || (sp.url && sp.url.split('#')[0] === cleanUrl)) {
+                            a.classList.add('sp-active');
+                        }
                         a.addEventListener('click', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
@@ -2908,8 +2914,42 @@
                         spList.appendChild(li);
                     });
                     sidebar.classList.add('has-pages');
+                }
+
+                const subpages = docData.subpages || [];
+                if (subpages.length > 0) {
+                    renderSubpagesList(subpages);
                 } else {
-                    sidebar.classList.remove('has-pages');
+                    let existingLink = null;
+                    spList.querySelectorAll('a').forEach(function(x) {
+                        if (x.href === cleanUrl || x.title === cleanUrl || (x.getAttribute('href') && x.getAttribute('href').split('#')[0] === cleanUrl)) {
+                            existingLink = x;
+                        }
+                    });
+                    if (existingLink) {
+                        spList.querySelectorAll('a').forEach(function(x) { x.classList.remove('sp-active'); });
+                        existingLink.classList.add('sp-active');
+                        sidebar.classList.add('has-pages');
+                    } else {
+                        let parentSubpages = null;
+                        if (window.INLINE_DOCS) {
+                            for (const pUrl in window.INLINE_DOCS) {
+                                const pData = window.INLINE_DOCS[pUrl];
+                                if (pData && pData.subpages && pData.subpages.length > 0) {
+                                    if (pData.subpages.some(sp => sp.url === cleanUrl || (sp.url && sp.url.split('#')[0] === cleanUrl))) {
+                                        parentSubpages = pData.subpages;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (parentSubpages && parentSubpages.length > 0) {
+                            renderSubpagesList(parentSubpages);
+                        } else {
+                            spList.innerHTML = '';
+                            sidebar.classList.remove('has-pages');
+                        }
+                    }
                 }
             }
 
@@ -2930,6 +2970,12 @@
             docNavStack = [];
             const backBtn = document.getElementById('docModalBackBtn');
             if (backBtn) backBtn.style.display = 'none';
+            const sidebar = document.getElementById('docSubpagesSidebar');
+            const spList = document.getElementById('docSubpagesList');
+            if (sidebar && spList) {
+                spList.innerHTML = '';
+                sidebar.classList.remove('has-pages');
+            }
         }
 
         function openExternalLink() {

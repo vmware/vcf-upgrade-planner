@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 
 # Configuration
-JSON_FILE = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.1-to-9.1.0100-no-automation-data.json', 'vcf-9.1-to-9.1.0100-with-automation-data.json']
+JSON_FILE = ['vsphere-no-vcf-data-ms.json', 'vsphere-no-vcf-data-no-ms.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.1-to-9.1.0100-no-automation-data.json', 'vcf-9.1-to-9.1.0100-with-automation-data.json']
 OUTPUT_FILE = 'docs_inline.js'
 MAX_CONTENT_SIZE = 100000  # 100KB per doc
 MAX_DEEP_URLS = 1000 # Max sub-pages to deep-scrape per run
@@ -32,7 +32,7 @@ MANUAL_URLS = [
 BAD_LINKS = []
 # Tracks where each URL originated.
 # Keys are URLs; values are lists of source strings, e.g.:
-#   'json:vsphere-no-vcf-data.json'  → direct link found in a JSON file
+#   'json:vsphere-no-vcf-data-ms.json'  → direct link found in a JSON file
 #   'manual'                          → listed in MANUAL_URLS
 #   'toc-subpage:<parent_url>'        → TOC sidebar child of a scraped page
 #   'deep-L1:<parent_url>'            → link found inside a level-1 scraped page
@@ -531,7 +531,7 @@ def main():
     
     # Step 1: Extract URLs from both JSON files
     all_urls = set()
-    json_files = ['vsphere-no-vcf-data.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.1-to-9.1.0100-no-automation-data.json', 'vcf-9.1-to-9.1.0100-with-automation-data.json' ]
+    json_files = ['vsphere-no-vcf-data-ms.json', 'vsphere-no-vcf-data-no-ms.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.1-to-9.1.0100-no-automation-data.json', 'vcf-9.1-to-9.1.0100-with-automation-data.json' ]
     
     for json_file in json_files:
         if Path(json_file).exists():
