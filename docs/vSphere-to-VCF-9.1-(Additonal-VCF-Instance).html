@@ -1594,9 +1594,10 @@
             
             // Show/hide Auto Deploy deprecation banner
             const autodeployBanner = document.getElementById('autodeployBanner');
-            const autodeployCheck = document.getElementById('autodeployCheck');
-            if (autodeployBanner && autodeployCheck) {
-                autodeployBanner.style.display = autodeployCheck.checked ? 'block' : 'none';
+            const autodeployCheck = document.getElementById('autodeployCheck') || document.getElementById('auto_deployCheck');
+            const isAutoDeploySelected = selectedProducts['auto_deploy'] === true || (autodeployCheck && autodeployCheck.checked);
+            if (autodeployBanner) {
+                autodeployBanner.style.display = isAutoDeploySelected ? 'block' : 'none';
             }
             
             // Auto-generate without requiring button click

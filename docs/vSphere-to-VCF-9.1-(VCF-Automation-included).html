@@ -1625,9 +1625,10 @@
             
             // Show/hide Auto Deploy deprecation banner
             const autodeployBanner = document.getElementById('autodeployBanner');
-            const autodeployCheck = document.getElementById('autodeployCheck');
-            if (autodeployBanner && autodeployCheck) {
-                autodeployBanner.style.display = autodeployCheck.checked ? 'block' : 'none';
+            const autodeployCheck = document.getElementById('autodeployCheck') || document.getElementById('auto_deployCheck');
+            const isAutoDeploySelected = selectedProducts['auto_deploy'] === true || (autodeployCheck && autodeployCheck.checked);
+            if (autodeployBanner) {
+                autodeployBanner.style.display = isAutoDeploySelected ? 'block' : 'none';
             }
             
             // Auto-generate without requiring button click
@@ -2195,7 +2196,9 @@
             
             if (aviPhases.length > 0) {
                 const _isSource910Lh = (vcenterVersion || '').startsWith('9.1') || (esxVersion || '').startsWith('9.1') || (operationsVersion || '').startsWith('9.1');
-                const _lhDataAvi = !_isSource910Lh ? upgradeData.components['license_hub'] : null;
+                const _isTarget911 = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.1');
+                const _skipLh = _isSource910Lh && _isTarget911;
+                const _lhDataAvi = !_skipLh ? upgradeData.components['license_hub'] : null;
                 if (_lhDataAvi) {
                     aviPhases.push({ number: aviPhases.length + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataAvi, componentId: 'license_hub' });
                 }
@@ -2264,7 +2267,9 @@
                     // Inject License Hub into NSX step only when vDefend selected AND AVI not selected
                     // (if AVI selected, License Hub already appears under the AVI step)
                     const _isSource910Lh = (vcenterVersion || '').startsWith('9.1') || (esxVersion || '').startsWith('9.1') || (operationsVersion || '').startsWith('9.1');
-                    const _vdefendOnly = selectedProducts['vdefend'] === true && aviPhases.length === 0 && !_isSource910Lh;
+                    const _isTarget911 = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.1');
+                    const _skipLh = _isSource910Lh && _isTarget911;
+                    const _vdefendOnly = selectedProducts['vdefend'] === true && aviPhases.length === 0 && !_skipLh;
                     const _nsxPhasesCombined = [...nsxPhases];
                     if (_vdefendOnly) {
                         const _lhDataNsx = upgradeData.components['license_hub'];

@@ -2050,14 +2050,14 @@
             // Group Replication + SRM together, keep AVI and HCX separate
             const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'vlr' || p.componentId === 'vsan_data_protection');
             const aviPhases = optionalPreInfraPhases.filter(p => p.componentId === 'avi');
-            // Inject License Hub into AVI step when AVI is selected (skip for 9.1.0.x source as License Hub already exists)
-            const _is910To911Lh = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+            // Inject License Hub into AVI step when AVI is selected (skip ONLY for 9.1.0.x source TO 9.1.1 as License Hub already exists)
+            const _is910To911Lh = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1')) && (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.1');
             if (aviPhases.length > 0 && !_is910To911Lh) {
                 const _lhDataAvi = upgradeData.components['license_hub'];
                 if (_lhDataAvi) aviPhases.push({ number: Math.max(0, ...aviPhases.map(p => p.number)) + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataAvi, componentId: 'license_hub' });
             }
             const hcxPhases = optionalPreInfraPhases.filter(p => p.componentId === 'hcx');
-            // Inject License Hub into NSX step only when vDefend selected AND AVI not selected (skip for 9.1.0.x source as License Hub already exists)
+            // Inject License Hub into NSX step only when vDefend selected AND AVI not selected (skip ONLY for 9.1.0.x source TO 9.1.1 as License Hub already exists)
             const _selProds = window.selectedAdvancedProducts || {};
             const _aviWasSelected = optionalPreInfraPhases.some(p => p.componentId === 'avi');
             if (nsxPhases.length > 0 && _selProds['vdefend'] === true && !_aviWasSelected && !_is910To911Lh) {

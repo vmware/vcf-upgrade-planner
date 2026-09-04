@@ -1452,8 +1452,9 @@
             // Show/hide Auto Deploy deprecation banner
             const autodeployBanner = document.getElementById('autodeployBanner');
             const autodeployCheck = document.getElementById('autodeployCheck') || document.getElementById('auto_deployCheck');
-            if (autodeployBanner && autodeployCheck) {
-                autodeployBanner.style.display = autodeployCheck.checked ? 'block' : 'none';
+            const isAutoDeploySelected = selectedProducts['auto_deploy'] === true || (autodeployCheck && autodeployCheck.checked);
+            if (autodeployBanner) {
+                autodeployBanner.style.display = isAutoDeploySelected ? 'block' : 'none';
             }
             
             // Auto-generate without requiring button click
@@ -1819,7 +1820,9 @@
              if (aviPhases.length > 0) {
                 const combinedAviPhases = [...aviPhases];
                 const _isSource910Lh = (vcenterVersion || '').startsWith('9.1') || (esxVersion || '').startsWith('9.1') || (operationsVersion || '').startsWith('9.1');
-                if (!_isSource910Lh) {
+                const _isTarget911 = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.1');
+                const _skipLh = _isSource910Lh && _isTarget911;
+                if (!_skipLh) {
                     const licenseHubData = upgradeData.components['license_hub'];
                     if (licenseHubData) {
                         combinedAviPhases.push({
@@ -3221,7 +3224,7 @@
             vum_migration: 'vum_migrationCheck',
             vsan_witness:  'vsan_witnessCheck',
             vcha:          'vchaCheck',
-            auto_deploy:   'auto_deployCheck',
+            auto_deploy:   'autodeployCheck',
         };
 
         let G_INDEX = [];
