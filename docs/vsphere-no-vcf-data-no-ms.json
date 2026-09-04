@@ -73,6 +73,7 @@
   "components": {
     "vcenter": {
       "name": "vCenter",
+      "vcenter_link_9110_placeholder": "https://techdocs.broadcom.com/.../TODO_VCENTER_9110_URL",
       "tables": [
         {
           "title": "Required Network Configuration",
@@ -346,6 +347,7 @@
     },
     "vcf_installer_vcenter_only": {
       "name": "VCF Installer",
+      "vcf_ms_tables_9110_placeholder_note": "TODO: If VCF Management Services table values for 9.1.1.0 differ from 9.1.0.0, update rows in tables below.",
       "tables": [
         {
           "title": "Required Network Configuration",

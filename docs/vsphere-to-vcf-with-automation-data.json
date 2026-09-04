@@ -186,7 +186,7 @@
     "vcenter": {
       "name": "vCenter",
        "steps": [
-          "Upgrade vCenter using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html' target='_blank'>View Documentation</a>)."
+          "Upgrade vCenter using standard vSphere upgrade process - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article?articleNumber=420920' target='_blank'>View Documentation</a>)."
         ],
         "steps_with_nsx": [
           "Upgrade vCenter to version using VCF Operations through Fleet Management - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/updating-vcenter-and-nsx/optimized-update-of-vcenter-and-nsx-manager.html' target='_blank'>View Documentation</a>)."
@@ -319,195 +319,450 @@
     },
     "convert_with_vsphere_only": {
       "name": "Converge to VCF",
-      "tables_simple_small_without_nsx": [
-        {
-          "title": "Required Network Configuration (Simple - Small)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"],
-            ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
-            ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (Simple - Small)",
-          "description": "Size requirements for all nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
-            ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
-            ["VCF Operations node", "Small", "1", "4", "16gb", "274gb"],
-            ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"]
-          ]
-        }
-      ],
-      "tables_ha_medium_without_nsx": [
-        {
-          "title": "Required Network Configuration (High Availability - Medium)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
-            ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
-            ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
-            ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (High Availability - Medium)",
-          "description": "Size requirements for all nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
-            ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
-            ["VCF Operations nodes", "Medium", "3", "48", "144gb", "822gb"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
-          ]
-        }
-      ],
-      "tables_ha_large_without_nsx": [
-        {
-          "title": "Required Network Configuration (High Availability - Large)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
-            ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
-            ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
-            ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (High Availability - Large)",
-          "description": "Size requirements for all nodes",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
-            ["NSX Manager", "Large", "3", "36", "144gb", "900gb"],
-            ["VCF Operations nodes", "Large", "3", "72", "384gb", "822gb"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
-          ]
-        }
-      ],
-      "tables_simple_small_with_nsx": [
-        {
-          "title": "Required Network Configuration (Simple - Small with NSX)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (Simple - Small with NSX)",
-          "description": "Size requirements for all nodes including NSX",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-           ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
-           ["VCF Operations node", "Small", "1", "4", "16gb", "274gb"],
-           ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
-           ["License server", "Default", "1", "2", "4gb", "12gb"],
-           ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"]
-          ]
-        }
-      ],
-      "tables_ha_medium_with_nsx": [
-        {
-          "title": "Required Network Configuration (High Availability - Medium with NSX)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
-            ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
-            ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (High Availability - Medium with NSX)",
-          "description": "Size requirements for all nodes including NSX",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["SDDC Manager", "Default", "1", "4", "16", "908"],
-            ["VCF Operations nodes", "Medium", "3", "48", "144gb", "822gb"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
-          ]
-        }
-      ],
-      "tables_ha_large_with_nsx": [
-        {
-          "title": "Required Network Configuration (High Availability - Large with NSX)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
-            ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
-            ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (High Availability - Large with NSX)",
-          "description": "Size requirements for all nodes including NSX",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["SDDC Manager", "Default", "1", "4", "16", "908"],
-            ["VCF Operations nodes", "Large", "3", "72", "384gb", "822gb"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
-          ]
-        }
-      ],
+       "tables_simple_small_without_nsx": [
+                {
+                    "title": "Required Network Configuration (Simple - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"],
+                        ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfvidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
+                        ["VCF Operations node", "Small", "1", "4", "16gb", "274gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"]
+                    ]
+                }
+            ],
+             "tables_simple_small_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (Simple - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"],
+                        ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfvidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
+                        ["VCF Operations node", "Small", "1", "4", "16gb", "274gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "4", "28", "58gb", "2900gb"]
+                    ]
+                }
+            ],
+            "tables_ha_small_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["VCF Operations", "2", "2", "vcfops1.rainpole.io, vcfops2.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+                        ["VCF Operations nodes", "Small", "2", "8", "32gb", "548gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "6", "42", "78gb", "3201gb"]
+                    ]
+                }
+            ],
+            "tables_ha_medium_without_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+                        ["VCF Operations nodes", "Medium", "3", "48", "144gb", "822gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+                    ]
+                }
+            ],
+            "tables_ha_medium_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+                        ["VCF Operations nodes", "Medium", "3", "24", "96gb", "822gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Medium", "6", "48", "102gb", "3,600gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_without_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["NSX Manager", "Large", "3", "36", "144", "900"],
+                        ["VCF Operations nodes", "Large", "3", "72", "384gb", "822gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["NSX Manager", "Large", "3", "36", "144", "900"],
+                        ["VCF Operations nodes", "Large", "3", "48", "144gb", "822gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Large", "7", "88", "170gb", "4,402gb"]
+                    ]
+                }
+            ],
+            "tables_simple_small_with_nsx": [
+                {
+                    "title": "Required Network Configuration (Simple - Small with NSX)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfvidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small with NSX)",
+                    "description": "Size requirements for all nodes including NSX",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["VCF Operations node", "Small", "1", "4", "16gb", "274gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"]
+                    ]
+                }
+            ],
+            "tables_simple_small_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (Simple - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["VCF Operations", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfvidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["VCF Operations node", "Small", "1", "4", "16gb", "274gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "4", "28", "58gb", "2900gb"]
+                    ]
+                }
+            ],
+            "tables_ha_small_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["VCF Operations", "2", "2", "vcfops1.rainpole.io, vcfops2.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["VCF Operations nodes", "Small", "2", "8", "32gb", "548gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "6", "42", "78gb", "3201gb"]
+                    ]
+                }
+            ],
+            "tables_ha_medium_with_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium with NSX)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium with NSX)",
+                    "description": "Size requirements for all nodes including NSX",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["VCF Operations nodes", "Medium", "3", "48", "144gb", "822gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+                    ]
+                }
+            ],
+            "tables_ha_medium_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["VCF Operations nodes", "Medium", "3", "24", "96gb", "822gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Medium", "6", "48", "102gb", "3,600gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_with_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large with NSX)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large with NSX)",
+                    "description": "Size requirements for all nodes including NSX",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["VCF Operations nodes", "Large", "3", "72", "384gb", "822gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["VCF Operations", "3", "3", "vcfops1.rainpole.io, vcfops2.rainpole.io, vcfops3.rainpole.io"],
+                        ["VCF Operations VIP", "1", "1", "vcfops.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["VCF Operations nodes", "Large", "3", "48", "144gb", "822gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Large", "7", "88", "170gb", "4,402gb"]
+                    ]
+                }
+            ],
       "steps": [
         "Deploy of VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/deploy-the-vmware-cloud-foundation-installer-appliance.html' target='_blank'>View Documentation</a>).",
         "Downloading Binaries to VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/downloading-binaries-to-the-vcf-installer-appliance.html' target='_blank'>View Documentation</a>).",
@@ -570,10 +825,70 @@
           "headers": ["Component", "Size", "Number of nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
           "rows": [
             ["VCF Automation node", "Small", "1", "16", "64gb", "600gb"]
+            ]
+        }
+      ],
+      "automation_install_tables_simple_small_9_1_1_0": [
+        {
+          "title": "VCF Automation  Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  node IP Pool", "4", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF Automation node", "Small", "1", "24", "96gb", "600gb"]
+          ]
+        }
+      ],
+       "automation_install_tables_ha_small_9_1_1_0": [
+        {
+          "title": "VCF Automation  Required Network Configuration (High Availability - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  node IP Pool", "4", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF Automation node", "Small", "1", "24", "96gb", "600gb"]
           ]
         }
       ],
       "automation_install_tables_ha_medium": [
+        {
+          "title": "VCF Automation  Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  node(s) IP Pool", "5", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF Automation nodes", "Medium", "3", "72", "288gb", "2,700gb"]
+          ]
+        }
+      ],
+       "automation_install_tables_ha_medium_9_1_1_0": [
         {
           "title": "VCF Automation  Required Network Configuration (High Availability - Medium)",
           "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
@@ -612,175 +927,436 @@
             ["VCF Automation nodes", "Large", "3", "96", "384gb", "3,600gb"]
           ]
         }
+      ],
+      "automation_install_tables_ha_large_9_1_1_0": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  node(s) IP Pool", "5", "0", "N/A"],
+            ["VCF Automation VIP", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+          "rows": [
+            ["VCF Automation nodes", "Large", "3", "96", "384gb", "3,600gb"]
+          ]
+        }
       ]
     },
     "convert_with_ops": {
       "name": "Converge to VCF",
       "tables_simple_small_without_nsx": [
-        {
-          "title": "Required Network Configuration (Simple - Small)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["NSX Managers", "2", "2", "nsxvip.rainpole.io, nsxmgr1.rainpole.io,"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (Simple - Small)",
-          "description": "Size requirements for all nodes (Operations already deployed)",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["NSX Manager", "Medium", "1", "6", "24", "300"],
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Small", "3", "40", "82gb", "3,000gb"],
-            ["Cloud proxy", "Small", "4", "4", "16gb", "144gb"]
-          ]
-        }
-      ],
-      "tables_ha_medium_without_nsx": [
-        {
-          "title": "Required Network Configuration (High Availability - Medium)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-
-          ]
-        },
-        {
-          "title": "Required Component Sizes (High Availability - Medium)",
-          "description": "Size requirements for all nodes (Operations already deployed)",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
-          ]
-        }
-      ],
-      "tables_ha_large_without_nsx": [
-        {
-          "title": "Required Network Configuration (High Availability - Large)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-
-          ]
-        },
-        {
-          "title": "Required Component Sizes (High Availability - Large)",
-          "description": "Size requirements for all nodes (Operations already deployed)",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["NSX Manager", "Large", "3", "36", "144gb", "900gb"],
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
-          ]
-        }
-      ],
-      "tables_simple_small_with_nsx": [
-        {
-          "title": "Required Network Configuration (Simple - Small with NSX)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (Simple - Small with NSX)",
-          "description": "Size requirements for all nodes including NSX (Operations already deployed)",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"],
-            ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"]
-          ]
-        }
-      ],
-      "tables_ha_medium_with_nsx": [
-        {
-          "title": "Required Network Configuration (High Availability - Medium with NSX)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (High Availability - Medium with NSX)",
-          "description": "Size requirements for all nodes including NSX (Operations already deployed)",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
-          ]
-        }
-      ],
-      "tables_ha_large_with_nsx": [
-        {
-          "title": "Required Network Configuration (High Availability - Large with NSX)",
-          "description": "Prepare the following IP addresses and DNS entries before deployment:",
-          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
-          "rows": [
-            ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
-            ["License server", "1", "1", "vcflic.rainpole.io"],
-            ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
-            ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
-            ["Instance component service", "1", "1", "vcfins.rainpole.io"],
-            ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
-            ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
-          ]
-        },
-        {
-          "title": "Required Component Sizes (High Availability - Large with NSX)",
-          "description": "Size requirements for all nodes including NSX (Operations already deployed)",
-          "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
-          "rows": [
-            ["License server", "Default", "1", "2", "4gb", "12gb"],
-            ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"],
-            ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"]
-          ]
-        }
-      ],
+                {
+                    "title": "Required Network Configuration (Simple - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfvidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"]
+                    ]
+                }
+            ],
+             "tables_simple_small_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (Simple - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfvidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "4", "28", "58gb", "2900gb"]
+                    ]
+                }
+            ],
+            "tables_ha_small_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "6", "42", "78gb", "3201gb"]
+                    ]
+                }
+            ],
+            "tables_ha_medium_without_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+                    ]
+                }
+            ],
+            "tables_ha_medium_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Medium", "6", "48", "102gb", "3,600gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_without_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["NSX Manager", "Large", "3", "36", "144", "900"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["NSX Manager", "Large", "3", "36", "144", "900"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Large", "7", "88", "170gb", "4,402gb"]
+                    ]
+                }
+            ],
+            "tables_simple_small_with_nsx": [
+                {
+                    "title": "Required Network Configuration (Simple - Small with NSX)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfvidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small with NSX)",
+                    "description": "Size requirements for all nodes including NSX",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"]
+                    ]
+                }
+            ],
+            "tables_simple_small_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (Simple - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfvidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "4", "28", "58gb", "2900gb"]
+                    ]
+                }
+            ],
+            "tables_ha_small_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Small", "6", "42", "78gb", "3201gb"]
+                    ]
+                }
+            ],
+            "tables_ha_medium_with_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium with NSX)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium with NSX)",
+                    "description": "Size requirements for all nodes including NSX",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+                    ]
+                }
+            ],
+            "tables_ha_medium_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Medium", "6", "48", "102gb", "3,600gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_with_nsx": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large with NSX)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large with NSX)",
+                    "description": "Size requirements for all nodes including NSX",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["License server", "1", "1", "vcflic.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Fleet component service", "1", "1", "vcffleet.rainpole.io"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"],
+                        ["Identity Broker", "1", "1", "vcfidb.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["License server", "Default", "1", "2", "4gb", "12gb"],
+                        ["VCF management services nodes", "Large", "7", "88", "170gb", "4,402gb"]
+                    ]
+                }
+            ],
       "steps": [
         "Deploy of VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/deploy-the-vmware-cloud-foundation-installer-appliance.html' target='_blank'>View Documentation</a>).",
         "Downloading Binaries to VCF Installer - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/preparing-your-environment/downloading-binaries-to-the-vcf-installer-appliance.html' target='_blank'>View Documentation</a>).",
@@ -857,7 +1433,47 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation node", "Small", "1", "1", "16gb", "60gb"]
+            ["VCF Automation node", "Small", "1", "16", "64gb", "600gb"]
+          ]
+        }
+      ],
+      "upgrade_tables_simple_small_9_1_1_0": [
+        {
+          "title": "VCF Automation Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation node IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation node", "Small", "1", "24", "96gb", "600gb"]
+          ]
+        }
+      ],
+      "upgrade_tables_ha_small_9_1_1_0": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation node IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation node", "Small", "1", "24", "96gb", "600gb"]
           ]
         }
       ],
@@ -877,7 +1493,27 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation nodes", "Medium", "3", "24", "96gb", "300gb"]
+            ["VCF Automation nodes", "Medium", "3", "72", "288gb", "2,700gb"]
+          ]
+        }
+      ],
+      "upgrade_tables_ha_medium_9_1_1_0": [
+         {
+          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation nodes", "Medium", "3", "72", "288gb", "2700gb"]
           ]
         }
       ],
@@ -897,7 +1533,27 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation nodes", "Large", "3", "48", "192gb", "600gb"]
+            ["VCF Automation nodes", "Large", "3", "96", "384gb", "3600gb"]
+          ]
+        }
+      ],
+         "upgrade_tables_ha_large_9_1_1_0": [
+         {
+          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation node(s) IP Pool(new)", "8", "0", "N/A"],
+            ["VCF Automation VIP(re-use)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation nodes", "Large", "3", "96", "384gb", "3600gb"]
           ]
         }
       ],
@@ -917,7 +1573,47 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation node", "Small", "1", "1", "16gb", "60gb"]
+            ["VCF Automation node", "Small", "1", "16", "64gb", "600gb"]
+          ]
+        }
+      ],
+      "install_tables_simple_small_9_1_1_0": [
+        {
+          "title": "VCF Automation Required Network Configuration (Simple - Small)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (Simple - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation node", "Small", "1", "24", "96gb", "600gb"]
+          ]
+        }
+      ],
+       "install_tables_ha_small_9_1_1_0": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Small",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Small)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation node", "Small", "1", "24", "96gb", "600gb"]
           ]
         }
       ],
@@ -937,7 +1633,27 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation nodes", "Medium", "3", "24", "96gb", "300gb"]
+            ["VCF Automation nodes", "Medium", "3", "72", "288gb", "2,700gb"]
+          ]
+        }
+      ],
+       "install_tables_ha_medium_9_1_1_0": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Medium)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Medium)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation nodes", "Medium", "3", "72", "288gb", "2,700gb"]
           ]
         }
       ],
@@ -957,7 +1673,27 @@
           "description": "Size requirements for VCF Automation nodes",
           "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
           "rows": [
-            ["VCF Automation nodes", "Large", "3", "48", "192gb", "600gb"]
+            ["VCF Automation nodes", "Large", "3", "96", "384gb", "3600gb"]
+          ]
+        }
+      ],
+      "install_tables_ha_large_9_1_1_0": [
+        {
+          "title": "VCF Automation Required Network Configuration (High Availability - Large)",
+          "description": "Prepare the following IP addresses and DNS entries for VCF Automation:",
+          "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+          "rows": [
+            ["VCF Automation  node(s) IP Pool(new)", "5", "0", "N/A"],
+            ["VCF Automation VIP(new)", "1", "1", "vcfauto.rainpole.io"],
+            ["VCF Automation Service Runtime(new)", "1", "1", "vcfautorun.sfo.rainpole.io"]
+          ]
+        },
+        {
+          "title": "VCF Automation Required Component Sizes (High Availability - Large)",
+          "description": "Size requirements for VCF Automation nodes",
+          "headers": ["Component", "Size", "Number of Nodes", "vCPU", "Memory", "Storage"],
+          "rows": [
+            ["VCF Automation nodes", "Large", "3", "96", "384gb", "3600gb"]
           ]
         }
       ]

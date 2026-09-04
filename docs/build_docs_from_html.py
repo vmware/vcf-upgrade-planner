@@ -25,6 +25,7 @@ MANUAL_URLS = [
     'https://williamlam.com/2026/05/vcf-9-1-additional-ip-allocation-options-for-vcf-management-services-vcfms-in-vcf-installer-and-sddc-manager.html',
     'https://knowledge.broadcom.com/external/article/433175/what-actions-should-be-taken-for-vmware.html',
     'https://knowledge.broadcom.com/external/article/429205/overriding-version-of-nsx-manager-while.html',
+    'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html'
 
 ]
 

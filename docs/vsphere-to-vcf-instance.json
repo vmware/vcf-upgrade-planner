@@ -291,6 +291,58 @@
                     ]
                 }
             ],
+               "tables_simple_small_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (Simple - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["VCF management services nodes", "Small", "4", "28", "58gb", "2900gb"]
+                    ]
+                }
+            ],
+            "tables_ha_small_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["VCF management services nodes", "Small", "6", "42", "78gb", "3201gb"]
+                    ]
+                }
+            ],
             "tables_ha_medium_without_nsx": [
                 {
                     "title": "Required Network Configuration (High Availability - Medium)",
@@ -314,6 +366,32 @@
                         ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
                         ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
                         ["VCF management services nodes", "Medium", "6", "84", "174gb", "3,600gb"]
+                    ]
+                }
+            ],
+             "tables_ha_medium_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["NSX Manager", "Medium", "3", "18", "72gb", "900gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["VCF management services nodes", "Medium", "6", "48", "102gb", "3,600gb"]
                     ]
                 }
             ],
@@ -343,6 +421,32 @@
                     ]
                 }
             ],
+             "tables_ha_large_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["NSX Managers", "4", "4", "nsxvip.rainpole.io, nsxmgr1.rainpole.io, nsxmgr2.rainpole.io, nsxmgr3.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["NSX Manager", "Large", "3", "36", "144", "900"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["VCF management services nodes", "Large", "7", "88", "170gb", "4,402gb"]
+                    ]
+                }
+            ],
             "tables_simple_small_with_nsx": [
                 {
                     "title": "Required Network Configuration (Simple - Small with NSX)",
@@ -363,6 +467,54 @@
                         ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
                         ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
                         ["VCF management services nodes", "Small", "4", "40", "82gb", "3,000gb"]
+                    ]
+                }
+            ],
+             "tables_simple_small_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (Simple - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["Cloud proxy", "Small", "1", "4", "16gb", "144gb"],
+                        ["VCF management services nodes", "Small", "4", "28", "58gb", "2900gb"]
+                    ]
+                }
+            ],
+            "tables_ha_small_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Small)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Small)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["VCF management services nodes", "Small", "6", "42", "78gb", "3201gb"]
                     ]
                 }
             ],
@@ -390,6 +542,30 @@
                     ]
                 }
             ],
+            "tables_ha_medium_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16gb", "908gb"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["VCF management services nodes", "Medium", "6", "48", "102gb", "3,600gb"]
+                    ]
+                }
+            ],
             "tables_ha_large_with_nsx": [
                 {
                     "title": "Required Network Configuration (High Availability - Large with NSX)",
@@ -411,6 +587,30 @@
                         ["SDDC Manager", "Default", "1", "4", "16", "908"],
                         ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
                         ["VCF management services nodes", "Large", "7", "120", "228gb", "4,402gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_with_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["SDDC Manager", "1", "1", "sfosddc.sfo.rainpole.io"],
+                        ["Cloud proxy", "1", "1", "vcfcxp.sfo.rainpole.io"],
+                        ["VCF management services", "Minimum 12 (Broadcom recommends 30)", "None", "N/A"],
+                        ["Instance component service", "1", "1", "vcfins.rainpole.io"],
+                        ["VCF services runtime", "1", "1", "vcfrun.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["SDDC Manager", "Default", "1", "4", "16", "908"],
+                        ["Cloud proxy", "Standard", "1", "8", "48gb", "144gb"],
+                        ["VCF management services nodes", "Large", "7", "88", "170gb", "4,402gb"]
                     ]
                 }
             ],

@@ -295,6 +295,24 @@
                     ]
                 }
             ],
+            "tables_simple_small_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (Simple - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Medium", "1", "6", "24gb", "300gb"]
+                    ]
+                }
+            ],
             "tables_simple_large_without_nsx": [
                 {
                     "title": "Required Network Configuration (Simple - Large)",
@@ -313,7 +331,43 @@
                     ]
                 }
             ],   
+            "tables_simple_large_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (Simple - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Large", "1", "12", "48gb", "300gb"]
+                    ]
+                }
+            ],   
             "tables_simple_xlarge_without_nsx": [
+                {
+                    "title": "Required Network Configuration (Simple - Extra Large",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "2", "2", "nsxvip.rainpole.io, nsxmgr.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (Simple - Extra Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Extra Large", "1", "24", "98gb", "400gb"]
+                    ]
+                }
+            ], 
+            "tables_simple_xlarge_without_nsx_9_1_1_0": [
                 {
                     "title": "Required Network Configuration (Simple - Extra Large",
                     "description": "Prepare the following IP addresses and DNS entries before deployment:",
@@ -384,7 +438,61 @@
                         ["NSX Manager", "Extra Large", "3", "24", "98gb", "400gb"]
                     ]
                 }
-            ],            
+            ],          
+             "tables_ha_medium_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Medium)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "4", "4", "nsxvip.rainpole.io, nsxmgra.rainpole.io, nsxmgrb.rainpole.io, nsxmgrc.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Medium)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Medium", "3", "6", "24gb", "300gb"]
+                    ]
+                }
+            ],
+            "tables_ha_large_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Large)",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "4", "4", "nsxvip.rainpole.io, nsxmgra.rainpole.io, nsxmgrb.rainpole.io, nsxmgrc.rainpole.io"]                    
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Large", "3", "12", "48gb", "300gb"]
+                    ]
+                }
+            ],   
+            "tables_ha_xlarge_without_nsx_9_1_1_0": [
+                {
+                    "title": "Required Network Configuration (High Availability - Extra Large",
+                    "description": "Prepare the following IP addresses and DNS entries before deployment:",
+                    "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
+                    "rows": [
+                        ["NSX Manager", "4", "4", "nsxvip.rainpole.io, nsxmgra.rainpole.io, nsxmgrb.rainpole.io, nsxmgrc.rainpole.io"]
+                    ]
+                },
+                {
+                    "title": "Required Component Sizes (High Availability - Extra Large)",
+                    "description": "Size requirements for all nodes",
+                    "headers": ["Component", "Size", "Number of Nodes", "vCPU(Total)", "Memory(Total)", "Storage(Total)"],
+                    "rows": [
+                        ["NSX Manager", "Extra Large", "3", "24", "98gb", "400gb"]
+                    ]
+                }
+            ],              
             "steps": [
                 "Downloading Binaries to VCF Depot - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/download-bundles-from-sddc-manager.html' target='_blank'>View Documentation</a>).",
                 "Start import to VCF - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/building-your-private-cloud-infrastructure/working-with-workload-domains/import-an-existing-vcenter-to-create-a-workload-domain.html' target='_blank'>View Documentation</a>)."

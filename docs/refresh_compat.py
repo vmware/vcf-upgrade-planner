@@ -213,7 +213,7 @@ def _validate_key(key, raise_on_error=True):
     sys.stdout.flush()
     try:
         r = _http_request(API_PRODUCTS, headers={"x-auth-key": key, "Accept": "application/json"},
-                          params={"size": 1}, timeout=20)
+                          params={"interoptype": "product"}, timeout=20)
         print(f"  HTTP {r.status_code}")
         if r.status_code in (401, 403):
             return _fail(f"Key rejected ({r.status_code}) -- it may have expired.")
@@ -223,7 +223,7 @@ def _validate_key(key, raise_on_error=True):
         return True
     except Exception as e:
         print(f"WARNING: Unexpected error validating key: {e}")
-        return True
+        return False
 
 
 # -- API helpers ------------------------------------------------------------
@@ -233,6 +233,7 @@ def fetch_all_products(key):
     sys.stdout.flush()
     r = _http_request(API_PRODUCTS,
                       headers={"x-auth-key": key, "Accept": "application/json"},
+                      params={"interoptype": "product"},
                       timeout=60)
     r.raise_for_status()
     products = r.json()

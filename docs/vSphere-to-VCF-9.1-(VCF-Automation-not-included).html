@@ -1235,9 +1235,22 @@
                         <span id="phaseCounter"></span> • Updates automatically as you select components above
                     </p>
                 </div>
-                        <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0;">
+                <div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn" onclick="copyJiraSummary()" style="background: var(--vmw-blue); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                            📋 Copy for Jira / CAB
+                        </button>
+                        <button class="btn" onclick="downloadJiraSummary()" style="background: var(--vmw-gray); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                            💾 Save .txt Plan
+                        </button>
+                        <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
                             📄 Export Complete Plan
                         </button>
+                    </div>
+                    <p style="margin: 6px 0 0 0; font-size: 0.8rem; color: var(--text-secondary); text-align: right;">
+                        💡 <strong>Tip:</strong> Copies or downloads detailed steps, prerequisites & tables formatted for Jira, ServiceNow, or text files (.txt/.md).
+                    </p>
+                </div>
             </div>
 
                 <!-- Safe Stopping Point Info Banner -->
@@ -1285,6 +1298,7 @@
     </div>
 
 <script>
+        let nsxVersion = null;
         // Variables to store selections
         let vcenterVersion = null;
         let esxVersion = null;
@@ -1335,6 +1349,9 @@
             // Auto-generate the initial upgrade plan
             autoGenerateUpgradePlan();
             updatePageTitlesForTargetVersion();
+            if (typeof autoGenerateUpgradePlan === "function") {
+                autoGenerateUpgradePlan();
+            }
         });
 
          // Patch specific sentences in the loaded JSON based on the selected target version.
@@ -1514,21 +1531,43 @@
             const simpleRadio = document.getElementById('simpleRadio');
             const haRadio = document.getElementById('haRadio');
             const sizeSelect = document.getElementById('deploymentSize');
-            
-            deploymentType = simpleRadio.checked ? 'simple' : 'ha';
+            if (!sizeSelect || !simpleRadio) {
+                if (typeof autoGenerateUpgradePlan === "function") {
+                    autoGenerateUpgradePlan();
+                }
+                return;
+            }
+            const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
+            const is911 = (targetVer || '').startsWith('9.1.1');
+            const prevSize = sizeSelect.value; 
+    
+
+             deploymentType = simpleRadio.checked ? 'simple' : 'ha';
             
             if (deploymentType === 'simple') {
-                // Simple deployment: only Small is available
+                // Simple deployment: only Small is available for both 9.1.0 and 9.1.1
                 sizeSelect.innerHTML = '<option value="small">Small</option>';
                 deploymentSize = 'small';
             } else {
-                // HA deployment: Medium or Large
-                sizeSelect.innerHTML = `
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
-                `;
-                deploymentSize = 'medium'; // Default to medium for HA
+                // HA deployment: 9.1.0 (Medium, Large), 9.1.1 (Small, Medium, Large)
+                if (is911) {
+                    sizeSelect.innerHTML = `
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                    `;
+                    if (['small', 'medium', 'large'].includes(prevSize)) sizeSelect.value = prevSize;
+                    deploymentSize = sizeSelect.value || 'medium';
+                } else {
+                    sizeSelect.innerHTML = `
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                    `;
+                    if (['medium', 'large'].includes(prevSize)) sizeSelect.value = prevSize;
+                    deploymentSize = sizeSelect.value || 'medium';
+                }
             }
+            
             
             // Regenerate the plan with new deployment config
             autoGenerateUpgradePlan();
@@ -1585,7 +1624,7 @@
 
         function generateUpgradePlan() {
             const phases = [];
-            const isConvergeOnly = vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k' || nsxVersion.startsWith('4.2.4');
+            const isConvergeOnly = ((vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k') && (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.0')) || (nsxVersion || '').startsWith('4.2.4');
             const selectedProducts = window.selectedAdvancedProducts || {};
             // Clear previously injected combination warnings
             if (upgradeData && upgradeData.components) {
@@ -1613,7 +1652,7 @@
             
 
             // Operations pre-upgrade for sub-8.18 versions (first)
-            if (operationsSelected && !isConvergeOnly && (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17'))) {
+            if (operationsSelected && (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17'))) {
                 const opsPrereqData = upgradeData.components['operations_prereq'] || null;
                 if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
@@ -1684,7 +1723,7 @@
                 } else if (componentId === 'vcenter') {
                     // vCenter included unless already on 9.1.x (no upgrade needed, just convert)
                     // 8.0u3j/8.0u3k: converge-only path
-                    shouldInclude = !vcenterVersion.startsWith('9.1') && !isConvergeOnly;
+                    shouldInclude = !(vcenterVersion || '').startsWith('9.1') && !isConvergeOnly;
                     phaseTitle = componentData ? componentData.name : 'vCenter Server';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                      // Use NSX-optimized link when NSX is present in the environment
@@ -1719,31 +1758,40 @@
                             // Build table key: tables_{type}_{size}_{nsx_status}
                             const nsxSuffix = nsxInEnvironment ? '_with_nsx' : '_without_nsx';
                             const tableKey = `tables_${deploymentType}_${deploymentSize}${nsxSuffix}`;
+                            const fallbackKey = `tables_${deploymentType}_${deploymentSize}`;
                             
                             console.log('Looking for table key:', tableKey);
                             
                             // Clone component data once
                             const clonedData = JSON.parse(JSON.stringify(componentData));
                             
-                            if (clonedData[tableKey]) {
-                                console.log('Found exact match:', tableKey);
-                                clonedData.tables = clonedData[tableKey];
+                            const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
+                            const is911 = (targetVer || '').startsWith('9.1.1');
+                            const is910 = (targetVer || '').startsWith('9.1.0');
+                            
+                            let keysToTry = [];
+                            if (is911) {
+                                keysToTry.push(`${tableKey}_9_1_1_0`, `${tableKey}_9_1_1`, `tables_9_1_1_0`, `tables_9_1_1`);
+                                keysToTry.push(`${fallbackKey}_9_1_1_0`, `${fallbackKey}_9_1_1`);
+                            } else if (is910) {
+                                keysToTry.push(`${tableKey}_9_1_0_0`, `${tableKey}_9_1_0`, `tables_9_1_0_0`, `tables_9_1_0`);
+                                keysToTry.push(`${fallbackKey}_9_1_0_0`, `${fallbackKey}_9_1_0`);
+                            }
+                            keysToTry.push(tableKey, fallbackKey, 'tables_simple_small_without_nsx', 'tables_simple_small', 'tables');
+                            
+                            let foundTable = null;
+                            for (const k of keysToTry) {
+                                if (clonedData[k]) {
+                                    foundTable = clonedData[k];
+                                    console.log('Found match for table key:', k);
+                                    break;
+                                }
+                            }
+                            if (foundTable) {
+                                clonedData.tables = foundTable;
                                 componentData = clonedData;
                             } else {
-                                // Fallback: try without NSX suffix
-                                const fallbackKey = `tables_${deploymentType}_${deploymentSize}`;
-                                console.log('Trying fallback:', fallbackKey);
-                                if (clonedData[fallbackKey]) {
-                                    console.log('Found fallback match:', fallbackKey);
-                                    clonedData.tables = clonedData[fallbackKey];
-                                    componentData = clonedData;
-                                } else if (clonedData.tables_simple_small_without_nsx) {
-                                    console.log('Using final fallback: tables_simple_small_without_nsx');
-                                    clonedData.tables = clonedData.tables_simple_small_without_nsx;
-                                    componentData = clonedData;
-                                } else {
-                                    console.warn('No suitable table variant found for component');
-                                }
+                                console.warn('No suitable table variant found for component');
                             }
                         } catch (error) {
                             console.error('Error selecting tables:', error);
@@ -1993,15 +2041,16 @@
             }
             
             if (aviPhases.length > 0) {
-                // Always attach License Hub to AVI step when AVI is selected
-                const _lhDataAvi = upgradeData.components['license_hub'];
+                const _isSource910Lh = (vcenterVersion || '').startsWith('9.1') || (esxVersion || '').startsWith('9.1') || (operationsVersion || '').startsWith('9.1');
+                const _lhDataAvi = !_isSource910Lh ? upgradeData.components['license_hub'] : null;
                 if (_lhDataAvi) {
                     aviPhases.push({ number: aviPhases.length + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataAvi, componentId: 'license_hub' });
                 }
+                const _hasLhAvi = aviPhases.some(p => p.componentId === 'license_hub');
                 steps.push({
                     number: steps.length + 1,
-                    title: 'Upgrade Avi Load Balancer & Deploy License Hub',
-                    description: 'Upgrade Avi Load Balancer and Deploy License Hub',
+                    title: _hasLhAvi ? 'Upgrade Avi Load Balancer & Deploy License Hub' : 'Upgrade Avi Load Balancer',
+                    description: _hasLhAvi ? 'Upgrade Avi Load Balancer and Deploy License Hub' : 'Upgrade Avi Load Balancer',
                     phases: aviPhases
                 });
             }
@@ -2077,7 +2126,8 @@
                 if (nsxPhases.length > 0) {
                     // Inject License Hub into NSX step only when vDefend selected AND AVI not selected
                     // (if AVI selected, License Hub already appears under the AVI step)
-                    const _vdefendOnly = selectedProducts['vdefend'] === true && aviPhases.length === 0;
+                    const _isSource910Lh = (vcenterVersion || '').startsWith('9.1') || (esxVersion || '').startsWith('9.1') || (operationsVersion || '').startsWith('9.1');
+                    const _vdefendOnly = selectedProducts['vdefend'] === true && aviPhases.length === 0 && !_isSource910Lh;
                     const _nsxPhasesCombined = [...nsxPhases];
                     if (_vdefendOnly) {
                         const _lhDataNsx = upgradeData.components['license_hub'];
@@ -2394,7 +2444,7 @@
                 var _tableA = _buildVerTable(_pathAComponents);
                 var _tableB = _buildVerTable(_pathBComponents);
 
-                const isConvergeOnly = vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k' || nsxVersion.startsWith('4.2.4');
+                const isConvergeOnly = ((vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k') && (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.0')) || (nsxVersion || '').startsWith('4.2.4');
 
             if (!isConvergeOnly) {
             steps.push({
@@ -2503,9 +2553,9 @@
                     ]
                 });
             }
-
-            return steps;
         }
+
+        return steps;
     }
         
         function displayStepsView() {
@@ -2522,7 +2572,7 @@
                         <button class="btn" onclick="window.location.href='index.html'" style="background: #6c757d;">Start Over</button>
                     </div>
                 `;
-                generateDiagram();
+                if (typeof generateDiagram === "function") generateDiagram();
                 return;
             }
             
@@ -2661,10 +2711,10 @@
             html += `</div></div>`;
             
             container.innerHTML = applyTargetVersion(html);
-            generateDiagram();
+            if (typeof generateDiagram === "function") generateDiagram();
             
             // Initialize inline documentation after content is loaded
-            setTimeout(() => initInlineDocumentation(), 100);
+            setTimeout(() => { if (typeof initInlineDocumentation === "function") initInlineDocumentation(); }, 100);
         }
         
         function nextStep() {
@@ -3010,10 +3060,10 @@
         function getAllPhasesForExport() {
             // Regenerate ALL phases regardless of current progress
             const phases = [];
-            const isConvergeOnly = vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k' || nsxVersion.startsWith('4.2.4');
+            const isConvergeOnly = ((vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k') && (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.0')) || (nsxVersion || '').startsWith('4.2.4');
 
             // Operations pre-upgrade for sub-8.18 versions (first)
-            if (operationsSelected && !isConvergeOnly && (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17'))) {
+            if (operationsSelected && (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17'))) {
                 const opsPrereqData = upgradeData ? upgradeData.components['operations_prereq'] : null;
                 if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
@@ -3050,7 +3100,7 @@
                 }
             }
 
-            if (!isConvergeOnly) {
+            if (!isConvergeOnly && !(vcenterVersion || '').startsWith('9.1')) {
                 const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
                 const effVC = (vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2')) ? '8.0u3' : vcenterVersion;
                 const vcDesc = effVC === '8.0u3' ? 'Upgrade vCenter' : 'Upgrade vCenter';
@@ -3603,7 +3653,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => initInlineDocumentation(), 1000);
+            setTimeout(() => { if (typeof initInlineDocumentation === "function") initInlineDocumentation(); }, 1000);
         });
 
         // Sidebar navigation function
@@ -3861,6 +3911,253 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {}
 });
 
+function stripBasicHtml(html) {
+    if (!html) return '';
+    if (typeof html !== 'string') return String(html);
+
+    return html
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<\/div>/gi, '\n')
+        .replace(/<\/li>/gi, '\n')
+        .replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, '*$1*')
+        .replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, '*$1*')
+        .replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, '_$1_')
+        .replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, '_$1_')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/\r\n/g, '\n')
+        .replace(/\n\s*\n\s*\n+/g, '\n\n')
+        .trim();
+}
+
+function convertHtmlToJiraText(html) {
+    if (!html) return '';
+    if (typeof html !== 'string') return String(html);
+
+    var text = html;
+
+    if (/<table/i.test(text)) {
+        text = text.replace(/<table[^>]*>([\s\S]*?)<\/table>/gi, function(match, tableBody) {
+            var jiraTable = '\n\n';
+            var rows = tableBody.match(/<tr[^>]*>([\s\S]*?)<\/tr>/gi) || [];
+            rows.forEach(function(rowHtml) {
+                var isHeader = /<th/i.test(rowHtml);
+                var cells = [];
+                var cellRegex = isHeader ? /<th[^>]*>([\s\S]*?)<\/th>/gi : /<td[^>]*>([\s\S]*?)<\/td>/gi;
+                var cellMatch;
+                while ((cellMatch = cellRegex.exec(rowHtml)) !== null) {
+                    var cellText = stripBasicHtml(cellMatch[1]).replace(/\n+/g, ' ');
+                    cells.push(cellText);
+                }
+                if (cells.length > 0) {
+                    var sep = isHeader ? '||' : '|';
+                    jiraTable += sep + cells.join(sep) + sep + '\n';
+                }
+            });
+            return jiraTable + '\n';
+        });
+    }
+
+    return stripBasicHtml(text);
+}
+
+function generateJiraSummaryText() {
+    const pageTitle = document.title || 'VCF Upgrade Plan';
+    
+    let text = `h2. Change Request Plan: ${pageTitle}\n\n`;
+    text += `*Generated via VMware VCF Upgrade Planner*\n`;
+    text += `*Export Date:* ${new Date().toLocaleDateString()}\n\n`;
+    
+    const depType = typeof deploymentType !== 'undefined' ? (deploymentType === 'ha' ? 'High Availability' : 'Simple') : null;
+    const depSize = typeof deploymentSize !== 'undefined' ? deploymentSize.toUpperCase() : null;
+    
+    text += `h3. 1. Executive Summary & Configuration\n`;
+    if (depType) text += `* *Deployment Type:* ${depType}\n`;
+    if (depSize) text += `* *Deployment Size:* ${depSize}\n`;
+    if (typeof vcenterVersion !== 'undefined' && vcenterVersion) text += `* *Current vCenter Version:* ${vcenterVersion}\n`;
+    if (typeof esxVersion !== 'undefined' && esxVersion) text += `* *Current ESXi Version:* ${esxVersion}\n`;
+    
+    const selectedProds = window.selectedAdvancedProducts || {};
+    const selectedNames = [];
+    if (typeof G_INDEX !== 'undefined') {
+        G_INDEX.forEach(item => {
+            if (selectedProds[item.id]) selectedNames.push(item.name);
+        });
+    }
+    if (selectedNames.length) {
+        text += `* *Selected Optional Components:* ${selectedNames.join(', ')}\n`;
+    }
+    text += `\n`;
+    
+    if (typeof allSteps !== 'undefined' && allSteps && allSteps.length) {
+        text += `h3. 2. Detailed Execution Plan (${allSteps.length} Steps, ${allPhases.length} Phases)\n\n`;
+        allSteps.forEach(step => {
+            text += `h4. Step ${step.number}: ${step.title}\n`;
+            if (step.description) text += `_${convertHtmlToJiraText(step.description)}_\n\n`;
+            
+            step.phases.forEach(phase => {
+                text += `*Phase ${phase.number}: ${phase.title}*\n`;
+                if (phase.description) text += `${convertHtmlToJiraText(phase.description)}\n`;
+                
+                if (phase.data) {
+                    if (phase.data.prereqs && phase.data.prereqs.length) {
+                        text += `\n*Prerequisites:*\n`;
+                        phase.data.prereqs.forEach(p => {
+                            text += `* ${convertHtmlToJiraText(p)}\n`;
+                        });
+                    }
+                    
+                    const notices = (phase.data._injectedWarnings || []).concat(phase.data.notices || []);
+                    if (notices.length) {
+                        text += `\n*Important Warnings & Notices:*\n`;
+                        notices.forEach(n => {
+                            text += `* [!] *${convertHtmlToJiraText(n.title)}*\n`;
+                            if (n.bullets && n.bullets.length) {
+                                n.bullets.forEach(b => {
+                                    if (typeof b === 'object' && b.text) {
+                                        text += `  - ${convertHtmlToJiraText(b.text)}\n`;
+                                        if (b.sub_bullets) {
+                                            b.sub_bullets.forEach(sb => text += `    -- ${convertHtmlToJiraText(sb)}\n`);
+                                        }
+                                    } else {
+                                        const formattedB = convertHtmlToJiraText(b);
+                                        if (formattedB.includes('||') || formattedB.includes('\n|')) {
+                                            const parts = formattedB.split('\n\n');
+                                            parts.forEach(part => {
+                                                part = part.trim();
+                                                if (part.startsWith('||') || part.startsWith('|')) {
+                                                    text += `\n${part}\n\n`;
+                                                } else if (part) {
+                                                    text += `  - ${part}\n`;
+                                                }
+                                            });
+                                        } else {
+                                            text += `  - ${formattedB}\n`;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    
+                    if (phase.data.steps && phase.data.steps.length) {
+                        text += `\n*Execution Procedures:*\n`;
+                        phase.data.steps.forEach((s) => {
+                            text += `# ${convertHtmlToJiraText(s)}\n`;
+                        });
+                    }
+                    
+                    if (phase.data.tables && phase.data.tables.length) {
+                        phase.data.tables.forEach(table => {
+                            text += `\n*Table: ${convertHtmlToJiraText(table.title)}*\n`;
+                            if (table.description) text += `_${convertHtmlToJiraText(table.description)}_\n`;
+                            if (table.headers && table.rows) {
+                                text += `||${table.headers.map(h => convertHtmlToJiraText(h)).join('||')}||` + `\n`;
+                                table.rows.forEach(row => {
+                                    text += `|${row.map(c => convertHtmlToJiraText(c)).join('|')}|` + `\n`;
+                                });
+                            }
+                        });
+                    }
+                }
+                text += `\n`;
+            });
+            
+            const safeStopPhase = step.phases.find(p => p.data && p.data.safe_stopping_point);
+            if (safeStopPhase) {
+                text += `*Safe Stopping Point:* YES - After Step ${step.number}, system is stable and fully operational.\n`;
+                if (safeStopPhase.data && safeStopPhase.data.stopping_point_reason) {
+                    text += `*Validation Reason:* ${convertHtmlToJiraText(safeStopPhase.data.stopping_point_reason)}\n`;
+                }
+                text += `\n`;
+            }
+            text += `----\n\n`;
+        });
+    } else if (typeof allPhases !== 'undefined' && allPhases && allPhases.length) {
+        text += `h3. 2. Detailed Execution Plan (${allPhases.length} Phases)\n\n`;
+        allPhases.forEach(phase => {
+            text += `h4. Phase ${phase.number}: ${phase.title}\n`;
+            if (phase.description) text += `_${convertHtmlToJiraText(phase.description)}_\n\n`;
+            if (phase.data) {
+                if (phase.data.prereqs && phase.data.prereqs.length) {
+                    text += `*Prerequisites:*\n`;
+                    phase.data.prereqs.forEach(p => text += `* ${convertHtmlToJiraText(p)}\n`);
+                }
+                if (phase.data.steps && phase.data.steps.length) {
+                    text += `*Execution Procedures:*\n`;
+                    phase.data.steps.forEach(s => text += `# ${convertHtmlToJiraText(s)}\n`);
+                }
+            }
+            text += `\n`;
+        });
+    }
+    
+    text += `h3. 3. Verification & Safe Stopping Points\n`;
+    text += `Each phase in this change plan represents a verified safe stopping point. Upgrades can be paused after any phase to validate workload health.\n`;
+    return text;
+}
+
+function copyJiraSummary() {
+    new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/jira-copy.svg';
+    const text = generateJiraSummaryText();
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('📋 Jira / CAB Plan copied to clipboard! Paste into Jira, ServiceNow, or a text file.');
+        }).catch(() => {
+            fallbackCopyText(text);
+        });
+    } else {
+        fallbackCopyText(text);
+    }
+}
+
+function downloadJiraSummary() {
+    new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/jira-copy.svg';
+    const text = generateJiraSummaryText();
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    const pageTitle = (document.title || 'VCF_Upgrade_Plan').replace(/[^a-zA-Z0-9_-]/g, '_');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${pageTitle}_Change_Request.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('💾 Change Request plan saved as text file!');
+}
+
+function fallbackCopyText(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('📋 Jira / CAB Plan copied to clipboard! Paste into Jira, ServiceNow, or a text file.');
+}
+
+function showToast(message) {
+    let toast = document.getElementById('jiraToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'jiraToast';
+        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:10000;background:#10B981;color:white;padding:14px 22px;border-radius:8px;font-weight:600;font-size:0.92rem;box-shadow:0 4px 16px rgba(0,0,0,0.25);transition:opacity 0.3s ease, transform 0.3s ease;transform:translateY(10px);opacity:0;pointer-events:none;';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+    }, 3500);
+}
 </script>
 </body>
 </html>

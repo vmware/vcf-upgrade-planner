@@ -1223,9 +1223,22 @@
                         <span id="phaseCounter"></span> • Updates automatically as you select components above
                     </p>
                 </div>
-                        <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0;">
+                <div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn" onclick="copyJiraSummary()" style="background: var(--vmw-blue); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                            📋 Copy for Jira / CAB
+                        </button>
+                        <button class="btn" onclick="downloadJiraSummary()" style="background: var(--vmw-gray); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                            💾 Save .txt Plan
+                        </button>
+                        <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
                             📄 Export Complete Plan
                         </button>
+                    </div>
+                    <p style="margin: 6px 0 0 0; font-size: 0.8rem; color: var(--text-secondary); text-align: right;">
+                        💡 <strong>Tip:</strong> Copies or downloads detailed steps, prerequisites & tables formatted for Jira, ServiceNow, or text files (.txt/.md).
+                    </p>
+                </div>
             </div>
             
             <div class="diagram-container" id="diagram">
@@ -1276,6 +1289,7 @@
 <script>
         // Variables to store selections
         let vcenterVersion = null;
+        let nsxVersion = null;
         let esxVersion = null;
         let operationsSelected = false;
         let operationsVersion = null;
@@ -1322,6 +1336,9 @@
             // Auto-generate the initial upgrade plan
             autoGenerateUpgradePlan();
             updatePageTitlesForTargetVersion();
+            if (typeof autoGenerateUpgradePlan === "function") {
+                autoGenerateUpgradePlan();
+            }
         });
 
         async function loadUpgradeData() {
@@ -1406,28 +1423,39 @@
         }
 
         function autoGenerateUpgradePlan() {
-            vlcmSelected = document.getElementById('vlcmCheck').checked;
-            witnessSelected = document.getElementById('witnessCheck').checked;
-            vchaSelected = document.getElementById('vchaCheck').checked;
+            // Get deployment configuration
+            const simpleRadio = document.getElementById('simpleRadio');
+            deploymentType = simpleRadio && simpleRadio.checked ? 'simple' : 'ha';
+            const sizeSelect = document.getElementById('deploymentSize');
+            deploymentSize = sizeSelect ? sizeSelect.value : 'small';
             
-            // Use selections already set by gSyncCheckboxes() (Option G).
-            // Merge in the 4 legacy checkbox states on top so they stay in sync.
+            // Collect advanced product selections — merge chip selections with legacy checkboxes
             const selectedProducts = Object.assign({}, window.selectedAdvancedProducts || {});
-            selectedProducts['vum_migration'] = document.getElementById('vlcmCheck').checked;
-            selectedProducts['vsan_witness']  = document.getElementById('witnessCheck').checked;
-            selectedProducts['vcha']          = document.getElementById('vchaCheck').checked;
-            selectedProducts['auto_deploy']   = document.getElementById('autodeployCheck').checked;
-
+            if (upgradeData && upgradeData.optional_products) {
+                upgradeData.optional_products.forEach(product => {
+                    const checkbox = document.getElementById(product.id + 'Check');
+                    if (checkbox && checkbox.checked) {
+                        selectedProducts[product.id] = true;
+                    }
+                });
+            }
+            
             // Store for use in generateUpgradePlan
             window.selectedAdvancedProducts = selectedProducts;
 
+            vlcmSelected = !!selectedProducts['vum_migration'];
+            witnessSelected = !!selectedProducts['vsan_witness'];
+            supervisorSelected = !!selectedProducts['supervisor'];
+            vchaSelected = !!selectedProducts['vcha'];
+            elmSelected = !!selectedProducts['elm'];
+            
             // Show/hide Auto Deploy deprecation banner
             const autodeployBanner = document.getElementById('autodeployBanner');
-            const autodeployCheck = document.getElementById('autodeployCheck');
+            const autodeployCheck = document.getElementById('autodeployCheck') || document.getElementById('auto_deployCheck');
             if (autodeployBanner && autodeployCheck) {
                 autodeployBanner.style.display = autodeployCheck.checked ? 'block' : 'none';
             }
-
+            
             // Auto-generate without requiring button click
             generateUpgradePlan();
         }
@@ -1448,7 +1476,7 @@
         function generateUpgradePlan() {
             const phases = [];
             const selectedProducts = window.selectedAdvancedProducts || {};
-            const vCenterblockupgrade = vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k';
+            const vCenterblockupgrade = (vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k') && (window.targetVcf91Version || '').startsWith('9.1.0');
 
             
             if (!upgradeData || !upgradeData.upgrade_order) {
@@ -1457,14 +1485,14 @@
             }
 
             // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
-            if (operationsSelected && (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17'))) {
+            if (operationsSelected && ((operationsVersion || '').startsWith('8.16') || (operationsVersion || '').startsWith('8.17'))) {
                 const opsPrereqData = upgradeData.components['operations_prereq'] || null;
                 if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
-            const vcNeedsPreUpgrade = vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2');
-            const esxNeedsPreUpgrade = esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2');
+            const vcNeedsPreUpgrade = (vcenterVersion || '').startsWith('8.0u1') || (vcenterVersion || '').startsWith('8.0u2');
+            const esxNeedsPreUpgrade = (esxVersion || '').startsWith('8.0u1') || (esxVersion || '').startsWith('8.0u2');
             if (vcNeedsPreUpgrade && esxNeedsPreUpgrade) {
                 const prereqData = upgradeData.components['vcenter_esx_prereq'] || null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade vCenter & ESX to 8.0u3', description: 'Upgrade both vCenter and ESX to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
@@ -1478,6 +1506,11 @@
 
             console.log('Generating upgrade plan with selected products:', selectedProducts);
             
+            const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+            const isTarget911 = (targetVer || '').startsWith('9.1.1');
+            const isSource910 = (vcenterVersion || '').startsWith('9.1') || (esxVersion || '').startsWith('9.1') || (operationsVersion || '').startsWith('9.1');
+            const is910To911 = isSource910 && isTarget911;
+
             // Iterate through upgrade_order array to maintain strict sequence
             upgradeData.upgrade_order.forEach(componentId => {
                 let shouldInclude = false;
@@ -1487,39 +1520,61 @@
                 
                 // Determine if this component should be included based on component type
                 if (componentId === 'operations') {
-                    // Only include if Operations is already deployed AND needs upgrading.
-                    // If not selected (not deployed), skip — the VCF Installer deploys it automatically.
-                    // If already on 9.1.x, skip — no upgrade needed.
-                    if (operationsSelected && operationsVersion.startsWith('9.1')) {
+                    const opsIsAtTarget = isTarget911 ? (operationsVersion || '').startsWith('9.1.1') : (operationsVersion || '').startsWith('9.1');
+                    if (opsIsAtTarget) {
                         shouldInclude = false;
+                    } else if (operationsSelected || isSource910) {
+                        shouldInclude = true;
+                        phaseTitle = 'Upgrade VCF Operations';
+                        phaseDescription = 'Upgrade VCF Operations';
+                        const baseOps = upgradeData.components['operations'];
+                        if (baseOps) {
+                            const clonedOps = JSON.parse(JSON.stringify(baseOps));
+                            clonedOps.tables = (clonedOps.tables || []).filter(t => !t.title.toLowerCase().includes('cloud proxy'));
+                            if (isSource910) {
+                                clonedOps.notices = [{
+                                    type: 'info',
+                                    title: 'License Server Update',
+                                    bullets: ['License Server is updated as part of the VCF Operations upgrade.']
+                                }];
+                            }
+                            componentData = clonedOps;
+                        }
                     } else {
                         shouldInclude = true;
-                        // Customer HAS Operations — upgrade it
-                        const effOpsVer = (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17')) ? '8.18.0' : operationsVersion;
-                        if (effOpsVer === '8.18.x') {
-                            phaseTitle = 'Upgrade VCF Operations';
-                            phaseDescription = 'Upgrade VCF Operations';
-                        } else {
-                            phaseTitle = 'Upgrade VCF Operations';
-                            phaseDescription = 'Upgrade VCF Operations';
+                        phaseTitle = 'Install VCF Operations';
+                        phaseDescription = 'Install VCF Operations (new installation)';
+                        const baseOps = upgradeData.components['operations_install'];
+                        if (baseOps) {
+                            const clonedOps = JSON.parse(JSON.stringify(baseOps));
+                            clonedOps.tables = (clonedOps.tables || []).filter(t => !t.title.toLowerCase().includes('cloud proxy'));
+                            componentData = clonedOps;
                         }
-                        componentData = upgradeData.components['operations'];
                     }
                 } else if (componentId === 'vcenter') {
-                    // vCenter included unless already on 9.1.x (no upgrade needed)
-                    // 8.0u3j/8.0u3k: no vCenter upgrade — other products still ok
-                    shouldInclude = !vcenterVersion.startsWith('9.1') && !vCenterblockupgrade;
+                    const vcIsAtTarget = isTarget911 ? (vcenterVersion || '').startsWith('9.1.1') : ((vcenterVersion || '').startsWith('9.1') || vCenterblockupgrade);
+                    shouldInclude = !vcIsAtTarget;
                     phaseTitle = componentData ? componentData.name : 'vCenter Server';
                     phaseDescription = 'Upgrade ' + phaseTitle;
+
+                    if (componentData) {
+                        componentData = JSON.parse(JSON.stringify(componentData));
+                        if (componentData.steps) {
+                            componentData.steps = componentData.steps.map(s => {
+                                return s.replace(/\s*-\s*All Guidance is provided in link\s*\(<a [^>]+>.*?<\/a>\)\.?,?/gi, '.')
+                                        .replace(/<a [^>]+>.*?<\/a>/gi, '')
+                                        .replace(/\s+\./g, '.');
+                            });
+                        }
+                    }
                 }  else if (componentId === 'vxrail') {
                     // VxRail only if selected - replaces ESX
                     shouldInclude = vxrailSelected;
                     phaseTitle = componentData ? componentData.name : 'VxRail';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'esx') {
-                    // ESX only if VxRail is NOT selected
-                    // 8.0u3j/8.0u3k: no ESX upgrade allowed
-                    shouldInclude = !vxrailSelected && !vCenterblockupgrade;
+                    const esxIsAtTarget = isTarget911 ? (esxVersion || '').startsWith('9.1.1') : ((esxVersion || '').startsWith('9.1') || vCenterblockupgrade);
+                    shouldInclude = !vxrailSelected && !esxIsAtTarget;
                     phaseTitle = componentData ? componentData.name : 'ESX Hosts';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'elm') {
@@ -1543,18 +1598,50 @@
                     phaseTitle = componentData ? componentData.name : 'VUM Cluster Migration to VMware Lifecycle Manager Images (vLCM)';
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'vcf_installer') {
-                    // Always include VCF Installer — variant depends on whether Operations is already deployed
-                    shouldInclude = true;
-                    if (operationsSelected) {
-                        // Operations already upgraded above — installer deploys License + Mgmt Services only
-                        componentData = upgradeData.components['vcf_installer_vcenter_with_ops'];
-                        phaseTitle = 'VCF Installer';
-                        phaseDescription = 'Deploy VCF Installer to provision Management Services (VCF Operations already deployed)';
+                    if (is910To911) {
+                        shouldInclude = false;
                     } else {
-                        // No Operations — installer deploys VCF Operations + License + Mgmt Services
-                        componentData = upgradeData.components['vcf_installer_vcenter_only'];
-                        phaseTitle = 'VCF Installer';
-                        phaseDescription = 'Deploy VCF Installer to provision VCF Operations and Management Services';
+                        shouldInclude = true;
+                        if (operationsSelected) {
+                            // Operations already upgraded above — installer deploys License + Mgmt Services only
+                            componentData = upgradeData.components['vcf_installer_vcenter_with_ops'];
+                            phaseTitle = 'VCF Installer';
+                            phaseDescription = 'Deploy VCF Installer to provision Management Services (VCF Operations already deployed)';
+                        } else {
+                            // No Operations — installer deploys VCF Operations + License + Mgmt Services
+                            componentData = upgradeData.components['vcf_installer_vcenter_only'];
+                            phaseTitle = 'VCF Installer';
+                            phaseDescription = 'Deploy VCF Installer to provision VCF Operations and Management Services';
+                        }
+                    }
+
+                    if (componentData) {
+                        try {
+                            const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
+                            const is911 = (targetVer || '').startsWith('9.1.1');
+                            const is910 = (targetVer || '').startsWith('9.1.0');
+
+                            const clonedData = JSON.parse(JSON.stringify(componentData));
+                            let keysToTry = [];
+                            if (is911) {
+                                keysToTry.push('tables_9_1_1_0', 'tables_9_1_1');
+                            } else if (is910) {
+                                keysToTry.push('tables_9_1_0_0', 'tables_9_1_0');
+                            }
+                            keysToTry.push('tables');
+
+                            let foundTable = null;
+                            for (const k of keysToTry) {
+                                if (clonedData[k]) {
+                                    foundTable = clonedData[k];
+                                    break;
+                                }
+                            }
+                            if (foundTable) {
+                                clonedData.tables = foundTable;
+                                componentData = clonedData;
+                            }
+                        } catch (e) {}
                     }
                 } else {
                     // All other components (advanced products) - check if selected
@@ -1575,6 +1662,35 @@
                 }
             });
             
+            const _is910Phase = (vcenterVersion || '').startsWith('9.1') || (esxVersion || '').startsWith('9.1') || (operationsVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1');
+            if (_is910Phase && isTarget911) {
+                phases.unshift({
+                    number: 1,
+                    title: 'VCF Management Services Fleet Lifecycle Component Patch',
+                    description: 'Patch the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component.',
+                    data: {
+                        name: 'VCF Management Services Fleet Lifecycle Component Patch',
+                        description: 'You begin applying the 9.1.1.0 maintenance release in your 9.1.0.x environment by patching the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component.',
+                        notices: [
+                            {
+                                type: 'info',
+                                title: 'Lifecycle Management & Component Dependencies (9.1.0.x → 9.1.1.0)',
+                                bullets: [
+                                    '<strong>1.</strong> You begin applying the 9.1.1.0 maintenance release in your 9.1.0.x environment by patching the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component.',
+                                    {
+                                        text: '<strong>2.</strong> After the fleet lifecycle component is at version 9.1.1.0, you can simultaneously patch the remaining components per the needs of your organization and must comply only with the following dependencies:',
+                                        sub_bullets: [
+                                            '<strong>a.</strong> Before you patch an identity broker instance from 9.1.0.0 to 9.1.1.0, you must first patch the respective VCF management services runtime that hosts the identity broker instance.'
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    componentId: 'vcf_fleet_lifecycle'
+                });
+            }
+
             // Renumber all phases to ensure sequential numbering
             phases.forEach((phase, index) => {
                 phase.number = index + 1;
@@ -1610,7 +1726,8 @@
             const steps = [];
             selectedProducts = selectedProducts || {};
 
-            // Buckets — ordered: DR → AVI → Operations+License → vCHA → vCenter → vLCM → Witness → supervisor → VxRail/ESX → Post-infra
+            // Buckets — ordered: Fleet Lifecycle → DR → AVI → Operations+License → vCHA → vCenter → vLCM → Witness → supervisor → VxRail/ESX → Post-infra
+            const fleetLifecyclePhases = [];
             const prereqPhases = [];
             const drPhases = [];
             const aviPhases = [];
@@ -1631,7 +1748,9 @@
                 const optionalProduct = upgradeData.optional_products?.find(p => p.id === phase.componentId);
                 const isPostInfraOptional = optionalProduct && optionalProduct.upgrade_phase === 'post_infrastructure';
 
-                if (phase.componentId === 'vcenter_esx_prereq' || phase.componentId === 'operations_prereq') {
+                if (phase.componentId === 'vcf_fleet_lifecycle') {
+                    fleetLifecyclePhases.push(phase);
+                } else if (phase.componentId === 'vcenter_esx_prereq' || phase.componentId === 'operations_prereq') {
                     prereqPhases.push(phase);
                 } else if (phase.componentId === 'replication' || phase.componentId === 'srm' || phase.componentId === 'vsan_data_protection') {
                     drPhases.push(phase);
@@ -1665,11 +1784,20 @@
             });
 
             // Sort all buckets
-            [prereqPhases, drPhases, aviPhases, operationsPhases, vchaPhases, vcenterPhases,
+            [fleetLifecyclePhases, prereqPhases, drPhases, aviPhases, operationsPhases, vchaPhases, vcenterPhases,
              vlcmPhases, supervisorPhases, witnessPhases, vxrailPhases, esxPhases, advancedPhases]
                 .forEach(arr => arr.sort((a, b) => a.number - b.number));
 
             // Build steps
+            if (fleetLifecyclePhases.length > 0) {
+                steps.push({
+                    number: steps.length + 1,
+                    title: 'VCF Management Services Fleet Lifecycle Component Patch',
+                    description: 'Patch VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component',
+                    phases: fleetLifecyclePhases
+                });
+            }
+
             prereqPhases.forEach(phase => {
                 steps.push({
                     number: steps.length + 1,
@@ -1690,15 +1818,18 @@
 
              if (aviPhases.length > 0) {
                 const combinedAviPhases = [...aviPhases];
-                const licenseHubData = upgradeData.components['license_hub'];
-                if (licenseHubData) {
-                    combinedAviPhases.push({
-                        number: Math.max(0, ...combinedAviPhases.map(p => p.number)) + 1,
-                        title: 'Deploy License Hub',
-                        description: 'Deploy License Hub',
-                        data: licenseHubData,
-                        componentId: 'license_hub'
-                    });
+                const _isSource910Lh = (vcenterVersion || '').startsWith('9.1') || (esxVersion || '').startsWith('9.1') || (operationsVersion || '').startsWith('9.1');
+                if (!_isSource910Lh) {
+                    const licenseHubData = upgradeData.components['license_hub'];
+                    if (licenseHubData) {
+                        combinedAviPhases.push({
+                            number: Math.max(0, ...combinedAviPhases.map(p => p.number)) + 1,
+                            title: 'Deploy License Hub',
+                            description: 'Deploy License Hub',
+                            data: licenseHubData,
+                            componentId: 'license_hub'
+                        });
+                    }
                 }
                 steps.push({
                     number: steps.length + 1,
@@ -1909,7 +2040,7 @@
                 if (_selProdsNow['avi'])          _pathBComponents.push('Avi Load Balancer');
                 if (_selProdsNow['logs'])         _pathBComponents.push('Log Management (Logs)');
                 if (_selProdsNow['operations_orchestrator'])    _pathBComponents.push('VCF Operations orchestrator');
-                if (_selProdsNow['vsan_witness'])    _pathBComponents.push('vSAN Witness')
+                if (_selProdsNow['vsan_witness'])    _pathBComponents.push('vSAN Witness');
 
 
                 var _tableA = _buildVerTable(_pathAComponents);
@@ -1972,7 +2103,7 @@
                         <button class="btn" onclick="window.location.href='index.html'" style="background: #6c757d;">Start Over</button>
                     </div>
                 `;
-                generateDiagram();
+                if (typeof generateDiagram === "function") generateDiagram();
                 return;
             }
             
@@ -2035,8 +2166,20 @@
                             const icon = notice.type === 'warning' ? '⚠️' : 'ℹ️';
                             html += `<div style="background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid ${color}; padding: 12px 16px; margin-top: 12px; border-radius: 8px; font-size: 0.9rem; color: var(--text-primary);"><strong>${icon} ${notice.title}</strong>`;
                             if (notice.bullets && notice.bullets.length > 0) {
-                                html += `<ul style="margin: 5px 0 0 20px;">`;
-                                notice.bullets.forEach(b => html += `<li>${b}</li>`);
+                                html += `<ul style="margin: 8px 0 0 20px;">`;
+                                notice.bullets.forEach(bullet => {
+                                    if (typeof bullet === 'object' && bullet.sub_bullets) {
+                                        const isNumbered = (typeof bullet.text === 'string' && (bullet.text.startsWith('<strong>1.') || bullet.text.startsWith('<strong>2.')));
+                                        const styleAttr = isNumbered ? 'style="list-style: none; margin-left: -20px; margin-top: 6px;"' : '';
+                                        html += `<li ${styleAttr}>${bullet.text}<ul style="margin: 4px 0 0 20px; list-style: none; padding-left: 0;">`;
+                                        bullet.sub_bullets.forEach(sb => html += `<li style="margin-top: 4px;">${sb}</li>`);
+                                        html += `</ul></li>`;
+                                    } else if (typeof bullet === 'string' && (bullet.startsWith('<strong>1.') || bullet.startsWith('<strong>2.'))) {
+                                        html += `<li style="list-style: none; margin-left: -20px; margin-top: 6px;">${bullet}</li>`;
+                                    } else {
+                                        html += `<li>${bullet}</li>`;
+                                    }
+                                });
                                 html += `</ul>`;
                             }
                             html += `</div>`;
@@ -2083,7 +2226,7 @@
             html += `</div></div>`;
             
             container.innerHTML = applyTargetVersion(html);
-            generateDiagram();
+            if (typeof generateDiagram === "function") generateDiagram();
         }
         
         function nextStep() {
@@ -2401,14 +2544,14 @@
             // Regenerate ALL phases regardless of current progress
             const phases = [];
             // Operations pre-upgrade for sub-8.18 versions (must come before vCenter/ESX)
-            if (operationsSelected && (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17'))) {
+            if (operationsSelected && ((operationsVersion || '').startsWith('8.16') || (operationsVersion || '').startsWith('8.17'))) {
                 const opsPrereqData = upgradeData ? upgradeData.components['operations_prereq'] : null;
                 if (opsPrereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade Aria Operations to 8.18.x', description: 'Upgrade Aria Operations to 8.18.x', data: opsPrereqData, componentId: 'operations_prereq' });
             }
 
             // vCenter/ESX pre-upgrade for 8.0u1/8.0u2
-            const vcNeedsPreUpgrade = vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2');
-            const esxNeedsPreUpgrade = esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2');
+            const vcNeedsPreUpgrade = (vcenterVersion || '').startsWith('8.0u1') || (vcenterVersion || '').startsWith('8.0u2');
+            const esxNeedsPreUpgrade = (esxVersion || '').startsWith('8.0u1') || (esxVersion || '').startsWith('8.0u2');
             if (vcNeedsPreUpgrade && esxNeedsPreUpgrade) {
                 const prereqData = upgradeData ? upgradeData.components['vcenter_esx_prereq'] : null;
                 if (prereqData) phases.push({ number: phases.length + 1, title: 'Pre-Upgrade: Upgrade vCenter & ESX to 8.0u3', description: 'Upgrade both vCenter and ESX to 8.0u3 before proceeding', data: prereqData, componentId: 'vcenter_esx_prereq' });
@@ -2421,28 +2564,42 @@
             }
 
             // Operations — included unless already on 9.1.x; install if not currently deployed
-            if (operationsSelected && !operationsVersion.startsWith('9.1')) {
+            if (operationsSelected && !(operationsVersion || '').startsWith('9.1')) {
                 const opsData = upgradeData ? upgradeData.components.operations : null;
-                const effOpsVersion = (operationsVersion.startsWith('8.16') || operationsVersion.startsWith('8.17')) ? '8.18.0' : operationsVersion;
+                const effOpsVersion = ((operationsVersion || '').startsWith('8.16') || (operationsVersion || '').startsWith('8.17')) ? '8.18.0' : operationsVersion;
                 const opsDesc = effOpsVersion === '8.18.x'
                     ? 'Upgrade VCF Operations'
                     : 'Upgrade VCF Operations';
-                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: opsDesc, data: opsData, componentId: 'operations' });
+                let clonedData = opsData;
+                if (opsData) {
+                    clonedData = JSON.parse(JSON.stringify(opsData));
+                    clonedData.tables = (clonedData.tables || []).filter(t => !t.title.toLowerCase().includes('cloud proxy'));
+                }
+                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: opsDesc, data: clonedData, componentId: 'operations' });
             } else if (!operationsSelected) {
                 const opsInstallData = upgradeData ? upgradeData.components.operations_install : null;
-                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations (new installation)', data: opsInstallData, componentId: 'operations_install' });
+                let clonedData = opsInstallData;
+                if (opsInstallData) {
+                    clonedData = JSON.parse(JSON.stringify(opsInstallData));
+                    clonedData.tables = (clonedData.tables || []).filter(t => !t.title.toLowerCase().includes('cloud proxy'));
+                }
+                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations (new installation)', data: clonedData, componentId: 'operations_install' });
             }
-            // operationsSelected && operationsVersion.startsWith('9.1'): already at target, skip upgrade phase
+            // operationsSelected && (operationsVersion || '').startsWith('9.1'): already at target, skip upgrade phase
 
-            // License Server — always included alongside Operations
-            const licenseData = upgradeData ? upgradeData.components.license : null;
-            phases.push({ number: phases.length + 1, title: 'License Server', description: 'Deploy License Server', data: licenseData, componentId: 'license' });
+            // License Server — included when installing Operations
+            if (!operationsSelected) {
+                const licenseData = upgradeData ? upgradeData.components.license : null;
+                if (licenseData) {
+                    phases.push({ number: phases.length + 1, title: 'License Server', description: 'Deploy License Server', data: licenseData, componentId: 'license' });
+                }
+            }
 
             // vCenter — included unless already on 9.1.x (no upgrade needed)
             // 8.0u3j/8.0u3k: no vCenter/ESX upgrade
-            if (!vcenterVersion.startsWith('9.1')) {
+            if (!(vcenterVersion || '').startsWith('9.1')) {
                 const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
-                const effVC = (vcenterVersion.startsWith('8.0u1') || vcenterVersion.startsWith('8.0u2')) ? '8.0u3' : vcenterVersion;
+                const effVC = ((vcenterVersion || '').startsWith('8.0u1') || (vcenterVersion || '').startsWith('8.0u2')) ? '8.0u3' : vcenterVersion;
                 const vcDesc = effVC === '8' ? 'Upgrade vCenter' : 'Upgrade vCenter';
                 phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
             }
@@ -2460,7 +2617,7 @@
             // ESX — always included (unless VxRail)
             if (!vxrailSelected) {
                 const esxData = upgradeData ? upgradeData.components.esx : null;
-                const effESX = (esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2')) ? '8.0u3' : esxVersion;
+                const effESX = ((esxVersion || '').startsWith('8.0u1') || (esxVersion || '').startsWith('8.0u2')) ? '8.0u3' : esxVersion;
                 const esxDesc = effESX === '8' ? 'Upgrade all ESX hosts from 8.x to 9.1.x' : 'Upgrade all ESX hosts from 9.0.x to 9.1.x';
                 phases.push({ number: phases.length + 1, title: 'Upgrade ESX Hosts', description: esxDesc, data: esxData, componentId: 'esx' });
             } else {
@@ -2990,7 +3147,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => initInlineDocumentation(), 1000);
+            setTimeout(() => { if (typeof initInlineDocumentation === "function") initInlineDocumentation(); }, 1000);
         });
     
         // ============================================================
@@ -3061,10 +3218,10 @@
 
         // Map component ids to the legacy hidden checkbox ids
         const G_CHECKBOX_MAP = {
-            vum_migration: 'vlcmCheck',
-            vsan_witness:  'witnessCheck',
+            vum_migration: 'vum_migrationCheck',
+            vsan_witness:  'vsan_witnessCheck',
             vcha:          'vchaCheck',
-            auto_deploy:   'autodeployCheck',
+            auto_deploy:   'auto_deployCheck',
         };
 
         let G_INDEX = [];
@@ -3263,6 +3420,253 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {}
 });
 
+function stripBasicHtml(html) {
+    if (!html) return '';
+    if (typeof html !== 'string') return String(html);
+
+    return html
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<\/div>/gi, '\n')
+        .replace(/<\/li>/gi, '\n')
+        .replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, '*$1*')
+        .replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, '*$1*')
+        .replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, '_$1_')
+        .replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, '_$1_')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/\r\n/g, '\n')
+        .replace(/\n\s*\n\s*\n+/g, '\n\n')
+        .trim();
+}
+
+function convertHtmlToJiraText(html) {
+    if (!html) return '';
+    if (typeof html !== 'string') return String(html);
+
+    var text = html;
+
+    if (/<table/i.test(text)) {
+        text = text.replace(/<table[^>]*>([\s\S]*?)<\/table>/gi, function(match, tableBody) {
+            var jiraTable = '\n\n';
+            var rows = tableBody.match(/<tr[^>]*>([\s\S]*?)<\/tr>/gi) || [];
+            rows.forEach(function(rowHtml) {
+                var isHeader = /<th/i.test(rowHtml);
+                var cells = [];
+                var cellRegex = isHeader ? /<th[^>]*>([\s\S]*?)<\/th>/gi : /<td[^>]*>([\s\S]*?)<\/td>/gi;
+                var cellMatch;
+                while ((cellMatch = cellRegex.exec(rowHtml)) !== null) {
+                    var cellText = stripBasicHtml(cellMatch[1]).replace(/\n+/g, ' ');
+                    cells.push(cellText);
+                }
+                if (cells.length > 0) {
+                    var sep = isHeader ? '||' : '|';
+                    jiraTable += sep + cells.join(sep) + sep + '\n';
+                }
+            });
+            return jiraTable + '\n';
+        });
+    }
+
+    return stripBasicHtml(text);
+}
+
+function generateJiraSummaryText() {
+    const pageTitle = document.title || 'VCF Upgrade Plan';
+    
+    let text = `h2. Change Request Plan: ${pageTitle}\n\n`;
+    text += `*Generated via VMware VCF Upgrade Planner*\n`;
+    text += `*Export Date:* ${new Date().toLocaleDateString()}\n\n`;
+    
+    const depType = typeof deploymentType !== 'undefined' ? (deploymentType === 'ha' ? 'High Availability' : 'Simple') : null;
+    const depSize = typeof deploymentSize !== 'undefined' ? deploymentSize.toUpperCase() : null;
+    
+    text += `h3. 1. Executive Summary & Configuration\n`;
+    if (depType) text += `* *Deployment Type:* ${depType}\n`;
+    if (depSize) text += `* *Deployment Size:* ${depSize}\n`;
+    if (typeof vcenterVersion !== 'undefined' && vcenterVersion) text += `* *Current vCenter Version:* ${vcenterVersion}\n`;
+    if (typeof esxVersion !== 'undefined' && esxVersion) text += `* *Current ESXi Version:* ${esxVersion}\n`;
+    
+    const selectedProds = window.selectedAdvancedProducts || {};
+    const selectedNames = [];
+    if (typeof G_INDEX !== 'undefined') {
+        G_INDEX.forEach(item => {
+            if (selectedProds[item.id]) selectedNames.push(item.name);
+        });
+    }
+    if (selectedNames.length) {
+        text += `* *Selected Optional Components:* ${selectedNames.join(', ')}\n`;
+    }
+    text += `\n`;
+    
+    if (typeof allSteps !== 'undefined' && allSteps && allSteps.length) {
+        text += `h3. 2. Detailed Execution Plan (${allSteps.length} Steps, ${allPhases.length} Phases)\n\n`;
+        allSteps.forEach(step => {
+            text += `h4. Step ${step.number}: ${step.title}\n`;
+            if (step.description) text += `_${convertHtmlToJiraText(step.description)}_\n\n`;
+            
+            step.phases.forEach(phase => {
+                text += `*Phase ${phase.number}: ${phase.title}*\n`;
+                if (phase.description) text += `${convertHtmlToJiraText(phase.description)}\n`;
+                
+                if (phase.data) {
+                    if (phase.data.prereqs && phase.data.prereqs.length) {
+                        text += `\n*Prerequisites:*\n`;
+                        phase.data.prereqs.forEach(p => {
+                            text += `* ${convertHtmlToJiraText(p)}\n`;
+                        });
+                    }
+                    
+                    const notices = (phase.data._injectedWarnings || []).concat(phase.data.notices || []);
+                    if (notices.length) {
+                        text += `\n*Important Warnings & Notices:*\n`;
+                        notices.forEach(n => {
+                            text += `* [!] *${convertHtmlToJiraText(n.title)}*\n`;
+                            if (n.bullets && n.bullets.length) {
+                                n.bullets.forEach(b => {
+                                    if (typeof b === 'object' && b.text) {
+                                        text += `  - ${convertHtmlToJiraText(b.text)}\n`;
+                                        if (b.sub_bullets) {
+                                            b.sub_bullets.forEach(sb => text += `    -- ${convertHtmlToJiraText(sb)}\n`);
+                                        }
+                                    } else {
+                                        const formattedB = convertHtmlToJiraText(b);
+                                        if (formattedB.includes('||') || formattedB.includes('\n|')) {
+                                            const parts = formattedB.split('\n\n');
+                                            parts.forEach(part => {
+                                                part = part.trim();
+                                                if (part.startsWith('||') || part.startsWith('|')) {
+                                                    text += `\n${part}\n\n`;
+                                                } else if (part) {
+                                                    text += `  - ${part}\n`;
+                                                }
+                                            });
+                                        } else {
+                                            text += `  - ${formattedB}\n`;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    
+                    if (phase.data.steps && phase.data.steps.length) {
+                        text += `\n*Execution Procedures:*\n`;
+                        phase.data.steps.forEach((s) => {
+                            text += `# ${convertHtmlToJiraText(s)}\n`;
+                        });
+                    }
+                    
+                    if (phase.data.tables && phase.data.tables.length) {
+                        phase.data.tables.forEach(table => {
+                            text += `\n*Table: ${convertHtmlToJiraText(table.title)}*\n`;
+                            if (table.description) text += `_${convertHtmlToJiraText(table.description)}_\n`;
+                            if (table.headers && table.rows) {
+                                text += `||${table.headers.map(h => convertHtmlToJiraText(h)).join('||')}||` + `\n`;
+                                table.rows.forEach(row => {
+                                    text += `|${row.map(c => convertHtmlToJiraText(c)).join('|')}|` + `\n`;
+                                });
+                            }
+                        });
+                    }
+                }
+                text += `\n`;
+            });
+            
+            const safeStopPhase = step.phases.find(p => p.data && p.data.safe_stopping_point);
+            if (safeStopPhase) {
+                text += `*Safe Stopping Point:* YES - After Step ${step.number}, system is stable and fully operational.\n`;
+                if (safeStopPhase.data && safeStopPhase.data.stopping_point_reason) {
+                    text += `*Validation Reason:* ${convertHtmlToJiraText(safeStopPhase.data.stopping_point_reason)}\n`;
+                }
+                text += `\n`;
+            }
+            text += `----\n\n`;
+        });
+    } else if (typeof allPhases !== 'undefined' && allPhases && allPhases.length) {
+        text += `h3. 2. Detailed Execution Plan (${allPhases.length} Phases)\n\n`;
+        allPhases.forEach(phase => {
+            text += `h4. Phase ${phase.number}: ${phase.title}\n`;
+            if (phase.description) text += `_${convertHtmlToJiraText(phase.description)}_\n\n`;
+            if (phase.data) {
+                if (phase.data.prereqs && phase.data.prereqs.length) {
+                    text += `*Prerequisites:*\n`;
+                    phase.data.prereqs.forEach(p => text += `* ${convertHtmlToJiraText(p)}\n`);
+                }
+                if (phase.data.steps && phase.data.steps.length) {
+                    text += `*Execution Procedures:*\n`;
+                    phase.data.steps.forEach(s => text += `# ${convertHtmlToJiraText(s)}\n`);
+                }
+            }
+            text += `\n`;
+        });
+    }
+    
+    text += `h3. 3. Verification & Safe Stopping Points\n`;
+    text += `Each phase in this change plan represents a verified safe stopping point. Upgrades can be paused after any phase to validate workload health.\n`;
+    return text;
+}
+
+function copyJiraSummary() {
+    new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/jira-copy.svg';
+    const text = generateJiraSummaryText();
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('📋 Jira / CAB Plan copied to clipboard! Paste into Jira, ServiceNow, or a text file.');
+        }).catch(() => {
+            fallbackCopyText(text);
+        });
+    } else {
+        fallbackCopyText(text);
+    }
+}
+
+function downloadJiraSummary() {
+    new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/jira-copy.svg';
+    const text = generateJiraSummaryText();
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    const pageTitle = (document.title || 'VCF_Upgrade_Plan').replace(/[^a-zA-Z0-9_-]/g, '_');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${pageTitle}_Change_Request.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('💾 Change Request plan saved as text file!');
+}
+
+function fallbackCopyText(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('📋 Jira / CAB Plan copied to clipboard! Paste into Jira, ServiceNow, or a text file.');
+}
+
+function showToast(message) {
+    let toast = document.getElementById('jiraToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'jiraToast';
+        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:10000;background:#10B981;color:white;padding:14px 22px;border-radius:8px;font-weight:600;font-size:0.92rem;box-shadow:0 4px 16px rgba(0,0,0,0.25);transition:opacity 0.3s ease, transform 0.3s ease;transform:translateY(10px);opacity:0;pointer-events:none;';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+    }, 3500);
+}
 </script>
 </body>
 </html>

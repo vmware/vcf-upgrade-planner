@@ -1135,7 +1135,7 @@
             </div>
 
             <!-- Deployment Configuration -->
-            <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue);">
+            <div id="deploymentConfigCard" style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue);">
                 <h3 style="color: var(--text-primary); margin-bottom: 14px; font-size: 16px;">&#x1F3D7;&#xFE0F; Deployment Configuration</h3>
                 <div style="margin-bottom: 14px;">
                     <label style="font-weight: 600; font-size: 14px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Deployment Type:</label>
@@ -1179,28 +1179,29 @@
 
 
         <!-- VMware Identity Broker (vIDB) — outside Additional Products, below Automation -->
-            <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); border-radius: 12px;">
+            <div id="vidbCard" style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); border-radius: 12px;">
                 <div class="checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="vidbCheck" onchange="(function(el){
                             var embQ = document.getElementById('vidbEmbeddedQuestion');
                             var overlayQ = document.getElementById('vidbOverlayQuestion');
-                            if (!el.checked) {
-                                embQ.style.display = 'none';
-                                overlayQ.style.display = 'none';
+                            var _is910To911Vidb = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+                            if (!el.checked || _is910To911Vidb) {
+                                if (embQ) embQ.style.display = 'none';
+                                if (overlayQ) overlayQ.style.display = 'none';
                                 window.vidbIsEmbedded = null;
                                 window.vidbOnOverlay = null;
                                 document.querySelectorAll('input[name=vidbEmbedded]').forEach(function(r){ r.checked = false; });
                                 document.querySelectorAll('input[name=vidbOverlay]').forEach(function(r){ r.checked = false; });
                             } else {
-                                embQ.style.display = 'block';
+                                if (embQ) embQ.style.display = 'block';
                             }
                             autoGenerateUpgradePlan();
                         })(this)">
                         <span>Identity Broker</span>
                     </label>
                 </div>
-                <p style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
+                <p id="vidbHelpNote" style="margin: 8px 0 0 28px; font-size: 13px; color: var(--text-secondary); font-style: italic;">
                     &#x2139;&#xFE0F; <strong>Unchecked</strong> = Identity Broker not yet deployed &mdash; install is covered as part of VCF Management Services deployment | <strong>Checked + Embedded</strong> = no separate upgrade step; notice added to vCenter phase | <strong>Checked + Not Embedded</strong> = Appliance Identity Broker upgrade step added
                 </p>
                 <!-- Question 1: Is Identity Broker Embedded? -->
@@ -1238,9 +1239,22 @@
                         <span id="phaseCounter"></span> • Updates automatically as you select components above
                     </p>
                 </div>
-                        <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0;">
+                <div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn" onclick="copyJiraSummary()" style="background: var(--vmw-blue); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                            📋 Copy for Jira / CAB
+                        </button>
+                        <button class="btn" onclick="downloadJiraSummary()" style="background: var(--vmw-gray); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                            💾 Save .txt Plan
+                        </button>
+                        <button class="btn" onclick="exportToPDF()" style="background: var(--pulse-red); margin: 0; display: inline-flex; align-items: center; gap: 6px;">
                             📄 Export Complete Plan
                         </button>
+                    </div>
+                    <p style="margin: 6px 0 0 0; font-size: 0.8rem; color: var(--text-secondary); text-align: right;">
+                        💡 <strong>Tip:</strong> Copies or downloads detailed steps, prerequisites & tables formatted for Jira, ServiceNow, or text files (.txt/.md).
+                    </p>
+                </div>
             </div>
 
               <!-- Safe Stopping Point Info Banner -->
@@ -1283,6 +1297,8 @@
         let deploymentType = 'simple';
         let deploymentSize = 'small';
         let vxrailSelected = false;
+        let vcfVersion = "";
+        let vcfdetailVersion = "";
         let upgradeData = null; // Will hold the loaded JSON data
         let allPhases = []; // Store all phases
         let currentPhaseIndex = 0; // Track which phase we're showing
@@ -1301,13 +1317,20 @@
         function updatePageTitlesForTargetVersion() {
             if (!window.targetVcf91Version) return;
             var ver = window.targetVcf91Version;
-            // Update all h1 elements containing 9.1
+            var srcVer = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1')) ? 'VCF 9.1.0.x' : 'VCF 9.0';
+            // Update all h1 elements
             document.querySelectorAll('h1').forEach(function(el) {
+                if (el.textContent.indexOf('VCF 9.0') !== -1) {
+                    el.textContent = el.textContent.replace('VCF 9.0', srcVer);
+                }
                 if (el.textContent.indexOf('9.1') !== -1) {
                     el.textContent = el.textContent.replace(/9\.1(?!\.[0-9])/g, ver);
                 }
             });
             // Update browser tab title
+            if (document.title.indexOf('VCF 9.0') !== -1) {
+                document.title = document.title.replace('VCF 9.0', srcVer);
+            }
             if (document.title.indexOf('9.1') !== -1) {
                 document.title = document.title.replace(/9\.1(?!\.[0-9])/g, ver);
             }
@@ -1321,8 +1344,11 @@
             gBuildIndex();
             gRender('');
             // Auto-generate the initial upgrade plan
-            autoGenerateUpgradePlan();
+            updateDeploymentSize();
             updatePageTitlesForTargetVersion();
+            if (typeof autoGenerateUpgradePlan === "function") {
+                autoGenerateUpgradePlan();
+            }
         });
 
           function patchUpgradeDataForVersion(data) {
@@ -1440,22 +1466,62 @@
 
         function updateDeploymentSize() {
             const simpleRadio = document.getElementById('simpleRadio');
+            const haRadio = document.getElementById('haRadio');
             const sizeSelect = document.getElementById('deploymentSize');
-
+            if (!sizeSelect || !simpleRadio) {
+                if (typeof autoGenerateUpgradePlan === "function") {
+                    autoGenerateUpgradePlan();
+                }
+                return;
+            }
+            
+            const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
+            const is911 = (targetVer || '').startsWith('9.1.1');
+            const prevSize = sizeSelect.value;
+            
             deploymentType = simpleRadio.checked ? 'simple' : 'ha';
-
+            
             if (deploymentType === 'simple') {
+                // Simple deployment: only Small is available for both 9.1.0 and 9.1.1
                 sizeSelect.innerHTML = '<option value="small">Small</option>';
                 deploymentSize = 'small';
             } else {
-                sizeSelect.innerHTML = '<option value="medium">Medium</option><option value="large">Large</option>';
-                deploymentSize = 'medium';
+                // HA deployment: 9.1.0 (Medium, Large), 9.1.1 (Small, Medium, Large)
+                if (is911) {
+                    sizeSelect.innerHTML = `
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                    `;
+                    if (['small', 'medium', 'large'].includes(prevSize)) sizeSelect.value = prevSize;
+                    deploymentSize = sizeSelect.value || 'medium';
+                } else {
+                    sizeSelect.innerHTML = `
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                    `;
+                    if (['medium', 'large'].includes(prevSize)) sizeSelect.value = prevSize;
+                    deploymentSize = sizeSelect.value || 'medium';
+                }
             }
-
-            autoGenerateUpgradePlan();
+            
+            // Regenerate the plan with new deployment config
+            if (typeof autoGenerateUpgradePlan === 'function') {
+                autoGenerateUpgradePlan();
+            }
         }
 
+
+
+
+
         function autoGenerateUpgradePlan() {
+            const _is910To911VidbCard = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+            const vidbCardEl = document.getElementById('vidbCard');
+            if (vidbCardEl) vidbCardEl.style.display = _is910To911VidbCard ? 'none' : '';
+            const _is910To911Card = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+            const depCard = document.getElementById('deploymentConfigCard');
+            if (depCard) depCard.style.display = _is910To911Card ? 'none' : '';
             supervisorSelected = document.getElementById('supervisorCheck') ? document.getElementById('supervisorCheck').checked : false;
 
             // Get deployment configuration from DOM
@@ -1533,6 +1599,17 @@
                     shouldInclude = true;
                     componentData = upgradeData.components['operations'];
                     phaseTitle = componentData ? componentData.name : componentId;
+                    const _targetVerOps = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+                    if (_targetVerOps.startsWith('9.1.1') && componentData) {
+                        try {
+                            const clonedOps = JSON.parse(JSON.stringify(componentData));
+                            clonedOps.notices = [];
+                            clonedOps.steps = [
+                                "Upgrade VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/upgrade-a-vcf-management-component.html' target='_blank'>View Documentation</a>)."
+                            ];
+                            componentData = clonedOps;
+                        } catch(e) {}
+                    }
 
                 } else if (componentId === 'vxrail') {
                     // VxRail only if selected - replaces ESX
@@ -1546,7 +1623,7 @@
                     phaseDescription = 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'vcfms') {
                     // VCF Management Services always included — select size-variant tables
-                    shouldInclude = true;
+                    shouldInclude = !((vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1')));
                     phaseTitle = componentData ? componentData.name : 'VCF Management Service Deployment';
                     phaseDescription = 'Deploy VCF management services';
                     if (componentData) {
@@ -1674,6 +1751,37 @@
                 }
             });
             
+            const _is910Phase = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+            if (_is910Phase) {
+                phases.unshift({
+                    number: 1,
+                    title: 'VCF Management Services Fleet Lifecycle Component Patch',
+                    description: "Patch the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component. For more details see (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html' target='_blank'>View Documentation</a>).",
+                    data: {
+                        name: 'VCF Management Services Fleet Lifecycle Component Patch',
+                        description: 'You begin applying the 9.1.1.0 maintenance release in your 9.1.0.x environment by patching the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component.',
+                        notices: [
+                            {
+                                type: 'info',
+                                title: 'Lifecycle Management & Component Dependencies (9.1.0.x → 9.1.1.0)',
+                                bullets: [
+                                    '<strong>1.</strong> You begin applying the 9.1.1.0 maintenance release in your 9.1.0.x environment by patching the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component.',
+                                    {
+                                        text: '<strong>2.</strong> After the fleet lifecycle component is at version 9.1.1.0, you can simultaneously patch the remaining components per the needs of your organization and must comply only with the following dependencies:',
+                                        sub_bullets: [
+                                            '<strong>a.</strong> When you patch a software depot instance, patching other components is blocked because the patch binaries are unavailable until the patch process for the software depot completes.',
+                                            '<strong>b.</strong> Before you patch an identity broker instance from 9.1.0.0 to 9.1.1.0, you must first patch the respective VCF management services runtime that hosts the identity broker instance.',
+                                            '<strong>c.</strong> Before you patch Salt RaaS from 9.1.0.0 to 9.1.1.0, you must first patch the respective VCF management services runtime that hosts the Salt RaaS instance.'
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    componentId: 'vcf_fleet_lifecycle'
+                });
+            }
+
             // Renumber all phases to ensure sequential numbering
             phases.forEach((phase, index) => {
                 phase.number = index + 1;
@@ -1738,7 +1846,10 @@
             // Block plan rendering if vIDB is checked but required questions not yet answered
             const _vidbCheckEl = document.getElementById('vidbCheck');
             const _vidbIsCheckedNow = _vidbCheckEl && _vidbCheckEl.checked;
-            if (_vidbIsCheckedNow && window.vidbIsEmbedded === null) {
+            const _is910To911Plan = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+            const _vidbHelp = document.getElementById('vidbHelpNote');
+            if (_vidbHelp) _vidbHelp.style.display = _is910To911Plan ? 'none' : '';
+            if (_vidbIsCheckedNow && !_is910To911Plan && window.vidbIsEmbedded === null) {
                 const container = document.getElementById('phaseContainer');
                 container.innerHTML = `
                     <div style="background: linear-gradient(135deg, #fff8e1, #fff3cd); border: 2px solid #ffc107; padding: 30px; border-radius: 12px; text-align: center; margin-top: 10px;">
@@ -1772,7 +1883,7 @@
             }
             
             displayStepsView();
-            setTimeout(() => initInlineDocumentation(), 100);
+            setTimeout(() => { if (typeof initInlineDocumentation === "function") initInlineDocumentation(); }, 100);
             
             // Smooth scroll on first generation
             if (steps.length > 0) {
@@ -1817,6 +1928,7 @@
             const vxrailPhases = [];
             const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
+            const fleetLifecyclePhases = [];
 
 
             phases.forEach(phase => {
@@ -1826,6 +1938,8 @@
                 
                 if (isPreInfraOptional) {
                     optionalPreInfraPhases.push(phase);
+                } else if (phase.componentId === 'vcf_fleet_lifecycle') {
+                    fleetLifecyclePhases.push(phase);
                 } else if (phase.componentId === 'operations') {
                     operationsPhases.push(phase);
                 }else if (phase.componentId === 'sddc_manager') {
@@ -1882,28 +1996,35 @@
             vxrailPhases.sort((a, b) => a.number - b.number);
             operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             vsan_file_servicePhases.sort((a, b) => a.number - b.number);
+            fleetLifecyclePhases.sort((a, b) => a.number - b.number);
 
             
             // Build steps in the order defined by currentOrder (dynamic based on NSX selection)
             // Group Replication + SRM together, keep AVI and HCX separate
             const replicationPhases = optionalPreInfraPhases.filter(p => p.componentId === 'vlr' || p.componentId === 'vsan_data_protection');
             const aviPhases = optionalPreInfraPhases.filter(p => p.componentId === 'avi');
-            // Inject License Hub into AVI step when AVI is selected
-            if (aviPhases.length > 0) {
+            // Inject License Hub into AVI step when AVI is selected (skip for 9.1.0.x source as License Hub already exists)
+            const _is910To911Lh = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+            if (aviPhases.length > 0 && !_is910To911Lh) {
                 const _lhDataAvi = upgradeData.components['license_hub'];
                 if (_lhDataAvi) aviPhases.push({ number: Math.max(0, ...aviPhases.map(p => p.number)) + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataAvi, componentId: 'license_hub' });
             }
             const hcxPhases = optionalPreInfraPhases.filter(p => p.componentId === 'hcx');
-            // Inject License Hub into NSX step only when vDefend selected AND AVI not selected
+            // Inject License Hub into NSX step only when vDefend selected AND AVI not selected (skip for 9.1.0.x source as License Hub already exists)
             const _selProds = window.selectedAdvancedProducts || {};
             const _aviWasSelected = optionalPreInfraPhases.some(p => p.componentId === 'avi');
-            if (nsxPhases.length > 0 && _selProds['vdefend'] === true && !_aviWasSelected) {
+            if (nsxPhases.length > 0 && _selProds['vdefend'] === true && !_aviWasSelected && !_is910To911Lh) {
                 const _lhDataNsx = upgradeData.components['license_hub'];
                 if (_lhDataNsx) nsxPhases.push({ number: Math.max(0, ...nsxPhases.map(p => p.number)) + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataNsx, componentId: 'license_hub' });
             }
             
             // Create a map of component groups to their step definitions
             const stepDefinitions = {
+                'vcf_fleet_lifecycle': {
+                    phases: fleetLifecyclePhases,
+                    title: 'VCF Management Services Fleet Lifecycle Component Patch',
+                    description: 'Patch VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component'
+                },
                 'operations': {
                     phases: operationsPhases,
                     title: 'VCF Operations Upgrade',
@@ -2032,15 +2153,20 @@
                 'vidb': 'vidb',
                 'operations_orchestrator': 'operations_orchestrator',
                 'vsan_file_service': 'vsan_file_service',
-                'nsx_edge': 'nsx_edge'
+                'nsx_edge': 'nsx_edge',
+                'vcf_fleet_lifecycle': 'vcf_fleet_lifecycle'
 
             };
             
             // Track which step groups have been added
             const addedStepGroups = new Set();
             
-            // Iterate through currentOrder and add step groups in that sequence
-            currentOrder.forEach(componentId => {
+            // Iterate through orderedComponents and add step groups in that sequence
+            let orderedComponents = [...currentOrder];
+            if (fleetLifecyclePhases.length > 0) {
+                orderedComponents.unshift('vcf_fleet_lifecycle');
+            }
+            orderedComponents.forEach(componentId => {
                 const stepGroup = componentToStepGroup[componentId];
                 if (stepGroup && !addedStepGroups.has(stepGroup)) {
                     const stepDef = stepDefinitions[stepGroup];
@@ -2197,7 +2323,6 @@
 
             return steps;
         }
-        
         function displayStepsView() {
             const container = document.getElementById('phaseContainer');
             container.classList.add('plan-updating');
@@ -2212,7 +2337,7 @@
                         <button class="btn" onclick="window.location.href='index.html'" style="background: #6c757d;">Start Over</button>
                     </div>
                 `;
-                generateDiagram();
+                if (typeof generateDiagram === 'function') generateDiagram();
                 return;
             }
             
@@ -2280,9 +2405,13 @@
                                     html += `<ul style="margin: 8px 0 0 20px;">`;
                                     _regBullets.forEach(bullet => {
                                         if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            const isNumbered = (typeof bullet.text === 'string' && (bullet.text.startsWith('<strong>1.') || bullet.text.startsWith('<strong>2.')));
+                                            const styleAttr = isNumbered ? 'style="list-style: none; margin-left: -20px; margin-top: 6px;"' : '';
+                                            html += `<li ${styleAttr}>${bullet.text}<ul style="margin: 4px 0 0 20px; list-style: none; padding-left: 0;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li style="margin-top: 4px;">${sb}</li>`);
                                             html += `</ul></li>`;
+                                        } else if (typeof bullet === 'string' && (bullet.startsWith('<strong>1.') || bullet.startsWith('<strong>2.'))) {
+                                            html += `<li style="list-style: none; margin-left: -20px; margin-top: 6px;">${bullet}</li>`;
                                         } else {
                                             html += `<li>${bullet}</li>`;
                                         }
@@ -2344,7 +2473,7 @@
             html += `</div></div>`;
             
             container.innerHTML = applyTargetVersion(html);
-            generateDiagram();
+            if (typeof generateDiagram === 'function') generateDiagram();
         }
         
         function nextStep() {
@@ -2520,9 +2649,13 @@
                                     html += `<ul style="margin: 8px 0 0 20px;">`;
                                     _regBullets.forEach(bullet => {
                                         if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            const isNumbered = (typeof bullet.text === 'string' && (bullet.text.startsWith('<strong>1.') || bullet.text.startsWith('<strong>2.')));
+                                            const styleAttr = isNumbered ? 'style="list-style: none; margin-left: -20px; margin-top: 6px;"' : '';
+                                            html += `<li ${styleAttr}>${bullet.text}<ul style="margin: 4px 0 0 20px; list-style: none; padding-left: 0;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li style="margin-top: 4px;">${sb}</li>`);
                                             html += `</ul></li>`;
+                                        } else if (typeof bullet === 'string' && (bullet.startsWith('<strong>1.') || bullet.startsWith('<strong>2.'))) {
+                                            html += `<li style="list-style: none; margin-left: -20px; margin-top: 6px;">${bullet}</li>`;
                                         } else {
                                             html += `<li>${bullet}</li>`;
                                         }
@@ -2609,9 +2742,13 @@
                                     html += `<ul style="margin: 8px 0 0 20px;">`;
                                     _regBullets.forEach(bullet => {
                                         if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            const isNumbered = (typeof bullet.text === 'string' && (bullet.text.startsWith('<strong>1.') || bullet.text.startsWith('<strong>2.')));
+                                            const styleAttr = isNumbered ? 'style="list-style: none; margin-left: -20px; margin-top: 6px;"' : '';
+                                            html += `<li ${styleAttr}>${bullet.text}<ul style="margin: 4px 0 0 20px; list-style: none; padding-left: 0;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li style="margin-top: 4px;">${sb}</li>`);
                                             html += `</ul></li>`;
+                                        } else if (typeof bullet === 'string' && (bullet.startsWith('<strong>1.') || bullet.startsWith('<strong>2.'))) {
+                                            html += `<li style="list-style: none; margin-left: -20px; margin-top: 6px;">${bullet}</li>`;
                                         } else {
                                             html += `<li>${bullet}</li>`;
                                         }
@@ -2810,9 +2947,13 @@
                                     html += `<ul style="margin: 8px 0 0 20px;">`;
                                     _regBullets.forEach(bullet => {
                                         if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                            html += `<li>${bullet.text}<ul style="margin: 4px 0 0 20px;">`;
-                                            bullet.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
+                                            const isNumbered = (typeof bullet.text === 'string' && (bullet.text.startsWith('<strong>1.') || bullet.text.startsWith('<strong>2.')));
+                                            const styleAttr = isNumbered ? 'style="list-style: none; margin-left: -20px; margin-top: 6px;"' : '';
+                                            html += `<li ${styleAttr}>${bullet.text}<ul style="margin: 4px 0 0 20px; list-style: none; padding-left: 0;">`;
+                                            bullet.sub_bullets.forEach(sb => html += `<li style="margin-top: 4px;">${sb}</li>`);
                                             html += `</ul></li>`;
+                                        } else if (typeof bullet === 'string' && (bullet.startsWith('<strong>1.') || bullet.startsWith('<strong>2.'))) {
+                                            html += `<li style="list-style: none; margin-left: -20px; margin-top: 6px;">${bullet}</li>`;
                                         } else {
                                             html += `<li>${bullet}</li>`;
                                         }
@@ -2910,7 +3051,7 @@
             
             // Regenerate diagram with new theme colors
             if (typeof generateDiagram === 'function') {
-                generateDiagram();
+                if (typeof generateDiagram === 'function') generateDiagram();
             }
         }
 
@@ -3184,7 +3325,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => initInlineDocumentation(), 1000);
+            setTimeout(() => { if (typeof initInlineDocumentation === "function") initInlineDocumentation(); }, 1000);
         });
 
 
@@ -3416,6 +3557,253 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {}
 });
 
+function stripBasicHtml(html) {
+    if (!html) return '';
+    if (typeof html !== 'string') return String(html);
+
+    return html
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<\/div>/gi, '\n')
+        .replace(/<\/li>/gi, '\n')
+        .replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, '*$1*')
+        .replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, '*$1*')
+        .replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, '_$1_')
+        .replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, '_$1_')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/\r\n/g, '\n')
+        .replace(/\n\s*\n\s*\n+/g, '\n\n')
+        .trim();
+}
+
+function convertHtmlToJiraText(html) {
+    if (!html) return '';
+    if (typeof html !== 'string') return String(html);
+
+    var text = html;
+
+    if (/<table/i.test(text)) {
+        text = text.replace(/<table[^>]*>([\s\S]*?)<\/table>/gi, function(match, tableBody) {
+            var jiraTable = '\n\n';
+            var rows = tableBody.match(/<tr[^>]*>([\s\S]*?)<\/tr>/gi) || [];
+            rows.forEach(function(rowHtml) {
+                var isHeader = /<th/i.test(rowHtml);
+                var cells = [];
+                var cellRegex = isHeader ? /<th[^>]*>([\s\S]*?)<\/th>/gi : /<td[^>]*>([\s\S]*?)<\/td>/gi;
+                var cellMatch;
+                while ((cellMatch = cellRegex.exec(rowHtml)) !== null) {
+                    var cellText = stripBasicHtml(cellMatch[1]).replace(/\n+/g, ' ');
+                    cells.push(cellText);
+                }
+                if (cells.length > 0) {
+                    var sep = isHeader ? '||' : '|';
+                    jiraTable += sep + cells.join(sep) + sep + '\n';
+                }
+            });
+            return jiraTable + '\n';
+        });
+    }
+
+    return stripBasicHtml(text);
+}
+
+function generateJiraSummaryText() {
+    const pageTitle = document.title || 'VCF Upgrade Plan';
+    
+    let text = `h2. Change Request Plan: ${pageTitle}\n\n`;
+    text += `*Generated via VMware VCF Upgrade Planner*\n`;
+    text += `*Export Date:* ${new Date().toLocaleDateString()}\n\n`;
+    
+    const depType = typeof deploymentType !== 'undefined' ? (deploymentType === 'ha' ? 'High Availability' : 'Simple') : null;
+    const depSize = typeof deploymentSize !== 'undefined' ? deploymentSize.toUpperCase() : null;
+    
+    text += `h3. 1. Executive Summary & Configuration\n`;
+    if (depType) text += `* *Deployment Type:* ${depType}\n`;
+    if (depSize) text += `* *Deployment Size:* ${depSize}\n`;
+    if (typeof vcenterVersion !== 'undefined' && vcenterVersion) text += `* *Current vCenter Version:* ${vcenterVersion}\n`;
+    if (typeof esxVersion !== 'undefined' && esxVersion) text += `* *Current ESXi Version:* ${esxVersion}\n`;
+    
+    const selectedProds = window.selectedAdvancedProducts || {};
+    const selectedNames = [];
+    if (typeof G_INDEX !== 'undefined') {
+        G_INDEX.forEach(item => {
+            if (selectedProds[item.id]) selectedNames.push(item.name);
+        });
+    }
+    if (selectedNames.length) {
+        text += `* *Selected Optional Components:* ${selectedNames.join(', ')}\n`;
+    }
+    text += `\n`;
+    
+    if (typeof allSteps !== 'undefined' && allSteps && allSteps.length) {
+        text += `h3. 2. Detailed Execution Plan (${allSteps.length} Steps, ${allPhases.length} Phases)\n\n`;
+        allSteps.forEach(step => {
+            text += `h4. Step ${step.number}: ${step.title}\n`;
+            if (step.description) text += `_${convertHtmlToJiraText(step.description)}_\n\n`;
+            
+            step.phases.forEach(phase => {
+                text += `*Phase ${phase.number}: ${phase.title}*\n`;
+                if (phase.description) text += `${convertHtmlToJiraText(phase.description)}\n`;
+                
+                if (phase.data) {
+                    if (phase.data.prereqs && phase.data.prereqs.length) {
+                        text += `\n*Prerequisites:*\n`;
+                        phase.data.prereqs.forEach(p => {
+                            text += `* ${convertHtmlToJiraText(p)}\n`;
+                        });
+                    }
+                    
+                    const notices = (phase.data._injectedWarnings || []).concat(phase.data.notices || []);
+                    if (notices.length) {
+                        text += `\n*Important Warnings & Notices:*\n`;
+                        notices.forEach(n => {
+                            text += `* [!] *${convertHtmlToJiraText(n.title)}*\n`;
+                            if (n.bullets && n.bullets.length) {
+                                n.bullets.forEach(b => {
+                                    if (typeof b === 'object' && b.text) {
+                                        text += `  - ${convertHtmlToJiraText(b.text)}\n`;
+                                        if (b.sub_bullets) {
+                                            b.sub_bullets.forEach(sb => text += `    -- ${convertHtmlToJiraText(sb)}\n`);
+                                        }
+                                    } else {
+                                        const formattedB = convertHtmlToJiraText(b);
+                                        if (formattedB.includes('||') || formattedB.includes('\n|')) {
+                                            const parts = formattedB.split('\n\n');
+                                            parts.forEach(part => {
+                                                part = part.trim();
+                                                if (part.startsWith('||') || part.startsWith('|')) {
+                                                    text += `\n${part}\n\n`;
+                                                } else if (part) {
+                                                    text += `  - ${part}\n`;
+                                                }
+                                            });
+                                        } else {
+                                            text += `  - ${formattedB}\n`;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    
+                    if (phase.data.steps && phase.data.steps.length) {
+                        text += `\n*Execution Procedures:*\n`;
+                        phase.data.steps.forEach((s) => {
+                            text += `# ${convertHtmlToJiraText(s)}\n`;
+                        });
+                    }
+                    
+                    if (phase.data.tables && phase.data.tables.length) {
+                        phase.data.tables.forEach(table => {
+                            text += `\n*Table: ${convertHtmlToJiraText(table.title)}*\n`;
+                            if (table.description) text += `_${convertHtmlToJiraText(table.description)}_\n`;
+                            if (table.headers && table.rows) {
+                                text += `||${table.headers.map(h => convertHtmlToJiraText(h)).join('||')}||` + `\n`;
+                                table.rows.forEach(row => {
+                                    text += `|${row.map(c => convertHtmlToJiraText(c)).join('|')}|` + `\n`;
+                                });
+                            }
+                        });
+                    }
+                }
+                text += `\n`;
+            });
+            
+            const safeStopPhase = step.phases.find(p => p.data && p.data.safe_stopping_point);
+            if (safeStopPhase) {
+                text += `*Safe Stopping Point:* YES - After Step ${step.number}, system is stable and fully operational.\n`;
+                if (safeStopPhase.data && safeStopPhase.data.stopping_point_reason) {
+                    text += `*Validation Reason:* ${convertHtmlToJiraText(safeStopPhase.data.stopping_point_reason)}\n`;
+                }
+                text += `\n`;
+            }
+            text += `----\n\n`;
+        });
+    } else if (typeof allPhases !== 'undefined' && allPhases && allPhases.length) {
+        text += `h3. 2. Detailed Execution Plan (${allPhases.length} Phases)\n\n`;
+        allPhases.forEach(phase => {
+            text += `h4. Phase ${phase.number}: ${phase.title}\n`;
+            if (phase.description) text += `_${convertHtmlToJiraText(phase.description)}_\n\n`;
+            if (phase.data) {
+                if (phase.data.prereqs && phase.data.prereqs.length) {
+                    text += `*Prerequisites:*\n`;
+                    phase.data.prereqs.forEach(p => text += `* ${convertHtmlToJiraText(p)}\n`);
+                }
+                if (phase.data.steps && phase.data.steps.length) {
+                    text += `*Execution Procedures:*\n`;
+                    phase.data.steps.forEach(s => text += `# ${convertHtmlToJiraText(s)}\n`);
+                }
+            }
+            text += `\n`;
+        });
+    }
+    
+    text += `h3. 3. Verification & Safe Stopping Points\n`;
+    text += `Each phase in this change plan represents a verified safe stopping point. Upgrades can be paused after any phase to validate workload health.\n`;
+    return text;
+}
+
+function copyJiraSummary() {
+    new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/jira-copy.svg';
+    const text = generateJiraSummaryText();
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('📋 Jira / CAB Plan copied to clipboard! Paste into Jira, ServiceNow, or a text file.');
+        }).catch(() => {
+            fallbackCopyText(text);
+        });
+    } else {
+        fallbackCopyText(text);
+    }
+}
+
+function downloadJiraSummary() {
+    new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/jira-copy.svg';
+    const text = generateJiraSummaryText();
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    const pageTitle = (document.title || 'VCF_Upgrade_Plan').replace(/[^a-zA-Z0-9_-]/g, '_');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${pageTitle}_Change_Request.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('💾 Change Request plan saved as text file!');
+}
+
+function fallbackCopyText(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('📋 Jira / CAB Plan copied to clipboard! Paste into Jira, ServiceNow, or a text file.');
+}
+
+function showToast(message) {
+    let toast = document.getElementById('jiraToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'jiraToast';
+        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:10000;background:#10B981;color:white;padding:14px 22px;border-radius:8px;font-weight:600;font-size:0.92rem;box-shadow:0 4px 16px rgba(0,0,0,0.25);transition:opacity 0.3s ease, transform 0.3s ease;transform:translateY(10px);opacity:0;pointer-events:none;';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+    }, 3500);
+}
 </script>
 </body>
 </html>
