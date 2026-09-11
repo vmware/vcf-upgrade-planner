@@ -1600,10 +1600,17 @@
                     componentData = upgradeData.components['operations'];
                     phaseTitle = componentData ? componentData.name : componentId;
                     const _targetVerOps = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
-                    if (_targetVerOps.startsWith('9.1.1') && componentData) {
+                    const _isSource910Ops = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1') || (vcfdetailVersion || '').startsWith('9.1'));
+                    if (_isSource910Ops && _targetVerOps.startsWith('9.1.1') && componentData) {
                         try {
                             const clonedOps = JSON.parse(JSON.stringify(componentData));
-                            clonedOps.notices = [];
+                            clonedOps.notices = [
+                                {
+                                "type": "info",
+                                 "title": "VCF Operations Patching",
+                                 "bullets": [
+                                'VCF Operations must not be patched in parallel with other components. Before you patch VCF Operations, ensure that no other lifecycle operations in the environment are in progress. Do not start other lifecycle operations until the VCF Operations patch process completes. The remaining components can be patched in parallel.'
+                        ]}];
                             clonedOps.steps = [
                                 "Upgrade VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/upgrade-a-vcf-management-component.html' target='_blank'>View Documentation</a>)."
                             ];

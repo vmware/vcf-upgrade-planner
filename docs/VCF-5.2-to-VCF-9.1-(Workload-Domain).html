@@ -1688,7 +1688,7 @@
             // Smooth scroll on first generation
             if (steps.length > 0) {
                 setTimeout(() => {
-                    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const _step3El = document.getElementById('step3'); if (_step3El) _step3El.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
             }
         }
@@ -3140,6 +3140,256 @@
         }
 
         function resetDropdowns() { gReset(); }
+
+        function extractDocUrlFromStep(stepHtml) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = stepHtml;
+            const link = tempDiv.querySelector('a[href*="techdocs.broadcom.com"]');
+            if (link) { return link.href.split('#')[0]; }
+            return null;
+        }
+
+        function getInlineDocForUrl(url) {
+            if (window.INLINE_DOCS && window.INLINE_DOCS[url]) { return window.INLINE_DOCS[url]; }
+            return null;
+        }
+
+        // INLINE DOCUMENTATION MODAL SYSTEM
+        var _inlineDocsInitialized = false;
+        function initInlineDocumentation() {
+            if (_inlineDocsInitialized) return;
+            _inlineDocsInitialized = true;
+            if (typeof window.INLINE_DOCS === 'undefined') {
+                console.warn('INLINE_DOCS not loaded');
+                return;
+            }
+            console.log('Inline docs loaded:', Object.keys(window.INLINE_DOCS).length);
+            // Use event delegation — intercepts ALL Broadcom/KB links including those injected dynamically
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href*="techdocs.broadcom.com"], a[href*="knowledge.broadcom.com"]');
+                if (!link) return;
+                // Never intercept the footer "Open on Broadcom TechDocs" link —
+                // let its target="_blank" fire naturally
+                if (link.id === 'docModalExternalLink') return;
+                e.preventDefault();
+                e.stopPropagation();
+                const fullUrl = link.href;
+                const urlWithoutFragment = fullUrl.split('#')[0];
+                if (window.INLINE_DOCS && window.INLINE_DOCS[urlWithoutFragment]) {
+                    showInlineDocumentation(urlWithoutFragment, fullUrl);
+                } else {
+                    // Not in inline docs — open in new tab, never navigate current page
+                    window.open(fullUrl, '_blank');
+                }
+            }, true);
+        }
+
+        // Navigation stack for back-button support
+        var docNavStack = [];
+
+        function showInlineDocumentation(url, originalUrl, pushToStack) {
+            const cleanUrl = (url || '').split('#')[0];
+            const docData = window.INLINE_DOCS ? window.INLINE_DOCS[cleanUrl] : null;
+            if (!docData) {
+                window.open(originalUrl || url, '_blank');
+                return;
+            }
+
+            // Push current state onto the nav stack so we can go back
+            if (pushToStack !== false) {
+                const modal = document.getElementById('docModal');
+                const currentExternalLink = document.getElementById('docModalExternalLink');
+                const currentTitle = document.getElementById('docModalTitle');
+                if (modal && modal.classList.contains('active') &&
+                    currentTitle && currentTitle.textContent &&
+                    currentTitle.textContent !== 'Documentation') {
+                    docNavStack.push({
+                        url: currentExternalLink ? currentExternalLink.href : '',
+                        originalUrl: currentExternalLink ? currentExternalLink.href : ''
+                    });
+                }
+            }
+
+            const modal = document.getElementById('docModal');
+            const title = document.getElementById('docModalTitle');
+            const body = document.getElementById('docModalBody');
+            const externalLink = document.getElementById('docModalExternalLink');
+            const backBtn = document.getElementById('docModalBackBtn');
+
+            if (backBtn) backBtn.style.display = docNavStack.length > 0 ? 'flex' : 'none';
+
+            title.textContent = docData.title || 'Documentation';
+            body.innerHTML = docData.content || '<p>No content available.</p>';
+
+            // Remove linklist / relatedlinks nav blocks
+            body.querySelectorAll(
+                '.linklist, .relatedlinks, .linkpool, [class*="linklist"], [class*="relatedlinks"]'
+            ).forEach(function(el) { el.remove(); });
+
+            // Strip display:inline from block elements, but skip if parent is inline (e.g. span.keyword)
+            var BLOCK_TAGS = new Set([
+                'DIV','P','LI','UL','OL','SECTION','H1','H2','H3','H4','H5','H6',
+                'TABLE','TR','TD','TH','THEAD','TBODY','TFOOT',
+                'ARTICLE','ASIDE','BLOCKQUOTE','FIGURE','FIGCAPTION',
+                'HEADER','FOOTER','MAIN','NAV','DETAILS','SUMMARY',
+                'DL','DT','DD','PRE','HR','FIELDSET','FORM'
+            ]);
+            var INLINE_PARENTS = new Set([
+                'SPAN','A','B','I','EM','STRONG','CODE','KBD','LABEL',
+                'CITE','ABBR','BIG','SMALL','SUB','SUP','VAR','Q','S','U'
+            ]);
+            body.querySelectorAll('*').forEach(function(el) {
+                if (BLOCK_TAGS.has(el.tagName) && el.style.display === 'inline') {
+                    if (el.parentElement && INLINE_PARENTS.has(el.parentElement.tagName)) return;
+                    el.style.removeProperty('display');
+                }
+            });
+
+            // Normalise injected TechDocs colour/opacity styles — theme-aware
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            var textColor = isDark ? '#E6EDF3' : '#111111';
+            var secondaryColor = isDark ? '#C9D1D9' : '#444444';
+            var linkColor = isDark ? '#58D3FF' : '#0088b5';
+            body.querySelectorAll('*').forEach(function(el) {
+                el.style.removeProperty('color');
+                el.style.removeProperty('-webkit-text-fill-color');
+                el.style.removeProperty('opacity');
+                el.style.setProperty('color', textColor, 'important');
+                el.style.setProperty('-webkit-text-fill-color', textColor, 'important');
+                el.style.setProperty('opacity', '1', 'important');
+            });
+            body.querySelectorAll('a').forEach(function(el) {
+                el.style.setProperty('color', linkColor, 'important');
+                el.style.setProperty('-webkit-text-fill-color', linkColor, 'important');
+            });
+
+            // Intercept link clicks — load inline if available
+            body.querySelectorAll('a[href]').forEach(function(a) {
+                const href = a.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
+                a.addEventListener('click', function(e) {
+                    const cleanHref = href.split('#')[0];
+                    if (window.INLINE_DOCS && window.INLINE_DOCS[cleanHref]) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showInlineDocumentation(cleanHref, href);
+                    }
+                });
+            });
+
+            if (externalLink) externalLink.href = originalUrl || url;
+
+            // Populate sub-pages sidebar
+            const sidebar = document.getElementById('docSubpagesSidebar');
+            const spList = document.getElementById('docSubpagesList');
+            if (sidebar && spList) {
+                function renderSubpagesList(list) {
+                    spList.innerHTML = '';
+                    if (!list || list.length === 0) {
+                        sidebar.classList.remove('has-pages');
+                        return;
+                    }
+                    list.forEach(function(sp) {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.textContent = sp.label;
+                        a.href = sp.url;
+                        a.title = sp.url;
+                        if (sp.url === cleanUrl || (sp.url && sp.url.split('#')[0] === cleanUrl)) {
+                            a.classList.add('sp-active');
+                        }
+                        a.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            spList.querySelectorAll('a').forEach(function(x) { x.classList.remove('sp-active'); });
+                            a.classList.add('sp-active');
+                            if (window.INLINE_DOCS && window.INLINE_DOCS[sp.url]) {
+                                showInlineDocumentation(sp.url, sp.url);
+                            } else {
+                                window.open(sp.url, '_blank');
+                            }
+                        });
+                        li.appendChild(a);
+                        spList.appendChild(li);
+                    });
+                    sidebar.classList.add('has-pages');
+                }
+
+                const subpages = docData.subpages || [];
+                if (subpages.length > 0) {
+                    renderSubpagesList(subpages);
+                } else {
+                    let existingLink = null;
+                    spList.querySelectorAll('a').forEach(function(x) {
+                        if (x.href === cleanUrl || x.title === cleanUrl || (x.getAttribute('href') && x.getAttribute('href').split('#')[0] === cleanUrl)) {
+                            existingLink = x;
+                        }
+                    });
+                    if (existingLink) {
+                        spList.querySelectorAll('a').forEach(function(x) { x.classList.remove('sp-active'); });
+                        existingLink.classList.add('sp-active');
+                        sidebar.classList.add('has-pages');
+                    } else {
+                        let parentSubpages = null;
+                        if (window.INLINE_DOCS) {
+                            for (const pUrl in window.INLINE_DOCS) {
+                                const pData = window.INLINE_DOCS[pUrl];
+                                if (pData && pData.subpages && pData.subpages.length > 0) {
+                                    if (pData.subpages.some(sp => sp.url === cleanUrl || (sp.url && sp.url.split('#')[0] === cleanUrl))) {
+                                        parentSubpages = pData.subpages;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (parentSubpages && parentSubpages.length > 0) {
+                            renderSubpagesList(parentSubpages);
+                        } else {
+                            spList.innerHTML = '';
+                            sidebar.classList.remove('has-pages');
+                        }
+                    }
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function docModalGoBack() {
+            if (docNavStack.length === 0) return;
+            const prev = docNavStack.pop();
+            showInlineDocumentation(prev.url, prev.originalUrl, false);
+        }
+
+        function closeDocModal() {
+            const modal = document.getElementById('docModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            docNavStack = [];
+            const backBtn = document.getElementById('docModalBackBtn');
+            if (backBtn) backBtn.style.display = 'none';
+            const sidebar = document.getElementById('docSubpagesSidebar');
+            const spList = document.getElementById('docSubpagesList');
+            if (sidebar && spList) {
+                spList.innerHTML = '';
+                sidebar.classList.remove('has-pages');
+            }
+        }
+
+        function openExternalLink() {
+            const url = document.getElementById('docModalExternalLink').href;
+            window.open(url, '_blank');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeDocModal();
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => { if (typeof initInlineDocumentation === "function") initInlineDocumentation(); }, 1000);
+        });
+
     </script>
     <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
         <div class="doc-modal-content">
