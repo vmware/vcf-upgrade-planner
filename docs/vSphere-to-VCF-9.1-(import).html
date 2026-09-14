@@ -1704,14 +1704,11 @@
 
                     if (componentData) {
                         componentData = JSON.parse(JSON.stringify(componentData));
-                        if (componentData.steps) {
-                            componentData.steps = componentData.steps.map(s => {
-                                return s.replace(/\s*-\s*All Guidance is provided in link\s*\(<a [^>]+>.*?<\/a>\)\.?,?/gi, '.')
-                                        .replace(/<a [^>]+>.*?<\/a>/gi, '')
-                                        .replace(/\s+\./g, '.');
-                            });
+                        if (elmSelected && componentData.steps_with_elm) {
+                            componentData.steps = componentData.steps_with_elm;
+                        } else if ((nsxInEnvironment || nsxSelected) && componentData.steps_with_nsx) {
+                            componentData.steps = componentData.steps_with_nsx;
                         }
-
                     }
                 } else if (componentId === 'elm_break') {
                     // ELM Break only if checkbox selected (break AFTER vCenter, BEFORE import)
@@ -3033,7 +3030,15 @@
 
 
             if (!isImportOnly) {
-                const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
+                let vcenterData = upgradeData ? upgradeData.components.vcenter : null;
+                if (vcenterData) {
+                    vcenterData = JSON.parse(JSON.stringify(vcenterData));
+                    if (elmSelected && vcenterData.steps_with_elm) {
+                        vcenterData.steps = vcenterData.steps_with_elm;
+                    } else if ((nsxInEnvironment || nsxSelected) && vcenterData.steps_with_nsx) {
+                        vcenterData.steps = vcenterData.steps_with_nsx;
+                    }
+                }
                 const effVC = ((vcenterVersion || '').startsWith('8.0u1') || (vcenterVersion || '').startsWith('8.0u2')) ? '8.0u3' : vcenterVersion;
                 const vcDesc = effVC === '8.0u3' ? 'Upgrade vCenter' : 'Upgrade vCenter';
                 phases.push({ number: phases.length + 1, title: 'Upgrade vCenter Server', description: vcDesc, data: vcenterData, componentId: 'vcenter' });
