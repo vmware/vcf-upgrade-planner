@@ -1,0 +1,7 @@
+# Bad links report
+# Format: REASON<TAB>URL
+
+HTTP 404	https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vcom_853&appid=vcf-9-1&language=&format=rendered
+HTTP 404	https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab.html
+HTTP 404	https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=vcf_535&appid=vcf-9-1&language=&format=rendered
+HTTP 404	https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere-sdks-tools/9-0/getting-started-with-esxcli-8-0/overview-of-esxcli/esxcli-syntax.html

@@ -1319,6 +1319,58 @@
 
         // Initialize page
 
+        function isFleetPhaseVerified() {
+            const keys = ['chk_fleet_ms', 'chk_vcfms_runtime', 'chk_ops', 'chk_auto_mig', 'chk_depot_warn', 'chk_no_upgrade_all'];
+            return keys.every(function(k) {
+                const el = document.getElementById(k);
+                return !el || el.checked;
+            });
+        }
+
+        function toggleFleetCheck(id) {
+            const keys = ['chk_fleet_ms', 'chk_vcfms_runtime', 'chk_ops', 'chk_auto_mig', 'chk_depot_warn', 'chk_no_upgrade_all'];
+            let count = 0;
+            keys.forEach(function(k) {
+                const el = document.getElementById(k);
+                if (el) {
+                    localStorage.setItem('fleet_check_' + k, el.checked ? 'true' : 'false');
+                    if (el.checked) count++;
+                }
+            });
+            updateFleetAckStatus(count, keys.length);
+        }
+
+        function initFleetChecks() {
+            const keys = ['chk_fleet_ms', 'chk_vcfms_runtime', 'chk_ops', 'chk_auto_mig', 'chk_depot_warn', 'chk_no_upgrade_all'];
+            let count = 0;
+            keys.forEach(function(k) {
+                const el = document.getElementById(k);
+                if (el) {
+                    const saved = localStorage.getItem('fleet_check_' + k) === 'true';
+                    el.checked = saved;
+                    if (saved) count++;
+                }
+            });
+            updateFleetAckStatus(count, keys.length);
+        }
+
+        function updateFleetAckStatus(count, total) {
+            const statusEl = document.getElementById('fleet_ack_status');
+            if (statusEl) {
+                if (count === total) {
+                    statusEl.style.background = '#d4edda';
+                    statusEl.style.color = '#155724';
+                    statusEl.style.borderColor = '#c3e6cb';
+                    statusEl.innerHTML = '✅ All Phase 1 Prerequisites & Safety Rules Acknowledged (6 of 6 Verified)';
+                } else {
+                    statusEl.style.background = 'var(--bg)';
+                    statusEl.style.color = 'var(--text-secondary)';
+                    statusEl.style.borderColor = 'var(--border-color)';
+                    statusEl.innerHTML = '⏳ Pending verification (' + count + ' of ' + total + ' acknowledged)';
+                }
+            }
+        }
+
         function applyTargetVersion(html) {
             if (!window.targetVcf91Version) return html;
             return html.replace(/9\.1(?!\.[0-9])/g, window.targetVcf91Version);
@@ -1326,23 +1378,42 @@
 
         function updatePageTitlesForTargetVersion() {
             if (!window.targetVcf91Version) return;
-            var ver = window.targetVcf91Version;
-            var srcVer = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1')) ? 'VCF 9.1.0.x' : 'VCF 9.0';
+            var ver = (window.targetVcf91Version || '').replace(/^(\d+\.\d+\.\d+)\.0$/, '$1');
+            var srcVer = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1')) ? 'VCF 9.1.x' : 'VCF 9.0';
             // Update all h1 elements
             document.querySelectorAll('h1').forEach(function(el) {
+                if (el.textContent.indexOf('9.1') !== -1) {
+                    el.textContent = el.textContent.replace(/to VCF 9\.1(?!\.[0-9])/g, 'to VCF ' + ver).replace(/to 9\.1(?!\.[0-9])/g, 'to ' + ver);
+                }
                 if (el.textContent.indexOf('VCF 9.0') !== -1) {
                     el.textContent = el.textContent.replace('VCF 9.0', srcVer);
                 }
-                if (el.textContent.indexOf('9.1') !== -1) {
-                    el.textContent = el.textContent.replace(/9\.1(?!\.[0-9])/g, ver);
-                }
             });
             // Update browser tab title
+            if (document.title.indexOf('9.1') !== -1) {
+                document.title = document.title.replace(/to VCF 9\.1(?!\.[0-9])/g, 'to VCF ' + ver).replace(/to 9\.1(?!\.[0-9])/g, 'to ' + ver);
+            }
             if (document.title.indexOf('VCF 9.0') !== -1) {
                 document.title = document.title.replace('VCF 9.0', srcVer);
             }
-            if (document.title.indexOf('9.1') !== -1) {
-                document.title = document.title.replace(/9\.1(?!\.[0-9])/g, ver);
+            // Update browser URL address bar dynamically without adding/renaming files
+            try {
+                var currentPath = window.location.pathname;
+                var fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+                if (fileName && fileName.indexOf('VCF-9.0-to-VCF-9.1') !== -1) {
+                    var newFileName = fileName;
+                    if (srcVer === 'VCF 9.1.x') {
+                        newFileName = newFileName.replace('VCF-9.0-to-VCF-9.1', 'VCF-9.1.x-to-VCF-' + ver);
+                    } else {
+                        newFileName = newFileName.replace('VCF-9.0-to-VCF-9.1', 'VCF-9.0-to-VCF-' + ver);
+                    }
+                    if (newFileName !== fileName) {
+                        var newUrl = window.location.protocol + "//" + window.location.host + currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + newFileName + window.location.search + window.location.hash;
+                        window.history.replaceState(null, '', newUrl);
+                    }
+                }
+            } catch(e) {
+                console.error('Error updating browser URL address bar:', e);
             }
         }
         window.addEventListener('DOMContentLoaded', async function() {
@@ -1606,26 +1677,14 @@
                 
                 // Determine if this component should be included based on component type
                 if (componentId === 'operations') {
-                    shouldInclude = true;
-                    componentData = upgradeData.components['operations'];
-                    phaseTitle = componentData ? componentData.name : componentId;
                     const _targetVerOps = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                     const _isSource910Ops = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1') || (vcfdetailVersion || '').startsWith('9.1'));
-                    if (_isSource910Ops && _targetVerOps.startsWith('9.1.1') && componentData) {
-                        try {
-                            const clonedOps = JSON.parse(JSON.stringify(componentData));
-                            clonedOps.notices = [
-                                {
-                                "type": "info",
-                                 "title": "VCF Operations Patching",
-                                 "bullets": [
-                                'VCF Operations must not be patched in parallel with other components. Before you patch VCF Operations, ensure that no other lifecycle operations in the environment are in progress. Do not start other lifecycle operations until the VCF Operations patch process completes. The remaining components can be patched in parallel.'
-                        ]}];
-                            clonedOps.steps = [
-                                "Upgrade VCF Operations - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/upgrade-a-vcf-management-component.html' target='_blank'>View Documentation</a>)."
-                            ];
-                            componentData = clonedOps;
-                        } catch(e) {}
+                    if (_isSource910Ops && _targetVerOps.startsWith('9.1.1')) {
+                        shouldInclude = false;
+                    } else {
+                        shouldInclude = true;
+                        componentData = upgradeData.components['operations'];
+                        phaseTitle = componentData ? componentData.name : componentId;
                     }
 
                 } else if (componentId === 'vxrail') {
@@ -1638,6 +1697,24 @@
                     shouldInclude = selectedProducts['vxrail'] !== true;
                     phaseTitle = componentData ? componentData.name : 'esx';
                     phaseDescription = 'Upgrade ' + phaseTitle;
+                    const _esxTargetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+                    const _isSourcePre911Esx = (vcfVersion === '9.0' || vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.0') || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.0') || (localStorage.getItem('vcf-version') || '').startsWith('9.1') || (vcfdetailVersion || '').startsWith('9.0') || (vcfdetailVersion || '').startsWith('9.1'));
+                    if (componentData && _isSourcePre911Esx && (_esxTargetVer.startsWith('9.1.1') || !_esxTargetVer)) {
+                        try {
+                            const cloned = JSON.parse(JSON.stringify(componentData));
+                            if (!cloned.notices) cloned.notices = [];
+                            cloned.notices.push({
+                                type: 'warning',
+                                title: 'ESXi Host Pre-Update Check Warning (VCF 9.0.x / 9.1.0.x → 9.1.1)',
+                                bullets: [
+                                    "\"Create and Commit draft check\" or \"Failed to invoke create and commit\" error in SDDC Manager/VCF Operations - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/455572' target='_blank'>View KB 455572</a>)."
+                                ]
+                            });
+                            componentData = cloned;
+                        } catch(e) {
+                            console.error('Error injecting warning notice into ESX:', e);
+                        }
+                    }
                 } else if (componentId === 'vcfms') {
                     // VCF Management Services always included — select size-variant tables
                     shouldInclude = !((vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1')));
@@ -1678,62 +1755,82 @@
                         }
                     }
                 } else if (componentId === 'automation') {
-                    // Automation always included; checkbox selects upgrade vs install
-                    shouldInclude = true;
-                    const automationComponentId = window.automationIsUpgrade ? 'automation' : 'automation_install';
-                    componentData = upgradeData.components[automationComponentId] || upgradeData.components['automation'];
-                    phaseTitle = componentData ? componentData.name : 'VCF Automation';
-                    phaseDescription = window.automationIsUpgrade ? 'Upgrade VCF Automation' : 'Install VCF Automation';
+                    const _targetVerAuto = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+                    const _isSource910Auto = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1') || (vcfdetailVersion || '').startsWith('9.1'));
+                    if (_isSource910Auto && _targetVerAuto.startsWith('9.1.1')) {
+                        shouldInclude = false;
+                    } else {
+                        // Automation always included; checkbox selects upgrade vs install
+                        shouldInclude = true;
+                        const automationComponentId = window.automationIsUpgrade ? 'automation' : 'automation_install';
+                        componentData = upgradeData.components[automationComponentId] || upgradeData.components['automation'];
+                        phaseTitle = componentData ? componentData.name : 'VCF Automation';
+                        phaseDescription = window.automationIsUpgrade ? 'Upgrade VCF Automation' : 'Install VCF Automation';
 
-                    // Select size-variant tables based on upgrade vs install path
-                    if (componentData) {
-                        try {
-                            if (window.automationIsUpgrade) {
-                                // Upgrade: tables_simple_small / tables_ha_medium / tables_ha_large
-                                const upgradeTableKey = deploymentType === 'simple'
-                                    ? 'upgrade_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
-                                const cloned = JSON.parse(JSON.stringify(componentData));
-                                if (cloned[upgradeTableKey]) {
-                                    console.log('automation upgrade: using table key:', upgradeTableKey);
-                                    cloned.tables = cloned[upgradeTableKey];
-                                    componentData = cloned;
+                        // Select size-variant tables based on upgrade vs install path
+                        if (componentData) {
+                            try {
+                                if (window.automationIsUpgrade) {
+                                    // Upgrade: tables_simple_small / tables_ha_medium / tables_ha_large
+                                    const upgradeTableKey = deploymentType === 'simple'
+                                        ? 'upgrade_tables_simple_small'
+                                        : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
+                                    const cloned = JSON.parse(JSON.stringify(componentData));
+                                    if (cloned[upgradeTableKey]) {
+                                        console.log('automation upgrade: using table key:', upgradeTableKey);
+                                        cloned.tables = cloned[upgradeTableKey];
+                                        componentData = cloned;
+                                    }
+                                } else {
+                                    // Install: automation_install_tableKey
+                                    const automation_install_tableKey = deploymentType === 'simple'
+                                        ? 'install_tables_simple_small'
+                                        : (deploymentSize === 'large' ? 'install_tables_ha_large' : 'install_tables_ha_medium');
+                                    const cloned = JSON.parse(JSON.stringify(componentData));
+                                    if (cloned[automation_install_tableKey]) {
+                                        console.log('automation install: using table key:', automation_install_tableKey);
+                                        cloned.tables = cloned[automation_install_tableKey];
+                                        componentData = cloned;
+                                    }
                                 }
-                            } else {
-                                // Install: automation_install_tableKey
-                                const automation_install_tableKey = deploymentType === 'simple'
-                                    ? 'install_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'install_tables_ha_large' : 'install_tables_ha_medium');
-                                const cloned = JSON.parse(JSON.stringify(componentData));
-                                if (cloned[automation_install_tableKey]) {
-                                    console.log('automation install: using table key:', automation_install_tableKey);
-                                    cloned.tables = cloned[automation_install_tableKey];
-                                    componentData = cloned;
-                                }
+                            } catch (e) {
+                                console.error('Error selecting automation tables:', e);
                             }
-                        } catch (e) {
-                            console.error('Error selecting automation tables:', e);
                         }
                     }
                 } else if (componentId === 'vcenter') {
-                    // vCenter — always included; inject Embedded Identity Broker notice when applicable
+                    // vCenter — always included; inject Embedded Identity Broker notice and 9.1.1 precheck warning when applicable
                     shouldInclude = true;
                     phaseTitle = componentData ? componentData.name : 'vCenter';
                     phaseDescription = 'Upgrade vCenter Server';
-                    if (window.vidbIsEmbedded === true && componentData) {
+                    const _vcTargetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+                    const _isSourcePre911Vc = (vcfVersion === '9.0' || vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.0') || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.0') || (localStorage.getItem('vcf-version') || '').startsWith('9.1') || (vcfdetailVersion || '').startsWith('9.0') || (vcfdetailVersion || '').startsWith('9.1'));
+                    if (componentData) {
                         try {
                             const cloned = JSON.parse(JSON.stringify(componentData));
                             if (!cloned.notices) cloned.notices = [];
-                            cloned.notices.push({
-                                type: 'info',
-                                title: 'Embedded Identity Broker',
-                                bullets: [
-                                    "Embedded Identity Broker will be installed as part of this vCenter upgrade. No separate Identity Broker upgrade step is required.",
-                                    "To move off embedded identity broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/what-is/managing-vmware-cloud-foundation-operations-sso/migration-of-vcf-identity-broker-embedded-to-vcf-identity-broker-appliance.html' target='_blank'>View Documentation</a>)."                                ]
-                            });
+                            if (window.vidbIsEmbedded === true) {
+                                cloned.notices.push({
+                                    type: 'info',
+                                    title: 'Embedded Identity Broker',
+                                    bullets: [
+                                        "Embedded Identity Broker will be installed as part of this vCenter upgrade. No separate Identity Broker upgrade step is required.",
+                                        "To move off embedded identity broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/what-is/managing-vmware-cloud-foundation-operations-sso/migration-of-vcf-identity-broker-embedded-to-vcf-identity-broker-appliance.html' target='_blank'>View Documentation</a>)."
+                                    ]
+                                });
+                            }
+                            if (_isSourcePre911Vc && (_vcTargetVer.startsWith('9.1.1') || !_vcTargetVer)) {
+                                cloned.notices.push({
+                                    type: 'warning',
+                                    title: 'vCenter Pre-Update Check Warning (VCF 9.0.x / 9.1.0.x → 9.1.1)',
+                                    bullets: [
+                                        "\"Unable to run vCenter NTP server check\" error during pre-update check to 9.1.1 - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/455439' target='_blank'>View KB 455439</a>)."
+                                    ]
+                                });
+                            }
                             componentData = cloned;
                         } catch(e) {
-                            console.error('Error injecting vidb embedded notice into vCenter:', e);
+                            console.error('Error injecting notices into vCenter:', e);
                         }
                     }
                 } else if (componentId === 'vidb') {
@@ -1765,6 +1862,28 @@
                         }
                     } else {
                         shouldInclude = false; // Embedded question not yet answered — blocking check will catch this
+                    }
+                } else if (componentId === 'sddc_manager') {
+                    shouldInclude = true;
+                    componentData = upgradeData.components['sddc_manager'];
+                    phaseTitle = componentData ? componentData.name : 'SDDC Manager Upgrade';
+                    phaseDescription = 'Upgrade SDDC Manager';
+                    const _sddcSrcVer = vcfdetailVersion || vcfVersion || localStorage.getItem('vcf-detailed-version') || localStorage.getItem('vcf-version') || '';
+                    if (_sddcSrcVer.startsWith('9.1.0.0400') && componentData) {
+                        try {
+                            const clonedSddc = JSON.parse(JSON.stringify(componentData));
+                            if (!clonedSddc.notices) clonedSddc.notices = [];
+                            clonedSddc.notices.push({
+                                type: 'warning',
+                                title: 'SDDC Manager Prechecks Issue (9.1.0.0400 → VCF 9.1)',
+                                bullets: [
+                                    "SDDC Manager upgrade prechecks fail with error: <em>'An unexpected error occurred during prechecks.'</em> on VCF 9.1.0.0400 due to a version string issue - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/455225/sddc-manager-upgrade-prechecks-fail-with.html' target='_blank'>View KB 455225</a>)."
+                                ]
+                            });
+                            componentData = clonedSddc;
+                        } catch(e) {
+                            console.error('Error injecting KB 455225 warning into SDDC Manager:', e);
+                        }
                     }
                 } else if (coreComponents.includes(componentId)) {
                     // Core components ALWAYS included
@@ -1809,25 +1928,34 @@
                 phases.unshift({
                     number: 1,
                     title: 'VCF Management Services Fleet Lifecycle Component Patch',
-                    description: "Patch the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component. For more details see (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html' target='_blank'>View Documentation</a>).",
+                    description: "Patch the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component. For step-by-step guidance see the (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/upgrade-a-vcf-management-component.html' target='_blank'>VCF Management Component Upgrade Process Documentation</a>) and (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html' target='_blank'>Release Notes</a>).",
                     data: {
                         name: 'VCF Management Services Fleet Lifecycle Component Patch',
                         description: 'You begin applying the 9.1.1.0 maintenance release in your 9.1.0.x environment by patching the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component.',
+                        steps: [],
                         notices: [
                             {
                                 type: 'info',
                                 title: 'Lifecycle Management & Component Dependencies (9.1.0.x → 9.1.1.0)',
                                 bullets: [
-                                    '<strong>1.</strong> You begin applying the 9.1.1.0 maintenance release in your 9.1.0.x environment by patching the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component.',
+                                    '<strong>1. VCF Management Services Fleet Lifecycle:</strong> You begin applying the 9.1.1.0 maintenance release in your 9.1.0.x environment by patching the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component.',
                                     {
-                                        text: '<strong>2.</strong> After the fleet lifecycle component is at version 9.1.1.0, you can simultaneously patch the remaining components per the needs of your organization and must comply only with the following dependencies:',
+                                        text: '<strong>2.</strong> After the fleet lifecycle component is at version 9.1.1.0, you can patch remaining components per organization needs adhering strictly to mandatory dependencies:',
                                         sub_bullets: [
-                                            '<strong>a.</strong> When you patch a software depot instance, patching other components is blocked because the patch binaries are unavailable until the patch process for the software depot completes.',
-                                            '<strong>b.</strong> Before you patch an identity broker instance from 9.1.0.0 to 9.1.1.0, you must first patch the respective VCF management services runtime that hosts the identity broker instance.',
-                                            '<strong>c.</strong> Before you patch Salt RaaS from 9.1.0.0 to 9.1.1.0, you must first patch the respective VCF management services runtime that hosts the Salt RaaS instance.',
-                                            '<strong>d.</strong> Before you patch the migration service engine component from 9.1.0.0 to 9.1.1.0, you must first patch VCF Automation.'
+                                            '<strong>a. VCF Management Services Runtime:</strong> Before you patch an Identity Broker or Salt RaaS instance, you must first patch the respective VCF management services runtime hosting it.',
+                                            '<strong>b. VCF Operations:</strong> Upgrade vCenter and VCF Operations through Fleet Management following the lifecycle guide.',
+                                            '<strong>c. VCF Automation Upgrade:</strong> VCF Automation is upgraded as part of the maintenance release cycle. Before you patch the migration service engine component from 9.1.0.0 to 9.1.1.0, you must first patch VCF Automation.'
                                         ]
                                     }
+                                ]
+                            },
+                            {
+                                type: 'warning',
+                                title: '⚠️ Critical Component Warnings & UI Restrictions',
+                                bullets: [
+                                    '<strong>VCF Operations:</strong> VCF Operations must not be patched in parallel with other components. Before you patch VCF Operations, ensure that no other lifecycle operations in the environment are in progress. Do not start other lifecycle operations until the VCF Operations patch process completes. The remaining components can be patched in parallel.',
+                                    '<strong>Software Depot Block:</strong> When you patch a software depot instance, patching other components is blocked because patch binaries are unavailable until the patch process for software depot completes.',
+                                    '<strong>Upgrade length:</strong> Upgrade could take longer than expected due to automatic backup workflow that was introduced in VCF 9.1.1.'
                                 ]
                             }
                         ]
@@ -2494,6 +2622,48 @@
                         });
                     }
 
+                    if (phase.componentId === 'vcf_fleet_lifecycle') {
+                        html += `
+                        <div class="fleet-read-verification" style="margin-top: 20px; padding: 16px 20px; background: rgba(0, 115, 230, 0.05); border: 2px solid var(--vmw-blue, #0073e6); border-radius: 10px;">
+                            <h4 style="margin: 0 0 12px 0; color: var(--vmw-blue, #0073e6); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                                📋 Phase 1 Interactive Checklist & Read Confirmation
+                            </h4>
+                            <p style="margin: 0 0 14px 0; font-size: 0.9rem; color: var(--text-primary);">
+                                Please review the official <a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/upgrade-a-vcf-management-component.html" target="_blank" style="color: var(--vmw-blue, #0073e6); font-weight: 600; text-decoration: underline;">VCF Management Component Upgrade Process Documentation</a> and read/verify each critical service requirement below. <strong>All checkboxes must be verified to proceed past Phase 1:</strong>
+                            </p>
+                            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem;">
+                                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="chk_fleet_ms" onchange="toggleFleetCheck('chk_fleet_ms')" style="margin-top: 3px; transform: scale(1.15);">
+                                    <span><strong>VCF Fleet VCF Management Services:</strong> Verified that VCF Management Services Fleet Lifecycle Component is patched to 9.1.1.0 first, before any other VCF component.</span>
+                                </label>
+                                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="chk_vcfms_runtime" onchange="toggleFleetCheck('chk_vcfms_runtime')" style="margin-top: 3px; transform: scale(1.15);">
+                                    <span><strong>VCF Management Services Runtime:</strong> Verified that VCF Management Services Runtime is patched prior to patching hosted Identity Broker or Salt RaaS instances.</span>
+                                </label>
+                                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="chk_ops" onchange="toggleFleetCheck('chk_ops')" style="margin-top: 3px; transform: scale(1.15);">
+                                    <span><strong>VCF Operations:</strong> Verified VCF Operations fleet upgrade guidance and prerequisites.</span>
+                                </label>
+                                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="chk_auto_mig" onchange="toggleFleetCheck('chk_auto_mig')" style="margin-top: 3px; transform: scale(1.15);">
+                                    <span><strong>VCF Automation & Migration Service Upgrade:</strong> Verified VCF Automation upgrade requirements and confirmed that VCF Automation HAS TO BE patched BEFORE patching the Migration Service Engine component.</span>
+                                </label>
+                                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; background: rgba(255, 193, 7, 0.1); padding: 8px 12px; border-radius: 6px; border-left: 4px solid #ffc107;">
+                                    <input type="checkbox" id="chk_depot_warn" onchange="toggleFleetCheck('chk_depot_warn')" style="margin-top: 3px; transform: scale(1.15);">
+                                    <span><strong style="color: #b78103;">⚠️ Software Depot Restriction Warning:</strong> Understood that while patching Software Depot, all other component patching is blocked as patch binaries remain unavailable until completion.</span>
+                                </label>
+                                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; background: rgba(217, 83, 79, 0.1); padding: 8px 12px; border-radius: 6px; border-left: 4px solid #d9534f;">
+                                    <input type="checkbox" id="chk_no_upgrade_all" onchange="toggleFleetCheck('chk_no_upgrade_all')" style="margin-top: 3px; transform: scale(1.15);">
+                                    <span><strong style="color: #d9534f;">🚫 Critical UI Warning - DO NOT USE "UPGRADE ALL" BUTTON:</strong> Confirmed that the "Upgrade All" button will NOT be used in the management UI; components must be patched individually according to mandatory dependency order.</span>
+                                </label>
+                            </div>
+                            <div id="fleet_ack_status" style="margin-top: 14px; padding: 10px 14px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-align: center; background: var(--bg); border: 1px dashed var(--border-color); color: var(--text-secondary);">
+                                ⏳ Pending verification (0 of 6 acknowledged)
+                            </div>
+                        </div>`;
+                        setTimeout(initFleetChecks, 50);
+                    }
+
                     if (phase.data.steps && phase.data.steps.length > 0) {
                         html +=`<p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px;"><strong>Steps:</strong></p><ul style="margin: 5px 0 10px 20px; font-size: 0.9rem; color: var(--text-primary);">`;
                         phase.data.steps.forEach(s => html += `<li>${s}</li>`);
@@ -2545,6 +2715,17 @@
         }
         
         function nextStep() {
+            const currentStep = allSteps[currentStepIndex];
+            if (currentStep && currentStep.phases && currentStep.phases.some(function(p) { return p.componentId === 'vcf_fleet_lifecycle'; })) {
+                if (!isFleetPhaseVerified()) {
+                    alert('⚠️ Phase 1 Verification Required:\n\nYou must read and check all prerequisite verification boxes in Phase 1 before moving to the next phase.');
+                    const statusEl = document.getElementById('fleet_ack_status');
+                    if (statusEl) {
+                        statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return;
+                }
+            }
             currentStepIndex++;
             displayStepsView();
         }

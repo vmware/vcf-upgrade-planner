@@ -2090,16 +2090,16 @@
                 }
             // ── VCF 9.1.0 selected ──────────────────────────────────────────────
             } else if (vcf91Checked && vcf91Version && vcf91Version.toLowerCase().startsWith('9.1.0')) {
-                const tgt91 = savedVcfTargetVer || '9.1.1';
+                const tgt91 = (savedVcfTargetVer || '9.1.1').replace(/^(\d+\.\d+\.\d+)\.0$/, '$1');
                 if (vcfIntent === 'fleet') {
                     paths = [
-                        { title: 'VCF 9.1.0 to VCF 9.1.1 (VCF Automation not included)', desc: 'Upgrade VCF Fleet from ' + vcf91Version + ' to ' + tgt91 + ' without deploying VCF Automation', icon: '' },
-                        { title: 'VCF 9.1.0 to VCF 9.1.1 (VCF Automation included)',     desc: 'Upgrade VCF Fleet from ' + vcf91Version + ' to ' + tgt91 + ' and deploy VCF Automation',        icon: '' }
+                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (VCF Automation not included)', desc: 'Upgrade VCF Fleet from ' + vcf91Version + ' to ' + tgt91 + ' without deploying VCF Automation', icon: '' },
+                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (VCF Automation included)',     desc: 'Upgrade VCF Fleet from ' + vcf91Version + ' to ' + tgt91 + ' and deploy VCF Automation',        icon: '' }
                     ];
                 } else {
                     // Instance and Workload: no Automation upgrade
                     paths = [
-                        { title: 'VCF 9.1.0 to VCF 9.1.1 (' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ')', desc: 'Upgrade VCF ' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ' from ' + vcf91Version + ' to ' + tgt91, icon: '' }
+                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ')', desc: 'Upgrade VCF ' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ' from ' + vcf91Version + ' to ' + tgt91, icon: '' }
                     ];
                 }
             }
@@ -2314,7 +2314,7 @@
                 localStorage.setItem('vxrail-selected', vcf90VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf90VxrailVersion);
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(Workload-Domain).html';
-            } else if (pathTitle.startsWith('VCF 9.1.0 to VCF 9.1.1 (VCF Automation not included)')) {
+            } else if (pathTitle.includes('VCF Automation not included') && (pathTitle.startsWith('VCF 9.1') || pathTitle.startsWith('VCF 9.1.x'))) {
                 const vcf91Version = document.getElementById('vcf91').value;
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
@@ -2323,7 +2323,7 @@
                 localStorage.setItem('vxrail-selected', vcf91VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf91VxrailVersion);
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-not-included).html';
-            } else if (pathTitle.startsWith('VCF 9.1.0 to VCF 9.1.1 (VCF Automation included)')) {
+            } else if (pathTitle.includes('VCF Automation included') && (pathTitle.startsWith('VCF 9.1') || pathTitle.startsWith('VCF 9.1.x'))) {
                 const vcf91Version = document.getElementById('vcf91').value;
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
@@ -2332,7 +2332,7 @@
                 localStorage.setItem('vxrail-selected', vcf91VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf91VxrailVersion);
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html';
-            } else if (pathTitle.startsWith('VCF 9.1.0 to VCF 9.1.1 (Instance)')) {
+            } else if (pathTitle.includes('Instance') && (pathTitle.startsWith('VCF 9.1') || pathTitle.startsWith('VCF 9.1.x'))) {
                 const vcf91Version = document.getElementById('vcf91').value;
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
@@ -2341,7 +2341,7 @@
                 localStorage.setItem('vxrail-selected', vcf91VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf91VxrailVersion);
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Instance).html';
-            } else if (pathTitle.startsWith('VCF 9.1.0 to VCF 9.1.1 (Workload Domain)')) {
+            } else if (pathTitle.includes('Workload Domain') && (pathTitle.startsWith('VCF 9.1') || pathTitle.startsWith('VCF 9.1.x'))) {
                 const vcf91Version = document.getElementById('vcf91').value;
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';

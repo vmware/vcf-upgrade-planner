@@ -401,6 +401,19 @@
  */
 function jumpToStep(stepIndex) {
     if (typeof allSteps === 'undefined' || !allSteps || stepIndex < 0 || stepIndex >= allSteps.length) return;
+    if (stepIndex > currentStepIndex) {
+        const currentStep = allSteps[currentStepIndex];
+        if (currentStep && currentStep.phases && currentStep.phases.some(function(p) { return p.componentId === 'vcf_fleet_lifecycle'; })) {
+            if (typeof isFleetPhaseVerified === 'function' && !isFleetPhaseVerified()) {
+                alert('⚠️ Verification Required:\n\nYou must read and check all safety and prerequisite verification boxes in Phase 1 before moving to the next phase.');
+                const statusEl = document.getElementById('fleet_ack_status');
+                if (statusEl) {
+                    statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+        }
+    }
     currentStepIndex = stepIndex;
     if (typeof displayStepsView === 'function') {
         displayStepsView();
