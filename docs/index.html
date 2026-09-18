@@ -3,6 +3,7 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>VCF Upgrade Planner</title>
+    <script src="docs_inline.js"></script>
     <!-- v2.3 2026-07-20: no-release advisory for patch targets without Supervisor/VKS builds -->
     <style>
         :root {
@@ -858,6 +859,367 @@
             display: flex;
         }
         .compat-card .upgrade-verdict { margin: 0; }
+
+        /* Target Release Notes Banner */
+        .target-rn-banner {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--vmw-blue);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            max-width: 100%;
+        }
+
+        /* Documentation Modal */
+        .doc-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 99999;
+        }
+        .doc-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .doc-modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            max-width: 1400px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .doc-modal-header {
+            padding: 20px 24px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--vmw-blue);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            flex-shrink: 0;
+        }
+        .doc-modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: white;
+        }
+        .doc-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .doc-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        .doc-modal-back {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .doc-modal-back:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+        .doc-modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+            color: var(--text-primary);
+            min-height: 0;
+        }
+        .doc-modal-body::-webkit-scrollbar {
+            width: 12px;
+        }
+        .doc-modal-body::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        .doc-modal-body::-webkit-scrollbar-thumb {
+            background: var(--vmw-blue);
+            border-radius: 6px;
+        }
+        .doc-modal-body h1, .doc-modal-body h2, .doc-modal-body h3 {
+            color: var(--vmw-blue);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        .doc-modal-body ul, .doc-modal-body ol {
+            padding-left: 28px;
+            margin: 12px 0;
+        }
+        .doc-modal-body li {
+            margin: 10px 0;
+            line-height: 1.7;
+        }
+        .doc-modal-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .doc-modal-body table th, .doc-modal-body table td {
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+        .doc-modal-body table th {
+            background: var(--bg);
+            font-weight: 600;
+        }
+        .doc-modal-footer {
+            padding: 16px 24px;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg);
+            border-radius: 0 0 12px 12px;
+            flex-shrink: 0;
+        }
+        .doc-modal-footer .external-link {
+            color: var(--vmw-blue);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .doc-modal-footer .external-link:hover {
+            text-decoration: underline;
+        }
+        /* Sub-pages sidebar */
+        .doc-modal-inner {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .doc-subpages-sidebar {
+            width: 240px;
+            min-width: 200px;
+            border-right: 2px solid var(--border-color);
+            overflow-y: auto;
+            background: var(--bg);
+            flex-shrink: 0;
+            display: none;
+            flex-direction: column;
+        }
+        .doc-subpages-sidebar.has-pages {
+            display: flex;
+        }
+        .doc-subpages-sidebar h4 {
+            margin: 0;
+            padding: 14px 16px 10px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--vmw-blue);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .doc-subpages-list {
+            list-style: none;
+            margin: 0;
+            padding: 8px 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .doc-subpages-list li a {
+            display: block;
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            line-height: 1.4;
+            border-left: 3px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .doc-subpages-list li a:hover,
+        .doc-subpages-list li a.sp-active {
+            background: rgba(0, 100, 210, 0.08);
+            border-left-color: var(--vmw-blue);
+            color: var(--vmw-blue);
+            font-weight: 600;
+        }
+        .doc-modal-body {
+            flex: 1;
+            min-width: 0;
+        }
+    
+        /* TechDocs DITA normalisation */
+        .doc-modal-body .linklist,
+        .doc-modal-body .relatedlinks,
+        .doc-modal-body .linkpool,
+        .doc-modal-body [class*="linklist"],
+        .doc-modal-body [class*="relatedlinks"] { display: none !important; }
+
+        .doc-modal-body .section, .doc-modal-body .prereq, .doc-modal-body .context,
+        .doc-modal-body .steps, .doc-modal-body .postreq, .doc-modal-body .result,
+        .doc-modal-body .shortdesc, .doc-modal-body .topic,
+        .doc-modal-body .dita, .doc-modal-body .main-content { display: block !important; }
+
+        .doc-modal-body ol.steps, .doc-modal-body ul.ul { display: block !important; padding-left: 24px; margin: 12px 0; }
+        .doc-modal-body li.step, .doc-modal-body li.li { display: list-item !important; margin: 8px 0; line-height: 1.6; }
+
+        .doc-modal-body .itemgroup, .doc-modal-body .stepresult, .doc-modal-body .info {
+            display: block !important; margin-top: 6px; padding-left: 12px;
+            border-left: 3px solid var(--border-color); color: var(--text-secondary); font-size: 0.9em;
+        }
+        .doc-modal-body .note {
+            display: block !important; background: #f0f7ff;
+            border-left: 4px solid var(--vmw-blue); border-radius: 4px;
+            padding: 10px 14px; margin: 14px 0; font-size: 0.92em;
+        }
+        .doc-modal-body .note::before {
+            content: attr(data-label); display: block; font-weight: 700;
+            font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase;
+            color: var(--vmw-blue); margin-bottom: 4px;
+        }
+        [data-theme="dark"] .doc-modal-body .note { background: rgba(0,152,199,0.1); }
+
+        .doc-modal-body code, .doc-modal-body .ph.codeph, .doc-modal-body .ph.filepath {
+            font-family: 'SFMono-Regular', Consolas, monospace;
+            background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-size: 0.88em;
+        }
+        [data-theme="dark"] .doc-modal-body code { background: rgba(255,255,255,0.1); }
+        .doc-modal-body .p, .doc-modal-body p { display: block !important; margin: 8px 0; line-height: 1.7; }
+
+        /* Dark mode overrides for inline TechDocs content */
+        [data-theme="dark"] .doc-modal-content {
+            background: var(--card-bg);
+        }
+        [data-theme="dark"] .doc-modal-body {
+            color: var(--text-primary) !important;
+            background: var(--card-bg) !important;
+        }
+        [data-theme="dark"] .doc-modal-body * {
+            color: inherit !important;
+            border-color: var(--border-color) !important;
+            background-color: transparent !important;
+        }
+        [data-theme="dark"] .doc-modal-body h1,
+        [data-theme="dark"] .doc-modal-body h2,
+        [data-theme="dark"] .doc-modal-body h3,
+        [data-theme="dark"] .doc-modal-body h4,
+        [data-theme="dark"] .doc-modal-body h5,
+        [data-theme="dark"] .doc-modal-body h6 {
+            color: var(--vmw-blue) !important;
+        }
+        [data-theme="dark"] .doc-modal-body a {
+            color: #58D3FF !important;
+        }
+        [data-theme="dark"] .doc-modal-body a:hover {
+            color: #8FE3FF !important;
+        }
+        [data-theme="dark"] .doc-modal-body table th {
+            background: #1c2128 !important;
+            color: var(--text-primary) !important;
+        }
+        [data-theme="dark"] .doc-modal-body table td {
+            color: var(--text-primary) !important;
+        }
+        [data-theme="dark"] .doc-modal-body .note {
+            background: rgba(0, 152, 199, 0.15) !important;
+            color: var(--text-primary) !important;
+        }
+        [data-theme="dark"] .doc-modal-body code,
+        [data-theme="dark"] .doc-modal-body .ph.codeph,
+        [data-theme="dark"] .doc-modal-body .ph.filepath,
+        [data-theme="dark"] .doc-modal-body pre,
+        [data-theme="dark"] .doc-modal-body .codeblock {
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #C9D1D9 !important;
+        }
+        [data-theme="dark"] .doc-modal-body .itemgroup,
+        [data-theme="dark"] .doc-modal-body .stepresult,
+        [data-theme="dark"] .doc-modal-body .info {
+            border-left-color: var(--border-color) !important;
+            color: var(--text-secondary) !important;
+        }
+        [data-theme="dark"] .doc-modal-footer {
+            background: #161b22 !important;
+            border-top-color: var(--border-color) !important;
+        }
+        [data-theme="dark"] .doc-subpages-sidebar {
+            background: #161b22 !important;
+        }
+        .target-rn-title {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .target-rn-title strong {
+            color: var(--text-primary);
+        }
+        .target-rn-patches {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .target-rn-patches-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .target-rn-patch-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        .target-rn-patch-badge:hover {
+            border-color: var(--vmw-blue);
+            color: var(--vmw-blue);
+            background: rgba(0, 136, 181, 0.1);
+            text-decoration: none;
+        }
+        [data-theme="dark"] .target-rn-patch-badge:hover {
+            background: rgba(88, 211, 255, 0.15);
+            color: #58D3FF;
+        }
         </style>
 </head>
 
@@ -1117,6 +1479,7 @@
                                 <option value="9.1.1.0">9.1.1.0</option>
                             </optgroup>
                         </select>
+                        <div id="targetVcf91ReleaseNotes" style="margin-top:10px;display:none;"></div>
                     </div>
                     <!-- Add-on Pre-check Banners -->
                     <div id="addonPrecheckBanners" style="display:none;margin-bottom:16px;">
@@ -1301,6 +1664,7 @@
                                 <option value="9.1.1.0">9.1.1.0</option>
                             </optgroup>
                         </select>
+                        <div id="vcfTargetVcf91ReleaseNotes" style="margin-top:10px;display:none;"></div>
                     </div>
                     <div id="vcfAddonPrecheckBanners" style="display:none;margin-bottom:16px;"><div style="font-size:0.85rem;font-weight:700;color:var(--vmw-gray);margin-bottom:10px;">⚠️ Add-on Compatibility Pre-checks</div><div style="overflow-x:auto;margin-bottom:12px;"><div class="compat-cards-container" id="vcfCompatCheckRow"><div class="compat-card"><div id="vcfCheckSddc" style="display:none;" class="upgrade-verdict"><div class="verdict-title" id="vcfCheckSddcTitle"></div><div class="verdict-detail" id="vcfCheckSddcDetail"></div></div></div></div></div></div>
                     <div class="path-options" id="vcfPathOptions">
@@ -1572,6 +1936,164 @@
             return errors;
         }
 
+        function getComponentPatchUrl(name, targetVer) {
+            if (!targetVer || targetVer === '9.1.0.0') return null;
+
+            if (targetVer === '9.1.1.0') {
+                var map911 = {
+                    'ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
+                    'ESX / vSphere': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
+                    'vCenter Server': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vCenter': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vSAN Witness': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vsan-9-1-1-0-release-notes.html',
+                    'vSAN': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vsan-9-1-1-0-release-notes.html',
+                    'NSX Local Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'NSX Global Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'NSX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'SDDC Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/sddc-manager-9-1-1-0-release-notes.html',
+                    'VCF Operations': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
+                    'VCF Operations orchestrator': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
+                    'Log Management (Logs)': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
+                    'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
+                    'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfautomation-9-1-1-0-release-notes.html'
+                };
+                return map911[name] || null;
+            }
+
+            var coverage = {
+                'ESX': ['9.1.0.0100', '9.1.0.0200'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200'],
+                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400'],
+                'VCF Management Services': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
+            };
+
+            var builds = coverage[name];
+            if (!builds || !builds.includes(targetVer)) {
+                return null;
+            }
+
+            var verSlug = targetVer.replace(/\./g, '-');
+            var pathMap = {
+                'ESX': 'vsphere/esx/esx-' + verSlug + '-release-notes.html',
+                'ESX / vSphere': 'vsphere/esx/esx-' + verSlug + '-release-notes.html',
+                'vCenter Server': 'vsphere/vcenter/vcenter-' + verSlug + '-release-notes.html',
+                'vCenter': 'vsphere/vcenter/vcenter-' + verSlug + '-release-notes.html',
+                'vSAN Witness': 'vsan/vsan-' + verSlug + '-release-notes.html',
+                'vSAN': 'vsan/vsan-' + verSlug + '-release-notes.html',
+                'NSX Local Manager': 'nsx/nsx-' + verSlug + '-release-notes.html',
+                'NSX Global Manager': 'nsx/nsx-' + verSlug + '-release-notes.html',
+                'NSX': 'nsx/nsx-' + verSlug + '-release-notes.html',
+                'SDDC Manager': 'vcf-installer/sddc-manager-' + verSlug + '-release-notes.html',
+                'VCF Operations': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
+                'VCF Operations orchestrator': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
+                'Log Management (Logs)': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
+                'VCF Management Services': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
+                'VCF Automation': 'vcf-automation/vcfautomation-' + verSlug + '-release-notes.html'
+            };
+
+            if (pathMap[name]) {
+                return 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/' + pathMap[name];
+            }
+            return null;
+        }
+
+        function getTargetProductPatches(targetVer, elementId) {
+            let products = ['SDDC Manager', 'VCF Operations', 'vCenter', 'ESX', 'vSAN', 'NSX', 'VCF Automation'];
+
+            if (elementId === 'targetVcf91ReleaseNotes') {
+                const intent = localStorage.getItem('vsphere-intent') || '';
+                if (intent === 'vvf') {
+                    products = ['VCF Operations', 'vCenter', 'ESX', 'vSAN'];
+                } else if (intent === 'instance') {
+                    products = ['SDDC Manager', 'VCF Management Services', 'vCenter', 'ESX', 'vSAN', 'NSX'];
+                } else if (intent === 'import') {
+                    products = ['vCenter', 'ESX', 'vSAN', 'NSX'];
+                } else if (intent === 'fleet') {
+                    products = ['SDDC Manager', 'VCF Operations', 'vCenter', 'ESX', 'vSAN', 'NSX', 'VCF Automation'];
+                }
+            } else if (elementId === 'vcfTargetVcf91ReleaseNotes') {
+                const vcfIntent = localStorage.getItem('vcf-intent') || 'fleet';
+                if (vcfIntent === 'instance') {
+                    products = ['SDDC Manager', 'VCF Management Services', 'vCenter', 'ESX', 'vSAN', 'NSX'];
+                } else if (vcfIntent === 'workload') {
+                    products = ['vCenter', 'ESX', 'vSAN', 'NSX'];
+                } else if (vcfIntent === 'fleet') {
+                    products = ['SDDC Manager', 'VCF Operations', 'VCF Management Services', 'vCenter', 'ESX', 'vSAN', 'NSX', 'VCF Automation'];
+                }
+            }
+
+            const patches = [];
+            const seenUrls = [];
+            products.forEach(function(p) {
+                const url = getComponentPatchUrl(p, targetVer);
+                if (url && !seenUrls.includes(url)) {
+                    seenUrls.push(url);
+                    patches.push({ name: p, url: url });
+                }
+            });
+            return patches;
+        }
+
+        const VCF_RELEASE_NOTES_MAP = {
+            '9.1.0.0': {
+                url: 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes.html',
+                title: 'VMware Cloud Foundation 9.1.0.0 Release Notes'
+            },
+            '9.1.1.0': {
+                url: 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html',
+                title: 'VMware Cloud Foundation 9.1.1.0 Release Notes'
+            }
+        };
+
+        function updateTargetReleaseNotesDisplay(targetVer, elementId) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            const rn = VCF_RELEASE_NOTES_MAP[targetVer];
+            const patches = getTargetProductPatches(targetVer, elementId);
+            if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0') {
+                if (rn) {
+                    container.style.display = 'block';
+                    let html = '<div class="target-rn-banner">';
+                    html += '<div class="target-rn-title">📖 <strong>VCF Release Notes:</strong> <a href="' + rn.url + '" target="_blank" rel="noopener" style="font-weight:600;">' + rn.title + ' ↗</a></div>';
+                    if (patches && patches.length > 0) {
+                        html += '<div class="target-rn-patches">';
+                        html += '<span class="target-rn-patches-label">Product Patch Notes:</span>';
+                        patches.forEach(function(p) {
+                            html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="target-rn-patch-badge">' + p.name + ' ↗</a>';
+                        });
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                    container.innerHTML = html;
+                }
+            } else if (patches && patches.length > 0) {
+                container.style.display = 'block';
+                let html = '<div class="target-rn-banner">';
+                html += '<div class="target-rn-patches" style="margin-top:0;">';
+                html += '<span class="target-rn-patches-label" style="font-weight:700;color:var(--text-primary);">📖 Component Patches for v' + targetVer + ':</span>';
+                patches.forEach(function(p) {
+                    html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="target-rn-patch-badge">' + p.name + ' ↗</a>';
+                });
+                html += '</div>';
+                html += '</div>';
+                container.innerHTML = html;
+            } else {
+                container.style.display = 'none';
+                container.innerHTML = '';
+            }
+        }
+
         function updateAvailablePaths() {
                 if (window.runConstructReadiness) window.runConstructReadiness();
             const intent = localStorage.getItem('vsphere-intent') || '';
@@ -1602,6 +2124,8 @@
             const targetVersionGroup  = document.getElementById('targetVcf91VersionGroup');
             const targetVersionSelect = document.getElementById('targetVcf91Version');
             const savedTargetVer   = targetVersionSelect ? targetVersionSelect.value : '';
+
+            updateTargetReleaseNotesDisplay(savedTargetVer, 'targetVcf91ReleaseNotes');
 
             // Clear existing paths
             pathOptions.innerHTML = '';
@@ -1666,6 +2190,22 @@
                 _cnel.style.cssText = 'background:rgba(0,136,181,0.07);border-left:3px solid var(--vmw-blue);border-radius:6px;padding:10px 16px;margin-bottom:16px;font-size:0.88rem;color:var(--text-secondary);line-height:1.55;';
                 _cnel.innerHTML = '&#x1F4A1; ' + _cnt;
                 pathOptions.appendChild(_cnel);
+            }
+
+            // ── NSX 4.2.4 / 4.2.4.1 block — supported for 9.1.1 ──────────────────
+            const _nsxVersionVal = (document.getElementById('nsx') ? document.getElementById('nsx').value : '').toLowerCase();
+            if (document.getElementById('nsxCheck') && (document.getElementById('nsxCheck') ? document.getElementById('nsxCheck').checked : false) && _nsxVersionVal.startsWith('4.2.4')) {
+                if (!savedTargetVer.startsWith('9.1.1')) {
+                    const nsxBlockDiv = document.createElement('div');
+                    nsxBlockDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                    nsxBlockDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; Target Version 9.1.1 Required</h3>' +
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">VMware NSX <strong>' + _nsxVersionVal + '</strong> is supported for upgrade to VCF <strong>9.1.1</strong>. ' +
+                        'Please select target version <strong>9.1.1</strong> to proceed, or select another NSX version to continue with 9.1.0.x.</p>';
+                    pathOptions.appendChild(nsxBlockDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                    return;
+                }
             }
 
             // ── Operations 8.18.7 block — supported for 9.1.1 ──────────────────
@@ -1893,6 +2433,8 @@
             const vcfTargetVersionSelect = document.getElementById('vcfTargetVcf91Version');
             let savedVcfTargetVer = vcfTargetVersionSelect ? vcfTargetVersionSelect.value : '';
 
+            updateTargetReleaseNotesDisplay(savedVcfTargetVer, 'vcfTargetVcf91ReleaseNotes');
+
             // VCF SDDC Manager upgrade compat check
             (function() {
                 var banner = document.getElementById('vcfAddonPrecheckBanners');
@@ -2093,13 +2635,13 @@
                 const tgt91 = (savedVcfTargetVer || '9.1.1').replace(/^(\d+\.\d+\.\d+)\.0$/, '$1');
                 if (vcfIntent === 'fleet') {
                     paths = [
-                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (VCF Automation not included)', desc: 'Upgrade VCF Fleet from ' + vcf91Version + ' to ' + tgt91 + ' without deploying VCF Automation', icon: '' },
-                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (VCF Automation included)',     desc: 'Upgrade VCF Fleet from ' + vcf91Version + ' to ' + tgt91 + ' and deploy VCF Automation',        icon: '' }
+                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (VCF Automation not included)', desc: 'Patch VCF Fleet from ' + vcf91Version + ' to ' + tgt91 + ' without deploying VCF Automation', icon: '' },
+                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (VCF Automation included)',     desc: 'Patch VCF Fleet from ' + vcf91Version + ' to ' + tgt91 + ' and deploy VCF Automation',        icon: '' }
                     ];
                 } else {
                     // Instance and Workload: no Automation upgrade
                     paths = [
-                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ')', desc: 'Upgrade VCF ' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ' from ' + vcf91Version + ' to ' + tgt91, icon: '' }
+                        { title: 'VCF 9.1.x to VCF ' + tgt91 + ' (' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ')', desc: 'Patch VCF ' + (vcfIntent === 'instance' ? 'Instance' : 'Workload Domain') + ' from ' + vcf91Version + ' to ' + tgt91, icon: '' }
                     ];
                 }
             }
@@ -3004,14 +3546,21 @@
                 });
                 populateSorted('vcenter', vcenterVers);
                 populateSorted('esx',     esxVers);
-                // Exclude Operations and Automation versions below 8.17
+                // Exclude Operations versions below 8.18
+                function minVer818(v) {
+                    var m = (v.group || '').match(/^(\d+)\.(\d+)/);
+                    if (!m) return true;
+                    var maj = parseInt(m[1], 10), min = parseInt(m[2], 10);
+                    return maj > 8 || (maj === 8 && min >= 18);
+                }
+                // Exclude Automation versions below 8.17
                 function minVer817(v) {
-                    var m = v.group.match(/^(\d+)\.(\d+)/);
+                    var m = (v.group || '').match(/^(\d+)\.(\d+)/);
                     if (!m) return true;
                     var maj = parseInt(m[1], 10), min = parseInt(m[2], 10);
                     return maj > 8 || (maj === 8 && min >= 17);
                 }
-                populateSorted('operations', (data.versions && data.versions['operations'] || []).filter(minVer817));
+                populateSorted('operations', (data.versions && data.versions['operations'] || []).filter(minVer818));
                 populateSorted('automation', (data.versions && data.versions['automation'] || []).filter(function(v){
                     return minVer817(v) && !v.group.toLowerCase().startsWith('9.');
                 }));
@@ -3462,9 +4011,13 @@
                             if (tEl) tEl.innerHTML = '\u2705 VCF Automation \u2014 Upgrade Path Supported';
                             if (dEl) dEl.innerHTML = 'VCF Automation <strong>' + cvl + '</strong> \u2192 <strong>' + tvl + '</strong> is a <strong>supported upgrade path</strong>.' + noteHtml;
                         } else if (cv.status === 'no') {
-                            box.className = 'upgrade-verdict show blocked';
-                            if (tEl) tEl.innerHTML = '\ud83d\udeab VCF Automation \u2014 Upgrade Path Not Supported';
-                            if (dEl) dEl.innerHTML = 'VCF Automation <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                            box.className = 'upgrade-verdict show warning';
+                            if (tEl) tEl.innerHTML = '\u26a0\ufe0f VCF Automation \u2014 Pre-Upgrade Step Required';
+                            if (curVer.startsWith('8.18.0') || curVer === '8.18.0' || curVer === '8.18') {
+                                if (dEl) dEl.innerHTML = 'VCF Automation <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>. A pre-upgrade step to <strong>VCF Automation 8.18.1 or later</strong> will be included in your plan.' + noteHtml;
+                            } else {
+                                if (dEl) dEl.innerHTML = 'VCF Automation <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                            }
                         } else {
                             box.className = 'upgrade-verdict show unknown';
                             if (tEl) tEl.innerHTML = '\u2753 VCF Automation \u2014 No Upgrade Path Data for ' + tvl;
@@ -3504,9 +4057,18 @@
                             if (tEl) tEl.innerHTML = '\u2705 NSX \u2014 Upgrade Path Supported';
                             if (dEl) dEl.innerHTML = 'NSX <strong>' + cvl + '</strong> \u2192 <strong>' + tvl + '</strong> is a <strong>supported upgrade path</strong>.' + noteHtml;
                         } else if (cv.status === 'no') {
-                            box.className = 'upgrade-verdict show blocked';
-                            if (tEl) tEl.innerHTML = '\ud83d\udeab NSX \u2014 Upgrade Path Not Supported';
-                            if (dEl) dEl.innerHTML = 'NSX <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                            box.className = 'upgrade-verdict show warning';
+                            if (curVer.startsWith('4.2.4')) {
+                                if (tEl) tEl.innerHTML = '\u26a0\ufe0f NSX \u2014 Target Version 9.1.1 Required';
+                                if (dEl) dEl.innerHTML = 'VMware NSX <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong> (NSX 4.2.4.x is supported for upgrade to VCF 9.1.1). Please select target version <strong>9.1.1</strong> to proceed.' + noteHtml;
+                            } else if (!curVer.startsWith('4.2') && !curVer.startsWith('9.')) {
+                                if (tEl) tEl.innerHTML = '\u26a0\ufe0f NSX \u2014 Pre-Upgrade Step Required';
+                                if (dEl) dEl.innerHTML = 'VMware NSX <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>. A pre-upgrade step to <strong>NSX 4.2.x</strong> will be included in your plan.' + noteHtml;
+                            } else {
+                                box.className = 'upgrade-verdict show blocked';
+                                if (tEl) tEl.innerHTML = '\ud83d\udeab NSX \u2014 Upgrade Path Not Supported';
+                                if (dEl) dEl.innerHTML = 'NSX <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                            }
                         } else {
                             box.className = 'upgrade-verdict show unknown';
                             if (tEl) tEl.innerHTML = '\u2753 NSX \u2014 No Upgrade Path Data for ' + tvl;
@@ -3546,9 +4108,13 @@
                             if (tEl) tEl.innerHTML = '\u2705 VCF Operations \u2014 Upgrade Path Supported';
                             if (dEl) dEl.innerHTML = 'VCF Operations <strong>' + cvl + '</strong> \u2192 <strong>' + tvl + '</strong> is a <strong>supported upgrade path</strong>.' + noteHtml;
                         } else if (cv.status === 'no') {
-                            box.className = 'upgrade-verdict show blocked';
-                            if (tEl) tEl.innerHTML = '\ud83d\udeab VCF Operations \u2014 Upgrade Path Not Supported';
-                            if (dEl) dEl.innerHTML = 'VCF Operations <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                            box.className = 'upgrade-verdict show warning';
+                            if (tEl) tEl.innerHTML = '\u26a0\ufe0f VCF Operations \u2014 Pre-Upgrade Step Required';
+                            if (toVer.startsWith('9.1.1')) {
+                                if (dEl) dEl.innerHTML = 'VCF Operations <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong> (only 8.18.6 and 8.18.7 support direct upgrade to 9.1.1). A pre-upgrade step to <strong>VCF Operations 8.18.6 or 8.18.7</strong> will be included in your plan.' + noteHtml;
+                            } else {
+                                if (dEl) dEl.innerHTML = 'VCF Operations <strong>' + cvl + '</strong> cannot be upgraded directly to <strong>' + tvl + '</strong>.' + noteHtml + (noteHtml ? '' : ' An intermediate upgrade step may be required.') + ' <a href="https://interopmatrix.broadcom.com/Interoperability" target="_blank" rel="noopener" style="font-size:0.85em;">Broadcom Interoperability Matrix</a>';
+                            }
                         } else {
                             box.className = 'upgrade-verdict show unknown';
                             if (tEl) tEl.innerHTML = '\u2753 VCF Operations \u2014 No Upgrade Path Data for ' + tvl;
@@ -3639,5 +4205,264 @@
     });
 })();
 </script>
+    <!-- Documentation Modal -->
+    <div id="docModal" class="doc-modal" onclick="if(event.target === this) closeDocModal()">
+        <div class="doc-modal-content">
+            <div class="doc-modal-header">
+                <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+                    <button id="docModalBackBtn" class="doc-modal-back" onclick="docModalGoBack()" style="display:none;" title="Go back">&#8592; Back</button>
+                    <h2 id="docModalTitle" style="margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Documentation</h2>
+                </div>
+                <button class="doc-modal-close" onclick="closeDocModal()">&times;</button>
+            </div>
+            <div class="doc-modal-inner">
+                <div class="doc-subpages-sidebar" id="docSubpagesSidebar">
+                    <h4>Related Pages</h4>
+                    <ul class="doc-subpages-list" id="docSubpagesList"></ul>
+                </div>
+                <div class="doc-modal-body" id="docModalBody"></div>
+            </div>
+            <div class="doc-modal-footer">
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">Inline documentation from Broadcom TechDocs</span>
+                <a id="docModalExternalLink" href="#" class="external-link" onclick="openExternalLink(); return false;">
+                    Open on Broadcom TechDocs &#8599;
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // INLINE DOCUMENTATION MODAL SYSTEM
+    var _inlineDocsInitialized = false;
+    function initInlineDocumentation() {
+        if (_inlineDocsInitialized) return;
+        _inlineDocsInitialized = true;
+        if (typeof window.INLINE_DOCS === 'undefined') {
+            console.warn('INLINE_DOCS not loaded');
+            return;
+        }
+        console.log('Inline docs loaded:', Object.keys(window.INLINE_DOCS).length);
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a[href*="techdocs.broadcom.com"], a[href*="knowledge.broadcom.com"]');
+            if (!link) return;
+            if (link.id === 'docModalExternalLink') return;
+            e.preventDefault();
+            e.stopPropagation();
+            const fullUrl = link.href;
+            const urlWithoutFragment = fullUrl.split('#')[0];
+            if (window.INLINE_DOCS && window.INLINE_DOCS[urlWithoutFragment]) {
+                showInlineDocumentation(urlWithoutFragment, fullUrl);
+            } else {
+                window.open(fullUrl, '_blank');
+            }
+        }, true);
+    }
+
+    var docNavStack = [];
+
+    function showInlineDocumentation(url, originalUrl, pushToStack) {
+        const cleanUrl = (url || '').split('#')[0];
+        const docData = window.INLINE_DOCS ? window.INLINE_DOCS[cleanUrl] : null;
+        if (!docData) {
+            window.open(originalUrl || url, '_blank');
+            return;
+        }
+
+        if (pushToStack !== false) {
+            const modal = document.getElementById('docModal');
+            const currentExternalLink = document.getElementById('docModalExternalLink');
+            const currentTitle = document.getElementById('docModalTitle');
+            if (modal && modal.classList.contains('active') &&
+                currentTitle && currentTitle.textContent &&
+                currentTitle.textContent !== 'Documentation') {
+                docNavStack.push({
+                    url: currentExternalLink ? currentExternalLink.href : '',
+                    originalUrl: currentExternalLink ? currentExternalLink.href : ''
+                });
+            }
+        }
+
+        const modal = document.getElementById('docModal');
+        const title = document.getElementById('docModalTitle');
+        const body = document.getElementById('docModalBody');
+        const externalLink = document.getElementById('docModalExternalLink');
+        const backBtn = document.getElementById('docModalBackBtn');
+
+        if (backBtn) backBtn.style.display = docNavStack.length > 0 ? 'flex' : 'none';
+
+        title.textContent = docData.title || 'Documentation';
+        body.innerHTML = docData.content || '<p>No content available.</p>';
+
+        body.querySelectorAll(
+            '.linklist, .relatedlinks, .linkpool, [class*="linklist"], [class*="relatedlinks"]'
+        ).forEach(function(el) { el.remove(); });
+
+        var BLOCK_TAGS = new Set([
+            'DIV','P','LI','UL','OL','SECTION','H1','H2','H3','H4','H5','H6',
+            'TABLE','TR','TD','TH','THEAD','TBODY','TFOOT',
+            'ARTICLE','ASIDE','BLOCKQUOTE','FIGURE','FIGCAPTION',
+            'HEADER','FOOTER','MAIN','NAV','DETAILS','SUMMARY',
+            'DL','DT','DD','PRE','HR','FIELDSET','FORM'
+        ]);
+        var INLINE_PARENTS = new Set([
+            'SPAN','A','B','I','EM','STRONG','CODE','KBD','LABEL',
+            'CITE','ABBR','BIG','SMALL','SUB','SUP','VAR','Q','S','U'
+        ]);
+        body.querySelectorAll('*').forEach(function(el) {
+            if (BLOCK_TAGS.has(el.tagName) && el.style.display === 'inline') {
+                if (el.parentElement && INLINE_PARENTS.has(el.parentElement.tagName)) return;
+                el.style.removeProperty('display');
+            }
+        });
+
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var textColor = isDark ? '#E6EDF3' : '#111111';
+        var linkColor = isDark ? '#58D3FF' : '#0088b5';
+        body.querySelectorAll('*').forEach(function(el) {
+            el.style.removeProperty('color');
+            el.style.removeProperty('-webkit-text-fill-color');
+            el.style.removeProperty('opacity');
+            el.style.setProperty('color', textColor, 'important');
+            el.style.setProperty('-webkit-text-fill-color', textColor, 'important');
+            el.style.setProperty('opacity', '1', 'important');
+        });
+        body.querySelectorAll('a').forEach(function(el) {
+            el.style.setProperty('color', linkColor, 'important');
+            el.style.setProperty('-webkit-text-fill-color', linkColor, 'important');
+        });
+
+        body.querySelectorAll('a[href]').forEach(function(a) {
+            var rawHref = a.getAttribute('href');
+            if (!rawHref || rawHref.startsWith('#') || rawHref.startsWith('javascript')) return;
+            var fullTargetUrl = rawHref;
+            if (rawHref.startsWith('/us/en/') || rawHref.startsWith('us/en/')) {
+                fullTargetUrl = 'https://techdocs.broadcom.com/' + rawHref.replace(/^\//, '');
+            } else if (!rawHref.startsWith('http')) {
+                try {
+                    fullTargetUrl = new URL(rawHref, cleanUrl).href;
+                } catch(e) {}
+            }
+            var cleanTargetUrl = fullTargetUrl.split('#')[0];
+            if (window.INLINE_DOCS && window.INLINE_DOCS[cleanTargetUrl]) {
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showInlineDocumentation(cleanTargetUrl, fullTargetUrl);
+                });
+            }
+        });
+
+        if (externalLink) externalLink.href = originalUrl || url;
+
+        const sidebar = document.getElementById('docSubpagesSidebar');
+        const spList = document.getElementById('docSubpagesList');
+        if (sidebar && spList) {
+            function renderSubpagesList(list) {
+                spList.innerHTML = '';
+                if (!list || list.length === 0) {
+                    sidebar.classList.remove('has-pages');
+                    return;
+                }
+                list.forEach(function(sp) {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.textContent = sp.label;
+                    a.href = sp.url;
+                    a.title = sp.url;
+                    if (sp.url === cleanUrl || (sp.url && sp.url.split('#')[0] === cleanUrl)) {
+                        a.classList.add('sp-active');
+                    }
+                    a.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        spList.querySelectorAll('a').forEach(function(x) { x.classList.remove('sp-active'); });
+                        a.classList.add('sp-active');
+                        if (window.INLINE_DOCS && window.INLINE_DOCS[sp.url]) {
+                            showInlineDocumentation(sp.url, sp.url);
+                        } else {
+                            window.open(sp.url, '_blank');
+                        }
+                    });
+                    li.appendChild(a);
+                    spList.appendChild(li);
+                });
+                sidebar.classList.add('has-pages');
+            }
+
+            const subpages = docData.subpages || [];
+            if (subpages.length > 0) {
+                renderSubpagesList(subpages);
+            } else {
+                let existingLink = null;
+                spList.querySelectorAll('a').forEach(function(x) {
+                    if (x.href === cleanUrl || x.title === cleanUrl || (x.getAttribute('href') && x.getAttribute('href').split('#')[0] === cleanUrl)) {
+                        existingLink = x;
+                    }
+                });
+                if (existingLink) {
+                    spList.querySelectorAll('a').forEach(function(x) { x.classList.remove('sp-active'); });
+                    existingLink.classList.add('sp-active');
+                    sidebar.classList.add('has-pages');
+                } else {
+                    let parentSubpages = null;
+                    if (window.INLINE_DOCS) {
+                        for (const pUrl in window.INLINE_DOCS) {
+                            const pData = window.INLINE_DOCS[pUrl];
+                            if (pData && pData.subpages && pData.subpages.length > 0) {
+                                if (pData.subpages.some(sp => sp.url === cleanUrl || (sp.url && sp.url.split('#')[0] === cleanUrl))) {
+                                    parentSubpages = pData.subpages;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (parentSubpages && parentSubpages.length > 0) {
+                        renderSubpagesList(parentSubpages);
+                    } else {
+                        spList.innerHTML = '';
+                        sidebar.classList.remove('has-pages');
+                    }
+                }
+            }
+        }
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function docModalGoBack() {
+        if (docNavStack.length === 0) return;
+        const prev = docNavStack.pop();
+        showInlineDocumentation(prev.url, prev.originalUrl, false);
+    }
+
+    function closeDocModal() {
+        const modal = document.getElementById('docModal');
+        if (modal) modal.classList.remove('active');
+        document.body.style.overflow = '';
+        docNavStack = [];
+        const backBtn = document.getElementById('docModalBackBtn');
+        if (backBtn) backBtn.style.display = 'none';
+        const sidebar = document.getElementById('docSubpagesSidebar');
+        const spList = document.getElementById('docSubpagesList');
+        if (sidebar && spList) {
+            spList.innerHTML = '';
+            sidebar.classList.remove('has-pages');
+        }
+    }
+
+    function openExternalLink() {
+        const url = document.getElementById('docModalExternalLink').href;
+        window.open(url, '_blank');
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeDocModal();
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() { if (typeof initInlineDocumentation === "function") initInlineDocumentation(); }, 500);
+    });
+    </script>
 </body>
 </html>

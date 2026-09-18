@@ -1519,6 +1519,73 @@
      
         }
 
+        function _getComponentPatchUrl(name, targetVer) {
+            if (!targetVer || targetVer === '9.1.0.0') return null;
+            if (targetVer === '9.1.1.0') {
+                var map911 = {
+                    'ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
+                    'ESX / vSphere': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
+                    'vCenter Server': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vCenter': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vSAN Witness': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vsan-9-1-1-0-release-notes.html',
+                    'vSAN': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vsan-9-1-1-0-release-notes.html',
+                    'NSX Local Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'NSX Global Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'NSX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'SDDC Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/sddc-manager-9-1-1-0-release-notes.html',
+                    'VCF Operations': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
+                    'VCF Operations orchestrator': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
+                    'Log Management (Logs)': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
+                    'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
+                    'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfautomation-9-1-1-0-release-notes.html'
+                };
+                return map911[name] || null;
+            }
+
+            var _covMap = {
+                'ESX': ['9.1.0.0100', '9.1.0.0200'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200'],
+                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400'],
+                'VCF Management Services': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
+            };
+
+            var builds = _covMap[name];
+            if (!builds || !builds.includes(targetVer)) return null;
+            var verSlug = targetVer.replace(/\./g, '-');
+            var pathMap = {
+                'ESX': 'vsphere/esx/esx-' + verSlug + '-release-notes.html',
+                'ESX / vSphere': 'vsphere/esx/esx-' + verSlug + '-release-notes.html',
+                'vCenter Server': 'vsphere/vcenter/vcenter-' + verSlug + '-release-notes.html',
+                'vCenter': 'vsphere/vcenter/vcenter-' + verSlug + '-release-notes.html',
+                'vSAN Witness': 'vsan/vsan-' + verSlug + '-release-notes.html',
+                'vSAN': 'vsan/vsan-' + verSlug + '-release-notes.html',
+                'NSX Local Manager': 'nsx/nsx-' + verSlug + '-release-notes.html',
+                'NSX Global Manager': 'nsx/nsx-' + verSlug + '-release-notes.html',
+                'NSX': 'nsx/nsx-' + verSlug + '-release-notes.html',
+                'SDDC Manager': 'vcf-installer/sddc-manager-' + verSlug + '-release-notes.html',
+                'VCF Operations': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
+                'VCF Operations orchestrator': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
+                'Log Management (Logs)': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
+                'VCF Management Services': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
+                'VCF Automation': 'vcf-automation/vcfautomation-' + verSlug + '-release-notes.html'
+            };
+            if (pathMap[name]) {
+                return 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/' + pathMap[name];
+            }
+            return null;
+        }
+
         function displaySelectedSummary() {
             const summary = document.getElementById('selectedSummary');
             let html = '<ul class="component-list">';
@@ -1530,6 +1597,33 @@
                 html += `<li><span class="badge included">✓ Dell VxRail (HCI)</span>${_vxrVer}</li>`;
             }
             
+            const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
+            if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0') {
+                const mainRnUrl = (targetVer === '9.1.1.0') 
+                    ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html'
+                    : 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes.html';
+                html += `<li><span class="badge included" style="background:#e8f4f8;color:#005588;border:1px solid #bce0ee;">🎯 Target VCF Version</span><span class="badge version">v${targetVer}</span> <a href="${mainRnUrl}" target="_blank" rel="noopener" style="font-size:0.82rem;color:#0088b5;font-weight:600;margin-left:6px;text-decoration:underline;">(Release Notes ↗)</a></li>`;
+            } else {
+                const products = ['SDDC Manager', 'VCF Operations', 'VCF Management Services', 'vCenter Server', 'ESX', 'vSAN', 'NSX'];
+                const patchLinks = [];
+                const seenUrls = [];
+                products.forEach(function(p) {
+                    var url = _getComponentPatchUrl(p, targetVer);
+                    if (url && !seenUrls.includes(url)) {
+                        seenUrls.push(url);
+                        patchLinks.push({ name: p, url: url });
+                    }
+                });
+                var patchHtml = '';
+                if (patchLinks.length > 0) {
+                    patchHtml = ' <span style="font-size:0.82rem;color:var(--text-secondary);margin-left:6px;">Product Patches: ' +
+                        patchLinks.map(function(pl) {
+                            return `<a href="${pl.url}" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;margin-right:6px;">${pl.name} ↗</a>`;
+                        }).join('') + '</span>';
+                }
+                html += `<li><span class="badge included" style="background:#e8f4f8;color:#005588;border:1px solid #bce0ee;">🎯 Target VCF Version</span><span class="badge version">v${targetVer}</span>${patchHtml}</li>`;
+            }
+
             html += '</ul>';
             summary.innerHTML = html;
         }
@@ -1646,6 +1740,7 @@
         function generateUpgradePlan() {
             const phases = [];
             const selectedProducts = window.selectedAdvancedProducts || {};
+            const _is910To911Plan = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
             
             if (!upgradeData || !upgradeData.upgrade_order) {
                 console.error('No upgrade order defined in JSON');
@@ -1674,19 +1769,20 @@
                     } else {
                         shouldInclude = true;
                         componentData = upgradeData.components['operations'];
-                        phaseTitle = componentData ? componentData.name : componentId;
+                        phaseTitle = _is910To911Plan ? 'VCF Operations Patch' : (componentData ? componentData.name : componentId);
+                        phaseDescription = _is910To911Plan ? 'Patch VCF Operations' : 'Upgrade VCF Operations';
                     }
 
                 } else if (componentId === 'vxrail') {
                     // VxRail only if selected - replaces ESX
                     shouldInclude = selectedProducts['vxrail'] === true;
                     phaseTitle = componentData ? componentData.name : 'vxrail';
-                    phaseDescription = 'Upgrade ' + phaseTitle; 
+                    phaseDescription = _is910To911Plan ? 'Patch ' + phaseTitle : 'Upgrade ' + phaseTitle; 
                 } else if (componentId === 'esx') {
                     // ESX only if VxRail is NOT selected
                     shouldInclude = selectedProducts['vxrail'] !== true;
                     phaseTitle = componentData ? componentData.name : 'esx';
-                    phaseDescription = 'Upgrade ' + phaseTitle;
+                    phaseDescription = _is910To911Plan ? 'Patch ESX host infrastructure' : 'Upgrade ' + phaseTitle;
                     const _esxTargetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                     const _isSourcePre911Esx = (vcfVersion === '9.0' || vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.0') || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.0') || (localStorage.getItem('vcf-version') || '').startsWith('9.1') || (vcfdetailVersion || '').startsWith('9.0') || (vcfdetailVersion || '').startsWith('9.1'));
                     if (componentData && _isSourcePre911Esx && (_esxTargetVer.startsWith('9.1.1') || !_esxTargetVer)) {
@@ -1793,7 +1889,7 @@
                         // Standalone upgrade
                         shouldInclude = true;
                         phaseTitle = componentData ? componentData.name : 'Identity Broker';
-                        phaseDescription = 'Upgrade Identity Broker';
+                        phaseDescription = _is910To911Plan ? 'Patch Identity Broker' : 'Upgrade Identity Broker';
                         if (componentData) {
                             try {
                                 const vidbUpgradeKey = deploymentType === 'simple'
@@ -1812,8 +1908,8 @@
                 } else if (componentId === 'sddc_manager') {
                     shouldInclude = true;
                     componentData = upgradeData.components['sddc_manager'];
-                    phaseTitle = componentData ? componentData.name : 'SDDC Manager Upgrade';
-                    phaseDescription = 'Upgrade SDDC Manager';
+                    phaseTitle = _is910To911Plan ? 'SDDC Manager Patch' : (componentData ? componentData.name : 'SDDC Manager Upgrade');
+                    phaseDescription = _is910To911Plan ? 'Patch SDDC Manager' : 'Upgrade SDDC Manager';
                     const _sddcSrcVer = vcfdetailVersion || vcfVersion || localStorage.getItem('vcf-detailed-version') || localStorage.getItem('vcf-version') || '';
                     if (_sddcSrcVer.startsWith('9.1.0.0400') && componentData) {
                         try {
@@ -1836,16 +1932,16 @@
                     shouldInclude = true;
                     phaseTitle = componentData ? componentData.name : componentId;
                     //phaseDescription = componentData ? componentData.description : 'Upgrade ' + phaseTitle;
-                    phaseDescription = 'Upgrade ' + phaseTitle;
+                    phaseDescription = _is910To911Plan ? 'Patch ' + phaseTitle : 'Upgrade ' + phaseTitle;
                 } else if (componentId === 'nsx_edge') {
                     // Always included — title depends on whether NSX Edge Nodes checkbox is selected
                     shouldInclude = true;
                     phaseTitle = selectedProducts['nsx_edge'] === true
-                        ? 'NSX Edge & NSX Finalize'
+                        ? (_is910To911Plan ? 'NSX Edge Patch & NSX Finalize' : 'NSX Edge & NSX Finalize')
                         : 'NSX Finalize';
                     phaseDescription = selectedProducts['nsx_edge'] === true
-                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
-                        : 'Finalize NSX upgrade';
+                        ? (_is910To911Plan ? 'Patch NSX Edge nodes and finalize NSX patch' : 'Upgrade NSX Edge nodes and finalize NSX upgrade')
+                        : (_is910To911Plan ? 'Finalize NSX patch' : 'Finalize NSX upgrade');
                 } else if (componentId === 'logs') {
                     // Logs is a fresh install, not an upgrade
                     shouldInclude = selectedProducts[componentId] === true;
@@ -1975,7 +2071,6 @@
             // Block plan rendering if vIDB is checked but required questions not yet answered
             const _vidbCheckEl = document.getElementById('vidbCheck');
             const _vidbIsCheckedNow = _vidbCheckEl && _vidbCheckEl.checked;
-            const _is910To911Plan = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
             const _vidbHelp = document.getElementById('vidbHelpNote');
             if (_vidbHelp) _vidbHelp.style.display = _is910To911Plan ? 'none' : '';
             if (_vidbIsCheckedNow && !_is910To911Plan && window.vidbIsEmbedded === null) {
@@ -2024,6 +2119,7 @@
         
         function groupPhasesIntoSteps(phases, orderArray) {
             const steps = [];
+            const _is910To911Plan = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
             
             // Use the passed orderArray (which is either upgrade_order or upgrade_order_without_nsx)
             const currentOrder = orderArray || upgradeData.upgrade_order;
@@ -2156,23 +2252,23 @@
                 },
                 'operations': {
                     phases: operationsPhases,
-                    title: 'VCF Operations Upgrade',
-                    description: 'VCF Operations Upgrade'
+                    title: _is910To911Plan ? 'VCF Operations Patch' : 'VCF Operations Upgrade',
+                    description: _is910To911Plan ? 'VCF Operations Patch' : 'VCF Operations Upgrade'
                 },
                 'drProducts': {
                     phases: replicationPhases,
                     title: 'Disaster Recovery Products',
-                    description: 'Upgrade VMware Live Recovery or vSAN Data Protection'
+                    description: _is910To911Plan ? 'Patch VMware Live Recovery or vSAN Data Protection' : 'Upgrade VMware Live Recovery or vSAN Data Protection'
                 },
                 'avi': {
                     phases: aviPhases,
                     title: aviPhases.some(p => p.componentId === 'license_hub') ? 'Avi Load Balancer & Deploy License Hub' : (aviPhases.length > 0 ? aviPhases[0].title : 'Avi Load Balancer'),
-                    description: aviPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade Avi Load Balancer and Deploy License Hub' : (aviPhases.length > 0 ? aviPhases[0].description : 'Upgrade Avi Load Balancer')
+                    description: aviPhases.some(p => p.componentId === 'license_hub') ? (_is910To911Plan ? 'Patch Avi Load Balancer and Deploy License Hub' : 'Upgrade Avi Load Balancer and Deploy License Hub') : (aviPhases.length > 0 ? aviPhases[0].description : (_is910To911Plan ? 'Patch Avi Load Balancer' : 'Upgrade Avi Load Balancer'))
                 },
                 'sddc_manager': {
                     phases: sddcPhases,
-                    title: 'SDDC Manager Upgrade',
-                    description: 'Upgrade SDDC Manager'
+                    title: _is910To911Plan ? 'SDDC Manager Patch' : 'SDDC Manager Upgrade',
+                    description: _is910To911Plan ? 'Patch SDDC Manager' : 'Upgrade SDDC Manager'
                 },
                 'vcfms':{
                     phases: vcfmsPhases,
@@ -2182,51 +2278,51 @@
                 'hcx': {
                     phases: hcxPhases,
                     title: hcxPhases.length > 0 ? hcxPhases[0].title : 'VMware HCX',
-                    description: hcxPhases.length > 0 ? hcxPhases[0].description : 'Upgrade VMware HCX'
+                    description: hcxPhases.length > 0 ? hcxPhases[0].description : (_is910To911Plan ? 'Patch VMware HCX' : 'Upgrade VMware HCX')
                 },
                 'nsx_federation': {
                     phases: nsxfedPhases,
-                    title: 'NSX Global Manager Upgrade',
-                    description: 'Upgrade Fderation'
+                    title: _is910To911Plan ? 'NSX Global Manager Patch' : 'NSX Global Manager Upgrade',
+                    description: _is910To911Plan ? 'Patch Federation' : 'Upgrade Federation'
                 },
                 'nsx': {
                     phases: nsxPhases,
-                    title: nsxPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade NSX Local Manager & Deploy License Hub' : 'NSX Local Manager Upgrade',
-                    description: nsxPhases.some(p => p.componentId === 'license_hub') ? 'Upgrade NSX and Deploy License Hub' : 'Upgrade NSX'
+                    title: nsxPhases.some(p => p.componentId === 'license_hub') ? (_is910To911Plan ? 'Patch NSX Local Manager & Deploy License Hub' : 'Upgrade NSX Local Manager & Deploy License Hub') : (_is910To911Plan ? 'NSX Local Manager Patch' : 'NSX Local Manager Upgrade'),
+                    description: nsxPhases.some(p => p.componentId === 'license_hub') ? (_is910To911Plan ? 'Patch NSX and Deploy License Hub' : 'Upgrade NSX and Deploy License Hub') : (_is910To911Plan ? 'Patch NSX' : 'Upgrade NSX')
                 },
                 'vcenter': {
                     phases: vcenterPhases,
-                    title: 'vCenter Upgrade',
-                    description: 'Upgrade vCenter Server'
+                    title: _is910To911Plan ? 'vCenter Patch' : 'vCenter Upgrade',
+                    description: _is910To911Plan ? 'Patch vCenter Server' : 'Upgrade vCenter Server'
                 },
                 'supervisor': {
                     phases: supervisorPhases,
                     title: 'vSphere Supervisor',
-                    description: 'Upgrade vSphere Supervisor'
+                    description: _is910To911Plan ? 'Patch vSphere Supervisor' : 'Upgrade vSphere Supervisor'
                 },
                 'witness': {
                     phases: witnessPhases,
                     title: 'vSAN Witness Host',
-                    description: 'Upgrade vSAN Witness Host'
+                    description: _is910To911Plan ? 'Patch vSAN Witness Host' : 'Upgrade vSAN Witness Host'
                 },
                 'vxrail': {
                     phases: vxrailPhases,
                     title: 'VxRail',
-                    description: 'Upgrade VxRail hardware and software'
+                    description: _is910To911Plan ? 'Patch VxRail hardware and software' : 'Upgrade VxRail hardware and software'
                 },
                 'esx': {
                     phases: esxPhases,
                     title: 'ESX Hosts',
-                    description: 'Upgrade ESX host infrastructure'
+                    description: _is910To911Plan ? 'Patch ESX host infrastructure' : 'Upgrade ESX host infrastructure'
                 },
                 'nsx_edge': {
                     phases: nsx_edgePhases,
                     title: (window.selectedAdvancedProducts || {})['nsx_edge'] === true
-                        ? 'NSX Edge & NSX Finalize'
+                        ? (_is910To911Plan ? 'NSX Edge Patch & NSX Finalize' : 'NSX Edge & NSX Finalize')
                         : 'NSX Finalize',
                     description: (window.selectedAdvancedProducts || {})['nsx_edge'] === true
-                        ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
-                        : 'Finalize NSX upgrade'
+                        ? (_is910To911Plan ? 'Patch NSX Edge nodes and finalize NSX patch' : 'Upgrade NSX Edge nodes and finalize NSX upgrade')
+                        : (_is910To911Plan ? 'Finalize NSX patch' : 'Finalize NSX upgrade')
                 },
                 'automation': {
                     phases: automationPhases,
@@ -2236,22 +2332,22 @@
                 'operations_orchestrator': {
                     phases: operations_orchestratorPhases,
                     title: 'Standalone VCF Operations Orchestrator',
-                    description: "Upgrade VCF Operations Orchestrator "
+                    description: _is910To911Plan ? 'Patch VCF Operations Orchestrator' : 'Upgrade VCF Operations Orchestrator'
                 },
                  'vidb': {
                     phases: vidbPhases,
                     title: 'Identity Broker',
-                    description: 'Upgrade Identity Broker'
+                    description: _is910To911Plan ? 'Patch Identity Broker' : 'Upgrade Identity Broker'
                 },
                 'network': {
                     phases: networkPhases,
                     title: 'VCF Operations for Networks',
-                    description: 'Upgrade VCF Operations for Networks'
+                    description: _is910To911Plan ? 'Patch VCF Operations for Networks' : 'Upgrade VCF Operations for Networks'
                 },
                 'advanced': {
                     phases: advancedPhases,
                     title: 'Post-Infrastructure Products',
-                    description: 'Upgrade additional products (Log Management)'
+                    description: _is910To911Plan ? 'Patch additional products (Log Management)' : 'Upgrade additional products (Log Management)'
                 },
                 'vsan_file_service': {
                  phases: vsan_file_servicePhases,

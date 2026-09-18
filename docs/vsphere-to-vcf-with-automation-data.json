@@ -1835,13 +1835,13 @@
       ]
     },
     "automation_prereq": {
-      "name": "Pre-Upgrade: Upgrade VCF Automation to 8.18.x",
+      "name": "Pre-Upgrade: Upgrade VCF Automation to 8.18.1 or later",
       "notices": [
         {
           "type": "warning",
           "title": "Required Before Proceeding",
           "bullets": [
-            "Your current VCF Automation version must be upgraded to 8.18.x"
+            "Your current VCF Automation version must be upgraded to 8.18.1 or later before proceeding with the VCF upgrade path"
           ]
         }
       ],
