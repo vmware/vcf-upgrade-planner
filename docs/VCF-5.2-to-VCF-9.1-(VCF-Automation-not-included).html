@@ -1202,16 +1202,19 @@
                 </div>
             </div>
 
-                        <!-- Optional Components Chip Picker (replaces Advanced Products toggle) -->
-            <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); border-radius: 12px;">
+            <!-- Optional Components Chip Picker (replaces Advanced Products toggle) -->
+           <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); border-radius: 12px;">
                 <h3 style="color:var(--text-primary); margin-bottom:12px; font-size:16px;">&#x1F9E9; Optional Components & Features</h3>
                 <p style="margin-bottom:14px; color:var(--text-secondary); font-size:0.9rem;">Select any additional components or features &mdash; your plan updates automatically.</p>
+                <input type="checkbox" id="vlcmCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
+                <input type="checkbox" id="elmCheck"        style="display:none" onchange="autoGenerateUpgradePlan()">
                 <input type="checkbox" id="supervisorCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
-                <input type="checkbox" id="elmCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
                 <div id="advancedProductsGrid" style="display:none"></div>
                 <div id="gResults" style="margin-bottom:10px;"></div>
-                <div id="gSummary" style="min-height:36px;padding:10px 14px;background:var(--bg);border:1px solid var(--border-color);border-radius:8px;font-size:0.85rem;color:var(--text-secondary);">No optional components selected &mdash; your plan will include core components only.</div>
                 <div style="margin-top:12px;"><button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">&#x21BA; Reset Selections</button></div>
+                <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary); font-style: italic;">
+                    Note: These products will add additional upgrade phases to your plan based on dependency and compatibility requirements.
+                </p>
             </div>
     
 
@@ -1319,7 +1322,8 @@
 
         function applyTargetVersion(html) {
             if (!window.targetVcf91Version) return html;
-            return html.replace(/9\.1(?!\.[0-9])/g, window.targetVcf91Version);
+            var targetVer = window.targetVcf91Version === '9.1.1.0100' ? '9.1.1.0' : window.targetVcf91Version;
+            return html.replace(/9\.1(?!\.[0-9])/g, targetVer);
         }
 
         function updatePageTitlesForTargetVersion() {
@@ -1463,10 +1467,29 @@
      
         }
 
-        function _getComponentPatchUrl(name, targetVer) {
+                function _getComponentPatchUrl(name, targetVer) {
             if (!targetVer || targetVer === '9.1.0.0') return null;
-            if (targetVer === '9.1.1.0') {
-                var map911 = {
+
+            var map = {
+                '9.1.1.0100': {
+                    'Fleet lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/fleet-lifecycle-9-1-1-0100-release-notes.html',
+                    'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x.html',
+                    'SDDC Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/sddc-lifecycle-9110100-release-notes.html',
+                    'SDDC lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/sddc-lifecycle-9110100-release-notes.html',
+                    'Migration service engine': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/migration-service-engine-9-1-1-0100-release-notes.html',
+                    'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/vcf-automation-9-1-1-0100-release-notes.html',
+                    'ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
+                    'ESX / vSphere': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
+                    'vCenter Server': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vCenter': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vSAN Witness': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vsan-9-1-1-0-release-notes.html',
+                    'vSAN': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vsan-9-1-1-0-release-notes.html',
+                    'NSX Local Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'NSX Global Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'NSX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'VCF Operations': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html'
+                },
+                '9.1.1.0': {
                     'ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
                     'ESX / vSphere': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
                     'vCenter Server': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
@@ -1482,11 +1505,74 @@
                     'Log Management (Logs)': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
                     'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
                     'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfautomation-9-1-1-0-release-notes.html'
-                };
-                return map911[name] || null;
+                }
+            };
+
+            if (map[targetVer] && map[targetVer][name]) {
+                return map[targetVer][name];
             }
 
-            var _covMap = {
+            var subMap = {
+                'Fleet lifecycle': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/fleet-lifecycle-9-1-0-0100-release-notes.html',
+                    '9.1.0.0300': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0300/fleet-lifecycle-9-1-0-0300-release-notes.html',
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/fleet-lifecycle-9-1-0-0400-release-notes.html'
+                },
+                'SDDC lifecycle': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/sddc-lifecycle-9-1-0-0100-release-notes.html',
+                    '9.1.0.0200': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0200/sddc-lifecycle-9-1-0-0200-release-notes.html',
+                    '9.1.0.0300': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0300/sddc-lifecycle-9-1-0-0300-release-notes.html',
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/sddc-lifecycle-9-1-0-0400-release-notes.html'
+                },
+                'Log Management': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/log-management-9-1-0-0100-release-notes.html',
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/log-management-9-1-0-0400-release-notes.html'
+                },
+                'Log Management (Logs)': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/log-management-9-1-0-0100-release-notes.html',
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/log-management-9-1-0-0400-release-notes.html'
+                },
+                'Real-Time Metrics': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/real-time-metrics-9-1-0-0100-release-notes.html',
+                    '9.1.0.0200': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0200/real-time-metrics-store-9-1-0-0200-release-notes.html',
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/real-time-mertics-9-1-0-0400-release-notes.html'
+                },
+                'Salt Master': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/salt-master-9-1-0-0100-release-notes.html',
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/salt-master-9-1-0-0400-release-notes.html'
+                },
+                'Salt RaaS': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/salt-raas-9-1-0-0100-release-notes.html',
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/salt-raas-9-1-0-0400-release-notes.html'
+                },
+                'Identity Broker': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/identity-broker-9-1-0-0100-release-notes.html'
+                },
+                'Software Depot': {
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/software-depot-9-1-0-0400-release-notes.html'
+                },
+                'VCF Services Runtime': {
+                    '9.1.0.0200': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0200/vcf-services-runtime-9-1-0-0200-release-notes.html'
+                },
+                'VCF Operations orchestrator': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/vcf-operations-orchestrator-9-1-0-0100-release-notes.html',
+                    '9.1.0.0400': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0400/vcf-operations-orchestrator-9-1-0-0400-release-notes.html'
+                },
+                'VCF Operations HCX': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/vcf-operations-hcx-9-1-0-0100-release-notes.html',
+                    '9.1.0.0200': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0200/vcf-operations-hcx-9-1-0-0200-release-notes.html'
+                },
+                'VCF Operations for Networks': {
+                    '9.1.0.0100': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0100/vcf-operations-for-networks-9-1-0-0100-release-notes.html',
+                    '9.1.0.0200': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vcf-operations/9-1-0-0200/vcf-operations-for-networks-9-1-0-0200-release-notes.html'
+                }
+            };
+
+            if (subMap[name] && subMap[name][targetVer]) {
+                return subMap[name][targetVer];
+            }
+
+            var coverage = {
                 'ESX': ['9.1.0.0100', '9.1.0.0200'],
                 'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
                 'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
@@ -1498,14 +1584,15 @@
                 'NSX': ['9.1.0.0100', '9.1.0.0200'],
                 'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
                 'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400'],
                 'VCF Management Services': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
                 'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
             };
 
-            var builds = _covMap[name];
-            if (!builds || !builds.includes(targetVer)) return null;
+            var builds = coverage[name];
+            if (!builds || !builds.includes(targetVer)) {
+                return null;
+            }
+
             var verSlug = targetVer.replace(/\./g, '-');
             var pathMap = {
                 'ESX': 'vsphere/esx/esx-' + verSlug + '-release-notes.html',
@@ -1519,11 +1606,10 @@
                 'NSX': 'nsx/nsx-' + verSlug + '-release-notes.html',
                 'SDDC Manager': 'vcf-installer/sddc-manager-' + verSlug + '-release-notes.html',
                 'VCF Operations': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
-                'VCF Operations orchestrator': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
-                'Log Management (Logs)': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
                 'VCF Management Services': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
                 'VCF Automation': 'vcf-automation/vcfautomation-' + verSlug + '-release-notes.html'
             };
+
             if (pathMap[name]) {
                 return 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/' + pathMap[name];
             }
@@ -1542,10 +1628,12 @@
             }
             
             const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
-            if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0') {
-                const mainRnUrl = (targetVer === '9.1.1.0') 
-                    ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html'
-                    : 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes.html';
+            if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0' || targetVer === '9.1.1.0100') {
+                const mainRnUrl = (targetVer === '9.1.1.0100')
+                    ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x.html'
+                    : (targetVer === '9.1.1.0')
+                        ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html'
+                        : 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes.html';
                 html += `<li><span class="badge included" style="background:#e8f4f8;color:#005588;border:1px solid #bce0ee;">🎯 Target VCF Version</span><span class="badge version">v${targetVer}</span> <a href="${mainRnUrl}" target="_blank" rel="noopener" style="font-size:0.82rem;color:#0088b5;font-weight:600;margin-left:6px;text-decoration:underline;">(Release Notes ↗)</a></li>`;
             } else {
                 const products = ['SDDC Manager', 'VCF Operations', 'VCF Management Services', 'vCenter Server', 'ESX', 'vSAN', 'NSX'];
@@ -2163,7 +2251,7 @@
             });
             
             // Inject final "Apply Patches" step when a patch build is selected
-            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'];
             if (_patchBuilds.includes(window.targetVcf91Version)) {
                 // ── Per-component patch coverage from compat-data ──────────────
                 // Each array lists every patch build that component has available.
@@ -2172,21 +2260,32 @@
                 var _selRank = _patchRank[window.targetVcf91Version] || 0;
 
                 var _coverage = {
-                    'vCenter Server':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                    'ESX / vSphere':               ['9.1.0.0100', '9.1.0.0200'],
-                    'vSAN Witness':                ['9.1.0.0100', '9.1.0.0200'],
-                    'NSX Local Manager':           ['9.1.0.0100', '9.1.0.0200'],
-                    'NSX Global Manager':           ['9.1.0.0100', '9.1.0.0200'],
-                    'SDDC Manager':                ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                    'VCF Operations':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                    'VCF Operations orchestrator':  ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                    'VCF Automation':              ['9.1.0.0100', '9.1.0.0200'],
-                    'HCX':                         ['9.1.0.0100', '9.1.0.0200'],
-                    'vSphere Replication':         ['9.1.0.0100', '9.1.0.0200'],
-                    'VMware Live Recovery (VLR)':  ['9.1.0.0100', '9.1.0.0200'],
-                    'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200'],
-                    'Log Management (Logs)':       ['9.1.0.0100', '9.1.0.0400']
-                };
+                'ESX': ['9.1.0.0100', '9.1.0.0200'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200'],
+                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'SDDC lifecycle': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'Fleet lifecycle': ['9.1.0.0100', '9.1.0.0300', '9.1.0.0400'],
+                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
+                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0400'],
+                'VCF Operations HCX': ['9.1.0.0100', '9.1.0.0200'],
+                'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200'],
+                'Log Management': ['9.1.0.0100', '9.1.0.0400'],
+                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400'],
+                'Real-Time Metrics': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0400'],
+                'Salt Master': ['9.1.0.0100', '9.1.0.0400'],
+                'Salt RaaS': ['9.1.0.0100', '9.1.0.0400'],
+                'Identity Broker': ['9.1.0.0100'],
+                'VCF Services Runtime': ['9.1.0.0200'],
+                'Software Depot': ['9.1.0.0400'],
+                'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
+            };
                 // Avi uses its own version scheme — map VCF patch build → Avi version string
                 var _aviVersionMap = {
                     '9.1.0.0100': '32.1.1',
@@ -2207,46 +2306,99 @@
                 // Build HTML version table for a group of components
                 function _buildVerTable(componentNames) {
                     var rows = '';
+                    var selTgt = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+
                     componentNames.forEach(function(name) {
-                        var verCell, note;
-                        // Special case: Avi Load Balancer — both 32.1.1 and 32.1.2 are compatible with any 9.1.0.x patch build
-                        if (name === 'Avi Load Balancer') {
+                        var verCell = '', rnCell = '';
+
+                        if (selTgt === '9.1.1.0100') {
+                            if (name === 'Fleet lifecycle' || name === 'VCF Management Services') {
+                                verCell = '<strong>9.1.1.0100</strong>';
+                                rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/fleet-lifecycle-9-1-1-0100-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
+                            } else if (name === 'SDDC lifecycle') {
+                                verCell = '<strong>9.1.1.0100</strong>';
+                                rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/sddc-lifecycle-9110100-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
+                            } else if (name === 'Migration service engine') {
+                                verCell = '<strong>9.1.1.0100</strong>';
+                                rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/migration-service-engine-9-1-1-0100-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
+                            } else if (name === 'VCF Automation') {
+                                var verVal = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
+                                var isSrcPre911Auto = (verVal === '9.1.0' || verVal.startsWith('9.1.0') || verVal.startsWith('9.0') || verVal.startsWith('5.2') || !verVal);
+                                if (isSrcPre911Auto) {
+                                    verCell = '<strong>9.1.1.0100</strong>';
+                                    rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/vcf-automation-9-1-1-0100-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
+                                } else {
+                                    verCell = '<strong>9.1.1.0</strong>';
+                                    rnCell = '<span style="color:var(--text-secondary)">— (Remains at 9.1.1.0)</span>';
+                                }
+                            } else if (name === 'VCF Operations' || name === 'VCF Operations orchestrator') {
+                                verCell = '<strong>9.1.1.0</strong>';
+                                rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
+                            } else {
+                                verCell = '<strong>9.1.1.0</strong>';
+                                var rnUrl = typeof _getComponentPatchUrl === 'function' ? _getComponentPatchUrl(name, '9.1.1.0') : null;
+                                if (rnUrl) {
+                                    rnCell = '<a href="' + rnUrl + '" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
+                                } else {
+                                    rnCell = '<span style="color:var(--text-secondary)">—</span>';
+                                }
+                            }
+                        } else if (name === 'Avi Load Balancer') {
                             verCell = '<strong>32.1.1</strong> or <strong>32.1.2</strong>';
-                            note = 'Both versions are compatible with any 9.1.0.x patch build';
+                            rnCell = '<span style="color:var(--text-secondary)">Compatible with any 9.1.0.x build</span>';
                         } else {
                             var builds = _coverage[name];
                             var eff = _effectiveVer(builds);
                             if (!builds || builds.length === 0) {
                                 verCell = '<em style="color:var(--text-secondary)">No patch available</em>';
-                                note = 'Remains at 9.1.0.0';
+                                rnCell = '<span style="color:var(--text-secondary)">—</span>';
                             } else if (!eff) {
                                 verCell = '<em style="color:var(--text-secondary)">No patch for this build</em>';
-                                note = 'Remains at 9.1.0.0';
+                                rnCell = '<span style="color:var(--text-secondary)">—</span>';
                             } else {
                                 verCell = '<strong>' + eff + '</strong>';
-                                note = eff === window.targetVcf91Version ? 'Matches selected build' : 'Latest available for this component';
+                                var patchUrl = typeof _getComponentPatchUrl === 'function' ? _getComponentPatchUrl(name, eff) : null;
+                                if (patchUrl) {
+                                    rnCell = '<a href="' + patchUrl + '" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
+                                } else {
+                                    rnCell = '<span style="color:var(--text-secondary)">—</span>';
+                                }
                             }
                         }
+
                         rows += '<tr style="border-bottom:1px solid var(--border-color)">'
                               + '<td style="padding:7px 10px;color:var(--text-primary)">' + name + '</td>'
                               + '<td style="padding:7px 10px;text-align:center">' + verCell + '</td>'
-                              + '<td style="padding:7px 10px;font-size:0.82rem;color:var(--text-secondary)">' + note + '</td>'
+                              + '<td style="padding:7px 10px;text-align:center">' + rnCell + '</td>'
                               + '</tr>';
                     });
                     return '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:10px">'
                          + '<thead><tr style="background:var(--bg)">'
                          + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Component</th>'
                          + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Effective Patch Version</th>'
-                         + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Note</th>'
+                         + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Release Notes</th>'
                          + '</tr></thead><tbody>' + rows + '</tbody></table>';
                 }
 
                 var _pathAComponents = ['vCenter Server', 'ESX / vSphere', 'NSX Local Manager'];
                 // Core components always shown; optional ones only if user selected them
                 var _selProdsNow = window.selectedAdvancedProducts || {};
-                var _pathBComponents = ['SDDC Manager', 'VCF Operations', 'VCF Automation'];
+                var _selTgtVerNow = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+                var _pathBComponents = [];
+                if (_selTgtVerNow === '9.1.1.0100') {
+                    _pathBComponents = ['Fleet lifecycle', 'SDDC lifecycle', 'Migration service engine', 'VCF Operations'];
+                } else if (_selTgtVerNow === '9.1.0.0100') {
+                    _pathBComponents = ['SDDC Manager', 'Fleet lifecycle', 'SDDC lifecycle', 'Real-Time Metrics', 'Salt Master', 'Salt RaaS', 'Identity Broker', 'VCF Operations orchestrator', 'VCF Operations HCX', 'VCF Operations for Networks', 'VCF Operations'];
+                } else if (_selTgtVerNow === '9.1.0.0200') {
+                    _pathBComponents = ['SDDC Manager', 'SDDC lifecycle', 'Real-Time Metrics', 'VCF Services Runtime', 'VCF Operations HCX', 'VCF Operations for Networks', 'VCF Operations'];
+                } else if (_selTgtVerNow === '9.1.0.0300') {
+                    _pathBComponents = ['SDDC Manager', 'Fleet lifecycle', 'SDDC lifecycle', 'VCF Operations'];
+                } else if (_selTgtVerNow === '9.1.0.0400') {
+                    _pathBComponents = ['SDDC Manager', 'Fleet lifecycle', 'SDDC lifecycle', 'Real-Time Metrics', 'Salt Master', 'Salt RaaS', 'Software Depot', 'VCF Operations orchestrator', 'VCF Operations'];
+                } else {
+                    _pathBComponents = ['SDDC Manager', 'VCF Operations'];
+                }
                 if (_selProdsNow['hcx'])         _pathBComponents.push('HCX');
-                if (_selProdsNow['replication'])  _pathBComponents.push('vSphere Replication');
                 if (_selProdsNow['srm'])          _pathBComponents.push('VMware Live Recovery (VLR)');
                 if (_selProdsNow['avi'])          _pathBComponents.push('Avi Load Balancer');
                 if (_selProdsNow['network'])      _pathBComponents.push('VCF Operations for Networks');
@@ -2893,7 +3045,7 @@
             html += '</div>';
 
             // Patch-release banner in PDF export
-            var _patchBuildsExport = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            var _patchBuildsExport = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'];
             if (_patchBuildsExport.includes(window.targetVcf91Version)) {
                 html += '<div style="background: #ddeeff; border-left: 4px solid #0077bb; padding: 14px 18px; margin-bottom: 20px; border-radius: 8px;">';
                 html += '<strong style="color: #005588; font-size: 14px;">&#128196; Patch Upgrade Path: Target Build ' + window.targetVcf91Version + '</strong>';
@@ -2989,7 +3141,7 @@
             });
             html += '</div>';
             
-            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'];
             if (_patchBuildsExp2.includes(window.targetVcf91Version)) {
                 var _patchStep = (allSteps || []).find(function(s) { return s.phases && s.phases.some(function(p) { return p.componentId === 'vcf_patch_base' || p.componentId === 'vcf_patch_direct'; }); });
                 if (_patchStep) {

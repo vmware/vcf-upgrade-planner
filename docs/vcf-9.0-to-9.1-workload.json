@@ -1,7 +1,6 @@
 {
     "upgrade_order": [
-        "replication",
-        "srm",
+        "vlr",
         "vsan_data_protection",
         "avi",
         "hcx",

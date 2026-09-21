@@ -1196,18 +1196,20 @@
                 </div>
             </div>
 
-                        <!-- Optional Components Chip Picker (replaces Advanced Products toggle) -->
+             <!-- Optional Components Chip Picker (replaces Advanced Products toggle) -->
             <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); border-radius: 12px;">
                 <h3 style="color:var(--text-primary); margin-bottom:12px; font-size:16px;">&#x1F9E9; Optional Components & Features</h3>
                 <p style="margin-bottom:14px; color:var(--text-secondary); font-size:0.9rem;">Select any additional components or features &mdash; your plan updates automatically.</p>
+                <input type="checkbox" id="vlcmCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
+                <input type="checkbox" id="elmCheck"        style="display:none" onchange="autoGenerateUpgradePlan()">
                 <input type="checkbox" id="supervisorCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
-                <input type="checkbox" id="elmCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
                 <div id="advancedProductsGrid" style="display:none"></div>
                 <div id="gResults" style="margin-bottom:10px;"></div>
-                <div id="gSummary" style="min-height:36px;padding:10px 14px;background:var(--bg);border:1px solid var(--border-color);border-radius:8px;font-size:0.85rem;color:var(--text-secondary);">No optional components selected &mdash; your plan will include core components only.</div>
                 <div style="margin-top:12px;"><button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">&#x21BA; Reset Selections</button></div>
+                <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary); font-style: italic;">
+                    Note: These products will add additional upgrade phases to your plan based on dependency and compatibility requirements.
+                </p>
             </div>
-
     
             <!-- VxRail + Stretch Cluster unsupported banner -->
             <div id="vxrailStretchBanner" class="vxrail-stretch-banner">
@@ -1299,7 +1301,8 @@
 
         function applyTargetVersion(html) {
             if (!window.targetVcf91Version) return html;
-            return html.replace(/9\.1(?!\.[0-9])/g, window.targetVcf91Version);
+            var targetVer = window.targetVcf91Version === '9.1.1.0100' ? '9.1.1.0' : window.targetVcf91Version;
+            return html.replace(/9\.1(?!\.[0-9])/g, targetVer);
         }
 
         function updatePageTitlesForTargetVersion() {
@@ -1411,10 +1414,11 @@
      
         }
 
-        function _getComponentPatchUrl(name, targetVer) {
+                function _getComponentPatchUrl(name, targetVer) {
             if (!targetVer || targetVer === '9.1.0.0') return null;
-            if (targetVer === '9.1.1.0') {
-                var map911 = {
+
+            var map = {
+                '9.1.1.0100': {
                     'ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
                     'ESX / vSphere': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
                     'vCenter Server': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
@@ -1424,17 +1428,26 @@
                     'NSX Local Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
                     'NSX Global Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
                     'NSX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
-                    'SDDC Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/sddc-manager-9-1-1-0-release-notes.html',
-                    'VCF Operations': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
-                    'VCF Operations orchestrator': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
-                    'Log Management (Logs)': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
-                    'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html',
-                    'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfautomation-9-1-1-0-release-notes.html'
-                };
-                return map911[name] || null;
+                },
+                '9.1.1.0': {
+                    'ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
+                    'ESX / vSphere': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
+                    'vCenter Server': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vCenter': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vSAN Witness': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vsan-9-1-1-0-release-notes.html',
+                    'vSAN': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vsan-9-1-1-0-release-notes.html',
+                    'NSX Local Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'NSX Global Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                    'NSX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/nsx-9-1-1-0-release-notes.html',
+                }
+            };
+
+            if (map[targetVer] && map[targetVer][name]) {
+                return map[targetVer][name];
             }
 
-            var _covMap = {
+
+            var coverage = {
                 'ESX': ['9.1.0.0100', '9.1.0.0200'],
                 'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
                 'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
@@ -1444,16 +1457,13 @@
                 'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
                 'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
                 'NSX': ['9.1.0.0100', '9.1.0.0200'],
-                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400'],
-                'VCF Management Services': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
             };
 
-            var builds = _covMap[name];
-            if (!builds || !builds.includes(targetVer)) return null;
+            var builds = coverage[name];
+            if (!builds || !builds.includes(targetVer)) {
+                return null;
+            }
+
             var verSlug = targetVer.replace(/\./g, '-');
             var pathMap = {
                 'ESX': 'vsphere/esx/esx-' + verSlug + '-release-notes.html',
@@ -1465,13 +1475,8 @@
                 'NSX Local Manager': 'nsx/nsx-' + verSlug + '-release-notes.html',
                 'NSX Global Manager': 'nsx/nsx-' + verSlug + '-release-notes.html',
                 'NSX': 'nsx/nsx-' + verSlug + '-release-notes.html',
-                'SDDC Manager': 'vcf-installer/sddc-manager-' + verSlug + '-release-notes.html',
-                'VCF Operations': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
-                'VCF Operations orchestrator': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
-                'Log Management (Logs)': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
-                'VCF Management Services': (targetVer === '9.1.0.0400') ? 'vcf-operations/9-1-0-0400/vcfoperations-9-1-0-0400-release-notes.html' : 'vcf-operations/' + verSlug + '.html',
-                'VCF Automation': 'vcf-automation/vcfautomation-' + verSlug + '-release-notes.html'
             };
+
             if (pathMap[name]) {
                 return 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/' + pathMap[name];
             }
@@ -1490,10 +1495,12 @@
             }
             
             const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
-            if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0') {
-                const mainRnUrl = (targetVer === '9.1.1.0') 
-                    ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html'
-                    : 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes.html';
+            if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0' || targetVer === '9.1.1.0100') {
+                const mainRnUrl = (targetVer === '9.1.1.0100')
+                    ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x.html'
+                    : (targetVer === '9.1.1.0')
+                        ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html'
+                        : 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes.html';
                 html += `<li><span class="badge included" style="background:#e8f4f8;color:#005588;border:1px solid #bce0ee;">🎯 Target VCF Version</span><span class="badge version">v${targetVer}</span> <a href="${mainRnUrl}" target="_blank" rel="noopener" style="font-size:0.82rem;color:#0088b5;font-weight:600;margin-left:6px;text-decoration:underline;">(Release Notes ↗)</a></li>`;
             } else {
                 const products = ['vCenter Server', 'ESX', 'vSAN', 'NSX'];
@@ -1616,76 +1623,10 @@
                 let phaseDescription = '';
                 
                 // Define CORE components that are ALWAYS included
-                const coreComponents = ['vcenter', 'sddc_manager', 'nsx', 'operations', 'operations_install', 'automation', 'automation_install', 'vcfms'];
+                const coreComponents = ['vcenter', 'nsx'];
                 
                 // Determine if this component should be included based on component type
-                if (componentId === 'operations' || componentId === 'operations_install') {
-                    // Operations ALWAYS included
-                    shouldInclude = true;
-                    // Use upgrade or install component based on checkbox
-                    const operationsComponentId = window.operationsIsUpgrade ? 'operations' : 'operations_install';
-                    componentData = upgradeData.components[operationsComponentId];
-                    phaseTitle = componentData ? componentData.name : componentId;
-                } else if (componentId === 'automation' || componentId === 'automation_install'){
-                    shouldInclude = true;
-                    const automationComponentId = window.automationIsUpgrade ? 'automation' : 'automation_install';
-                    componentData = upgradeData.components[automationComponentId];
-                    phaseTitle = componentData ? componentData.name : componentId;
-                    phaseDescription = window.automationIsUpgrade ? 'Upgrade VCF Automation' : 'Install VCF Automation';
-
-                    // Select size-variant tables based on upgrade vs install path
-                    if (componentData) {
-                        try {
-                            if (window.automationIsUpgrade) {
-                                // Upgrade: pick tables_simple_small / tables_ha_medium / tables_ha_large
-                                const upgradeTableKey = deploymentType === 'simple'
-                                    ? 'upgrade_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
-                                const cloned = JSON.parse(JSON.stringify(componentData));
-                                if (cloned[upgradeTableKey]) {
-                                    console.log('automation upgrade: using table key:', upgradeTableKey);
-                                    cloned.tables = cloned[upgradeTableKey];
-                                    componentData = cloned;
-                                }
-                            } else {
-                                // Install: pick automation_install_tableKey
-                                const automation_install_tableKey = deploymentType === 'simple'
-                                    ? 'install_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'install_tables_ha_large' : 'install_tables_ha_medium');
-                                const cloned = JSON.parse(JSON.stringify(componentData));
-                                if (cloned[automation_install_tableKey]) {
-                                    console.log('automation install: using table key:', automation_install_tableKey);
-                                    cloned.tables = cloned[automation_install_tableKey];
-                                    componentData = cloned;
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Error selecting automation tables:', e);
-                        }
-                    }
-                } else if (componentId === 'vcfms') {
-                    // VCF Management Services always included — select size-variant tables
-                    shouldInclude = true;
-                    phaseTitle = componentData ? componentData.name : 'VCF Management Service Deployment';
-                    phaseDescription = 'Deploy VCF management services';
-                    if (componentData) {
-                        try {
-                            const tableKey = 'tables_' + deploymentType + '_' + deploymentSize;
-                            const cloned = JSON.parse(JSON.stringify(componentData));
-                            if (cloned[tableKey]) {
-                                console.log('vcfms: using table key:', tableKey);
-                                cloned.tables = cloned[tableKey];
-                            } else {
-                                const fallback = 'tables_simple_small';
-                                console.log('vcfms: key not found, falling back to:', fallback);
-                                if (cloned[fallback]) cloned.tables = cloned[fallback];
-                            }
-                            componentData = cloned;
-                        } catch (e) {
-                            console.error('Error selecting vcfms tables:', e);
-                        }
-                    }
-                } else if (componentId === 'elm') {
+               if (componentId === 'elm') {
                     // ELM Upgrade Ring - not used in this VCF conversion path
                     shouldInclude = elmSelected
                     phaseTitle = componentData ? componentData.name : 'Enhanced Linked Mode (ELM) - Break Configuration';
@@ -1705,12 +1646,7 @@
                     phaseDescription = selectedProducts['nsx_edge'] === true
                         ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
                         : 'Finalize NSX upgrade';
-                } else if (componentId === 'logs') {
-                    // Logs is a fresh install, not an upgrade
-                    shouldInclude = selectedProducts[componentId] === true;
-                    phaseTitle = componentData ? componentData.name : componentId;
-                    phaseDescription = 'Deploy ' + phaseTitle;
-                } else if (componentId === 'vxrail') {
+                }  else if (componentId === 'vxrail') {
                     // VxRail only if selected - replaces ESX
                     shouldInclude = selectedProducts['vxrail'] === true;
                     phaseTitle = componentData ? componentData.name : 'vxrail';
@@ -1795,20 +1731,13 @@
             
             // Categorize phases based on the current order:
             // 1. Optional Products (SRM, Replication, AVI, HCX)
-            // 2. Operations Upgrade (only if already installed)
-            // 3. sddc to VCF (includes Ops install if not installed)
-            // 4. NSX
-            // 5. vCenter
-            // 6. Pre-ESX Infrastructure (vLCM, vSAN Witness, supervisor)
-            // 7. ESX Hosts
-            // 8. Automation Deployment
-            // 9. Post-Infrastructure (Logs, Network)
+            // 2. NSX
+            // 3. vCenter
+            // 4. Pre-ESX Infrastructure (vLCM, vSAN Witness, supervisor)
+            // 5. ESX Hosts
             
             const prereqPhases = [];
             const optionalPreInfraPhases = [];
-            const operationsPhases = [];
-            const sddcPhases = [];
-            const vcfmsPhases = [];
             const nsxfedPhases = [];
             const nsxPhases = [];
             const vcenterPhases = [];
@@ -1816,13 +1745,9 @@
             const supervisorPhases = [];
             const witnessPhases = [];
             const esxPhases = [];
-            const automationPhases = [];
-            const networkPhases = [];
             const advancedPhases = [];
-            const vidmPhases =[];
             const elmPhases = [];
             const vxrailPhases = [];
-            const operations_orchestratorPhases = [];
             const vsan_file_servicePhases = [];
             const nsx_edgePhases = [];
 
@@ -1836,13 +1761,7 @@
                     prereqPhases.push(phase);
                 } else if (isPreInfraOptional) {
                     optionalPreInfraPhases.push(phase);
-                } else if (phase.componentId === 'operations') {
-                    operationsPhases.push(phase);
-                } else if (phase.componentId === 'sddc_manager') {
-                    sddcPhases.push(phase);
-                }else if (phase.componentId === 'vcfms') {
-                    vcfmsPhases.push(phase);
-                }else if (phase.componentId === 'nsx_federation') {
+                } else if (phase.componentId === 'nsx_federation') {
                     nsxfedPhases.push(phase);
                 } else if (phase.componentId === 'nsx') {
                     nsxPhases.push(phase);
@@ -1862,14 +1781,6 @@
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'nsx_edge') {
                     nsx_edgePhases.push(phase);
-                } else if (phase.componentId === 'automation' || phase.componentId === 'automation_install') {
-                    automationPhases.push(phase);
-                } else if (phase.componentId === 'operations_orchestrator') {
-                    operations_orchestratorPhases.push(phase);
-                } else if (phase.componentId === 'vidm') {
-                    vidmPhases.push(phase);
-                } else if (phase.componentId === 'network') {
-                    networkPhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
@@ -1880,9 +1791,6 @@
             // Sort groups
             prereqPhases.sort((a, b) => a.number - b.number);
             optionalPreInfraPhases.sort((a, b) => a.number - b.number);
-            operationsPhases.sort((a, b) => a.number - b.number);
-            sddcPhases.sort((a, b) => a.number - b.number);
-            vcfmsPhases.sort((a, b) => a.number - b.number);
             nsxfedPhases.sort((a, b) => a.number - b.number);
             nsxPhases.sort((a, b) => a.number - b.number);
             vcenterPhases.sort((a, b) => a.number - b.number);
@@ -1890,13 +1798,9 @@
             supervisorPhases.sort((a, b) => a.number - b.number);
             witnessPhases.sort((a, b) => a.number - b.number);
             esxPhases.sort((a, b) => a.number - b.number);
-            automationPhases.sort((a, b) => a.number - b.number);
-            networkPhases.sort((a, b) => a.number - b.number);
             advancedPhases.sort((a, b) => a.number - b.number);
             elmPhases.sort((a, b) => a.number - b.number);
-            vidmPhases.sort((a, b) => a.number - b.number);
             vxrailPhases.sort((a, b) => a.number - b.number);
-            operations_orchestratorPhases.sort((a, b) => a.number - b.number);
             vsan_file_servicePhases.sort((a, b) => a.number - b.number);
             
             // Build steps in the order defined by currentOrder (dynamic based on NSX selection)
@@ -1919,11 +1823,6 @@
             
             // Create a map of component groups to their step definitions
             const stepDefinitions = {
-                'vcf_prereq': {
-                    phases: prereqPhases,
-                    title: 'Pre-Upgrade: Upgrade VCF to 5.2.2 or 5.2.3',
-                    description: 'pre-upgrade step before proceeding to VCF ' + window.targetVcf91Version,
-                },
                 'drProducts': {
                     phases: replicationPhases,
                     title: 'Disaster Recovery Products',
@@ -1938,20 +1837,6 @@
                     phases: hcxPhases,
                     title: hcxPhases.length > 0 ? hcxPhases[0].title : 'VMware HCX',
                     description: hcxPhases.length > 0 ? hcxPhases[0].description : 'Upgrade VMware HCX'
-                },
-                'operations': {
-                    phases: operationsPhases,
-                    title: window.operationsIsUpgrade ? 'VCF Operations Upgrade' : 'VCF Operations Install'
-                },
-                'sddc_manager': {
-                    phases: sddcPhases,
-                    title: 'SDDC Manager Upgrade',
-                    description: 'Upgrade SDDC Manager'
-                },
-                'vcfms':{
-                    phases: vcfmsPhases,
-                    title: 'VCF Management Service Deployment',
-                    description: 'Deploy VCF management services on first SDDC Instance'
                 },
                 'nsx_federation': {
                     phases: nsxfedPhases,
@@ -2004,31 +1889,6 @@
                         ? 'Upgrade NSX Edge nodes and finalize NSX upgrade'
                         : 'Finalize NSX upgrade'
                 },
-                'automation': {
-                    phases: automationPhases,
-                    title: window.automationIsUpgrade ? 'VCF Automation Upgrade' : 'VCF Automation Install'
-                },
-                'operations_orchestrator': {
-                    phases: operations_orchestratorPhases,
-                    title: 'Standalone VCF Operations Orchestrator',
-                    description: "Upgrade VCF Operations Orchestrator "
-                },
-                'vidm': {
-                    phases: vidmPhases,
-                    title: 'VMware Identity Manager Migration',
-                    description: 'Migration from VMware Identity Manager to VMware Identity Broker'
-
-                },
-                'network': {
-                    phases: networkPhases,
-                    title: 'VCF Operations for Networks',
-                    description: 'Upgrade VCF Operations for Networks'
-                },
-                'advanced': {
-                    phases: advancedPhases,
-                    title: 'Post-Infrastructure Products',
-                    description: 'Upgrade additional products (Log Management)'
-                },
                 'elm': {
                     phases: elmPhases,
                     title: 'ELM Breakage on SDDC Manager',
@@ -2050,7 +1910,6 @@
                 'vsan_data_protection': "drProducts",
                 'avi': 'avi',
                 'hcx': 'hcx',
-                'operations': 'operations',
                 'nsx': 'nsx',
                 'nsx_federation': 'nsx_federation',
                 'vcenter': 'vcenter',
@@ -2059,27 +1918,12 @@
                 'supervisor': 'supervisor',
                 'vxrail': 'vxrail',
                 'esx': 'esx',
-                'automation': 'automation',
-                'logs': 'advanced',
-                'network': 'network',
-                'sddc_manager': 'sddc_manager',
-                'vcfms': 'vcfms',
-                'vidm': 'vidm',
                 'elm': 'elm',
-                'operations_orchestrator': 'operations_orchestrator',
                 'vsan_file_service': 'vsan_file_service',
                 'nsx_edge': 'nsx_edge'
             };
             
             // Insert vcf_prereq as the very first step if present
-            if (prereqPhases.length > 0) {
-                steps.push({
-                    number: 1,
-                    title: stepDefinitions['vcf_prereq'].title,
-                    description: stepDefinitions['vcf_prereq'].description,
-                    phases: prereqPhases
-                });
-            }
 
             // Track which step groups have been added
             const addedStepGroups = new Set();
@@ -2102,7 +1946,7 @@
             });
             
             // Inject final "Apply Patches" step when a patch build is selected
-            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'];
             if (_patchBuilds.includes(window.targetVcf91Version)) {
                 // ── Per-component patch coverage from compat-data ──────────────
                 // Each array lists every patch build that component has available.
@@ -2111,21 +1955,16 @@
                 var _selRank = _patchRank[window.targetVcf91Version] || 0;
 
                 var _coverage = {
-                    'vCenter Server':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                    'ESX / vSphere':               ['9.1.0.0100', '9.1.0.0200'],
-                    'vSAN Witness':                ['9.1.0.0100', '9.1.0.0200'],
-                    'NSX Local Manager':           ['9.1.0.0100', '9.1.0.0200'],
-                    'NSX Global Manager':           ['9.1.0.0100', '9.1.0.0200'],
-                    'SDDC Manager':                ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                    'VCF Operations':              ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                    'VCF Operations orchestrator':  ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                    'VCF Automation':              ['9.1.0.0100', '9.1.0.0200'],
-                    'HCX':                         ['9.1.0.0100', '9.1.0.0200'],
-                    'vSphere Replication':         ['9.1.0.0100', '9.1.0.0200'],
-                    'VMware Live Recovery (VLR)':  ['9.1.0.0100', '9.1.0.0200'],
-                    'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200'],
-                    'Log Management (Logs)':       ['9.1.0.0100', '9.1.0.0400']
-                };
+                'ESX': ['9.1.0.0100', '9.1.0.0200'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200'],
+            };
                 // Avi uses its own version scheme — map VCF patch build → Avi version string
                 var _aviVersionMap = {
                     '9.1.0.0100': '32.1.1',
@@ -2146,52 +1985,57 @@
                 // Build HTML version table for a group of components
                 function _buildVerTable(componentNames) {
                     var rows = '';
+                    var selTgt = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+
                     componentNames.forEach(function(name) {
-                        var verCell, note;
-                        // Special case: Avi Load Balancer — both 32.1.1 and 32.1.2 are compatible with any 9.1.0.x patch build
+                        var verCell = '', rnCell = '';
+
                         if (name === 'Avi Load Balancer') {
                             verCell = '<strong>32.1.1</strong> or <strong>32.1.2</strong>';
-                            note = 'Both versions are compatible with any 9.1.0.x patch build';
+                            rnCell = '<span style="color:var(--text-secondary)">Compatible with any 9.1.0.x build</span>';
                         } else {
                             var builds = _coverage[name];
                             var eff = _effectiveVer(builds);
                             if (!builds || builds.length === 0) {
                                 verCell = '<em style="color:var(--text-secondary)">No patch available</em>';
-                                note = 'Remains at 9.1.0.0';
+                                rnCell = '<span style="color:var(--text-secondary)">—</span>';
                             } else if (!eff) {
                                 verCell = '<em style="color:var(--text-secondary)">No patch for this build</em>';
-                                note = 'Remains at 9.1.0.0';
+                                rnCell = '<span style="color:var(--text-secondary)">—</span>';
                             } else {
                                 verCell = '<strong>' + eff + '</strong>';
-                                note = eff === window.targetVcf91Version ? 'Matches selected build' : 'Latest available for this component';
+                                var patchUrl = typeof _getComponentPatchUrl === 'function' ? _getComponentPatchUrl(name, eff) : null;
+                                if (patchUrl) {
+                                    rnCell = '<a href="' + patchUrl + '" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
+                                } else {
+                                    rnCell = '<span style="color:var(--text-secondary)">—</span>';
+                                }
                             }
                         }
+
                         rows += '<tr style="border-bottom:1px solid var(--border-color)">'
                               + '<td style="padding:7px 10px;color:var(--text-primary)">' + name + '</td>'
                               + '<td style="padding:7px 10px;text-align:center">' + verCell + '</td>'
-                              + '<td style="padding:7px 10px;font-size:0.82rem;color:var(--text-secondary)">' + note + '</td>'
+                              + '<td style="padding:7px 10px;text-align:center">' + rnCell + '</td>'
                               + '</tr>';
                     });
                     return '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:10px">'
                          + '<thead><tr style="background:var(--bg)">'
                          + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Component</th>'
                          + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Effective Patch Version</th>'
-                         + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Note</th>'
+                         + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Release Notes</th>'
                          + '</tr></thead><tbody>' + rows + '</tbody></table>';
                 }
 
                 var _pathAComponents = ['vCenter Server', 'ESX / vSphere', 'NSX Local Manager'];
                 // Core components always shown; optional ones only if user selected them
                 var _selProdsNow = window.selectedAdvancedProducts || {};
-                var _pathBComponents = ['SDDC Manager', 'VCF Operations', 'VCF Automation'];
+                var _selTgtVerNow = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+                var _pathBComponents = [];
                 if (_selProdsNow['hcx'])         _pathBComponents.push('HCX');
-                if (_selProdsNow['replication'])  _pathBComponents.push('vSphere Replication');
                 if (_selProdsNow['srm'])          _pathBComponents.push('VMware Live Recovery (VLR)');
                 if (_selProdsNow['avi'])          _pathBComponents.push('Avi Load Balancer');
-                if (_selProdsNow['network'])      _pathBComponents.push('VCF Operations for Networks');
-                if (_selProdsNow['logs'])         _pathBComponents.push('Log Management (Logs)');
                 if (_selProdsNow['nsx_federation'])     _pathBComponents.push('NSX Global Manager');
-                if (_selProdsNow['operations_orchestrator'])    _pathBComponents.push('VCF Operations orchestrator');
                 if (_selProdsNow['vsan_witness'])    _pathBComponents.push('vSAN Witness')
 
 
@@ -2703,15 +2547,6 @@
         function getAllPhasesForExport() {
             // Regenerate ALL phases regardless of current progress
             const phases = [];
-            const opsData = upgradeData ? upgradeData.components.operations : null;
-            
-            if (operationsSelected && operationsVersion === '8.18.x') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations', data: opsData });
-            } else if (operationsSelected && operationsVersion === '9.0.x') {
-                phases.push({ number: phases.length + 1, title: 'Upgrade VCF Operations', description: 'Upgrade VCF Operations', data: opsData });
-            } else if (!operationsSelected) {
-                phases.push({ number: phases.length + 1, title: 'Install VCF Operations', description: 'Install VCF Operations (new installation)', data: opsData });
-            }
 
             const vcenterData = upgradeData ? upgradeData.components.vcenter : null;
             if (vcenterVersion === '8') {
@@ -2832,7 +2667,7 @@
             html += '</div>';
 
             // Patch-release banner in PDF export
-            var _patchBuildsExport = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            var _patchBuildsExport = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'];
             if (_patchBuildsExport.includes(window.targetVcf91Version)) {
                 html += '<div style="background: #ddeeff; border-left: 4px solid #0077bb; padding: 14px 18px; margin-bottom: 20px; border-radius: 8px;">';
                 html += '<strong style="color: #005588; font-size: 14px;">&#128196; Patch Upgrade Path: Target Build ' + window.targetVcf91Version + '</strong>';
@@ -2928,7 +2763,7 @@
             });
             html += '</div>';
             
-            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'];
             if (_patchBuildsExp2.includes(window.targetVcf91Version)) {
                 var _patchStep = (allSteps || []).find(function(s) { return s.phases && s.phases.some(function(p) { return p.componentId === 'vcf_patch_base' || p.componentId === 'vcf_patch_direct'; }); });
                 if (_patchStep) {
@@ -3089,12 +2924,8 @@
             replication:             G_GROUP_COMPONENTS,
             avi:                     G_GROUP_COMPONENTS,
             hcx:                     G_GROUP_COMPONENTS,
-            operations_orchestrator: G_GROUP_COMPONENTS,
             nsx_edge:                G_GROUP_COMPONENTS,
-            logs:                    G_GROUP_COMPONENTS,
-            network:                 G_GROUP_COMPONENTS,
             vsan_witness:            G_GROUP_COMPONENTS,
-            vidm:                    G_GROUP_COMPONENTS,
 
             // Add-on:
             vdefend:                 G_GROUP_ADDON,
@@ -3115,11 +2946,7 @@
             hcx:                     'hcx hybrid cloud extension migration mobility',
             nsx_federation:          'nsx federation multi-site locations',
             vdefend:                 'vdefend distributed firewall security microsegmentation dfw',
-            operations_orchestrator: 'aria automation orchestrator workflow',
             nsx_edge:                'nsx edge node gateway transit',
-            vidm:                    'vidm identity manager authentication sso',
-            logs:                    'logs log vcf operations observability syslog',
-            network:                 'vcf operations networks aria network insight',
         };
 
         const G_CHECKBOX_MAP = {
