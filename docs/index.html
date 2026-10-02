@@ -1728,6 +1728,18 @@
             }
         }
 
+        function isOpsVerBelow9(str) {
+            if (!str) return false;
+            var s = (str || '').trim().toLowerCase();
+            if (s.startsWith('9.') || s.startsWith('10.')) return false;
+            var m = s.match(/^(\d+)/);
+            if (m) {
+                var maj = parseInt(m[1], 10);
+                return maj < 9;
+            }
+            return false;
+        }
+
         function checkVersionsAndToggleOptions() {
             // Get vCenter and ESX versions
             const vcenterVersion = document.getElementById('vcenter').value;
@@ -1743,17 +1755,23 @@
             const opsSel = document.getElementById('operations');
             if (opsSel) {
                 Array.from(opsSel.options).forEach(function(opt) {
-                    if (opt.value && opt.value.startsWith('8.')) {
-                        opt.disabled = isSource9x;
-                        opt.style.display = isSource9x ? 'none' : '';
+                    if (opt.value) {
+                        var isBelow9 = isOpsVerBelow9(opt.value);
+                        opt.disabled = isSource9x && isBelow9;
+                        opt.style.display = (isSource9x && isBelow9) ? 'none' : '';
                     }
                 });
                 Array.from(opsSel.querySelectorAll('optgroup')).forEach(function(grp) {
-                    if (grp.label && grp.label.startsWith('8.')) {
-                        grp.style.display = isSource9x ? 'none' : '';
+                    if (grp.label) {
+                        var isBelow9 = isOpsVerBelow9(grp.label);
+                        var visibleChildren = Array.from(grp.querySelectorAll('option')).filter(function(o) {
+                            return o.style.display !== 'none';
+                        });
+                        var hideGrp = (isSource9x && isBelow9) || (visibleChildren.length === 0);
+                        grp.style.display = hideGrp ? 'none' : '';
                     }
                 });
-                if (isSource9x && opsSel.value && opsSel.value.startsWith('8.')) {
+                if (isSource9x && opsSel.value && isOpsVerBelow9(opsSel.value)) {
                     opsSel.value = '';
                 }
             }
@@ -1944,10 +1962,10 @@
             var map = {
                 '9.1.1.0100': {
                     'Fleet lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/fleet-lifecycle-9-1-1-0100-release-notes.html',
-                    'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/fleet-lifecycle-9-1-1-0100-release-notes.html',
+                    'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x.html',
                     'SDDC lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/sddc-lifecycle-9110100-release-notes.html',
                     'Migration service engine': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/migration-service-engine-9-1-1-0100-release-notes.html',
-                    'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/vcf-automation-9-1-1-0100-release-notes.html',
+                    'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/vcf-automation-9-1-1-0100-release-notes.html'
                 },
                 '9.1.1.0': {
                     'ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/esx-9-1-1-0-release-notes.html',
@@ -2079,12 +2097,15 @@
         function getTargetProductPatches(targetVer, elementId) {
             let products = ['SDDC Manager', 'VCF Operations', 'vCenter', 'ESX', 'vSAN', 'NSX', 'VCF Automation'];
 
-            var _vcf91Chk = document.getElementById('vcf91Check');
-            var _vcf91SelVal = document.getElementById('vcf91') ? document.getElementById('vcf91').value : '';
-            var _isSrc911InIndex = (_vcf91Chk && _vcf91Chk.checked && _vcf91SelVal && _vcf91SelVal.startsWith('9.1.1')) || (localStorage.getItem('vcf-version') || '').startsWith('9.1.1');
-
-            if (targetVer === '9.1.1.0100' && _isSrc911InIndex) {
-                products = ['Fleet lifecycle', 'SDDC lifecycle', 'Migration service engine', 'VCF Automation'];
+            if (targetVer === '9.1.1.0100') {
+                const intent = localStorage.getItem('vsphere-intent') || localStorage.getItem('vcf-intent') || 'fleet';
+                if (intent === 'vvf') {
+                    products = ['Fleet lifecycle', 'SDDC lifecycle'];
+                } else if (intent === 'instance') {
+                    products = ['Fleet lifecycle', 'SDDC lifecycle'];
+                } else {
+                    products = ['Fleet lifecycle', 'SDDC lifecycle', 'Migration service engine', 'VCF Automation'];
+                }
             } else if (elementId === 'targetVcf91ReleaseNotes') {
                 const intent = localStorage.getItem('vsphere-intent') || '';
                 if (intent === 'vvf') {
@@ -2657,12 +2678,7 @@
 
                 const vcfIntent = localStorage.getItem('vcf-intent') || 'fleet';
                 if ((vcf91Version || '').startsWith('9.1.1') && savedVcfTargetVer === '9.1.1.0100' && vcfIntent === 'workload') {
-                    const vcf91WdNoteDiv = document.createElement('div');
-                    vcf91WdNoteDiv.style.cssText = 'background: #e8f4f8; border-left: 4px solid #0088b5; padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #b3d9ea;';
-                    vcf91WdNoteDiv.innerHTML = '<p style="color: #1a2d40; font-size: 1rem; line-height: 1.6; margin: 0;"><strong>ℹ️ No Upgrade Required:</strong> There are no component patches or upgrades required for a VCF Workload Domain when patching from VCF 9.1.1.0 to 9.1.1.0100. Workload domain components (vCenter, ESX, vSAN, NSX) remain at version 9.1.1.0.</p>';
-                    vcfPathOptions.appendChild(vcf91WdNoteDiv);
-                    vcfPathSelection.classList.remove('hidden');
-                    return;
+                    selectVcfIntent('fleet');
                 }
 
                 if (savedVcfTargetVer && savedVcfTargetVer === vcf91Version) {
@@ -3354,15 +3370,23 @@
             // Workload Domain card
             var workloadCard = document.getElementById('intentCardVcfWorkload');
             if (workloadCard) {
-                var wTitleEl = workloadCard.querySelector('.intent-card-title');
-                var wDescEl  = workloadCard.querySelector('.intent-card-desc');
-                if (wTitleEl && wDescEl) {
-                    if (isVcf52 || isVcf90 || isVcf91) {
-                        wTitleEl.textContent = actionVerb + ' VCF Workload Domain';
-                        wDescEl.textContent  = actionVerb + ' an existing workload domain within ' + srcVer + ' instance.';
-                    } else {
-                        wTitleEl.textContent = 'Upgrade VCF Workload Domain';
-                        wDescEl.textContent  = 'Upgrade an existing workload domain within VCF instance.';
+                if (isVcf91 && vcf91Val && vcf91Val.startsWith('9.1.1') && savedVcfTargetVer === '9.1.1.0100') {
+                    workloadCard.style.display = 'none';
+                    if (localStorage.getItem('vcf-intent') === 'workload') {
+                        selectVcfIntent('fleet');
+                    }
+                } else {
+                    workloadCard.style.display = '';
+                    var wTitleEl = workloadCard.querySelector('.intent-card-title');
+                    var wDescEl  = workloadCard.querySelector('.intent-card-desc');
+                    if (wTitleEl && wDescEl) {
+                        if (isVcf52 || isVcf90 || isVcf91) {
+                            wTitleEl.textContent = actionVerb + ' VCF Workload Domain';
+                            wDescEl.textContent  = actionVerb + ' an existing workload domain within ' + srcVer + ' instance.';
+                        } else {
+                            wTitleEl.textContent = 'Upgrade VCF Workload Domain';
+                            wDescEl.textContent  = 'Upgrade an existing workload domain within VCF instance.';
+                        }
                     }
                 }
             }
@@ -3649,27 +3673,34 @@
                 populateSorted('vksVer',        (data.versions && data.versions['vks'])               || []);
 
                 // ── Main product dropdowns ── pulled from compat-data ───────
-                // Exclude 6.7.x and 7.x versions for vCenter and ESX
-                var vcenterVers = (data.versions && data.versions['vcenter'] || []).filter(function(v){
-                    return !v.group.startsWith('6.7') && !v.group.startsWith('7.');
-                });
-                var esxVers = (data.versions && data.versions['esx'] || []).filter(function(v){
-                    return !v.group.startsWith('6.7') && !v.group.startsWith('7.');
-                });
+                // Exclude 6.7.x, 7.x, and 8.x versions prior to 8.0U3 for vCenter and ESX
+                function minVer80u3(v) {
+                    if (v.group.startsWith('6.7') || v.group.startsWith('7.')) return false;
+                    if (v.value.startsWith('8.')) {
+                        return v.value.toLowerCase().includes('u3');
+                    }
+                    return true;
+                }
+                var vcenterVers = (data.versions && data.versions['vcenter'] || []).filter(minVer80u3);
+                var esxVers     = (data.versions && data.versions['esx'] || []).filter(minVer80u3);
                 populateSorted('vcenter', vcenterVers);
                 populateSorted('esx',     esxVers);
                 // Exclude Operations versions below 8.18
                 function minVer818(v) {
-                    var m = (v.group || '').match(/^(\d+)\.(\d+)/);
-                    if (!m) return true;
-                    var maj = parseInt(m[1], 10), min = parseInt(m[2], 10);
+                    var grp = (v.group || v.value || '').trim();
+                    var m = grp.match(/^(\d+)(?:\.(\d+))?/);
+                    if (!m) return false;
+                    var maj = parseInt(m[1], 10);
+                    var min = m[2] !== undefined ? parseInt(m[2], 10) : 0;
                     return maj > 8 || (maj === 8 && min >= 18);
                 }
                 // Exclude Automation versions below 8.17
                 function minVer817(v) {
-                    var m = (v.group || '').match(/^(\d+)\.(\d+)/);
-                    if (!m) return true;
-                    var maj = parseInt(m[1], 10), min = parseInt(m[2], 10);
+                    var grp = (v.group || v.value || '').trim();
+                    var m = grp.match(/^(\d+)(?:\.(\d+))?/);
+                    if (!m) return false;
+                    var maj = parseInt(m[1], 10);
+                    var min = m[2] !== undefined ? parseInt(m[2], 10) : 0;
                     return maj > 8 || (maj === 8 && min >= 17);
                 }
                 populateSorted('operations', (data.versions && data.versions['operations'] || []).filter(minVer818));
@@ -3678,9 +3709,11 @@
                 }));
                 // Exclude NSX versions below 4.1
                 var nsxVers = (data.versions && data.versions['nsx'] || []).filter(function(v) {
-                    var m = v.group.match(/^(\d+)\.(\d+)/);
-                    if (!m) return true;
-                    var maj = parseInt(m[1], 10), min = parseInt(m[2], 10);
+                    var grp = (v.group || v.value || '').trim();
+                    var m = grp.match(/^(\d+)(?:\.(\d+))?/);
+                    if (!m) return false;
+                    var maj = parseInt(m[1], 10);
+                    var min = m[2] !== undefined ? parseInt(m[2], 10) : 0;
                     return maj > 4 || (maj === 4 && min >= 1);
                 });
                 populateSorted('nsx', nsxVers);
@@ -4287,6 +4320,9 @@
                 var data = window._compatData;
                 if (data) {
                     populateAddonVersionDropdowns(data);
+                    if (typeof checkVersionsAndToggleOptions === 'function') {
+                        checkVersionsAndToggleOptions();
+                    }
                 } else {
                     setTimeout(hookDataLoad, 100);
                 }

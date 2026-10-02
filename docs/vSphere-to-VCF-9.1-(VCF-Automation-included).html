@@ -1451,6 +1451,11 @@
 
             // Generate checkboxes from JSON
             upgradeData.optional_products.forEach(product => {
+                
+                // Hide vSphere Configuration Profiles (VCP) if not applicable (vCenter < 8.0u3e, 9.x+, or NSX selected)
+                if (product.id === 'vcp' && !isVcpPhaseReorderApplicable(vcenterVersion)) {
+                    return;
+                }
 
                 // Hide NSX Federation if NSX was not selected on the index page
                 if (product.id === 'nsx_federation' || product.id === 'nsx_edge'  && localStorage.getItem('nsx-selected') !== 'true') {
@@ -1564,6 +1569,9 @@
 
             if (map[targetVer] && map[targetVer][name]) {
                 return map[targetVer][name];
+            }
+            if (targetVer === '9.1.1.0100' && map['9.1.1.0'] && map['9.1.1.0'][name]) {
+                return map['9.1.1.0'][name];
             }
 
             var subMap = {
@@ -1688,6 +1696,8 @@
             if (automationSelected) {
                 html += `<li><span class="badge included">✓ VCF Automation</span><span class="badge version">v${automationVersion}</span></li>`;
             }
+
+        
 
             const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
             if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0' || targetVer === '9.1.1.0100') {
@@ -1827,7 +1837,38 @@
             }
         }
 
+         function isVersion80U3eOrAbove(ver) {
+            if (!ver) return false;
+            var s = (ver || '').toLowerCase().trim();
+            if (s.startsWith('9.') || s.startsWith('10.')) return true;
+            if (s.startsWith('8.')) {
+                var uIdx = s.indexOf('u');
+                if (uIdx > -1) {
+                    var rest = s.slice(uIdx + 1);
+                    var numPart = parseInt(rest, 10) || 0;
+                    if (numPart > 3) return true;
+                    if (numPart < 3) return false;
+                    var letterMatch = rest.match(/[a-z]+/i);
+                    var letter = letterMatch ? letterMatch[0] : '';
+                    return letter >= 'e';
+                }
+            }
+            return false;
+        }
+
+         function isVcpPhaseReorderApplicable(ver) {
+            if (!ver) return false;
+            var s = (ver || '').toLowerCase().trim();
+            // If vCenter version is 9.x or higher, VCP has no change to upgrade phases
+            if (s.startsWith('9.') || s.startsWith('10.')) return false;
+            // If NSX is selected, VCP phase reorder is not applicable
+            var nsxInEnv = (typeof nsxSelected !== 'undefined' ? nsxSelected : (localStorage.getItem('nsx-selected') === 'true'));
+            if (nsxInEnv) return false;
+            return isVersion80U3eOrAbove(s);
+        }
+
         function generateUpgradePlan() {
+            displaySelectedSummary();
             const phases = [];
             const isConvergeOnly = ((vcenterVersion === '8.0u3j' || vcenterVersion === '8.0u3k') && (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.0')) || (nsxVersion || '').startsWith('4.2.4');
             const selectedProducts = window.selectedAdvancedProducts || {};
@@ -2327,8 +2368,6 @@
                     aviPhases.push(phase);
                 } else if (phase.componentId === 'hcx') {
                     hcxPhases.push(phase);
-                } else if (phase.componentId === 'operations') {
-                    operationsPhases.push(phase);
                 } else if (phase.componentId === 'operations_orchestrator') {
                     operations_orchestratorPhases.push(phase);
                 } else if (phase.componentId === 'vcha') {
@@ -2443,16 +2482,36 @@
             
             
             // Dynamic ordering for Convert and vCenter based on NSX selection
-            const nsxSelected = nsxPhases.length > 0;
+            const isVcpEnabled = isVcpPhaseReorderApplicable(vcenterVersion) && selectedProducts['vcp'] === true;
+            const nsxHasPhases = nsxPhases.length > 0;
+            let esxPhasesPushed = false;
             
             if (nsxSelected) {
                 // If NSX is selected: vCHA → vCenter → ELM → vLCM → Convert → NSX Federation → NSX → Witness/supervisor
+                if (hasPrereqs && operationsPhases.length > 0) {
+                    steps.push({
+                        number: steps.length + 1,
+                        title: 'Operations Upgrade',
+                        description: 'Upgrade VCF Operations',
+                        phases: operationsPhases
+                    });
+                }
+
                 if (vchaPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
                         title: 'Remove vCenter High Availability',
                         description: 'Remove vCHA configuration before vCenter upgrade',
                         phases: vchaPhases
+                    });
+                }
+
+                if (isVcpEnabled && vcenterPhases.length > 0) {
+                    steps.push({
+                        number: steps.length + 1,
+                        title: 'vCenter Upgrade',
+                        description: 'Upgrade vCenter Server',
+                        phases: vcenterPhases
                     });
                 }
 
@@ -2465,6 +2524,15 @@
                     });
                 }
                 
+                if (isVcpEnabled && esxPhases.length > 0) {
+                    steps.push({
+                        number: steps.length + 1,
+                        title: 'ESX Hosts',
+                        description: 'Upgrade ESX host infrastructure',
+                        phases: esxPhases
+                    });
+                    esxPhasesPushed = true;
+                }
                 
                 if (convertPhases.length > 0) {
                     steps.push({
@@ -2506,7 +2574,7 @@
                     });
                 }
 
-                 if (vcenterPhases.length > 0) {
+                 if (!isVcpEnabled && vcenterPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
                         title: 'vCenter Upgrade',
@@ -2555,6 +2623,13 @@
                 if (elmPhases.length > 0) {
                     steps.push({ number: steps.length + 1, title: 'Break Enhanced Linked Mode', description: 'Break ELM configuration before VCF conversion', phases: elmPhases });
                 }
+                if (isVcpEnabled && vcenterPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'vCenter Upgrade', description: 'Upgrade vCenter Server', phases: vcenterPhases });
+                }
+                if (isVcpEnabled && esxPhases.length > 0) {
+                    steps.push({ number: steps.length + 1, title: 'ESX Hosts', description: 'Upgrade ESX host infrastructure', phases: esxPhases });
+                    esxPhasesPushed = true;
+                }
                 if (convertPhases.length > 0) {
                     steps.push({ number: steps.length + 1, title: 'Converge to VCF', description: 'Converge to VCF', phases: convertPhases });
                 }
@@ -2564,7 +2639,7 @@
                 if (operations_orchestratorPhases.length > 0) {
                     steps.push({ number: steps.length + 1, title: 'VCF Operations Orchestrator', description: 'Upgrade VCF Operations Orchestrator', phases: operations_orchestratorPhases });
                 }
-                if (vcenterPhases.length > 0) {
+                if (!isVcpEnabled && vcenterPhases.length > 0) {
                     steps.push({ number: steps.length + 1, title: 'vCenter Upgrade', description: 'Upgrade vCenter Server', phases: vcenterPhases });
                 }
                 if (vlcmPhases.length > 0) {
@@ -2577,6 +2652,17 @@
                     steps.push({ number: steps.length + 1, title: 'vSphere Supervisor', description: 'Upgrade vSphere Supervisor', phases: supervisorPhases });
                 }
             } else {
+                const moveEsxBeforeConverge = isVcpEnabled;
+
+                if (hasPrereqs && operationsPhases.length > 0) {
+                    steps.push({
+                        number: steps.length + 1,
+                        title: 'Operations Upgrade',
+                        description: 'Upgrade VCF Operations',
+                        phases: operationsPhases
+                    });
+                }
+
                 // If NSX is NOT selected: vCHA → vCenter → ELM → vLCM → Convert → Witness/supervisor
                 if (vchaPhases.length > 0) {
                     steps.push({
@@ -2614,6 +2700,16 @@
                     });
                 }
                 
+                if (moveEsxBeforeConverge && esxPhases.length > 0) {
+                    steps.push({
+                        number: steps.length + 1,
+                        title: 'ESX Hosts',
+                        description: 'Upgrade ESX host infrastructure',
+                        phases: esxPhases
+                    });
+                    esxPhasesPushed = true;
+                }
+
                 if (convertPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
@@ -2624,6 +2720,16 @@
                 }
 
 
+                if (!moveEsxBeforeConverge && esxPhases.length > 0) {
+                    steps.push({
+                        number: steps.length + 1,
+                        title: 'ESX Hosts',
+                        description: 'Upgrade ESX host infrastructure',
+                        phases: esxPhases
+                    });
+                    esxPhasesPushed = true;
+                }
+                
                 if (witnessPhases.length > 0) {
                     steps.push({
                         number: steps.length + 1,
@@ -2644,7 +2750,7 @@
                 
             }
             
-            if (esxPhases.length > 0) {
+            if (!esxPhasesPushed && esxPhases.length > 0) {
                 steps.push({
                     number: steps.length + 1,
                     title: 'ESX Hosts',
@@ -2726,40 +2832,45 @@
                 // ── Per-component patch coverage from compat-data ──────────────
                 // Each array lists every patch build that component has available.
                 // Effective version = highest available build <= selected build.
-                var _patchRank = { '9.1.0.0': 0, '9.1.0.0100': 1, '9.1.0.0200': 2, '9.1.0.0300': 3, '9.1.0.0400': 4 };
+                 var _patchRank = { '9.1.0.0': 0, '9.1.0.0100': 1, '9.1.0.0200': 2, '9.1.0.0300': 3, '9.1.0.0400': 4, '9.1.1.0': 5, '9.1.1.0100': 6 };
                 var _selRank = _patchRank[window.targetVcf91Version] || 0;
 
                 var _coverage = {
-                'ESX': ['9.1.0.0100', '9.1.0.0200'],
-                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
-                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200'],
-                'vSAN': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX': ['9.1.0.0100', '9.1.0.0200'],
-                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'SDDC lifecycle': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'Fleet lifecycle': ['9.1.0.0100', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0400'],
-                'VCF Operations HCX': ['9.1.0.0100', '9.1.0.0200'],
-                'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200'],
-                'Log Management': ['9.1.0.0100', '9.1.0.0400'],
-                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400'],
-                'Real-Time Metrics': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0400'],
-                'Salt Master': ['9.1.0.0100', '9.1.0.0400'],
-                'Salt RaaS': ['9.1.0.0100', '9.1.0.0400'],
-                'Identity Broker': ['9.1.0.0100'],
+                'ESX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0'],
+                'SDDC lifecycle': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
+                'Fleet lifecycle': ['9.1.0.0100', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
+                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0'],
+                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'VCF Operations HCX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'Log Management': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'Real-Time Metrics': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0400', '9.1.1.0'],
+                'Salt Master': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'Salt RaaS': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'Identity Broker': ['9.1.0.0100', '9.1.1.0'],
                 'VCF Services Runtime': ['9.1.0.0200'],
-                'Software Depot': ['9.1.0.0400'],
-                'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
+                'Software Depot': ['9.1.0.0400', '9.1.1.0'],
+                'VCF Automation': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100'], 
+                'Migration Service Engine': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100'], 
             };
                 // Avi uses its own version scheme — map VCF patch build → Avi version string
                 var _aviVersionMap = {
                     '9.1.0.0100': '32.1.1',
-                    '9.1.0.0200': '32.1.2'
+                    '9.1.0.0200': '32.1.2',
+                    '9.1.0.0300': '32.1.3',
+                    '9.1.0.0400': '32.1.3',
+                    '9.1.1.0': '32.1.4',
+                    '9.1.1.0100': '32.1.4'
                 };
 
                 // Compute effective version for a component using VCF patch build coverage list
@@ -4199,6 +4310,7 @@
             vsan_data_protection:    G_GROUP_FEATURES,
             vsan_file_service:       G_GROUP_FEATURES,
             nsx_federation:          G_GROUP_FEATURES,
+            vcp:                     G_GROUP_FEATURES,
 
             // Product
             
@@ -4242,6 +4354,8 @@
             network:                 'vcf operations networks aria network insight',
             vidb:                    'vidb identity broker idm authentication sso',
             vxrail:                  'vxrail dell vxrail hyperconverged hci',
+            vcp:                     'vSphere Configuration Profile'
+
         };
 
         const G_CHECKBOX_MAP = {
@@ -4268,6 +4382,11 @@
             (upgradeData.optional_products || []).forEach(p => {
                 // Skip NSX-dependent items if NSX is not selected
                 if (NSX_GATED.has(p.id) && !nsxInEnv) return;
+                // Skip vSphere Configuration Profiles (VCP) if vCenter is below 8.0u3e
+                if (p.id === 'vcp' && !isVcpPhaseReorderApplicable(vcenterVersion)) {
+                    gSelected.delete('vcp');
+                    return;
+                }
                 seen.add(p.id);
                 G_INDEX.push({ id: p.id, name: p.display_name, keywords: G_KEYWORD_MAP[p.id] || p.display_name.toLowerCase(), group: G_GROUP_MAP[p.id] || 'Other' });
             });

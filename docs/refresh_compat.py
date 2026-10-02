@@ -266,7 +266,7 @@ def find_product(all_products, name_fragment, known_pid=None):
 
 # Maximum versions to keep per product (newest by GA date first).
 # Increase this if you need more history.
-MAX_VERSIONS_PER_PRODUCT = 25
+MAX_VERSIONS_PER_PRODUCT = 50
 
 
 def infer_group(version):

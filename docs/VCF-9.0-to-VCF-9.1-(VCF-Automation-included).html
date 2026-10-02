@@ -1309,7 +1309,17 @@
         let vxrailSelected = false;
         let vcfVersion = "";
         let vcfdetailVersion = "";
+        let operationsVersion = "9.0";
+        let operationsSelected = true;
+        let vcenterVersion = "";
+        let esxVersion = "";
         let upgradeData = null; // Will hold the loaded JSON data
+
+        function abbrev(v) {
+            if (!v) return '9.0.0';
+            var m = String(v).match(/\d+\.\d+(\.\d+)*/);
+            return m ? m[0] : String(v);
+        }
         let allPhases = []; // Store all phases
         let currentPhaseIndex = 0; // Track which phase we're showing
         let allSteps = []; // Store all steps (groups of phases)
@@ -1520,7 +1530,10 @@
 
         function loadSelectionsFromStorage() {
            vcfVersion =  localStorage.getItem('vcf-version') || '9.0';
-           vcfdetailVersion = localStorage.getItem('vcf-detailed-version');
+           vcfdetailVersion = localStorage.getItem('vcf-detailed-version') || '';
+           operationsVersion = localStorage.getItem('operations-version') || '9.0';
+           vcenterVersion = localStorage.getItem('vcenter-version') || '';
+           esxVersion = localStorage.getItem('esx-version') || '';
            window.targetVcf91Version = localStorage.getItem('target-vcf91-version') || '9.1.0';
          // Read VxRail selection passed from index page
            const _vxrailRaw = localStorage.getItem('vxrail-selected');
@@ -1574,6 +1587,9 @@
 
             if (map[targetVer] && map[targetVer][name]) {
                 return map[targetVer][name];
+            }
+            if (targetVer === '9.1.1.0100' && map['9.1.1.0'] && map['9.1.1.0'][name]) {
+                return map['9.1.1.0'][name];
             }
 
             var subMap = {
@@ -1842,11 +1858,16 @@
                 return;
             }
             
+            const _tgtVerP1 = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
+            const _verValP1 = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
+            const _isSrc911P1 = _verValP1.startsWith('9.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1'));
+            const _isTarget9110100P1 = _isSrc911P1 && (_tgtVerP1 === '9.1.1.0100');
             
             const orderArray = upgradeData.upgrade_order;
 
             // Iterate through the selected upgrade order array to maintain strict sequence
             orderArray.forEach(componentId => {
+                if (_isTarget9110100P1) return;
                 let shouldInclude = false;
                 let componentData = upgradeData.components[componentId];
                 let phaseTitle = '';
@@ -2104,21 +2125,16 @@
                 }
             });
             
-            const _is910Phase = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+           const _is910Phase = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
             if (_is910Phase) {
                 var _tgtVerPhase1 = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
-                var _verValP1 = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
-                var _isSrc911P1 = _verValP1.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
-                var _isTarget9110100P1 = _isSrc911P1 && (_tgtVerPhase1 === '9.1.1.0100');
-                var _verValP1 = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
-                var _isSourcePre911AutoP1 = (_verValP1 === '9.1.0' || _verValP1.startsWith('9.1.0') || _verValP1.startsWith('9.0') || _verValP1.startsWith('5.2') || !_verValP1);
 
                 var p1Title = _isTarget9110100P1
-                    ? ('Patch Fleet lifecycle, SDDC lifecycle, Migration service engine' + (_isSourcePre911AutoP1 ? ', and VCF Automation binaries' : ' binaries'))
+                    ? 'Patch Fleet lifecycle, SDDC lifecycle, Migration service engine, and VCF Automation binaries'
                     : 'VCF Management Services Fleet Lifecycle Component Patch';
 
                 var p1Desc = _isTarget9110100P1
-                    ? ('Patch Fleet lifecycle (9.1.1.0100 binaries), SDDC lifecycle (9.1.1.0100 binaries), Migration service engine (9.1.1.0100 binaries)' + (_isSourcePre911AutoP1 ? ', and VCF Automation (9.1.1.0100 binaries).' : '. VCF Automation remains at 9.1.1.0.'))
+                    ? 'Patch Fleet lifecycle (9.1.1.0100 binaries), SDDC lifecycle (9.1.1.0100 binaries), Migration service engine (9.1.1.0100 binaries), and VCF Automation (9.1.1.0100 binaries).'
                     : "Patch the VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component. For step-by-step guidance see the (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/using-the-depot-configuration-tab/upgrade-a-vcf-management-component.html' target='_blank'>VCF Management Component Upgrade Process Documentation</a>) and (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html' target='_blank'>Release Notes</a>).";
 
                 var p1Notices = _isTarget9110100P1 ? [
@@ -2129,7 +2145,7 @@
                             '<strong>Fleet lifecycle:</strong> Patched to 9.1.1.0100 binaries.',
                             '<strong>SDDC lifecycle:</strong> Patched to 9.1.1.0100 binaries.',
                             '<strong>Migration service engine:</strong> Patched to 9.1.1.0100 binaries.',
-                            '<strong>VCF Automation:</strong> ' + (_isSourcePre911AutoP1 ? 'Patched to 9.1.1.0100 binaries.' : 'Remains at 9.1.1.0 (no patch required when already on 9.1.1.0).')
+                            '<strong>VCF Automation:</strong> Patched to 9.1.1.0100 binaries.'
                         ]
                     }
                 ] : [
@@ -2591,40 +2607,45 @@
                 // ── Per-component patch coverage from compat-data ──────────────
                 // Each array lists every patch build that component has available.
                 // Effective version = highest available build <= selected build.
-                var _patchRank = { '9.1.0.0': 0, '9.1.0.0100': 1, '9.1.0.0200': 2, '9.1.0.0300': 3, '9.1.0.0400': 4 };
+                 var _patchRank = { '9.1.0.0': 0, '9.1.0.0100': 1, '9.1.0.0200': 2, '9.1.0.0300': 3, '9.1.0.0400': 4, '9.1.1.0': 5, '9.1.1.0100': 6 };
                 var _selRank = _patchRank[window.targetVcf91Version] || 0;
 
                 var _coverage = {
-                'ESX': ['9.1.0.0100', '9.1.0.0200'],
-                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
-                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200'],
-                'vSAN': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX': ['9.1.0.0100', '9.1.0.0200'],
-                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'SDDC lifecycle': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'Fleet lifecycle': ['9.1.0.0100', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0400'],
-                'VCF Operations HCX': ['9.1.0.0100', '9.1.0.0200'],
-                'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200'],
-                'Log Management': ['9.1.0.0100', '9.1.0.0400'],
-                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400'],
-                'Real-Time Metrics': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0400'],
-                'Salt Master': ['9.1.0.0100', '9.1.0.0400'],
-                'Salt RaaS': ['9.1.0.0100', '9.1.0.0400'],
-                'Identity Broker': ['9.1.0.0100'],
+                'ESX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0'],
+                'SDDC lifecycle': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
+                'Fleet lifecycle': ['9.1.0.0100', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
+                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0'],
+                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'VCF Operations HCX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
+                'Log Management': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'Real-Time Metrics': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0400', '9.1.1.0'],
+                'Salt Master': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'Salt RaaS': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
+                'Identity Broker': ['9.1.0.0100', '9.1.1.0'],
                 'VCF Services Runtime': ['9.1.0.0200'],
-                'Software Depot': ['9.1.0.0400'],
-                'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
+                'Software Depot': ['9.1.0.0400', '9.1.1.0'],
+                'VCF Automation': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100'], 
+                'Migration Service Engine': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100'], 
             };
                 // Avi uses its own version scheme — map VCF patch build → Avi version string
                 var _aviVersionMap = {
                     '9.1.0.0100': '32.1.1',
-                    '9.1.0.0200': '32.1.2'
+                    '9.1.0.0200': '32.1.2',
+                    '9.1.0.0300': '32.1.3',
+                    '9.1.0.0400': '32.1.3',
+                    '9.1.1.0': '32.1.4',
+                    '9.1.1.0100': '32.1.4'
                 };
 
                 // Compute effective version for a component using VCF patch build coverage list
@@ -2899,7 +2920,7 @@
                         var _selTgtCheck = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                         var _verValCheck = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
                         var _isSrc911Check = _verValCheck.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
-                        var _isTarget9110100P1Check = _isSrc911Check && (_selTgtCheck === '9.1.1.0100');
+                        var _isTarget9110100P1Check = (_selTgtCheck === '9.1.1.0100');
                         if (!_isTarget9110100P1Check) {
                         html += `
                         <div class="fleet-read-verification" style="margin-top: 20px; padding: 16px 20px; background: rgba(0, 115, 230, 0.05); border: 2px solid var(--vmw-blue, #0073e6); border-radius: 10px;">

@@ -1,2 +1,8 @@
 .DS_Store
 mkdocs.yml
+security-standards.mdc
+AGENTS.md
+
+# Local test suite
+package.json
+scripts/

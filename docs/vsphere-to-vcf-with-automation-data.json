@@ -90,6 +90,11 @@
       "upgrade_phase": "mid_infrastructure"
     },
     {
+      "id": "vcp",
+      "display_name": "vSphere Configuration Profiles (VCP)",
+      "category": "advanced"
+    },
+    {
       "id": "nsx_federation",
       "display_name": "NSX Federation",
       "category": "advanced"
