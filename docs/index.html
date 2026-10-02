@@ -2580,7 +2580,7 @@
                 else if (vcf90Chk && vcf90Chk.checked && vcf90Sel) srcVer = vcf90Sel.value;
                 else if (vcf91Chk && vcf91Chk.checked && vcf91Sel) srcVer = vcf91Sel.value;
 
-                if (!srcVer || !savedVcfTargetVer) {
+                if (!srcVer || !savedVcfTargetVer || (srcVer.startsWith('9.1.0') && savedVcfTargetVer.startsWith('9.1.0')) || srcVer === savedVcfTargetVer) {
                     box.style.display = 'none';
                     if (banner) banner.style.display = 'none';
                     return;
@@ -2681,8 +2681,11 @@
                     selectVcfIntent('fleet');
                 }
 
-                if (savedVcfTargetVer && savedVcfTargetVer === vcf91Version) {
-                    // Exact match (e.g. 9.1.0.0 to 9.1.0.0 or 9.1.1.0 to 9.1.1.0): show info message only, no path cards
+                const isSrc910 = (vcf91Version || '').startsWith('9.1.0');
+                const isTgt910 = (savedVcfTargetVer || '').startsWith('9.1.0');
+
+                if (savedVcfTargetVer && (savedVcfTargetVer === vcf91Version || (isSrc910 && isTgt910))) {
+                    // Exact match or 9.1.0.x to 9.1.0.x: show info message only, no path cards
                     const vcf91NoteDiv = document.createElement('div');
                     vcf91NoteDiv.style.cssText = 'background: #e8f4f8; border-left: 4px solid #0088b5; padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #b3d9ea;';
                     vcf91NoteDiv.innerHTML = '<p style="color: #1a2d40; font-size: 1rem; line-height: 1.6; margin: 0;"><strong>ℹ️ There is no specified order, apply per the requirements and specifics of your organization. Plan for possible downtime of a certain functionality and consider the other services that might be impacted.</strong></p>';
@@ -2985,7 +2988,7 @@
                 const vcf91Version = document.getElementById('vcf91').value;
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
-                localStorage.setItem('vcf-version', '9.1.0');
+                localStorage.setItem('vcf-version', vcf91Version || '9.1.0');
                 localStorage.setItem('vcf-detailed-version', vcf91Version);
                 localStorage.setItem('vxrail-selected', vcf91VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf91VxrailVersion);
@@ -2994,7 +2997,7 @@
                 const vcf91Version = document.getElementById('vcf91').value;
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
-                localStorage.setItem('vcf-version', '9.1.0');
+                localStorage.setItem('vcf-version', vcf91Version || '9.1.0');
                 localStorage.setItem('vcf-detailed-version', vcf91Version);
                 localStorage.setItem('vxrail-selected', vcf91VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf91VxrailVersion);
@@ -3003,7 +3006,7 @@
                 const vcf91Version = document.getElementById('vcf91').value;
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
-                localStorage.setItem('vcf-version', '9.1.0');
+                localStorage.setItem('vcf-version', vcf91Version || '9.1.0');
                 localStorage.setItem('vcf-detailed-version', vcf91Version);
                 localStorage.setItem('vxrail-selected', vcf91VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf91VxrailVersion);
@@ -3012,7 +3015,7 @@
                 const vcf91Version = document.getElementById('vcf91').value;
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
-                localStorage.setItem('vcf-version', '9.1.0');
+                localStorage.setItem('vcf-version', vcf91Version || '9.1.0');
                 localStorage.setItem('vcf-detailed-version', vcf91Version);
                 localStorage.setItem('vxrail-selected', vcf91VxrailSelected.toString());
                 localStorage.setItem('vxrail-version', vcf91VxrailVersion);

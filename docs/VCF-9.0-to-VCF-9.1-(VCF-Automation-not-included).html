@@ -1520,6 +1520,9 @@
         function loadSelectionsFromStorage() {
            vcfVersion =  localStorage.getItem('vcf-version') || '9.0';
            vcfdetailVersion = localStorage.getItem('vcf-detailed-version') || '';
+           if (vcfdetailVersion && vcfdetailVersion.startsWith('9.1.1')) {
+               vcfVersion = vcfdetailVersion;
+           }
            operationsVersion = localStorage.getItem('operations-version') || '9.0';
            vcenterVersion = localStorage.getItem('vcenter-version') || '';
            esxVersion = localStorage.getItem('esx-version') || '';
@@ -1849,7 +1852,8 @@
 
             const _tgtVerP1 = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
             const _verValP1 = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
-            const _isSrc911P1 = _verValP1.startsWith('9.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1'));
+            const _detVerP1 = typeof vcfdetailVersion !== 'undefined' ? vcfdetailVersion : (localStorage.getItem('vcf-detailed-version') || '');
+            const _isSrc911P1 = _verValP1.startsWith('9.1.1') || _detVerP1.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
             const _isTarget9110100P1 = _isSrc911P1 && (_tgtVerP1 === '9.1.1.0100');
             
             
@@ -1875,13 +1879,10 @@
                     } else {
                         shouldInclude = true;
                         componentData = upgradeData.components['operations'];
-                        const srcOpsVer = abbrev(operationsVersion || vcfdetailVersion || '9.0');
-                        const tgtOpsVer = (_targetVerOps === '9.1.1.0100' ? '9.1.1.0' : (_targetVerOps || '9.1.0')).trim();
-                        phaseTitle = _targetVerOps.startsWith('9.1.1')
-                            ? ('VCF Operations Patch (' + srcOpsVer + ' → ' + tgtOpsVer + ')')
-                            : (_is910To911Plan ? 'VCF Operations Patch' : (componentData ? componentData.name : componentId));
+                        phaseTitle = _is910To911Plan ? 'VCF Operations Patch' : (componentData ? componentData.name : componentId);
                         phaseDescription = _is910To911Plan ? 'Patch VCF Operations' : 'Upgrade VCF Operations';
                     }
+
                 } else if (componentId === 'vxrail') {
                     // VxRail only if selected - replaces ESX
                     shouldInclude = selectedProducts['vxrail'] === true;
@@ -2378,7 +2379,7 @@
                 'vcf_fleet_lifecycle': {
                     phases: fleetLifecyclePhases,
                     title: 'VCF Management Services Fleet Lifecycle Component Patch',
-                    description: 'Patch VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component'
+                    description: fleetLifecyclePhases.length > 0 ? fleetLifecyclePhases[0].description : 'Patch VCF management services fleet lifecycle component to 9.1.1.0 before any other VCF component'
                 },
                 'operations': {
                     phases: operationsPhases,
@@ -2537,7 +2538,12 @@
                 }
             });
             // Inject final "Apply Patches" step when a patch build is selected
-            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'];
+            var _verValPatch = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
+            var _isSrc911Patch = _verValPatch.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
+            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            if (_isSrc911Patch) {
+                _patchBuilds.push('9.1.1.0100');
+            }
             if (_patchBuilds.includes(window.targetVcf91Version)) {
 
                 // ── Per-component patch coverage from compat-data ──────────────
@@ -2676,7 +2682,13 @@
                 var _selTgtVerNow = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                 var _pathBComponents = [];
                 if (_selTgtVerNow === '9.1.1.0100') {
-                    _pathBComponents = ['Fleet lifecycle', 'SDDC lifecycle', 'VCF Operations'];
+                    var _verValTable = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
+                    var _isSrcPre911Table = !(_verValTable.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1')));
+                    if (_isSrcPre911Table) {
+                        _pathBComponents = ['SDDC Manager', 'Fleet lifecycle', 'SDDC lifecycle', 'VCF Operations'];
+                    } else {
+                        _pathBComponents = ['Fleet lifecycle', 'SDDC lifecycle', 'VCF Operations'];
+                    }
                 } else if (_selTgtVerNow === '9.1.0.0100') {
                     _pathBComponents = ['SDDC Manager', 'Fleet lifecycle', 'SDDC lifecycle', 'Real-Time Metrics', 'Salt Master', 'Salt RaaS', 'Identity Broker', 'VCF Operations orchestrator', 'VCF Operations HCX', 'VCF Operations for Networks', 'VCF Operations'];
                 } else if (_selTgtVerNow === '9.1.0.0200') {
@@ -2853,8 +2865,9 @@
                      if (phase.componentId === 'vcf_fleet_lifecycle') {
                         var _selTgtCheck = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                         var _verValCheck = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
-                        var _isSrc911Check = _verValCheck.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
-                        var _isTarget9110100P1Check = (_selTgtCheck === '9.1.1.0100');
+                        var _detVerCheck = typeof vcfdetailVersion !== 'undefined' ? vcfdetailVersion : (localStorage.getItem('vcf-detailed-version') || '');
+                        var _isSrc911Check = _verValCheck.startsWith('9.1.1') || _detVerCheck.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
+                        var _isTarget9110100P1Check = _isSrc911Check && (_selTgtCheck === '9.1.1.0100');
                         if (!_isTarget9110100P1Check) {
                         html += `
                         <div class="fleet-read-verification" style="margin-top: 20px; padding: 16px 20px; background: rgba(0, 115, 230, 0.05); border: 2px solid var(--vmw-blue, #0073e6); border-radius: 10px;">
@@ -3472,7 +3485,12 @@
             });
             html += '</div>';
             
-            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'];
+            var _verValExp2 = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
+            var _isSrc911Exp2 = _verValExp2.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
+            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            if (_isSrc911Exp2) {
+                _patchBuildsExp2.push('9.1.1.0100');
+            }
             if (_patchBuildsExp2.includes(window.targetVcf91Version)) {
                 var _patchStep = (allSteps || []).find(function(s) { return s.phases && s.phases.some(function(p) { return p.componentId === 'vcf_patch_base' || p.componentId === 'vcf_patch_direct'; }); });
                 if (_patchStep) {
