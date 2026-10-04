@@ -1108,6 +1108,7 @@
 
     </style>
     <script src="docs_inline.js"></script>
+    <script src="counter.js"></script>
     <script src="diagram.js"></script>
 </head>
 
@@ -1145,9 +1146,7 @@
                         <div class="toggle-slider"></div>
                     </div>
                 </div>
-                <div class="sidebar-counter">
-                    <img src="https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-5.2-to-9.1-workload-domain.svg?label=Visitors&color=EC4899&labelColor=092138" alt="Visitor counter" />
-                </div>
+                <div class="sidebar-counter" data-slug="vcf-5.2-to-9.1-workload-domain"></div>
             </div>
         </div>
 
@@ -2377,7 +2376,7 @@
             setTimeout(function() { win.print(); win.close(); URL.revokeObjectURL(blobUrl); }, 600);
         }
         function exportStep(stepNumber) {
-            new Image().src = 'https://hits.sh/vcf-planner-events-exports/phase-vcf5.2-to-vcf9.1-with-automation.svg';
+            trackEvent('https://hits.sh/vcf-planner-events-exports/phase-vcf5.2-to-vcf9.1-workload-domain.svg');
             const step = allSteps.find(s => s.number === stepNumber);
             if (!step) return alert('Step not found');
             
@@ -2605,7 +2604,7 @@
         }
 
         function exportToPDF() {
-            new Image().src = 'https://hits.sh/vcf-planner-events-exports/complete-vcf5.2-to-vcf9.1-with-automation.svg';
+            trackEvent('https://hits.sh/vcf-planner-events-exports/complete-vcf5.2-to-vcf9.1-workload-domain.svg');
             // Use allSteps to export everything properly grouped
             const phases = allPhases; // Use the actual generated phases
             const printDiv = document.getElementById('printAllPhases');
@@ -3353,7 +3352,7 @@
 <script>
 (function(){
     var B='https://hits.sh/vcf-planner-events-versions/';
-    function t(c,k){var v=localStorage.getItem(k);if(v)new Image().src=B+c+'-'+v+'.svg';}
+    function t(c,k){var v=localStorage.getItem(k);if(v)trackEvent(B+c+'-'+v+'.svg');}
     t('vcf','vcf-detailed-version');
     t('tgt','target-vcf91-version');
 })();
@@ -3577,7 +3576,7 @@ function generateJiraSummaryText() {
 }
 
 function copyJiraSummary() {
-    new Image().src = 'https://hits.sh/vcf-planner-events-jira.svg';
+    trackEvent('https://hits.sh/vcf-planner-events-jira.svg');
     const text = generateJiraSummaryText();
     
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -3592,7 +3591,7 @@ function copyJiraSummary() {
 }
 
 function downloadJiraSummary() {
-    new Image().src = 'https://hits.sh/vcf-planner-events-jira.svg';
+    trackEvent('https://hits.sh/vcf-planner-events-jira.svg');
     const text = generateJiraSummaryText();
     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     const link = document.createElement('a');
