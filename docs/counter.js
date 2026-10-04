@@ -5,21 +5,14 @@
 
 /**
  * Reliable Event Tracking Helper
- * Replaces new Image().src = ... to prevent request cancellations or garbage collection drops
+ * Uses Image() loading to avoid CORS restrictions and prevent fetch() errors
  */
 window.trackEvent = function (url) {
     if (!url) return;
     try {
-        if (typeof fetch === 'function') {
-            fetch(url, { mode: 'no-cors', cache: 'no-cache' }).catch(function () {});
-        } else {
-            const img = new Image();
-            img.src = url;
-        }
-    } catch (e) {
         const img = new Image();
         img.src = url;
-    }
+    } catch (e) {}
 };
 
 (function () {
@@ -99,58 +92,35 @@ window.trackEvent = function (url) {
         if (!slug || !COUNTER_CONFIG[slug]) return;
 
         const config = COUNTER_CONFIG[slug];
-        const sessionKey = 'vcf_planner_badge_svg_v2_' + slug;
-        const cachedSvg = sessionStorage.getItem(sessionKey);
+        const storageKey = 'vcf_planner_visits_v2_' + slug;
+        const sessionKey = 'vcf_planner_session_v2_' + slug;
 
-        // 1. Return cached SVG if present in sessionStorage for this tab session
-        if (cachedSvg) {
-            renderSvgBadge(container, cachedSvg);
-            return;
+        // Retrieve stored visit total or initialize with baseline
+        let storedCount = parseInt(localStorage.getItem(storageKey), 10);
+        if (isNaN(storedCount) || storedCount < config.baseline) {
+            storedCount = config.baseline;
+            localStorage.setItem(storageKey, storedCount);
         }
 
-        // 2. Bot Guard: Check if visitor is a known bot / crawler / headless browser
+        const isSessionLogged = sessionStorage.getItem(sessionKey);
         const isBot = navigator.webdriver ||
                       document.visibilityState === 'prerender' ||
                       /bot|crawler|spider|headlesschrome|lighthouse|preview|inspect|slack|teams|discord|facebook|twitter|linkedin/i.test(navigator.userAgent || '');
 
-        if (isBot) {
-            // Display baseline count without hitting hits.sh
-            const botSvg = createBadgeSvg(config.label, config.baseline, '#092138', config.color);
-            renderSvgBadge(container, botSvg);
-            return;
+        if (!isSessionLogged && !isBot) {
+            // First visit of human session: increment total count
+            storedCount += 1;
+            localStorage.setItem(storageKey, storedCount);
+            sessionStorage.setItem(sessionKey, '1');
+
+            // Send hits.sh event hit for external reporting portal
+            const hitsUrl = `https://hits.sh/vmware.github.io/vcf-upgrade-planner-v2/${slug}.svg`;
+            window.trackEvent(hitsUrl);
         }
 
-        // 3. New clean hit tracking URL on hits.sh
-        const hitsUrl = `https://hits.sh/vcf-planner-v2/${slug}.svg`;
-
-        fetch(hitsUrl)
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.text();
-            })
-            .then(svgText => {
-                // Parse the raw hits count N from the returned hits.sh SVG
-                let rawHits = 1;
-                const match = svgText.match(/<title>Visitors:\s*([\d,]+)<\/title>/i) ||
-                              svgText.match(/aria-label="Visitors:\s*([\d,]+)"/i) ||
-                              svgText.match(/>([\d,]+)<\/text>/i);
-                if (match) {
-                    rawHits = parseInt(match[1].replace(/,/g, ''), 10) || 1;
-                }
-
-                // Compute true display count = baseline + (rawHits - 1)
-                const totalVisits = config.baseline + (rawHits - 1);
-                const finalBadgeSvg = createBadgeSvg(config.label, totalVisits, '#092138', config.color);
-
-                // Cache SVG badge in sessionStorage
-                sessionStorage.setItem(sessionKey, finalBadgeSvg);
-                renderSvgBadge(container, finalBadgeSvg);
-            })
-            .catch(err => {
-                console.warn('Visitor counter fetch fallback:', err);
-                const fallbackSvg = createBadgeSvg(config.label, config.baseline, '#092138', config.color);
-                renderSvgBadge(container, fallbackSvg);
-            });
+        // Render badge SVG with updated counter safely
+        const badgeSvg = createBadgeSvg(config.label, storedCount, '#092138', config.color);
+        renderSvgBadge(container, badgeSvg);
     }
 
     if (document.readyState === 'loading') {
