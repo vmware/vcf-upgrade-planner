@@ -2,7 +2,7 @@
   "_meta": {
     "description": "VCF product interoperability data for all key product pairs",
     "source": "Broadcom Interoperability Matrix \u2014 https://interopmatrix.broadcom.com/Interoperability",
-    "last_updated": "2026-10-01",
+    "last_updated": "2026-10-04",
     "update_instructions": "Run `python3 refresh_compat.py` to pull latest data from Broadcom API, or let the GitHub Workflow refresh-compat.yml update it automatically.",
     "api_base": "https://interop.esp.spespg1.vmw.saas.broadcom.com/external",
     "interop_base": "https://interopmatrix.broadcom.com/Interoperability",
@@ -96,8 +96,8 @@
   "versions": {
     "vsphere_supervisor": [
       {
-        "value": "v1.34.9+vmware.1-fips-vsc9.1.1.0",
-        "label": "v1.34.9+vmware.1-fips-vsc9.1.1.0",
+        "value": "v1.34.9+vmware.1-vsc9.1.1.0",
+        "label": "v1.34.9+vmware.1-vsc9.1.1.0",
         "group": "v1.34",
         "broadcom_release_id": 21421,
         "ga_date": 1788393600000
@@ -4461,7 +4461,7 @@
         "3.1.1": "no",
         "3.1.0": "no"
       },
-      "v1.34.9+vmware.1-fips-vsc9.1.1.0": {
+      "v1.34.9+vmware.1-vsc9.1.1.0": {
         "3.8.0+v.137": "no",
         "3.7.2+v1.36": "no",
         "3.7.1+v1.36": "yes",
