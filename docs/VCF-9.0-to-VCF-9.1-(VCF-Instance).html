@@ -1776,11 +1776,14 @@
 
 
         function autoGenerateUpgradePlan() {
+            const _is910To911VidbCard = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
+            const vidbCardEl = document.getElementById('vidbCard');
+            if (vidbCardEl) vidbCardEl.style.display = _is910To911VidbCard ? 'none' : '';
             const _is910To911Card = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
             const depCard = document.getElementById('deploymentConfigCard');
             if (depCard) depCard.style.display = _is910To911Card ? 'none' : '';
             supervisorSelected = document.getElementById('supervisorCheck') ? document.getElementById('supervisorCheck').checked : false;
-
+            
             // Get deployment configuration from DOM
             const simpleRadio = document.getElementById('simpleRadio');
             deploymentType = simpleRadio && simpleRadio.checked ? 'simple' : 'ha';
@@ -1839,7 +1842,8 @@
             
             const _tgtVerP1 = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
             const _verValP1 = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
-            const _isSrc911P1 = _verValP1.startsWith('9.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1'));
+            const _detVerP1 = typeof vcfdetailVersion !== 'undefined' ? (vcfdetailVersion || '') : (localStorage.getItem('vcfdetail-version') || '');
+            const _isSrc911P1 = _verValP1.startsWith('9.1.1') || _detVerP1.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
             const _isTarget9110100P1 = _isSrc911P1 && (_tgtVerP1 === '9.1.1.0100');
             
             const orderArray = upgradeData.upgrade_order;
@@ -2759,8 +2763,9 @@
                     if (phase.componentId === 'vcf_fleet_lifecycle') {
                         var _selTgtCheck = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                         var _verValCheck = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
-                        var _isSrc911Check = _verValCheck.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
-                        var _isTarget9110100P1Check = (_selTgtCheck === '9.1.1.0100');
+                        var _detVerCheck = typeof vcfdetailVersion !== 'undefined' ? (vcfdetailVersion || '') : (localStorage.getItem('vcfdetail-version') || '');
+                        var _isSrc911Check = _verValCheck.startsWith('9.1.1') || _detVerCheck.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
+                        var _isTarget9110100P1Check = _isSrc911Check && (_selTgtCheck === '9.1.1.0100');
                         if (!_isTarget9110100P1Check) {
                         const _depotChecked = document.getElementById('depotCheck') && document.getElementById('depotCheck').checked;
                         const _vidbChecked = (document.getElementById('vidbCheck') && document.getElementById('vidbCheck').checked) || (window.selectedProducts && window.selectedProducts['vidb'] === true);

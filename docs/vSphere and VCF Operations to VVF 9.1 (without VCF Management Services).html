@@ -1184,6 +1184,8 @@
             <p style="margin-bottom: 14px; color: var(--text-secondary); font-size: 0.9rem;">
                 Select any additional components or features &mdash; your plan updates automatically.
             </p>
+             <div id="advancedProductsGrid" style="display:none"></div>
+
 
             <!-- Hidden checkboxes kept for backward-compatibility with existing JS -->
             <input type="checkbox" id="vlcmCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
@@ -1776,7 +1778,10 @@
             // Smooth scroll on first generation
             if (steps.length > 0) {
                 setTimeout(() => {
-                    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const step3El = document.getElementById('step3');
+                    if (step3El) {
+                        step3El.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }, 100);
             }
         }

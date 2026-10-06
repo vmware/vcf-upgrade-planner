@@ -2015,7 +2015,10 @@
             // Smooth scroll on first generation
             if (steps.length > 0) {
                 setTimeout(() => {
-                    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const step3El = document.getElementById('step3');
+                    if (step3El) {
+                    step3El.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }, 100);
             }
         }

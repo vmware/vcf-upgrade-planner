@@ -1,12 +1,10 @@
 /**
- * Visitor Counter Implementation with sessionStorage, Bot Guard, and Baseline Offsets
- * Safe DOM rendering using Blob URLs adhering to AGENTS.md security guidelines.
+ * Visitor Counter & Event Tracking Implementation
+ * - All 14 Scenario Subpages: Display live historical hits from official hits.sh endpoints.
+ * - Home Page (index.html): Fixed baseline starting at 85,000 (eliminates 283k bot inflation) and increments per new human session.
+ * - All Pages: Use sessionStorage to prevent page reloads & navigation from adding duplicate hits.
  */
 
-/**
- * Reliable Event Tracking Helper
- * Uses Image() loading to avoid CORS restrictions and prevent fetch() errors
- */
 window.trackEvent = function (url) {
     if (!url) return;
     try {
@@ -16,23 +14,22 @@ window.trackEvent = function (url) {
 };
 
 (function () {
-    // Baseline starting visitor numbers per page slug
-    const COUNTER_CONFIG = {
-        'index': { baseline: 85000, label: 'Visitors', color: '#0098C7' },
-        'vcf-5.2-to-9.1-with-automation': { baseline: 5988, label: 'Visitors', color: '#7B61FF' },
-        'vcf-5.2-to-9.1-no-automation': { baseline: 5059, label: 'Visitors', color: '#EC4899' },
-        'vcf-5.2-to-9.1-vcf-instance': { baseline: 2723, label: 'Visitors', color: '#EC4899' },
-        'vcf-5.2-to-9.1-workload-domain': { baseline: 2079, label: 'Visitors', color: '#EC4899' },
-        'vcf-9.0-to-9.1-with-automation': { baseline: 7059, label: 'Visitors', color: '#FF6B35' },
-        'vcf-9.0-to-9.1-no-automation': { baseline: 5005, label: 'Visitors', color: '#F59E0B' },
-        'vcf-9.0-to-9.1-vcf-instance': { baseline: 2654, label: 'Visitors', color: '#F59E0B' },
-        'vcf-9.0-to-9.1-workload-domain': { baseline: 1827, label: 'Visitors', color: '#F59E0B' },
-        'vsphere-to-vcf-with-automation': { baseline: 8481, label: 'Visitors', color: '#F43F5E' },
-        'vsphere-to-vcf-no-automation': { baseline: 10858, label: 'Visitors', color: '#00BCD4' },
-        'vsphere-to-vcf-instance': { baseline: 2047, label: 'Visitors', color: '#00BCD4' },
-        'vsphere-to-vcf-workload-domain': { baseline: 2414, label: 'Visitors', color: '#00BCD4' },
-        'vsphere-to-vvf-ms': { baseline: 5401, label: 'Visitors', color: '#00C48C' },
-        'vsphere-no-vcf': { baseline: 14376, label: 'Visitors', color: '#00C48C' }
+    // Official hits.sh global counter endpoints for subpages
+    const SUBPAGE_CONFIG = {
+        'vcf-5.2-to-9.1-with-automation': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-5.2-to-9.1-with-automation.svg?label=Visitors&color=7B61FF&labelColor=092138',
+        'vcf-5.2-to-9.1-no-automation': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-5.2-to-9.1-no-automation.svg?label=Visitors&color=EC4899&labelColor=092138',
+        'vcf-5.2-to-9.1-vcf-instance': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-5.2-to-9.1-vcf-instance.svg?label=Visitors&color=EC4899&labelColor=092138',
+        'vcf-5.2-to-9.1-workload-domain': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-5.2-to-9.1-workload-domain.svg?label=Visitors&color=EC4899&labelColor=092138',
+        'vcf-9.0-to-9.1-with-automation': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-9.0-to-9.1-with-automation.svg?label=Visitors&color=FF6B35&labelColor=092138',
+        'vcf-9.0-to-9.1-no-automation': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-9.0-to-9.1-no-automation.svg?label=Visitors&color=F59E0B&labelColor=092138',
+        'vcf-9.0-to-9.1-vcf-instance': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-9.0-to-9.1-vcf-instance.svg?label=Visitors&color=F59E0B&labelColor=092138',
+        'vcf-9.0-to-9.1-workload-domain': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-9.0-to-9.1-workload-domain.svg?label=Visitors&color=F59E0B&labelColor=092138',
+        'vsphere-to-vcf-with-automation': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vcf-with-automation.svg?label=Visitors&color=F43F5E&labelColor=092138',
+        'vsphere-to-vcf-no-automation': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vcf-no-automation.svg?label=Visitors&color=00BCD4&labelColor=092138',
+        'vsphere-to-vcf-instance': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vcf-instance.svg?label=Visitors&color=00BCD4&labelColor=092138',
+        'vsphere-to-vcf-workload-domain': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vcf-workload-domain.svg?label=Visitors&color=00BCD4&labelColor=092138',
+        'vsphere-to-vvf-ms': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vvf-ms.svg?label=Visitors&color=00C48C&labelColor=092138',
+        'vsphere-no-vcf': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-no-vcf.svg?label=Visitors&color=00C48C&labelColor=092138'
     };
 
     /**
@@ -71,7 +68,7 @@ window.trackEvent = function (url) {
     /**
      * Renders an SVG badge string into target container safely via Blob URL
      */
-    function renderSvgBadge(container, svgText) {
+    function renderSvgBlob(container, svgText) {
         container.innerHTML = '';
         const blob = new Blob([svgText], { type: 'image/svg+xml' });
         const blobUrl = URL.createObjectURL(blob);
@@ -89,38 +86,61 @@ window.trackEvent = function (url) {
         if (!container) return;
 
         const slug = container.getAttribute('data-slug');
-        if (!slug || !COUNTER_CONFIG[slug]) return;
+        if (!slug) return;
 
-        const config = COUNTER_CONFIG[slug];
-        const storageKey = 'vcf_planner_visits_v2_' + slug;
-        const sessionKey = 'vcf_planner_session_v2_' + slug;
+        // --- 1. HOME PAGE (index.html): Fixed Baseline 85,000 ---
+        if (slug === 'index') {
+            const BASELINE_HOME = 85000;
+            const storageKey = 'vcf_planner_home_visits_v3';
+            const sessionKey = 'vcf_planner_home_session_v3';
 
-        // Retrieve stored visit total or initialize with baseline
-        let storedCount = parseInt(localStorage.getItem(storageKey), 10);
-        if (isNaN(storedCount) || storedCount < config.baseline) {
-            storedCount = config.baseline;
-            localStorage.setItem(storageKey, storedCount);
+            let currentCount = parseInt(localStorage.getItem(storageKey), 10);
+            if (isNaN(currentCount) || currentCount < BASELINE_HOME) {
+                currentCount = BASELINE_HOME;
+                localStorage.setItem(storageKey, currentCount);
+            }
+
+            const isLogged = sessionStorage.getItem(sessionKey);
+            const isBot = navigator.webdriver ||
+                          document.visibilityState === 'prerender' ||
+                          /bot|crawler|spider|headlesschrome|lighthouse|preview|inspect|slack|teams|discord|facebook|twitter|linkedin/i.test(navigator.userAgent || '');
+
+            if (!isLogged && !isBot) {
+                currentCount += 1;
+                localStorage.setItem(storageKey, currentCount);
+                sessionStorage.setItem(sessionKey, '1');
+
+                // Sync hit event with hits.sh clean v2 key for internal reporting
+                window.trackEvent('https://hits.sh/vmware.github.io/vcf-upgrade-planner-v2/index.svg');
+            }
+
+            const homeBadgeSvg = createBadgeSvg('Visitors', currentCount, '#092138', '#0098C7');
+            renderSvgBlob(container, homeBadgeSvg);
+            return;
         }
 
-        const isSessionLogged = sessionStorage.getItem(sessionKey);
-        const isBot = navigator.webdriver ||
-                      document.visibilityState === 'prerender' ||
-                      /bot|crawler|spider|headlesschrome|lighthouse|preview|inspect|slack|teams|discord|facebook|twitter|linkedin/i.test(navigator.userAgent || '');
+        // --- 2. SCENARIO SUBPAGES: Live Historical hits.sh Counts ---
+        if (!SUBPAGE_CONFIG[slug]) return;
 
-        if (!isSessionLogged && !isBot) {
-            // First visit of human session: increment total count
-            storedCount += 1;
-            localStorage.setItem(storageKey, storedCount);
-            sessionStorage.setItem(sessionKey, '1');
+        const hitsUrl = SUBPAGE_CONFIG[slug];
+        const sessionKey = 'vcf_planner_logged_' + slug;
+        const cachedImgSrc = sessionStorage.getItem(sessionKey);
 
-            // Send hits.sh event hit for external reporting portal
-            const hitsUrl = `https://hits.sh/vmware.github.io/vcf-upgrade-planner-v2/${slug}.svg`;
-            window.trackEvent(hitsUrl);
+        container.innerHTML = '';
+        const img = document.createElement('img');
+        img.alt = 'Visitor counter';
+
+        if (cachedImgSrc) {
+            // Already logged in this session: reuse cached URL to avoid extra hits.sh count
+            img.src = cachedImgSrc;
+        } else {
+            // First visit of session: fetch live historical hits.sh badge (+ timestamp cache-buster)
+            const freshUrl = hitsUrl + '&_t=' + Date.now();
+            img.src = freshUrl;
+            sessionStorage.setItem(sessionKey, freshUrl);
         }
 
-        // Render badge SVG with updated counter safely
-        const badgeSvg = createBadgeSvg(config.label, storedCount, '#092138', config.color);
-        renderSvgBadge(container, badgeSvg);
+        container.appendChild(img);
     }
 
     if (document.readyState === 'loading') {
