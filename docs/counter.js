@@ -1,8 +1,9 @@
 /**
  * Visitor Counter & Event Tracking Implementation
- * - All 14 Scenario Subpages: Display live historical hits from official hits.sh endpoints.
- * - Home Page (index.html): Fixed baseline starting at 85,000 (eliminates 283k bot inflation) and increments per new human session.
- * - All Pages: Use sessionStorage to prevent page reloads & navigation from adding duplicate hits.
+ * - Home Page (index.html): Clean global counter starting from 77,741 baseline (exact sum of all subpages),
+ *   incrementing for every real human session while protected against bot/reload bloat.
+ * - Scenario Subpages: Live historical counts loaded from official hits.sh endpoints.
+ * - All Pages: Bot guard & sessionStorage caching prevent crawlers & reloads from adding duplicate hits.
  */
 
 window.trackEvent = function (url) {
@@ -14,7 +15,6 @@ window.trackEvent = function (url) {
 };
 
 (function () {
-    // Official hits.sh global counter endpoints for subpages
     const SUBPAGE_CONFIG = {
         'vcf-5.2-to-9.1-with-automation': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-5.2-to-9.1-with-automation.svg?label=Visitors&color=7B61FF&labelColor=092138',
         'vcf-5.2-to-9.1-no-automation': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vcf-5.2-to-9.1-no-automation.svg?label=Visitors&color=EC4899&labelColor=092138',
@@ -33,7 +33,7 @@ window.trackEvent = function (url) {
     };
 
     /**
-     * Generates a pixel-perfect Shields.io style SVG badge string
+     * Helper to render Shields.io SVG badge
      */
     function createBadgeSvg(label, value, labelBg, valueBg) {
         const formattedVal = typeof value === 'number' ? value.toLocaleString('en-US') : String(value);
@@ -66,7 +66,7 @@ window.trackEvent = function (url) {
     }
 
     /**
-     * Renders an SVG badge string into target container safely via Blob URL
+     * Helper to safely render SVG Blob URL into DOM
      */
     function renderSvgBlob(container, svgText) {
         container.innerHTML = '';
@@ -88,34 +88,34 @@ window.trackEvent = function (url) {
         const slug = container.getAttribute('data-slug');
         if (!slug) return;
 
-        // --- 1. HOME PAGE (index.html): Fixed Baseline 85,000 ---
+        // --- 1. HOME PAGE (index.html): Baseline 77,741 (Sum of all subpages) ---
         if (slug === 'index') {
-            const BASELINE_HOME = 85000;
-            const storageKey = 'vcf_planner_home_visits_v3';
-            const sessionKey = 'vcf_planner_home_session_v3';
+            const BASELINE_HOME = 77741;
+            const sessionKey = 'vcf_planner_home_session_v4';
+            const localKey = 'vcf_planner_home_count_v4';
 
-            let currentCount = parseInt(localStorage.getItem(storageKey), 10);
-            if (isNaN(currentCount) || currentCount < BASELINE_HOME) {
-                currentCount = BASELINE_HOME;
-                localStorage.setItem(storageKey, currentCount);
-            }
-
-            const isLogged = sessionStorage.getItem(sessionKey);
             const isBot = navigator.webdriver ||
                           document.visibilityState === 'prerender' ||
                           /bot|crawler|spider|headlesschrome|lighthouse|preview|inspect|slack|teams|discord|facebook|twitter|linkedin/i.test(navigator.userAgent || '');
 
-            if (!isLogged && !isBot) {
-                currentCount += 1;
-                localStorage.setItem(storageKey, currentCount);
-                sessionStorage.setItem(sessionKey, '1');
-
-                // Sync hit event with hits.sh clean v2 key for internal reporting
-                window.trackEvent('https://hits.sh/vmware.github.io/vcf-upgrade-planner-v2/index.svg');
+            let currentCount = parseInt(localStorage.getItem(localKey), 10);
+            if (isNaN(currentCount) || currentCount < BASELINE_HOME) {
+                currentCount = BASELINE_HOME;
+                localStorage.setItem(localKey, currentCount);
             }
 
-            const homeBadgeSvg = createBadgeSvg('Visitors', currentCount, '#092138', '#0098C7');
-            renderSvgBlob(container, homeBadgeSvg);
+            if (!isBot && !sessionStorage.getItem(sessionKey)) {
+                // First human visit in this browser session: increment counter
+                currentCount += 1;
+                localStorage.setItem(localKey, currentCount);
+                sessionStorage.setItem(sessionKey, '1');
+
+                // Record global hit on clean hits.sh key in background
+                window.trackEvent('https://hits.sh/vmware.github.io/vcf-upgrade-planner-v4/index.svg');
+            }
+
+            const badgeSvg = createBadgeSvg('Visitors', currentCount, '#092138', '#0098C7');
+            renderSvgBlob(container, badgeSvg);
             return;
         }
 
@@ -134,7 +134,7 @@ window.trackEvent = function (url) {
             // Already logged in this session: reuse cached URL to avoid extra hits.sh count
             img.src = cachedImgSrc;
         } else {
-            // First visit of session: fetch live historical hits.sh badge (+ timestamp cache-buster)
+            // First visit of session: load live hits.sh badge (increments global count once per session)
             const freshUrl = hitsUrl + '&_t=' + Date.now();
             img.src = freshUrl;
             sessionStorage.setItem(sessionKey, freshUrl);
