@@ -3720,6 +3720,13 @@
                 populateSorted('supervisorVer', (data.versions && data.versions['vsphere_supervisor']) || []);
                 populateSorted('vksVer',        (data.versions && data.versions['vks'])               || []);
 
+                var sddcVers = (data.versions && data.versions['sddc_manager']) || [];
+                var vcf90Vers = sddcVers.filter(function(v){ return v.group === '9.0'; });
+                // Dynamically add 9.1.1.0100 if it isn't already present in the list
+                if (!vcf90Vers.some(function(v) { return v.value === '9.1.1.0100'; })) {
+                    vcf90Vers.push({ group: '9.1', value: '9.1.1.0100', label: '9.1.1.0100' });
+                }
+                populateSorted('vcf90', vcf90Vers);
                 // ── Main product dropdowns ── pulled from compat-data ───────
                 // Exclude 6.7.x, 7.x, and 8.x versions prior to 8.0U3 for vCenter and ESX
                 function minVer80u3(v) {
@@ -3766,11 +3773,14 @@
                 });
                 populateSorted('nsx', nsxVers);
 
-                // VCF 5.2 and 9.0 come from the sddc_manager version list filtered by group
-                var sddcVers = (data.versions && data.versions['sddc_manager']) || [];
+                // VCF 5.2, 9.0, and 9.1 come from the sddc_manager version list filtered by group
                 populateSorted('vcf52', sddcVers.filter(function(v){ return v.group === '5.2'; }));
-                populateSorted('vcf90', sddcVers.filter(function(v){ return v.group === '9.0'; }));
-                populateSorted('vcf91', sddcVers.filter(function(v){ return (v.group || '').startsWith('9.1'); }));
+                
+                var vcf91Vers = sddcVers.filter(function(v){ return (v.group || '').startsWith('9.1'); });
+                if (!vcf91Vers.some(function(v) { return v.value === '9.1.1.0100'; })) {
+                    vcf91Vers.push({ group: '9.1', value: '9.1.1.0100', label: '9.1.1.0100' });
+                }
+                populateSorted('vcf91', vcf91Vers);
             }
 
             window.runConstructReadiness = function() {
