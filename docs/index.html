@@ -1477,6 +1477,7 @@
                             <optgroup label="9.1.1">
                                 <option value="9.1.1.0">9.1.1.0</option>
                                 <option value="9.1.1.0100">9.1.1.0100</option>
+                                <option value="9.1.1.0200">9.1.1.0200</option>
                             </optgroup>
                         </select>
                         <div id="targetVcf91ReleaseNotes" style="margin-top:10px;display:none;"></div>
@@ -1663,6 +1664,7 @@
                             <optgroup label="9.1.1">
                                 <option value="9.1.1.0">9.1.1.0</option>
                                 <option value="9.1.1.0100">9.1.1.0100</option>
+                                <option value="9.1.1.0200">9.1.1.0200</option>
                             </optgroup>
                         </select>
                         <div id="vcfTargetVcf91ReleaseNotes" style="margin-top:10px;display:none;"></div>
@@ -1959,6 +1961,34 @@
             if (!targetVer || targetVer === '9.1.0.0') return null;
 
             var map = {
+                '9.1.1.0200': {
+ '                   ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/esx/esx-9-1-1-0200-release-notes.html',
+                    'ESX / vSphere': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/esx/esx-9-1-1-0200-release-notes.html',
+                    'vCenter Server': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0100-release-notes.html',
+                    'vCenter': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0100-release-notes.html',
+                    'vSAN Witness': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsan/vsan-9-1-1-0100-release-notes.html',
+                    'vSAN': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsan/vsan-9-1-1-0100-release-notes.html',
+                    'NSX Local Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/nsx/nsx-9-1-1-0100-release-notes.html',
+                    'NSX Global Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/nsx/nsx-9-1-1-0100-release-notes.html',
+                    'NSX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/nsx/nsx-9-1-1-0100-release-notes.html',
+                    'SDDC Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/sddc-manager/sddc-manager-9-1-1-0200-release-notes.html',
+                    'VCF Operations': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-9-1-1-0100-release-notes.html',
+                    'VCF Operations orchestrator': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-orchestrator-9-1-1-0100-release-notes.html',
+                    'Log Management (Logs)': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/log-management-9-1-1-0100-release-notes.html',
+                    'VCF Operations for Networks': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vcf-9-1-release-notes-review-9-1-x-ditamap/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-for-networks-9-1-1-0100-release-notes.html',
+                    'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-services-runtime-9-1-1-0100-release-notes.html',
+                    'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/vcf-automation-9-1-1-0200-release-notes.html',
+                    'Migration Service': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notespatch-releases-9-1-1-x/vcf-automation/9110200(1)/migration-service-engine-9-1-1-0200-release-notes.html',
+                    'HCX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-hcx-9-1-1-0100-release-notes.html',
+                    'Fleet Lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9110200/fleet-lifecycle-9-1-1-0200-release-notes.html',
+                    'SDDC Lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9110200/sddc-lifecycle-9-1-1-0200-release-notes.html',
+                    'Real-Time Metrics': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/real-time-metrics-9-1-1-0100-release-notes.html',
+                    'Salt Master': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/salt-master-9-1-1-0100-release-notes.html',
+                    'Salt Raas': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/salt-raas-9-1-1-0100-release-notes.html',
+                    'Software Depot': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9110200/software-depot-9-1-1-0200-release-notes.html',
+                    'Telemetry': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/telemetry-9-1-1-0100-release-notes.html',
+                    'Identity Broker': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/identity-broker-9-1-1-0100-release-notes.html'
+                },
                 '9.1.1.0100': {
                     'Fleet lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/fleet-lifecycle-9-1-1-0100-release-notes.html',
                     'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x.html',
@@ -1984,6 +2014,8 @@
                     'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfautomation-9-1-1-0-release-notes.html'
                 }
             };
+
+       
 
             if (map[targetVer] && map[targetVer][name]) {
                 return map[targetVer][name];
@@ -2050,19 +2082,19 @@
             }
 
             var coverage = {
-                'ESX': ['9.1.0.0100', '9.1.0.0200'],
-                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
-                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200'],
-                'vSAN': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX': ['9.1.0.0100', '9.1.0.0200'],
-                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Management Services': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
+                'ESX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100' ],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0100'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0100'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0200'],
+                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100' ],
+                'VCF Management Services': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'],
+                'VCF Automation': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100', '9.1.1.0200']
             };
 
             var builds = coverage[name];
@@ -2096,7 +2128,18 @@
         function getTargetProductPatches(targetVer, elementId) {
             let products = ['SDDC Manager', 'VCF Operations', 'vCenter', 'ESX', 'vSAN', 'NSX', 'VCF Automation'];
 
-            if (targetVer === '9.1.1.0100') {
+            if (targetVer === '9.1.1.0200') {
+              const intent = localStorage.getItem('vsphere-intent') || '';
+                if (intent === 'vvf') {
+                    products = ['VCF Operations', 'vCenter', 'ESX', 'vSAN'];
+                } else if (intent === 'instance') {
+                    products = ['SDDC Manager', 'VCF Management Services', 'vCenter', 'ESX', 'vSAN', 'NSX'];
+                } else if (intent === 'import') {
+                    products = ['vCenter', 'ESX', 'vSAN', 'NSX'];
+                } else if (intent === 'fleet') {
+                    products = ['SDDC Manager', 'VCF Operations', 'vCenter', 'ESX', 'vSAN', 'NSX', 'VCF Automation', ];
+                }
+            } else if (targetVer === '9.1.1.0100') {
                 const intent = localStorage.getItem('vsphere-intent') || localStorage.getItem('vcf-intent') || 'fleet';
                 if (intent === 'vvf') {
                     products = ['Fleet lifecycle', 'SDDC lifecycle'];
@@ -3342,9 +3385,12 @@
                 var descEl  = fleetCard.querySelector('.intent-card-desc');
                 if (titleEl && descEl) {
                     var infoLink = descEl.querySelector('a');
-                    if (isVcf52 || isVcf90 || isVcf91) {
+                    if (isVcf90 || isVcf91) {
                         titleEl.textContent = actionVerb + ' VCF Fleet to ' + tgtVer;
                         descEl.textContent = actionVerb + ' your existing ' + srcVer + ' Fleet to ' + tgtVer;
+                    } else if (isVcf52) {
+                        titleEl.textContent = 'Create New ' + tgtVer + ' Fleet';
+                        descEl.textContent = 'Upgrade your existing ' + srcVer + ' environment into a new ' + tgtVer + ' Fleet';
                     } else {
                         titleEl.textContent = 'Create New VCF 9.1 Fleet';
                         descEl.textContent = 'Upgrade your existing VCF environment into new VCF Fleet';

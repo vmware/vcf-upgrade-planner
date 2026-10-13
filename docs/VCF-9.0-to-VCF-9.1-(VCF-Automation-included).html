@@ -1550,6 +1550,34 @@
             if (!targetVer || targetVer === '9.1.0.0') return null;
 
             var map = {
+                 '9.1.1.0200': {
+                    'ESX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/esx/esx-9-1-1-0200-release-notes.html',
+                    'ESX / vSphere': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/esx/esx-9-1-1-0200-release-notes.html',
+                    'vCenter Server': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html',
+                    'vCenter': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0100-release-notes.html',
+                    'vSAN Witness': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsan/vsan-9-1-1-0100-release-notes.html',
+                    'vSAN': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsan/vsan-9-1-1-0100-release-notes.html',
+                    'NSX Local Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/nsx/nsx-9-1-1-0100-release-notes.html',
+                    'NSX Global Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/nsx/nsx-9-1-1-0100-release-notes.html',
+                    'NSX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/nsx/nsx-9-1-1-0100-release-notes.html',
+                    'SDDC Manager': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/sddc-manager/sddc-manager-9-1-1-0200-release-notes.html',
+                    'VCF Operations': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-9-1-1-0100-release-notes.html',
+                    'VCF Operations orchestrator': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-orchestrator-9-1-1-0100-release-notes.html',
+                    'Log Management (Logs)': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/log-management-9-1-1-0100-release-notes.html',
+                    'VCF Operations for Networks': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vcf-9-1-release-notes-review-9-1-x-ditamap/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-for-networks-9-1-1-0100-release-notes.html',
+                    'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-services-runtime-9-1-1-0100-release-notes.html',
+                    'VCF Automation': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/9110200(1)/vcf-automation-9-1-1-0200-release-notes.html',
+                    'Migration Service': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notespatch-releases-9-1-1-x/vcf-automation/9110200(1)/migration-service-engine-9-1-1-0200-release-notes.html',
+                    'HCX': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-hcx-9-1-1-0100-release-notes.html',
+                    'Fleet Lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9110200/fleet-lifecycle-9-1-1-0200-release-notes.html',
+                    'SDDC Lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9110200/sddc-lifecycle-9-1-1-0200-release-notes.html',
+                    'Real-Time Metrics': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/real-time-metrics-9-1-1-0100-release-notes.html',
+                    'Salt Master': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/salt-master-9-1-1-0100-release-notes.html',
+                    'Salt Raas': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/salt-raas-9-1-1-0100-release-notes.html',
+                    'Software Depot': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9110200/software-depot-9-1-1-0200-release-notes.html',
+                    'Telemetry': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/telemetry-9-1-1-0100-release-notes.html',
+                    'Identity Broker': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/identity-broker-9-1-1-0100-release-notes.html'
+                },
                 '9.1.1.0100': {
                     'Fleet lifecycle': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/fleet-lifecycle-9-1-1-0100-release-notes.html',
                     'VCF Management Services': 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x.html',
@@ -1655,19 +1683,19 @@
             }
 
             var coverage = {
-                'ESX': ['9.1.0.0100', '9.1.0.0200'],
-                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200'],
-                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300'],
-                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200'],
-                'vSAN': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200'],
-                'NSX': ['9.1.0.0100', '9.1.0.0200'],
-                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Management Services': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'],
-                'VCF Automation': ['9.1.0.0100', '9.1.0.0200']
+                'ESX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0100'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0100'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'],
+                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'],
+                'VCF Management Services': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'],
+                'VCF Automation': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100', '9.1.1.0200']
             };
 
             var builds = coverage[name];
@@ -1709,8 +1737,8 @@
             }
             
             const targetVer = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0.0';
-            if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0' || targetVer === '9.1.1.0100') {
-                const mainRnUrl = (targetVer === '9.1.1.0100')
+            if (targetVer === '9.1.0.0' || targetVer === '9.1.1.0' || targetVer === '9.1.1.0100' || targetVer === '9.1.1.0200') {
+                const mainRnUrl = (targetVer === '9.1.1.0100' || targetVer === '9.1.1.0200')
                     ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x.html'
                     : (targetVer === '9.1.1.0')
                         ? 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes.html'
@@ -2012,27 +2040,41 @@
                     const _isSourcePre911Vc = (vcfVersion === '9.0' || vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.0') || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.0') || (localStorage.getItem('vcf-version') || '').startsWith('9.1') || (vcfdetailVersion || '').startsWith('9.0') || (vcfdetailVersion || '').startsWith('9.1'));
                     if (componentData) {
                         try {
-                            const cloned = JSON.parse(JSON.stringify(componentData));
-                            if (!cloned.notices) cloned.notices = [];
-                            if (window.vidbIsEmbedded === true) {
-                                cloned.notices.push({
-                                    type: 'info',
-                                    title: 'Embedded Identity Broker',
-                                    bullets: [
-                                        "Embedded Identity Broker will be installed as part of this vCenter upgrade. No separate Identity Broker upgrade step is required.",
-                                        "To move off embedded identity broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/what-is/managing-vmware-cloud-foundation-operations-sso/migration-of-vcf-identity-broker-embedded-to-vcf-identity-broker-appliance.html' target='_blank'>View Documentation</a>)."
+                    const cloned = JSON.parse(JSON.stringify(componentData));
+                        if (!cloned.notices) cloned.notices = [];
+                        
+                        // Embedded Identity Broker notice
+                        if (window.vidbIsEmbedded === true) {
+                            cloned.notices.push({
+                                type: 'info',
+                                title: 'Embedded Identity Broker',
+                                bullets: [
+                                    "Embedded Identity Broker will be installed as part of this vCenter upgrade. No separate Identity Broker upgrade step is required.",
+                                    "To move off embedded identity broker - All Guidance is provided in link (<a href='https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/what-is/managing-vmware-cloud-foundation-operations-sso/migration-of-vcf-identity-broker-embedded-to-vcf-identity-broker-appliance.html' target='_blank'>View Documentation</a>)."
+                                ]
+                            });
+                        }
+                        // KB 455439: vCenter NTP server pre-check warning (pre-9.1.1.0200)
+                        if (_isSourcePre911Vc && (_vcTargetVer.startsWith('9.1.1') || !_vcTargetVer) && _vcTargetVer < '9.1.1.0200') {
+                            cloned.notices.push({
+                                type: 'warning',
+                                title: 'vCenter Pre-Update Check Warning (VCF 9.0.x / 9.1.0.x → 9.1.1)',
+                                bullets: [
+                                    "\"Unable to run vCenter NTP server check\" error during pre-update check to 9.1.1 - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/455439' target='_blank'>View KB 455439</a>)."
+                                ]
+                            });
+                    }
+                     // KB 455737: vSphere Lifecycle Manager database reset warning
+                    const _isTarget910or911Vc = !_vcTargetVer || _vcTargetVer.startsWith('9.1.0') || _vcTargetVer.startsWith('9.1.1');
+                        if (_isTarget910or911Vc) {
+                            cloned.notices.push({
+                            type: 'warning',
+                            title: 'vSphere Lifecycle Manager Pre-Update Warning (vCenter Upgrade to 9.1.0 / 9.1.1)',
+                            bullets: [
+                                        "A reset of the vSphere Lifecycle Manager database might cause data loss in the vSphere Supervisor when upgrading vCenter from 8.0 Update 3+ or 9.0.x to 9.1.0 or 9.1.1. Verify your environment and take required mitigation steps before proceeding - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article?articleNumber=455737' target='_blank'>View KB 455737</a>)."
                                     ]
-                                });
-                            }
-                            if (_isSourcePre911Vc && (_vcTargetVer.startsWith('9.1.1') || !_vcTargetVer)) {
-                                cloned.notices.push({
-                                    type: 'warning',
-                                    title: 'vCenter Pre-Update Check Warning (VCF 9.0.x / 9.1.0.x → 9.1.1)',
-                                    bullets: [
-                                        "\"Unable to run vCenter NTP server check\" error during pre-update check to 9.1.1 - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/455439' target='_blank'>View KB 455439</a>)."
-                                    ]
-                                });
-                            }
+                            });
+                        }
                             componentData = cloned;
                         } catch(e) {
                             console.error('Error injecting notices into vCenter:', e);
@@ -2606,7 +2648,7 @@
             // Inject final "Apply Patches" step when a patch build is selected
             var _verValPatch = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
             var _isSrc911Patch = _verValPatch.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
-            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
+            var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100', '9.1.1.0200'];
             if (_isSrc911Patch) {
                 _patchBuilds.push('9.1.1.0100');
             }
@@ -2615,36 +2657,37 @@
                 // ── Per-component patch coverage from compat-data ──────────────
                 // Each array lists every patch build that component has available.
                 // Effective version = highest available build <= selected build.
-                 var _patchRank = { '9.1.0.0': 0, '9.1.0.0100': 1, '9.1.0.0200': 2, '9.1.0.0300': 3, '9.1.0.0400': 4, '9.1.1.0': 5, '9.1.1.0100': 6 };
+                var _patchRank = { '9.1.0.0': 0, '9.1.0.0100': 1, '9.1.0.0200': 2, '9.1.0.0300': 3, '9.1.0.0400': 4, '9.1.1.0100': 5, '9.1.1.0200': 6 };
                 var _selRank = _patchRank[window.targetVcf91Version] || 0;
 
                 var _coverage = {
-                'ESX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0'],
-                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0'],
-                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'vSAN': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'NSX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0'],
-                'SDDC lifecycle': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
-                'Fleet lifecycle': ['9.1.0.0100', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
-                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0'],
-                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
-                'VCF Operations HCX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0'],
-                'Log Management': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
-                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
-                'Real-Time Metrics': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0400', '9.1.1.0'],
-                'Salt Master': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
-                'Salt RaaS': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0'],
-                'Identity Broker': ['9.1.0.0100', '9.1.1.0'],
-                'VCF Services Runtime': ['9.1.0.0200'],
-                'Software Depot': ['9.1.0.0400', '9.1.1.0'],
-                'VCF Automation': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100'], 
-                'Migration Service Engine': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100'], 
+                'ESX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100'],
+                'ESX / vSphere': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'vCenter Server': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0100'],
+                'vCenter': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.1.0100'],
+                'vSAN Witness': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'vSAN': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX Local Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX Global Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'NSX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'SDDC Manager': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'],
+                'SDDC lifecycle': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100', '9.1.1.0200'],
+                'Fleet lifecycle': ['9.1.0.0100', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100', '9.1.1.0200'],
+                'VCF Operations': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100'],
+                'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0100'],
+                'VCF Operations HCX': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'VCF Operations for Networks': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0100'],
+                'Log Management': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0100'],
+                'Log Management (Logs)': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0100'],
+                'Real-Time Metrics': ['9.1.0.0100', '9.1.0.0200', '9.1.0.0400', '9.1.1.0100'],
+                'Salt Master': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0100'],
+                'Salt RaaS': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0100'],
+                'Identity Broker': ['9.1.0.0100', '9.1.1.0100'],
+                'VCF Services Runtime': ['9.1.0.0200', '9.1.1.0100'],
+                'VCF Automation': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100', '9.1.1.0200'], 
+                'Migration Service Engine': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100', '9.1.1.0200'],
+                'Software Depot': ['9.1.0.0100', '9.1.0.0200', '9.1.1.0', '9.1.1.0100', '9.1.1.0200'],
+                'Telemetry': ['9.1.1.0100']
             };
                 // Avi uses its own version scheme — map VCF patch build → Avi version string
                 var _aviVersionMap = {
@@ -2673,74 +2716,68 @@
                     var selTgt = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
 
                     componentNames.forEach(function(name) {
-                        var verCell = '', rnCell = '';
-
-                        if (selTgt === '9.1.1.0100') {
+                        var verCell = ''
+                        if (name === 'Avi Load Balancer') {
+                            verCell = '<strong>32.1.1</strong> or <strong>32.1.2</strong>';
+                        } 
+                        else if (selTgt === '9.1.1.0200') {
+                            if (name === 'Fleet lifecycle') {
+                                verCell = '<strong>9.1.1.0200</strong>';
+                            } else if (name === 'SDDC lifecycle') {
+                                verCell = '<strong>9.1.1.0200</strong>';
+                            } else if (name === 'Software Depot') {
+                                verCell = '<strong>9.1.1.0200</strong>';
+                            } else if (name === 'VCF Automation') {
+                                verCell = '<strong>9.1.1.0200</strong>';
+                            } else if (name === 'Migration Service Engine' || name === 'Migration service engine') {
+                                verCell = '<strong>9.1.1.0200</strong>';
+                            } else {
+                                // Fallback for base components that remain at 9.1.1.0 base or 9.1.1.0100
+                                var builds = _coverage[name];
+                                var eff = _effectiveVer(builds) || '9.1.1.0';
+                                verCell = '<strong>' + eff + '</strong>';                    
+                            }
+                        } else if (selTgt === '9.1.1.0100') {
                             if (name === 'Fleet lifecycle' || name === 'VCF Management Services') {
                                 verCell = '<strong>9.1.1.0100</strong>';
-                                rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/fleet-lifecycle-9-1-1-0100-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
                             } else if (name === 'SDDC lifecycle') {
                                 verCell = '<strong>9.1.1.0100</strong>';
-                                rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/sddc-lifecycle-9110100-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
                             } else if (name === 'Migration service engine') {
                                 verCell = '<strong>9.1.1.0100</strong>';
-                                rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/migration-service-engine-9-1-1-0100-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
                             } else if (name === 'VCF Automation') {
                                 var verVal = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
                                 var isSrcPre911Auto = (verVal === '9.1.0' || verVal.startsWith('9.1.0') || verVal.startsWith('9.0') || verVal.startsWith('5.2') || !verVal);
                                 if (isSrcPre911Auto) {
                                     verCell = '<strong>9.1.1.0100</strong>';
-                                    rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/vcf-automation-9-1-1-0100-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
                                 } else {
                                     verCell = '<strong>9.1.1.0</strong>';
-                                    rnCell = '<span style="color:var(--text-secondary)">— (Remains at 9.1.1.0)</span>';
                                 }
                             } else if (name === 'VCF Operations' || name === 'VCF Operations orchestrator') {
                                 verCell = '<strong>9.1.1.0</strong>';
-                                rnCell = '<a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfoperations-9-1-1-0-release-notes.html" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
                             } else {
                                 verCell = '<strong>9.1.1.0</strong>';
-                                var rnUrl = typeof _getComponentPatchUrl === 'function' ? _getComponentPatchUrl(name, '9.1.1.0') : null;
-                                if (rnUrl) {
-                                    rnCell = '<a href="' + rnUrl + '" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
-                                } else {
-                                    rnCell = '<span style="color:var(--text-secondary)">—</span>';
-                                }
                             }
-                        } else if (name === 'Avi Load Balancer') {
-                            verCell = '<strong>32.1.1</strong> or <strong>32.1.2</strong>';
-                            rnCell = '<span style="color:var(--text-secondary)">Compatible with any 9.1.0.x build</span>';
                         } else {
                             var builds = _coverage[name];
                             var eff = _effectiveVer(builds);
                             if (!builds || builds.length === 0) {
                                 verCell = '<em style="color:var(--text-secondary)">No patch available</em>';
-                                rnCell = '<span style="color:var(--text-secondary)">—</span>';
                             } else if (!eff) {
                                 verCell = '<em style="color:var(--text-secondary)">No patch for this build</em>';
-                                rnCell = '<span style="color:var(--text-secondary)">—</span>';
                             } else {
                                 verCell = '<strong>' + eff + '</strong>';
-                                var patchUrl = typeof _getComponentPatchUrl === 'function' ? _getComponentPatchUrl(name, eff) : null;
-                                if (patchUrl) {
-                                    rnCell = '<a href="' + patchUrl + '" target="_blank" rel="noopener" style="color:#0088b5;font-weight:600;text-decoration:underline;">Patch Release Notes ↗</a>';
-                                } else {
-                                    rnCell = '<span style="color:var(--text-secondary)">—</span>';
-                                }
                             }
                         }
 
                         rows += '<tr style="border-bottom:1px solid var(--border-color)">'
                               + '<td style="padding:7px 10px;color:var(--text-primary)">' + name + '</td>'
                               + '<td style="padding:7px 10px;text-align:center">' + verCell + '</td>'
-                              + '<td style="padding:7px 10px;text-align:center">' + rnCell + '</td>'
                               + '</tr>';
                     });
                     return '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:10px">'
                          + '<thead><tr style="background:var(--bg)">'
                          + '<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Component</th>'
                          + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Effective Patch Version</th>'
-                         + '<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--vmw-dark)">Release Notes</th>'
                          + '</tr></thead><tbody>' + rows + '</tbody></table>';
                 }
 
@@ -2749,7 +2786,9 @@
                 var _selProdsNow = window.selectedAdvancedProducts || {};
                 var _selTgtVerNow = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                 var _pathBComponents = [];
-                if (_selTgtVerNow === '9.1.1.0100') {
+                 if (_selTgtVerNow === '9.1.1.0200') {
+                   _pathBComponents = ['SDDC Manager', 'VCF Automation', 'VCF Operations', 'VCF Services Runtime', 'Fleet lifecycle',  'SDDC lifecycle', 'Migration service engine', 'Software Depot', 'Telemetry', 'Salt RaaS', 'Salt Master', 'Identity Broker'];
+                } else if (_selTgtVerNow === '9.1.1.0100') {
                     var _verValTable = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
                     var _isSrcPre911Table = !(_verValTable.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1')));
                     if (_isSrcPre911Table) {
@@ -2774,7 +2813,6 @@
                 if (_selProdsNow['avi'])          _pathBComponents.push('Avi Load Balancer');
                 if (_selProdsNow['network'])      _pathBComponents.push('VCF Operations for Networks');
                 if (_selProdsNow['logs'])         _pathBComponents.push('Log Management (Logs)');
-                if (_selProdsNow['vidb'] && !window.vidbIsEmbedded) _pathBComponents.push('Identity Broker');
                 if (_selProdsNow['vsan_witness'])    _pathBComponents.push('vSAN Witness')
                 if (_selProdsNow['nsx_federation'])     _pathBComponents.push('NSX Global Manager');
                 if (_selProdsNow['operations_orchestrator'])    _pathBComponents.push('VCF Operations orchestrator');
@@ -3157,111 +3195,150 @@
             win.focus();
             setTimeout(function() { win.print(); win.close(); URL.revokeObjectURL(blobUrl); }, 600);
         }
-        function exportStep(stepNumber) {
-            trackEvent('https://hits.sh/vcf-planner-events-exports/phase-vcf9.0-to-vcf9.1-with-automation.svg');
-            const step = allSteps.find(s => s.number === stepNumber);
-            if (!step) return alert('Step not found');
-            
-            const printDiv = document.getElementById('printAllPhases');
-            let html = '<div style="padding: 20px;">';
-            html += `<h2 style="color: #3d6680; margin-bottom: 20px;">Step ${step.number}: ${step.title}</h2>`;
-            
-            step.phases.forEach(phase => {
-                html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px;">';
-                html += '<h3 style="color: #3d6680;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
-                html += '<p>' + phase.description + '</p>';
-                
-                if (phase.data) {
-                    if (phase.data.prereqs && phase.data.prereqs.length > 0) {
-                        html += '<h4>Prerequisites:</h4><ul>';
-                        phase.data.prereqs.forEach(p => html += '<li>' + p + '</li>');
-                        html += '</ul>';
-                    }
-                    if (phase.data.tables && phase.data.tables.length > 0) {
-                        phase.data.tables.forEach(table => {
-                            html += '<div style="margin-top: 15px; border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden;">';
-                            html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
-                            if (table.description) {
-                                html += '<div style="padding: 10px; background: #f0f2f5; font-size: 0.85rem;">' + table.description + '</div>';
-                            }
-                            html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
-                            html += '<thead><tr style="background: #f0f2f5;">';
-                            table.headers.forEach(header => {
-                                html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">' + header + '</th>';
-                            });
-                            html += '</tr></thead><tbody>';
-                            table.rows.forEach((row, idx) => {
-                                const bg = idx % 2 === 0 ? '#ffffff' : '#f0f2f5';
-                                html += '<tr style="background: ' + bg + ';">';
-                                row.forEach(cell => { html += '<td style="padding: 10px; border-bottom: 1px solid #dee2e6;">' + cell + '</td>'; });
-                                html += '</tr>';
-                            });
-                            html += '</tbody></table></div></div>';
-                        });
-                    }
-                      if (phase.data.notices && phase.data.notices.length > 0) {
-                        phase.data.notices.forEach(notice => {
-                            const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
-                            html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
-                            if (notice.bullets && notice.bullets.length > 0) {
-                                // Separate regular bullets from notice_block entries (rendered as styled divs)
-                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
-                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
-                                if (_regBullets.length > 0) {
-                                    html += `<ul style="margin: 8px 0 0 20px;">`;
-                                    _regBullets.forEach(bullet => {
-                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                            const isNumbered = (typeof bullet.text === 'string' && (bullet.text.startsWith('<strong>1.') || bullet.text.startsWith('<strong>2.')));
-                                            const styleAttr = isNumbered ? 'style="list-style: none; margin-left: -20px; margin-top: 6px;"' : '';
-                                            html += `<li ${styleAttr}>${bullet.text}<ul style="margin: 4px 0 0 20px; list-style: none; padding-left: 0;">`;
-                                            bullet.sub_bullets.forEach(sb => html += `<li style="margin-top: 4px;">${sb}</li>`);
-                                            html += `</ul></li>`;
-                                        } else if (typeof bullet === 'string' && (bullet.startsWith('<strong>1.') || bullet.startsWith('<strong>2.'))) {
-                                            html += `<li style="list-style: none; margin-left: -20px; margin-top: 6px;">${bullet}</li>`;
-                                        } else {
-                                            html += `<li>${bullet}</li>`;
-                                        }
-                                    });
-                                    html += `</ul>`;
-                                }
-                                _noticeBlocks.forEach(block => {
-                                    html += `<div style="background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid #17a2b8; padding: 12px 16px; margin-top: 12px; border-radius: 8px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
-                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                    html += `</ul></div>`;
-                                });
-                            }
-                            html += '</div>';
-                        });
-                    }
-
-                    if (phase.data.steps && phase.data.steps.length > 0) {
-                        html += '<h4>Steps:</h4><ul>';
-                        phase.data.steps.forEach(s => {
-                            html += '<li>' + s + '</li>';
-                            const docUrl = extractDocUrlFromStep(s);
-                            if (docUrl) {
-                                const inlineDoc = getInlineDocForUrl(docUrl);
-                                if (inlineDoc) {
-                                    html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px;">';
-                                    html += '<h5 style="color: #3d6680; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
-                                    html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
-                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);"><strong>Source:</strong> ' + docUrl + '</p>';
-                                    html += '</div>';
-                                }
-                            }
-                        });
-                        html += '</ul>';
-                    }
-                   
-                }
-                html += '</div>';
-            });
-            
-            html += '</div>';
-            // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
-            _openPrintWindow(html);
+         function exportStep(stepNumber) {
+        trackEvent('https://hits.sh/vcf-planner-events-exports/phase-vcf9.0-to-vcf9.1-with-automation.svg');
+        const step = allSteps.find(s => s.number === stepNumber);
+        if (!step) return alert('Step not found');
+        
+        const printDiv = document.getElementById('printAllPhases');
+        let html = '<div style="padding: 20px;">';
+        
+        // Outer Phase Header & Card Container
+        html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px;">';
+        html += '<h3 style="color: #3d6680; margin-bottom: 8px;">Phase ' + step.number + ': ' + (step.title || '') + '</h3>';
+        if (step.description) {
+            html += '<p style="color: #5a6778; margin-bottom: 12px;">' + step.description + '</p>';
         }
 
+        const stepPhases = step.phases || [step];
+
+        // Inner loop: Render each sub-item as "Step 1: ...", "Step 2: ..."
+        stepPhases.forEach((phase, phaseIdx) => {
+            const stepNum = phaseIdx + 1;
+            const stepTitle = phase.title || ('Step ' + stepNum);
+            
+            html += '<div style="margin-top: 16px; padding-top: 12px; border-top: 2px solid #bce0ee;">';
+            html += '<h4 style="color: #0070c0; font-size: 1.05rem; margin-bottom: 6px;">Step ' + stepNum + ': ' + stepTitle + '</h4>';
+            if (phase.description) {
+                html += '<p style="color: #5a6778; margin-bottom: 12px; font-size: 0.9rem;">' + phase.description + '</p>';
+            }
+            
+            if (phase.data) {
+                if (phase.data.prereqs && phase.data.prereqs.length > 0) {
+                    html += '<h5 style="color: #1a2332; margin-top: 12px;">Prerequisites:</h5><ul style="margin-left: 20px;">';
+                    phase.data.prereqs.forEach(p => html += '<li>' + p + '</li>');
+                    html += '</ul>';
+                }
+
+                // Render warnings
+                if (phase.data._injectedWarnings && phase.data._injectedWarnings.length > 0) {
+                    phase.data._injectedWarnings.forEach(notice => {
+                        html += '<div style="background: white; border-left: 4px solid #ffc107; padding: 12px; margin-top: 12px; border-radius: 4px;"><strong>WARNING: ' + stripHtml(notice.title) + '</strong>';
+                        if (notice.bullets && notice.bullets.length > 0) {
+                            html += '<ul style="margin: 8px 0 0 20px;">';
+                            notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                            html += '</ul>';
+                        }
+                        html += '</div>';
+                    });
+                }
+
+                // Render notices
+                if (phase.data.notices && phase.data.notices.length > 0) {
+                    phase.data.notices.forEach(notice => {
+                        const color = notice.type === 'warning' ? '#ffc107' : '#17a2b8';
+                        const icon = notice.type === 'warning' ? 'WARNING' : 'INFO';
+                        html += '<div style="background: white; border-left: 4px solid ' + color + '; padding: 12px; margin-top: 12px; border-radius: 4px;"><strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
+                        if (notice.bullets && notice.bullets.length > 0) {
+                            html += '<ul style="margin: 8px 0 0 20px;">';
+                            notice.bullets.forEach(b => {
+                                if (typeof b === 'object' && b.sub_bullets) {
+                                    html += '<li>' + stripHtml(b.text) + '<ul style="margin: 4px 0 0 20px;">';
+                                    b.sub_bullets.forEach(sb => html += '<li>' + stripHtml(sb) + '</li>');
+                                    html += '</ul></li>';
+                                } else if (phase.componentId === 'vcf_patch_base' || phase.componentId === 'vcf_patch_direct') {
+                                    // Patch version tables contain raw HTML — output directly without stripping
+                                    html += '<li>' + b + '</li>';
+                                } else {
+                                    html += '<li>' + stripHtml(b) + '</li>';
+                                }
+                            });
+                            html += '</ul>';
+                        }
+                        html += '</div>';
+                    });
+                }
+
+                // Render tables
+                if (phase.data.tables && phase.data.tables.length > 0) {
+                    phase.data.tables.forEach(table => {
+                        html += '<div style="margin-top: 15px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">';
+                        html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
+                        if (table.description) {
+                            html += '<div style="padding: 10px; background: #f0f2f5; font-size: 0.85rem;">' + table.description + '</div>';
+                        }
+                        html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
+                        html += '<thead><tr style="background: #f0f2f5;">';
+                        table.headers.forEach(header => {
+                            html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600;">' + header + '</th>';
+                        });
+                        html += '</tr></thead><tbody>';
+                        table.rows.forEach((row, idx) => {
+                            const bgColor = idx % 2 === 0 ? '#ffffff' : '#f0f2f5';
+                            html += '<tr style="background: ' + bgColor + ';">';
+                            row.forEach(cell => {
+                                html += '<td style="padding: 10px; border-bottom: 1px solid #ddd;">' + cell + '</td>';
+                            });
+                            html += '</tr>';
+                        });
+                        html += '</tbody></table></div></div>';
+                    });
+                }
+
+                // Render steps
+                if (phase.data.steps && phase.data.steps.length > 0) {
+                    html += '<h5 style="color: #1a2332; margin-top: 12px;">Steps:</h5><ul style="margin-left: 20px;">';
+                    phase.data.steps.forEach(s => {
+                        html += '<li>' + s + '</li>';
+                        const docUrl = extractDocUrlFromStep(s);
+                        if (docUrl) {
+                            const inlineDoc = getInlineDocForUrl(docUrl);
+                            if (inlineDoc) {
+                                html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px;">';
+                                html += '<h5 style="color: #3d6680; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
+                                html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
+                                html += '<p style="margin-top: 12px; font-size: 0.85rem; color: #6c757d;"><strong>Source:</strong> ' + docUrl + '</p>';
+
+                                if (inlineDoc.subpages && inlineDoc.subpages.length > 0) {
+                                    html += '<div style="margin-top:16px;border-top:2px solid #e8edf3;padding-top:14px;">';
+                                    html += '<h6 style="color:#3d6680;margin:0 0 10px 0;font-size:0.8rem;text-transform:uppercase;">Related Pages:</h6>';
+                                    inlineDoc.subpages.forEach(function(sp) {
+                                        var spDoc = window.INLINE_DOCS && window.INLINE_DOCS[sp.url] ? window.INLINE_DOCS[sp.url] : null;
+                                        if (spDoc) {
+                                            html += '<div style="background:#f0f2f5;border-left:3px solid #3d6680;padding:12px 14px;margin:8px 0;border-radius:4px;">';
+                                            html += '<strong style="color:#3d6680;font-size:0.88rem;">' + sp.label + '</strong>';
+                                            html += '<div style="font-size:0.83rem;line-height:1.55;margin-top:8px;">' + spDoc.content + '</div>';
+                                            html += '</div>';
+                                        } else {
+                                            html += '<div style="font-size:0.85rem;padding:4px 0;">\u2022 <a href="' + sp.url + '" style="color:#3d6680;">' + sp.label + '</a></div>';
+                                        }
+                                    });
+                                    html += '</div>';
+                                }
+                                html += '</div>';
+                            }
+                        }
+                    });
+                    html += '</ul>';
+                }
+            }
+            html += '</div>';
+        });
+        
+        html += '</div></div>';
+        _openPrintWindow(html);
+    }
+        
         // Keep old functions for compatibility
         function displayCurrentPhase() {
             displayStepsView();
@@ -3422,103 +3499,101 @@
             html += '<h3 style="margin-bottom: 8px; font-size:1rem;">Selected Components:</h3>';           
             html += '<ul style="margin-left: 20px;">';
             html += `<li><span class="badge included">✓ VCF Version</span><span class="badge version">v${vcfdetailVersion}</span></li>`;
-             if (vxrailSelected) {
+            
+            if (vxrailSelected) {
                 const _vxrVer = window.vxrailVersion ? ` <span class="badge version">v${window.vxrailVersion}</span>` : '';
                 html += `<li><span class="badge included">✓ Dell VxRail (HCI)</span>${_vxrVer}</li>`;
             }
-
             
             html += '</ul>';
-            
-            // Additional Products Section — grouped by chip category
-            const selectedProducts = window.selectedAdvancedProducts || {};
-            const hasAdditionalProducts = Object.values(selectedProducts).some(val => val === true);
+        
+        // Additional Products Section — grouped by chip category
+        const selectedProducts = window.selectedAdvancedProducts || {};
+        const hasAdditionalProducts = Object.values(selectedProducts).some(val => val === true);
 
-            if (hasAdditionalProducts && typeof G_INDEX !== 'undefined' && G_INDEX.length) {
-                // Bucket selected items by group, preserving group order
-                const groupOrder = [];
-                const groupItems = {};
-                G_INDEX.forEach(item => {
-                    if (selectedProducts[item.id]) {
-                        if (!groupItems[item.group]) {
-                            groupOrder.push(item.group);
-                            groupItems[item.group] = [];
-                        }
-                        groupItems[item.group].push(item.name);
+        if (hasAdditionalProducts && typeof G_INDEX !== 'undefined' && G_INDEX.length) {
+            const groupOrder = [];
+            const groupItems = {};
+            G_INDEX.forEach(item => {
+                if (selectedProducts[item.id]) {
+                    if (!groupItems[item.group]) {
+                        groupOrder.push(item.group);
+                        groupItems[item.group] = [];
+                    }
+                    groupItems[item.group].push(item.name);
+                }
+            });
+
+            if (groupOrder.length) {
+                html += '<div style="margin-top:16px;">';
+                html += '<h3 style="margin-bottom:10px;font-size:1rem;">Selected Optional Components:</h3>';
+                groupOrder.forEach(grp => {
+                    html += '<div style="margin-bottom:10px;">';
+                    html += '<div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#1674b1;border-left:3px solid #1674b1;padding-left:7px;margin-bottom:5px;">' + grp + '</div>';
+                    html += '<ul style="margin-left:18px;margin-top:0;">';
+                    groupItems[grp].forEach(name => {
+                        html += '<li style="font-size:0.92rem;">' + name + '</li>';
+                    });
+                    html += '</ul></div>';
+                });
+                html += '</div>';
+            }
+        } else if (hasAdditionalProducts) {
+            html += '<h3 style="margin-top: 16px; margin-bottom: 8px;">Selected Optional Components:</h3>';
+            html += '<ul style="margin-left: 20px;">';
+            if (upgradeData && upgradeData.optional_products) {
+                upgradeData.optional_products.forEach(product => {
+                    if (selectedProducts[product.id] === true) {
+                        html += '<li>' + product.display_name + '</li>';
                     }
                 });
-
-                if (groupOrder.length) {
-                    html += '<div style="margin-top:16px;">';
-                    html += '<h3 style="margin-bottom:10px;font-size:1rem;">Selected Optional Components:</h3>';
-                    // Sort group order: Components → Features → Add-on
-            const G_EXPORT_ORDER = { 'Components': 0, 'Features': 1, 'Add-on': 2 };
-            groupOrder.sort((a, b) => {
-                const oa = G_EXPORT_ORDER[a] !== undefined ? G_EXPORT_ORDER[a] : 99;
-                const ob = G_EXPORT_ORDER[b] !== undefined ? G_EXPORT_ORDER[b] : 99;
-                return oa - ob;
-            });
-            groupOrder.forEach(grp => {
-                        html += '<div style="margin-bottom:10px;">';
-                        html += '<div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#1674b1;border-left:3px solid #1674b1;padding-left:7px;margin-bottom:5px;">' + grp + '</div>';
-                        html += '<ul style="margin-left:18px;margin-top:0;">';
-                        groupItems[grp].forEach(name => {
-                            html += '<li style="font-size:0.92rem;">' + name + '</li>';
-                        });
-                        html += '</ul></div>';
-                    });
-                    html += '</div>';
-                }
-            } else if (hasAdditionalProducts) {
-                // Fallback: flat list if G_INDEX not available
-                html += '<h3 style="margin-top: 16px; margin-bottom: 8px;">Selected Optional Components:</h3>';
-                html += '<ul style="margin-left: 20px;">';
-                if (upgradeData && upgradeData.optional_products) {
-                    upgradeData.optional_products.forEach(product => {
-                        if (selectedProducts[product.id] === true) {
-                            html += '<li>' + product.display_name + '</li>';
-                        }
-                    });
-                }
-                html += '</ul>';
             }
-            
-            html += '</div>';
+            html += '</ul>';
+        }
         
+        html += '</div>';
 
-            // All phases
-            phases.forEach(phase => {
-                html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
-                html += '<h3 style="color: #3d6680; margin-bottom: 8px;">Phase ' + phase.number + ': ' + phase.title + '</h3>';
-                html += '<p style="color: #5a6778; margin-bottom: 12px;">' + phase.description + '</p>';
+        // Outer loop through main Phase cards (Phase 1, Phase 2, Phase 3...)
+        (allSteps || []).forEach((step, stepIdx) => {
+            const phaseNum = step.number || (stepIdx + 1);
+            html += '<div style="background: #f0f2f5; border-left: 4px solid #3d6680; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
+            html += '<h3 style="color: #3d6680; margin-bottom: 8px;">Phase ' + phaseNum + ': ' + (step.title || '') + '</h3>';
+            if (step.description) {
+                html += '<p style="color: #5a6778; margin-bottom: 12px;">' + step.description + '</p>';
+            }
+
+            const stepPhases = step.phases || [step];
+
+            // Inner loop: Render each sub-item as "Step 1: ...", "Step 2: ..."
+            stepPhases.forEach((phase, phaseIdx) => {
+                const stepNum = phaseIdx + 1;
+                const stepTitle = phase.title || ('Step ' + stepNum);
                 
+                html += '<div style="margin-top: 16px; padding-top: 12px; border-top: 2px solid #bce0ee;">';
+                html += '<h4 style="color: #0070c0; font-size: 1.05rem; margin-bottom: 6px;">Step ' + stepNum + ': ' + stepTitle + '</h4>';
+                if (phase.description) {
+                    html += '<p style="color: #5a6778; margin-bottom: 12px; font-size: 0.9rem;">' + phase.description + '</p>';
+                }
+
                 if (phase.data) {
                     if (phase.data.prereqs && phase.data.prereqs.length > 0) {
-                        html += '<h4 style="color: #1a2332; margin-top: 12px;">Prerequisites:</h4>';
+                        html += '<h5 style="color: #1a2332; margin-top: 12px;">Prerequisites:</h5>';
                         html += '<ul style="margin-left: 20px;">';
                         phase.data.prereqs.forEach(p => { html += '<li>' + p + '</li>'; });
                         html += '</ul>';
                     }
-                    if (phase.data.tables && phase.data.tables.length > 0) {
-                        phase.data.tables.forEach(table => {
-                            html += '<div style="margin-top: 15px; border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden; page-break-inside: avoid;">';
-                            html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
-                            if (table.description) {
-                                html += '<div style="padding: 10px; background: #f0f2f5; font-size: 0.85rem;">' + table.description + '</div>';
+
+                    // Render warnings
+                    if (phase.data._injectedWarnings && phase.data._injectedWarnings.length > 0) {
+                        phase.data._injectedWarnings.forEach(notice => {
+                            html += '<div style="background: white; border-left: 4px solid #ffc107; padding: 12px; margin-top: 12px; border-radius: 4px;">';
+                            html += '<strong>WARNING: ' + stripHtml(notice.title) + '</strong>';
+                            if (notice.bullets && notice.bullets.length > 0) {
+                                html += '<ul style="margin: 8px 0 0 20px;">';
+                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                                html += '</ul>';
                             }
-                            html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
-                            html += '<thead><tr style="background: #f0f2f5;">';
-                            table.headers.forEach(header => {
-                                html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">' + header + '</th>';
-                            });
-                            html += '</tr></thead><tbody>';
-                            table.rows.forEach((row, idx) => {
-                                const bg = idx % 2 === 0 ? '#ffffff' : '#f0f2f5';
-                                html += '<tr style="background: ' + bg + ';">';
-                                row.forEach(cell => { html += '<td style="padding: 10px; border-bottom: 1px solid #dee2e6;">' + cell + '</td>'; });
-                                html += '</tr>';
-                            });
-                            html += '</tbody></table></div></div>';
+                            html += '</div>';
                         });
                     }
 
@@ -3529,38 +3604,49 @@
                             html += '<div style="background: white; border-left: 4px solid ' + color + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
                             html += '<strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
                             if (notice.bullets && notice.bullets.length > 0) {
-                                // Separate regular bullets from notice_block entries (rendered as styled divs)
-                                const _regBullets = notice.bullets.filter(b => !(typeof b === 'object' && b.type === 'notice_block'));
-                                const _noticeBlocks = notice.bullets.filter(b => typeof b === 'object' && b.type === 'notice_block');
-                                if (_regBullets.length > 0) {
-                                    html += `<ul style="margin: 8px 0 0 20px;">`;
-                                    _regBullets.forEach(bullet => {
-                                        if (typeof bullet === 'object' && bullet.sub_bullets) {
-                                            const isNumbered = (typeof bullet.text === 'string' && (bullet.text.startsWith('<strong>1.') || bullet.text.startsWith('<strong>2.')));
-                                            const styleAttr = isNumbered ? 'style="list-style: none; margin-left: -20px; margin-top: 6px;"' : '';
-                                            html += `<li ${styleAttr}>${bullet.text}<ul style="margin: 4px 0 0 20px; list-style: none; padding-left: 0;">`;
-                                            bullet.sub_bullets.forEach(sb => html += `<li style="margin-top: 4px;">${sb}</li>`);
-                                            html += `</ul></li>`;
-                                        } else if (typeof bullet === 'string' && (bullet.startsWith('<strong>1.') || bullet.startsWith('<strong>2.'))) {
-                                            html += `<li style="list-style: none; margin-left: -20px; margin-top: 6px;">${bullet}</li>`;
-                                        } else {
-                                            html += `<li>${bullet}</li>`;
-                                        }
-                                    });
-                                    html += `</ul>`;
-                                }
-                                _noticeBlocks.forEach(block => {
-                                    html += `<div style="background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid #17a2b8; padding: 12px 16px; margin-top: 12px; border-radius: 8px; font-size: 0.9rem; color: var(--text-primary);"><strong>&#x2139;&#xFE0F; ${block.text.replace(/:$/, '')}</strong><ul style="margin: 8px 0 0 20px;">`;
-                                    block.sub_bullets.forEach(sb => html += `<li>${sb}</li>`);
-                                    html += `</ul></div>`;
+                                html += '<ul style="margin: 8px 0 0 20px;">';
+                                notice.bullets.forEach(b => {
+                                    if (typeof b === 'object' && b.sub_bullets) {
+                                        html += '<li>' + stripHtml(b.text) + '<ul style="margin: 4px 0 0 20px;">';
+                                        b.sub_bullets.forEach(sb => html += '<li>' + stripHtml(sb) + '</li>');
+                                        html += '</ul></li>';
+                                    } else {
+                                        html += '<li>' + stripHtml(b) + '</li>';
+                                    }
                                 });
+                                html += '</ul>';
                             }
                             html += '</div>';
                         });
                     }
-                    
+
+                    if (phase.data.tables && phase.data.tables.length > 0) {
+                        phase.data.tables.forEach(table => {
+                            html += '<div style="margin-top: 15px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">';
+                            html += '<div style="background: #3d6680; color: #dde8f0; padding: 10px; font-weight: 600;">' + table.title + '</div>';
+                            if (table.description) {
+                                html += '<div style="padding: 10px; background: #f0f2f5; font-size: 0.85rem;">' + table.description + '</div>';
+                            }
+                            html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">';
+                            html += '<thead><tr style="background: #f0f2f5;">';
+                            table.headers.forEach(header => {
+                                html += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600;">' + header + '</th>';
+                            });
+                            html += '</tr></thead><tbody>';
+                            table.rows.forEach((row, idx) => {
+                                const bgColor = idx % 2 === 0 ? '#ffffff' : '#f0f2f5';
+                                html += '<tr style="background: ' + bgColor + ';">';
+                                row.forEach(cell => {
+                                    html += '<td style="padding: 10px; border-bottom: 1px solid #ddd;">' + cell + '</td>';
+                                });
+                                html += '</tr>';
+                            });
+                            html += '</tbody></table></div></div>';
+                        });
+                    }
+
                     if (phase.data.steps && phase.data.steps.length > 0) {
-                        html += '<h4 style="color: #1a2332; margin-top: 12px;">Steps:</h4>';
+                        html += '<h5 style="color: #1a2332; margin-top: 12px;">Steps:</h5>';
                         html += '<ul style="margin-left: 20px;">';
                         phase.data.steps.forEach(s => {
                             html += '<li>' + s + '</li>';
@@ -3571,61 +3657,42 @@
                                     html += '<div style="background: white; border: 2px solid #3d6680; padding: 16px; margin: 12px 0 12px 20px; border-radius: 8px; page-break-inside: avoid;">';
                                     html += '<h5 style="color: #3d6680; margin: 0 0 12px 0;">📄 ' + inlineDoc.title + '</h5>';
                                     html += '<div style="font-size: 0.9rem; line-height: 1.6;">' + inlineDoc.content + '</div>';
-                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);"><strong>Source:</strong> ' + docUrl + '</p>';
+                                    html += '<p style="margin-top: 12px; font-size: 0.85rem; color: #6c757d;"><strong>Source:</strong> ' + docUrl + '</p>';
+
+                                    if (inlineDoc.subpages && inlineDoc.subpages.length > 0) {
+                                        html += '<div style="margin-top:16px;border-top:2px solid #e8edf3;padding-top:14px;">';
+                                        html += '<h6 style="color:#3d6680;margin:0 0 10px 0;font-size:0.8rem;text-transform:uppercase;">Related Pages:</h6>';
+                                        inlineDoc.subpages.forEach(function(sp) {
+                                            var spDoc = window.INLINE_DOCS && window.INLINE_DOCS[sp.url] ? window.INLINE_DOCS[sp.url] : null;
+                                            if (spDoc) {
+                                                html += '<div style="background:#f0f2f5;border-left:3px solid #3d6680;padding:12px 14px;margin:8px 0;border-radius:4px;">';
+                                                html += '<strong style="color:#3d6680;font-size:0.88rem;">' + sp.label + '</strong>';
+                                                html += '<div style="font-size:0.83rem;line-height:1.55;margin-top:8px;">' + spDoc.content + '</div>';
+                                                html += '</div>';
+                                            } else {
+                                                html += '<div style="font-size:0.85rem;padding:4px 0;">\u2022 <a href="' + sp.url + '" style="color:#3d6680;">' + sp.label + '</a></div>';
+                                            }
+                                        });
+                                        html += '</div>';
+                                    }
                                     html += '</div>';
                                 }
                             }
                         });
                         html += '</ul>';
                     }
-
                 }
+
                 html += '</div>';
             });
             html += '</div>';
-            
-            var _verValExp2 = typeof vcfVersion !== 'undefined' ? vcfVersion : (localStorage.getItem('vcf-version') || '');
-            var _isSrc911Exp2 = _verValExp2.startsWith('9.1.1') || (typeof vcenterVersion !== 'undefined' && (vcenterVersion || '').startsWith('9.1.1'));
-            var _patchBuildsExp2 = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400'];
-            if (_isSrc911Exp2) {
-                _patchBuildsExp2.push('9.1.1.0100');
-            }
-            if (_patchBuildsExp2.includes(window.targetVcf91Version)) {
-                var _patchStep = (allSteps || []).find(function(s) { return s.phases && s.phases.some(function(p) { return p.componentId === 'vcf_patch_base' || p.componentId === 'vcf_patch_direct'; }); });
-                if (_patchStep) {
-                    html += '<div style="background: #ddeeff; border-left: 4px solid #0077bb; padding: 10px 18px; margin: 24px 0 8px; border-radius: 6px; page-break-before: always;">';
-                    html += '<h3 style="color: #005588; margin: 0;">Apply ' + window.targetVcf91Version + ' Patches</h3>';
-                    html += '</div>';
-                    _patchStep.phases.forEach(function(phase) {
-                        var borderColor = phase.componentId === 'vcf_patch_base' ? '#e6a800' : '#0077bb';
-                        html += '<div style="background: #f8fafb; border-left: 4px solid ' + borderColor + '; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid;">';
-                        html += '<h4 style="color: #1a2d40; margin-bottom: 8px;">' + phase.title + '</h4>';
-                        html += '<p style="color: #5a6778; margin-bottom: 12px;">' + phase.description + '</p>';
-                        if (phase.data && phase.data.notices) {
-                            phase.data.notices.forEach(function(notice) {
-                                var nColor = notice.type === 'warning' ? '#e6a800' : '#0077bb';
-                                var nLabel = notice.type === 'warning' ? 'WARNING' : 'INFO';
-                                html += '<div style="background: white; border-left: 4px solid ' + nColor + '; padding: 12px; margin-top: 12px; border-radius: 4px;">';
-                                html += '<strong>' + nLabel + ': ' + notice.title + '</strong>';
-                                if (notice.bullets && notice.bullets.length > 0) {
-                                    html += '<ul style="margin: 8px 0 0 20px;">';
-                                    notice.bullets.forEach(function(b) { html += '<li>' + b + '</li>'; });
-                                    html += '</ul>';
-                                }
-                                html += '</div>';
-                            });
-                        }
-                        html += '</div>';
-                    });
-                }
-            }
-            // Open a clean popup window with diagram + content — avoids @media print CSS conflicts
-            _openPrintWindow(html);
-        }
-
-
+        });
         
+        html += '</div>';
+        _openPrintWindow(html);
+    }
 
+    
         
     // Dark Mode Toggle
         function toggleDarkMode() {

@@ -90,7 +90,8 @@ MANUAL_URLS = [
     'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-automation/vcf-automation-9-1-1-0100-release-notes.html',
     'https://knowledge.broadcom.com/external/article/455572',
     'https://knowledge.broadcom.com/external/article/455225/sddc-manager-upgrade-prechecks-fail-with.html',
-    'https://knowledge.broadcom.com/external/article/455439'
+    'https://knowledge.broadcom.com/external/article/455439',
+    'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0100-release-notes.html',
 ]
 
 # Collects (url, reason) tuples for every link that fails during the run

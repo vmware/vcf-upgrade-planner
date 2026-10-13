@@ -300,15 +300,6 @@
           ]
         },
         {
-         "type": "warning",
-         "title": "Aria Operations Placement Before Convergence",
-         "bullets": [
-           "Aria Operations must reside within the vCenter targeted for convergence.",
-           "If Aria Operations is on a different vCenter, migrate it to the target vCenter before proceeding.",
-           "If building a new Greenfield management cluster and reusing an existing Aria Operations instance, deploy a new vCenter and migrate Aria Operations to it prior to convergence."
-          ]
-        },
-        {
           "type": "info",
           "title": "Upgrade Options when having multiple VCF Operations",
           "bullets": [
