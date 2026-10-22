@@ -52,7 +52,7 @@ window.trackEvent = function (url) {
     };
 
     /**
-     * Main initialization function
+     * Main visitor counter initialization
      */
     function initVisitorCounter() {
         const containers = document.querySelectorAll('.sidebar-counter, .vks-counter, [data-slug]');
@@ -69,7 +69,7 @@ window.trackEvent = function (url) {
             const img = document.createElement('img');
             img.alt = 'Visitor counter';
 
-            // --- 1. HOME PAGE (index.html): Display clean subpage-driven index counter from hits.sh ---
+            // 1. HOME PAGE (index.html): Display clean subpage-driven index counter from hits.sh
             if (slug === 'index') {
                 if (cachedImgSrc) {
                     img.src = cachedImgSrc;
@@ -82,22 +82,19 @@ window.trackEvent = function (url) {
                 return;
             }
 
-            // --- 2. SCENARIO SUBPAGES & VKS PLANNER: Live Historical hits.sh Counts ---
+            // 2. SCENARIO SUBPAGES & VKS PLANNER: Live Historical hits.sh Counts
             if (!SUBPAGE_CONFIG[slug]) return;
 
             const hitsUrl = SUBPAGE_CONFIG[slug];
 
             if (cachedImgSrc) {
-                // Already logged in this session: reuse cached URL to avoid duplicate counts
                 img.src = cachedImgSrc;
             } else {
-                // First visit of session: load badge AND increment counter on hits.sh
                 const freshUrl = hitsUrl + '&_t=' + Date.now();
                 img.src = freshUrl;
                 sessionStorage.setItem(sessionKey, freshUrl);
 
                 if (slug !== 'supervisor-vks-config') {
-                    // Increment clean index counter on hits.sh whenever subpage is visited in a new session
                     window.trackEvent(INDEX_HITS_URL + '&_t=' + Date.now());
                 }
             }
@@ -110,5 +107,71 @@ window.trackEvent = function (url) {
         document.addEventListener('DOMContentLoaded', initVisitorCounter);
     } else {
         initVisitorCounter();
+    }
+})();
+
+/**
+ * Version Tracking IIFE (versions-r5)
+ * Guards against double-counting via sessionStorage and scopes inputs by plan type.
+ */
+(function () {
+    var container = document.querySelector('[data-slug]');
+    var planBadge = container ? container.getAttribute('data-slug') : null;
+    
+    // Do not log versions on home page or unknown containers
+    if (!planBadge || planBadge === 'index') return;
+
+    var VER_BASE = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/versions-r5/' + planBadge + '/';
+
+    function trackVersion(component, storageKey) {
+        var val = localStorage.getItem(storageKey);
+        if (!val) return;
+
+        // Session guard: track each component version ONCE per plan per browser session
+        var sessionKey = 'vcf_ver_logged_' + planBadge + '_' + component + '_' + val;
+        if (sessionStorage.getItem(sessionKey)) return;
+
+        var url = VER_BASE + component + '-' + encodeURIComponent(val) + '.svg?label=' + encodeURIComponent(val) + '&color=7b3fa0&labelColor=092138';
+        window.trackEvent(url);
+        sessionStorage.setItem(sessionKey, 'true');
+    }
+
+    // Determine plan type from badge prefix
+    var isVspherePlan = planBadge.indexOf('vsphere') === 0;
+    var isVcf52Plan   = planBadge.indexOf('vcf-5.2') === 0;
+    var isVcf90Plan   = planBadge.indexOf('vcf-9.0') === 0;
+    var isVksPlan     = planBadge === 'vks-upgrade-planner' || planBadge === 'supervisor-vks-config';
+
+    // 1. vSphere Source Versions (ONLY for vsphere-* plans)
+    if (isVspherePlan) {
+        trackVersion('vcenter', 'vcenter-version');
+        trackVersion('esx', 'esx-version');
+    }
+
+    // 2. VCF Source Versions (ONLY for vcf-5.2-* and vcf-9.0-* plans)
+    if (isVcf52Plan || isVcf90Plan) {
+        trackVersion('vcf', 'vcf-version');
+        trackVersion('vcfdet', 'vcfdet-version');
+    }
+
+    // 3. Common Target Version (All Upgrade Plans)
+    if (!isVksPlan) {
+        trackVersion('tgt', 'target-vcf91-version');
+    }
+
+    // 4. Optional Component Add-ons (only when selected)
+    if (localStorage.getItem('nsx-selected') === 'true') trackVersion('nsx', 'nsx-version');
+    if (localStorage.getItem('operations-selected') === 'true') trackVersion('ops', 'operations-version');
+    if (localStorage.getItem('automation-selected') === 'true') trackVersion('auto', 'automation-version');
+
+    // 5. vSphere Supervisor, VKS, and VKR Versions
+    if (isVksPlan || localStorage.getItem('supervisor-selected') === 'true' || localStorage.getItem('supervisor-version')) {
+        trackVersion('supervisor', 'supervisor-version');
+    }
+    if (isVksPlan || localStorage.getItem('vks-selected') === 'true' || localStorage.getItem('vks-version')) {
+        trackVersion('vks', 'vks-version');
+    }
+    if (isVksPlan || localStorage.getItem('vkr-selected') === 'true' || localStorage.getItem('vkr-version')) {
+        trackVersion('vkr', 'vkr-version');
     }
 })();
