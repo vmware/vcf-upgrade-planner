@@ -32,58 +32,78 @@ window.trackEvent = function (url) {
         'vsphere-to-vcf-instance': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vcf-instance.svg?label=Visitors&color=00BCD4&labelColor=092138',
         'vsphere-to-vcf-workload-domain': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vcf-workload-domain.svg?label=Visitors&color=00BCD4&labelColor=092138',
         'vsphere-to-vvf-ms': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-to-vvf-ms.svg?label=Visitors&color=00C48C&labelColor=092138',
-        'vsphere-no-vcf': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-no-vcf.svg?label=Visitors&color=00C48C&labelColor=092138'
+        'vsphere-no-vcf': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vsphere-no-vcf.svg?label=Visitors&color=00C48C&labelColor=092138',
+        'vks-upgrade-planner': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/vks-upgrade-planner.svg?label=Visitors&color=0088B5&labelColor=092138',
+        'supervisor-vks-config': 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/supervisor-vks-config.svg?label=Supervisor%2FVKS%20Configs&color=0088B5&labelColor=092138'
+    };
+
+    /**
+     * Track when user selects/configures Supervisor, VKS, or VKR on index or subpages
+     */
+    window.trackSupervisorConfig = function() {
+        const sessionKey = 'vcf_planner_logged_supervisor_vks_config';
+        if (!sessionStorage.getItem(sessionKey)) {
+            const hitsUrl = SUBPAGE_CONFIG['supervisor-vks-config'];
+            if (hitsUrl) {
+                window.trackEvent(hitsUrl + '&_t=' + Date.now());
+                sessionStorage.setItem(sessionKey, 'true');
+            }
+        }
     };
 
     /**
      * Main initialization function
      */
     function initVisitorCounter() {
-        const container = document.querySelector('.sidebar-counter');
-        if (!container) return;
+        const containers = document.querySelectorAll('.sidebar-counter, .vks-counter, [data-slug]');
+        if (!containers || containers.length === 0) return;
 
-        const slug = container.getAttribute('data-slug');
-        if (!slug) return;
+        containers.forEach(container => {
+            const slug = container.getAttribute('data-slug');
+            if (!slug) return;
 
-        const sessionKey = 'vcf_planner_logged_' + slug;
-        const cachedImgSrc = sessionStorage.getItem(sessionKey);
+            const sessionKey = 'vcf_planner_logged_' + slug;
+            const cachedImgSrc = sessionStorage.getItem(sessionKey);
 
-        container.innerHTML = '';
-        const img = document.createElement('img');
-        img.alt = 'Visitor counter';
+            container.innerHTML = '';
+            const img = document.createElement('img');
+            img.alt = 'Visitor counter';
 
-        // --- 1. HOME PAGE (index.html): Display clean subpage-driven index counter from hits.sh ---
-        if (slug === 'index') {
+            // --- 1. HOME PAGE (index.html): Display clean subpage-driven index counter from hits.sh ---
+            if (slug === 'index') {
+                if (cachedImgSrc) {
+                    img.src = cachedImgSrc;
+                } else {
+                    const freshUrl = INDEX_HITS_URL + '&_t=' + Date.now();
+                    img.src = freshUrl;
+                    sessionStorage.setItem(sessionKey, freshUrl);
+                }
+                container.appendChild(img);
+                return;
+            }
+
+            // --- 2. SCENARIO SUBPAGES & VKS PLANNER: Live Historical hits.sh Counts ---
+            if (!SUBPAGE_CONFIG[slug]) return;
+
+            const hitsUrl = SUBPAGE_CONFIG[slug];
+
             if (cachedImgSrc) {
+                // Already logged in this session: reuse cached URL to avoid duplicate counts
                 img.src = cachedImgSrc;
             } else {
-                const freshUrl = INDEX_HITS_URL + '&_t=' + Date.now();
+                // First visit of session: load badge AND increment counter on hits.sh
+                const freshUrl = hitsUrl + '&_t=' + Date.now();
                 img.src = freshUrl;
                 sessionStorage.setItem(sessionKey, freshUrl);
+
+                if (slug !== 'supervisor-vks-config') {
+                    // Increment clean index counter on hits.sh whenever subpage is visited in a new session
+                    window.trackEvent(INDEX_HITS_URL + '&_t=' + Date.now());
+                }
             }
+
             container.appendChild(img);
-            return;
-        }
-
-        // --- 2. SCENARIO SUBPAGES: Live Historical hits.sh Counts ---
-        if (!SUBPAGE_CONFIG[slug]) return;
-
-        const hitsUrl = SUBPAGE_CONFIG[slug];
-
-        if (cachedImgSrc) {
-            // Already logged in this session: reuse cached URL to avoid duplicate counts
-            img.src = cachedImgSrc;
-        } else {
-            // First visit of session: load subpage badge AND increment shared index counter on hits.sh
-            const freshUrl = hitsUrl + '&_t=' + Date.now();
-            img.src = freshUrl;
-            sessionStorage.setItem(sessionKey, freshUrl);
-
-            // Increment clean index counter on hits.sh whenever subpage is visited in a new session
-            window.trackEvent(INDEX_HITS_URL + '&_t=' + Date.now());
-        }
-
-        container.appendChild(img);
+        });
     }
 
     if (document.readyState === 'loading') {

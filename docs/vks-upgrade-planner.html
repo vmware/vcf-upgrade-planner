@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>VC / Supervisor / VKS Upgrade Planner</title>
+    <script src="counter.js"></script>
+    <style>
+        :root {
+            --vmw-blue: #0088b5;
+            --vmw-dark: #1a2d40;
+            --vmw-gray: #535c65;
+            --bg: #f0f3f6;
+            --card-bg: #f8f9fb;
+            --border-color: #cdd2d8;
+            --pulse-red: #b8082a;
+            --lime: #4e8f0a;
+            --jade: #006b7a;
+            --gray-100: #e4e8ec;
+            --gray-400: #9ba0a8;
+            --text-primary: #1a2d40;
+            --text-secondary: #4a5260;
+            --warning-bg: #fdf3d8;
+            --warning-border: #e6aa00;
+            --warning-text: #7a5900;
+            --layer-vc: #0088b5;
+            --layer-sv: #6b4fbb;
+            --layer-vks: #b06a00;
+            --layer-vkr: #007a5e;
+        }
+
+        [data-theme="dark"] {
+            --vmw-blue: #4e90aa;
+            --vmw-dark: #d4dbe3;
+            --vmw-gray: #8a96a2;
+            --bg: #151c24;
+            --card-bg: #1e2730;
+            --border-color: #38424e;
+            --text-primary: #c8d0d8;
+            --text-secondary: #8e9aaa;
+            --pulse-red: #cc5555;
+            --lime: #4db800;
+            --warning-bg: #2e2200;
+            --warning-border: #b88800;
+            --warning-text: #d4aa30;
+            --layer-vc: #58c3e8;
+            --layer-sv: #a690e8;
+            --layer-vks: #e0a44a;
+            --layer-vkr: #4fc4a6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        a { color: #0088b5; text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--vmw-dark); text-decoration: underline; }
+        [data-theme="dark"] a { color: #58D3FF; }
+        [data-theme="dark"] a:hover { color: #8FE3FF; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.65;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2, h3, h4, p, li, label { color: var(--text-primary); }
+
+        /* ── Dark Mode Toggle Switch ── */
+        .theme-toggle-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .theme-toggle-wrapper .theme-toggle-label { color: white; }
+        .theme-toggle-label { color: var(--text-primary); font-size: 0.9rem; font-weight: 500; }
+        .toggle-switch {
+            position: relative; width: 50px; height: 26px;
+            background: rgba(255, 255, 255, 0.2); border-radius: 13px;
+            cursor: pointer; transition: background 0.3s;
+        }
+        .toggle-switch.active, [data-theme="dark"] .toggle-switch { background: var(--vmw-blue); }
+        .toggle-slider {
+            position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+            background: white; border-radius: 50%; transition: transform 0.3s;
+        }
+        .toggle-switch.active .toggle-slider, [data-theme="dark"] .toggle-slider { transform: translateX(24px); }
+
+        /* ── Sidebar Layout ── */
+        .app-container { display: flex; width: 100%; min-height: 100vh; }
+
+        .sidebar {
+            width: 280px; background: #1e2d3d; color: white;
+            display: flex; flex-direction: column;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+            position: fixed; height: 100vh; left: 0; top: 0; z-index: 100;
+        }
+        [data-theme="dark"] .sidebar { background: #161b22; border-right: 1px solid #30363d; }
+        .sidebar-header { padding: 28px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .sidebar-logo h1 { font-size: 1.15rem; font-weight: 700; }
+        .sidebar-subtitle { font-size: 0.8rem; opacity: 0.7; color: rgba(255,255,255,0.8); }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 20px 12px; }
+        .nav-item {
+            padding: 12px 14px; border-radius: 8px; margin-bottom: 4px; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; gap: 10px;
+            font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);
+        }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        .nav-item.active { background: var(--vmw-blue); font-weight: 600; color: white; }
+        .nav-item.nav-hidden { display: none; }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-counter {
+            margin-top: 12px; display: flex; justify-content: center; align-items: center;
+            gap: 8px; font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);
+        }
+        .sidebar-counter img { height: 18px; }
+
+        .main-wrapper { margin-left: 280px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 32px 48px; width: 100%; }
+
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: var(--text-primary); font-size: 2.5rem; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+        .header p { color: var(--text-secondary); font-size: 1.05rem; }
+
+        .explanation {
+            background: var(--card-bg); border-left: 4px solid var(--vmw-blue);
+            border-radius: 12px; padding: 28px 32px; margin-bottom: 40px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color); border-left-width: 4px;
+        }
+        [data-theme="dark"] .explanation { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2); }
+        .explanation h2 { color: var(--vmw-blue); font-size: 1.4rem; font-weight: 600; margin-bottom: 12px; }
+        .explanation h2::before { content: "📋 "; margin-right: 8px; }
+        .explanation p { color: var(--text-secondary); }
+        .explanation ul { margin: 10px 0 0 22px; }
+        .explanation li { color: var(--text-secondary); font-size: 0.95rem; }
+
+        .question-section {
+            background: var(--card-bg); border-radius: 12px; padding: 32px; margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+        }
+        [data-theme="dark"] .question-section { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2); }
+        .question-label { font-size: 1.2rem; font-weight: 600; color: var(--vmw-dark); margin-bottom: 16px; display: block; }
+        .section-hint {
+            background: rgba(1, 152, 199, 0.1); border-left: 4px solid var(--vmw-blue);
+            border-radius: 6px; padding: 12px 16px; margin-bottom: 20px;
+            font-size: 0.95rem; color: var(--text-primary);
+        }
+        /* ── Form fields ── */
+        .field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px 24px; }
+        .field { display: flex; flex-direction: column; min-width: 0; }
+        .field label { display: block; font-size: 1rem; font-weight: 600; color: var(--vmw-gray); margin-bottom: 8px; }
+        select {
+            width: 100%; padding: 12px 16px; font-size: 1rem;
+            border: 2px solid var(--border-color); border-radius: 8px;
+            background: var(--card-bg); color: var(--text-primary); cursor: pointer; transition: all 0.3s;
+        }
+        select:hover { border-color: var(--vmw-blue); }
+        select:focus { outline: none; border-color: var(--vmw-blue); box-shadow: 0 0 0 3px rgba(0, 119, 200, 0.1); }
+        select option:disabled { color: var(--gray-400); }
+        .hint { font-size: 0.82rem; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
+        .hint code { background: var(--gray-100); padding: 1px 4px; border-radius: 4px; font-size: 0.95em; }
+        [data-theme="dark"] .hint code { background: #2a3441; }
+        .req-badge { display: none; margin-left: 8px; padding: 2px 8px; border-radius: 12px;
+            background: var(--warning-bg); color: var(--pulse-red); font-size: 0.75rem; font-weight: 700; }
+        .field.invalid .req-badge { display: inline-block; }
+        .field.invalid select { border-color: var(--pulse-red); }
+        .field.invalid select:focus { outline: 2px solid var(--pulse-red); outline-offset: 2px; }
+        .field-msgs { font-size: 0.82rem; line-height: 1.5; }
+        .field-msgs div { margin-top: 6px; }
+        .field-msgs .n-req { color: var(--pulse-red); font-weight: 600; }
+        .field-msgs .n-clear { color: var(--warning-text); }
+        .input-summary { margin-left: 10px; font-size: 0.85rem; font-weight: 400; color: var(--text-secondary); }
+        .input-summary.missing { color: var(--pulse-red); font-weight: 600; }
+        .req-list { margin-top: 20px; padding-left: 22px; font-size: 0.88rem; }
+        .req-list li { color: var(--pulse-red); }
+        .req-list:empty { display: none; }
+
+        .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 28px; }
+        button.btn {
+            padding: 13px 26px; font-size: 1rem; font-weight: 600; border-radius: 8px;
+            border: 2px solid var(--vmw-blue); background: var(--vmw-blue); color: white;
+            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        button.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,136,181,0.25); }
+        button.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        button.btn.secondary { background: transparent; color: var(--vmw-blue); }
+        button.btn.secondary:hover { background: var(--vmw-blue); color: white; }
+        .status { font-size: 0.88rem; color: var(--text-secondary); }
+        .status.err { color: var(--pulse-red); font-weight: 600; }
+
+        .hidden { display: none; }
+
+        /* ── Plan output: stages ── */
+        .plan-summary {
+            background: rgba(0,136,181,0.07); border-left: 4px solid var(--vmw-blue);
+            border-radius: 8px; padding: 18px 22px; margin-bottom: 20px; font-size: 0.98rem;
+        }
+        .plan-summary .counts { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip {
+            display: inline-block; background: var(--gray-100); color: var(--text-primary);
+            border-radius: 12px; padding: 3px 12px; font-size: 0.8rem; font-weight: 600;
+        }
+        [data-theme="dark"] .chip { background: #2a3441; }
+
+        .tabs-wrap { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+        .tab-btn {
+            flex: 1 1 240px; text-align: left; padding: 14px 18px; border-radius: 10px;
+            border: 2px solid var(--border-color); background: var(--card-bg);
+            color: var(--text-primary); cursor: pointer; font-size: 0.9rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tab-btn b { display: block; font-size: 1rem; margin-bottom: 2px; }
+        .tab-btn:hover { border-color: var(--vmw-blue); }
+        .tab-btn.active { border-color: var(--vmw-blue); background: rgba(0,136,181,0.08); box-shadow: 0 0 0 3px rgba(0,136,181,0.15); }
+
+        .stage {
+            border: 1px solid var(--border-color); border-left: 6px solid var(--vmw-blue);
+            border-radius: 12px; background: var(--card-bg); margin-bottom: 20px; overflow: hidden;
+        }
+        .stage.layer-vc  { border-left-color: var(--layer-vc); }
+        .stage.layer-sv  { border-left-color: var(--layer-sv); }
+        .stage.layer-vks { border-left-color: var(--layer-vks); }
+        .stage.layer-vkr { border-left-color: var(--layer-vkr); }
+
+        .stage-head { display: flex; align-items: center; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--border-color); }
+        .stage-badge {
+            flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.95rem; color: white; background: var(--vmw-blue);
+        }
+        .stage.layer-vc  .stage-badge { background: var(--layer-vc); }
+        .stage.layer-sv  .stage-badge { background: var(--layer-sv); }
+        .stage.layer-vks .stage-badge { background: var(--layer-vks); }
+        .stage.layer-vkr .stage-badge { background: var(--layer-vkr); }
+        .stage-title { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+        .stage-sub { font-size: 0.85rem; color: var(--text-secondary); }
+
+        .stage-steps { list-style: none; padding: 8px 0; }
+        .step {
+            display: flex; gap: 14px; padding: 14px 24px 14px 20px;
+            border-top: 1px solid transparent;
+        }
+        .step + .step { border-top-color: var(--border-color); }
+        .step-num {
+            flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+            background: var(--gray-100); color: var(--text-primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700; margin-top: 2px;
+        }
+        [data-theme="dark"] .step-num { background: #2a3441; }
+        .step-body { flex: 1; min-width: 0; }
+        .step-title { font-weight: 600; font-size: 1rem; color: var(--text-primary); }
+        .step-arrow { color: var(--text-secondary); margin: 0 6px; }
+        .step-desc { font-size: 0.9rem; color: var(--text-secondary); margin-top: 3px; }
+
+        .step-note {
+            font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px;
+            padding: 9px 13px; border-radius: 6px; background: rgba(0,136,181,0.07); border-left: 3px solid var(--vmw-blue);
+        }
+        .step-note-warn {
+            background: var(--warning-bg); border-left-color: var(--warning-border); color: var(--warning-text);
+        }
+        /* Rule 15f: a milestone, not a warning - green reads as "you have arrived", which is what it says. */
+        .step-note-ok {
+            background: rgba(28,107,63,0.08); border-left-color: #1c6b3f; color: #1c6b3f; font-weight: 600;
+        }
+
+        .note, .advisory, .unreachable {
+            border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; font-size: 0.93rem; line-height: 1.6;
+        }
+        .note { background: rgba(0,136,181,0.07); border-left: 4px solid var(--vmw-blue); color: var(--text-primary); }
+        .advisory { background: var(--warning-bg); border-left: 4px solid var(--warning-border); color: var(--warning-text); }
+        .advisories { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color); }
+        .advisories .advisory:last-child { margin-bottom: 0; }
+        .unreachable { background: rgba(184,8,42,0.08); border-left: 4px solid var(--pulse-red); color: var(--text-primary); }
+        [data-theme="dark"] .unreachable { background: rgba(204,85,85,0.12); }
+
+        .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 0 0 20px; font-size: 0.83rem; color: var(--text-secondary); }
+        .legend span { display: inline-flex; align-items: center; gap: 6px; }
+        .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+        .legend .layer-vc i  { background: var(--layer-vc); }
+        .legend .layer-sv i  { background: var(--layer-sv); }
+        .legend .layer-vks i { background: var(--layer-vks); }
+        .legend .layer-vkr i { background: var(--layer-vkr); }
+
+        .disclaimer { font-size: 0.82rem; color: var(--text-secondary); margin-top: 32px; text-align: center; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-wrapper { margin-left: 0; }
+            .container { padding: 24px 20px; }
+            body { flex-direction: column; }
+            .app-container { flex-direction: column; }
+        }
+
+        @media print {
+            .sidebar, .actions, .tabs-wrap, .explanation, #screenForm { display: none !important; }
+            .main-wrapper { margin-left: 0; }
+            .stage, .question-section { box-shadow: none; break-inside: avoid; }
+            body { background: white; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <span style="font-size: 1.5rem;">☸️</span>
+                <h1>VKS Upgrade Planner</h1>
+            </div>
+            <p class="sidebar-subtitle">vCenter &middot; Supervisor &middot; VKS &middot; Kubernetes Releases</p>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-item active" id="navInputs" onclick="scrollToElement('screenForm')">
+                <span>📝</span> Your Versions
+            </div>
+            <div class="nav-item nav-hidden" id="navPlan" onclick="scrollToElement('screenResult')">
+                <span>🛤️</span> Your Upgrade Plan
+            </div>
+            <div class="nav-item" onclick="location.href='index.html'">
+                <span>↩️</span> VCF Upgrade Planner
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="theme-toggle-wrapper">
+                <span class="theme-toggle-label">Dark Mode</span>
+                <div class="toggle-switch" id="themeToggle" onclick="toggleDarkMode()">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="sidebar-counter" data-slug="vks-upgrade-planner"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>vCenter, Supervisor &amp; VKS Upgrade Planner</h1>
+                <p>Plan a compatible upgrade across vCenter, vSphere Supervisor, VKS and your Kubernetes Releases.</p>
+            </div>
+
+            <div class="explanation">
+                <h2>How this works</h2>
+                <p>Tell us the versions you run today and where you want to land. This planner computes
+                   an ordered, compatibility-checked plan across all four layers, grouped into stages, with the
+                   reason for every step.</p>
+                <ul>
+                    <li>Every version list comes from the generated Broadcom interoperability matrix &mdash; nothing is hardcoded.</li>
+                    <li>The plan never proposes an uncompatible hop: Supervisor/Kubernetes Releases move one Kubernetes minor at a time.</li>
+                    <li>If upgrade paths for both 8.x and 9.x are available, the planner displays them side-by-side instead of automatically selecting one for you.</li>
+                    <li>Use the <a href="index.html">VCF Upgrade Planner</a> if you want to include NSX, ESX, VCF Operations, VCF Automation.</li>
+                </ul>
+            </div>
+
+            <!-- ── Screen 1: inputs ── -->
+            <div class="question-section" id="screenForm">
+                <label class="question-label">📝 Your versions</label>
+                <div class="section-hint">Anything you leave blank on the target side is planned for you when
+                    reaching a target you did specify requires moving it. Incompatible options are greyed out
+                    rather than hidden. Required fields are marked as you choose versions, and a note explains
+                    any selection cleared by a filter.</div>
+                <h3 style="font-size:1.02rem;margin-bottom:14px;color:var(--vmw-gray)">Current state<span class="input-summary" id="curSummary">specify at least one</span></h3>
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="curVC">Current vCenter</label>
+                        <select id="curVC"><option value="">— not specified —</option></select>
+                        <div class="hint">Strongly recommended.</div>
+                    </div>
+                    <div class="field">
+                        <label for="curSV">Current Supervisor</label>
+                        <select id="curSV"><option value="">— not specified —</option></select>
+                        <div class="hint">If left blank, we assume the highest minor your current vCenter supports.</div>
+                    </div>
+                    <div class="field">
+                        <label for="curVKS">Current VKS (Supervisor Service)</label>
+                        <select id="curVKS"><option value="">— not specified —</option></select>
+                    </div>
+                    <div class="field">
+                        <label for="curVKr">Current Kubernetes Release (VKr)</label>
+                        <select id="curVKr"><option value="">— not specified / no VKS Clusters —</option></select>
+                        <div class="hint">Enter the <b>lowest</b> VKr across your VKS Clusters. This input validates
+                            only that release. Before each VKS upgrade, check every cluster, including higher or
+                            superseded releases, against the destination VKS. Complete the required checks shown
+                            on the step. Leave blank if you have no VKS Clusters.</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size:1.02rem;margin:28px 0 14px;color:var(--vmw-gray)">Target<span class="input-summary" id="tgtSummary">specify at least one</span></h3>
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="tgtVC">Target vCenter</label>
+                        <select id="tgtVC"><option value="">— none —</option></select>
+                    </div>
+                    <div class="field">
+                        <label for="tgtSV">Target Supervisor</label>
+                        <select id="tgtSV"><option value="">— none —</option></select>
+                    </div>
+                    <div class="field">
+                        <label for="tgtVKS">Target VKS</label>
+                        <select id="tgtVKS"><option value="">— none —</option></select>
+                    </div>
+                    <div class="field">
+                        <label for="tgtVKr">Target Kubernetes Release (VKr)</label>
+                        <select id="tgtVKr"><option value="">— none —</option></select>
+                    </div>
+                </div>
+                <div class="field" style="margin-top:12px">
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:400">
+                        <input type="checkbox" id="broadcomRecommend" style="width:auto">
+                        Include recommendations based on target
+                    </label>
+                    <div class="hint">
+                        When checked, any layer you left no target for is also carried forward to the latest
+                        version compatible with what you did name, and the plan marks the step where your own
+                        request ends and this recommendation continues. Unchecked, the plan stops exactly at the
+                        targets you named, plus whatever moves reaching them requires.
+                    </div>
+                </div>
+
+                <ul class="req-list" id="reqList" aria-live="polite" aria-label="Versions still needed"></ul>
+                <div class="actions">
+                    <button class="btn" id="planBtn" disabled>Compute my plan</button>
+                    <span class="status" id="status">Loading interoperability matrix…</span>
+                </div>
+
+                <div class="hidden" id="matrixFallback">
+                    <div class="hint" style="margin-top:12px">
+                        Could not load <code>k8s-upgrade-matrix.json</code> (browsers block <code>fetch()</code> of
+                        local files opened over <code>file://</code>). Serve this folder over HTTP, or load the
+                        matrix manually:
+                    </div>
+                    <input type="file" id="matrixFile" accept="application/json" style="margin-top:8px">
+                </div>
+            </div>
+
+            <!-- ── Screen 3: the plan ── -->
+            <div class="hidden" id="screenResult">
+                <div class="question-section">
+                    <label class="question-label">🛤️ Your upgrade plan</label>
+                    <div id="output"></div>
+                    <div class="actions">
+                        <button class="btn secondary" id="dlBtn">Download plan (JSON)</button>
+                        <button class="btn secondary" onclick="window.print()">Print / Save as PDF</button>
+                        <button class="btn secondary" onclick="scrollToElement('screenForm')">Edit my versions</button>
+                    </div>
+                </div>
+            </div>
+
+            <p class="disclaimer">
+                Plans are computed from the published Broadcom interoperability matrix and are advisory. Always confirm
+                against the release notes for each product before you upgrade.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Matrix data, embedded by embed_vks_matrix.py so this page works from a plain file:// URL.
+     Re-run that script after updating k8s-upgrade-matrix.json. -->
+<script type="application/json" id="matrix-data">{"vc_upgrade_graph":{"8.0U3":["8.0U3a","8.0U3b","8.0U3c","8.0U3d","8.0U3e","8.0U3g","8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.0.0","9.0.1.0","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3a":["8.0U3b","8.0U3c","8.0U3d","8.0U3e","8.0U3g","8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.0.0","9.0.1.0","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3b":["8.0U3c","8.0U3d","8.0U3e","8.0U3g","8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.0.0","9.0.1.0","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3c":["8.0U3d","8.0U3e","8.0U3g","8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.0.0","9.0.1.0","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3d":["8.0U3e","8.0U3g","8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.0.0","9.0.1.0","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3e":["8.0U3g","8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.0.0","9.0.1.0","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3g":["8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.1.0","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3h":["8.0U3i","8.0U3j","8.0U3k","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3i":["8.0U3j","8.0U3k","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"8.0U3j":["8.0U3k","9.1.1.0","9.1.1.0100"],"8.0U3k":["9.1.1.0","9.1.1.0100"],"9.0.0.0":["9.0.1.0","9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"9.0.1.0":["9.0.2.0","9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"9.0.2.0":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.0.2.0100","9.1.0.0300","9.1.1.0","9.1.1.0100"],"9.1.0.0":["9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"9.1.0.0100":["9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"9.1.0.0200":["9.1.0.0300","9.1.1.0","9.1.1.0100"],"9.0.2.0100":["9.1.0.0300","9.1.1.0","9.1.1.0100"],"9.1.0.0300":["9.1.1.0","9.1.1.0100"],"9.1.1.0":["9.1.1.0100"]},"vc_sv_matrix":{"8.0U3":{"supported_sv_k8s_minors":["1.26","1.27","1.28"],"sv_version_suffix":"0.1.9","release_date":"2024-06-25","requires_sv_overlap":true},"8.0U3a":{"supported_sv_k8s_minors":["1.26","1.27","1.28"],"sv_version_suffix":"0.1.9","release_date":"2024-07-18","requires_sv_overlap":true},"8.0U3b":{"supported_sv_k8s_minors":["1.27","1.28","1.29"],"sv_version_suffix":"0.1.10","release_date":"2024-09-17","requires_sv_overlap":true},"8.0U3c":{"supported_sv_k8s_minors":["1.27","1.28","1.29"],"sv_version_suffix":"0.1.10","release_date":"2024-10-09","requires_sv_overlap":true},"8.0U3d":{"supported_sv_k8s_minors":["1.27","1.28","1.29"],"sv_version_suffix":"0.1.10","release_date":"2024-10-21","requires_sv_overlap":true},"8.0U3e":{"supported_sv_k8s_minors":["1.27","1.28","1.29"],"sv_version_suffix":"0.1.11","release_date":"2025-04-10","requires_sv_overlap":true},"8.0U3g":{"supported_sv_k8s_minors":["1.28","1.29","1.30"],"sv_version_suffix":"0.1.12","release_date":"2025-07-29","requires_sv_overlap":true},"8.0U3h":{"supported_sv_k8s_minors":["1.30","1.31","1.32"],"sv_version_suffix":"0.1.13","release_date":"2025-12-15","requires_sv_overlap":true},"8.0U3i":{"supported_sv_k8s_minors":["1.30","1.31","1.32"],"sv_version_suffix":"0.1.14","release_date":"2026-02-24","requires_sv_overlap":true},"8.0U3j":{"supported_sv_k8s_minors":["1.31","1.32","1.33"],"sv_version_suffix":"0.1.15","release_date":"2026-05-27","requires_sv_overlap":true},"8.0U3k":{"supported_sv_k8s_minors":["1.31","1.32","1.33"],"sv_version_suffix":"0.1.15","release_date":"2026-07-29","requires_sv_overlap":true},"9.0.0.0":{"supported_sv_k8s_minors":["1.28","1.29","1.30"],"sv_version_suffix":"9.0.0.0","release_date":"2025-06-17","requires_sv_overlap":true},"9.0.1.0":{"supported_sv_k8s_minors":["1.29","1.30","1.31"],"sv_version_suffix":"9.0.1.0","release_date":"2025-09-29","requires_sv_overlap":true},"9.0.2.0":{"supported_sv_k8s_minors":["1.30","1.31","1.32"],"sv_version_suffix":"9.0.2.0","release_date":"2026-01-20","requires_sv_overlap":true},"9.1.0.0":{"supported_sv_k8s_minors":["1.30","1.31","1.32"],"sv_version_suffix":"9.1.0.0","release_date":"2026-05-12","requires_sv_overlap":true},"9.1.0.0100":{"supported_sv_k8s_minors":["1.30","1.31","1.32"],"sv_version_suffix":"9.1.0.0100","release_date":"2026-06-05","requires_sv_overlap":true},"9.1.0.0200":{"supported_sv_k8s_minors":["1.30","1.31","1.32"],"sv_version_suffix":"9.1.0.0200","release_date":"2026-07-13","requires_sv_overlap":true},"9.0.2.0100":{"supported_sv_k8s_minors":["1.30","1.31","1.32"],"sv_version_suffix":"9.0.2.0","release_date":"2026-07-29","requires_sv_overlap":true},"9.1.0.0300":{"supported_sv_k8s_minors":["1.30","1.31","1.32"],"sv_version_suffix":"9.1.0.0300","release_date":"2026-07-29","requires_sv_overlap":true},"9.1.1.0":{"supported_sv_k8s_minors":["1.32","1.33","1.34"],"sv_version_suffix":"9.1.1.0","release_date":"2026-09-03","requires_sv_overlap":true},"9.1.1.0100":{"supported_sv_k8s_minors":["1.32","1.33","1.34"],"sv_version_suffix":"9.1.1.0100","release_date":"2026-10-12","requires_sv_overlap":true}},"sv_to_vc_map":{"0.1.9":[{"vc_version":"8.0U3","major_family":"8.x"},{"vc_version":"8.0U3a","major_family":"8.x"}],"0.1.10":[{"vc_version":"8.0U3b","major_family":"8.x"},{"vc_version":"8.0U3c","major_family":"8.x"},{"vc_version":"8.0U3d","major_family":"8.x"}],"0.1.11":[{"vc_version":"8.0U3e","major_family":"8.x"}],"0.1.12":[{"vc_version":"8.0U3g","major_family":"8.x"}],"0.1.13":[{"vc_version":"8.0U3h","major_family":"8.x"}],"0.1.14":[{"vc_version":"8.0U3i","major_family":"8.x"}],"0.1.15":[{"vc_version":"8.0U3j","major_family":"8.x"},{"vc_version":"8.0U3k","major_family":"8.x"}],"9.0.0.0":[{"vc_version":"9.0.0.0","major_family":"9.x"}],"9.0.1.0":[{"vc_version":"9.0.1.0","major_family":"9.x"}],"9.0.2.0":[{"vc_version":"9.0.2.0","major_family":"9.x"},{"vc_version":"9.0.2.0100","major_family":"9.x"}],"9.1.0.0":[{"vc_version":"9.1.0.0","major_family":"9.x"}],"9.1.0.0100":[{"vc_version":"9.1.0.0100","major_family":"9.x"}],"9.1.0.0200":[{"vc_version":"9.1.0.0200","major_family":"9.x"}],"9.1.0.0300":[{"vc_version":"9.1.0.0300","major_family":"9.x"}],"9.1.1.0":[{"vc_version":"9.1.1.0","major_family":"9.x"}],"9.1.1.0100":[{"vc_version":"9.1.1.0100","major_family":"9.x"}]},"vc_embedded_vks":{"8.0U3":"3.0.0","8.0U3a":"3.0.0","8.0U3b":"3.1.1","8.0U3c":"3.1.1","8.0U3d":"3.1.1","8.0U3e":"3.3.2","8.0U3g":"3.3.3","8.0U3h":"3.4.1+v1.33","8.0U3i":"3.4.2+v1.33","8.0U3j":"3.5.1+v1.34","8.0U3k":"3.5.1+v1.34","9.0.0.0":"3.3.1","9.0.1.0":"3.4.1+v1.33","9.0.2.0":"3.4.1+v1.33","9.0.2.0100":"3.4.1+v1.33","9.1.0.0":"3.6.1+v1.35","9.1.0.0100":"3.6.1+v1.35","9.1.0.0200":"3.6.3+v1.35","9.1.0.0300":"3.6.3+v1.35","9.1.1.0":"3.7.0+v1.36","9.1.1.0100":"3.7.1+v1.36"},"vc_major_upgrade_requires_sv":{"8.x->9.x":true},"vc_minor_upgrade_requires_post_sv":{"9.x->9.x":true},"sv_upgrade_graph":{"v1.26.8+vmware.1-fips.1-vsc0.1.9":["v1.27.5+vmware.1-fips.1-vsc0.1.9"],"v1.27.5+vmware.1-fips.1-vsc0.1.10":["v1.27.5+vmware.1-fips.1-vsc0.1.11","v1.28.3+vmware.2-fips.1-vsc0.1.10","v1.28.3+vmware.2-fips.1-vsc0.1.11"],"v1.27.5+vmware.1-fips.1-vsc0.1.11":["v1.28.3+vmware.2-fips.1-vsc0.1.11"],"v1.27.5+vmware.1-fips.1-vsc0.1.9":["v1.27.5+vmware.1-fips.1-vsc0.1.10","v1.27.5+vmware.1-fips.1-vsc0.1.11","v1.28.3+vmware.2-fips.1-vsc0.1.10","v1.28.3+vmware.2-fips.1-vsc0.1.11","v1.28.3+vmware.2-fips.1-vsc0.1.9"],"v1.28.14+vmware.3-fips-vsc9.0.0.0":["v1.28.14+vmware.3-fips-vsc9.0.0.0100","v1.29.14+vmware.1-fips-vsc9.0.0.0100","v1.29.9+vmware.3-fips-vsc9.0.0.0"],"v1.28.14+vmware.3-fips-vsc9.0.0.0100":["v1.29.14+vmware.1-fips-vsc9.0.0.0100"],"v1.28.3+vmware.2-fips.1-vsc0.1.10":["v1.28.14+vmware.3-fips-vsc9.0.0.0","v1.28.14+vmware.3-fips-vsc9.0.0.0100","v1.28.3+vmware.2-fips.1-vsc0.1.11","v1.28.3+vmware.2-fips.1-vsc0.1.12","v1.29.14+vmware.1-fips-vsc9.0.0.0100","v1.29.7+vmware.1-fips-vsc0.1.10","v1.29.7+vmware.1-fips-vsc0.1.11","v1.29.7+vmware.1-fips-vsc0.1.12","v1.29.9+vmware.3-fips-vsc9.0.0.0"],"v1.28.3+vmware.2-fips.1-vsc0.1.11":["v1.28.14+vmware.3-fips-vsc9.0.0.0","v1.28.14+vmware.3-fips-vsc9.0.0.0100","v1.28.3+vmware.2-fips.1-vsc0.1.12","v1.29.14+vmware.1-fips-vsc9.0.0.0100","v1.29.7+vmware.1-fips-vsc0.1.11","v1.29.7+vmware.1-fips-vsc0.1.12","v1.29.9+vmware.3-fips-vsc9.0.0.0"],"v1.28.3+vmware.2-fips.1-vsc0.1.12":["v1.29.7+vmware.1-fips-vsc0.1.12"],"v1.28.3+vmware.2-fips.1-vsc0.1.9":["v1.28.14+vmware.3-fips-vsc9.0.0.0","v1.28.14+vmware.3-fips-vsc9.0.0.0100","v1.28.3+vmware.2-fips.1-vsc0.1.10","v1.28.3+vmware.2-fips.1-vsc0.1.11","v1.28.3+vmware.2-fips.1-vsc0.1.12","v1.29.14+vmware.1-fips-vsc9.0.0.0100","v1.29.7+vmware.1-fips-vsc0.1.10","v1.29.7+vmware.1-fips-vsc0.1.11","v1.29.7+vmware.1-fips-vsc0.1.12","v1.29.9+vmware.3-fips-vsc9.0.0.0"],"v1.29.14+vmware.1-fips-vsc9.0.0.0100":["v1.29.14+vmware.1-fips-vsc9.0.1.0","v1.30.10+vmware.1-fips-vsc9.0.0.0100","v1.30.10+vmware.1-fips-vsc9.0.1.0"],"v1.29.14+vmware.1-fips-vsc9.0.1.0":["v1.30.10+vmware.1-fips-vsc9.0.1.0"],"v1.29.7+vmware.1-fips-vsc0.1.10":["v1.29.14+vmware.1-fips-vsc9.0.0.0100","v1.29.14+vmware.1-fips-vsc9.0.1.0","v1.29.7+vmware.1-fips-vsc0.1.11","v1.29.7+vmware.1-fips-vsc0.1.12","v1.29.9+vmware.3-fips-vsc9.0.0.0","v1.30.10+vmware.1-fips-vsc0.1.12","v1.30.10+vmware.1-fips-vsc9.0.0.0100","v1.30.10+vmware.1-fips-vsc9.0.1.0","v1.30.5+vmware.4-fips-vsc9.0.0.0"],"v1.29.7+vmware.1-fips-vsc0.1.11":["v1.29.14+vmware.1-fips-vsc9.0.0.0100","v1.29.14+vmware.1-fips-vsc9.0.1.0","v1.29.7+vmware.1-fips-vsc0.1.12","v1.29.9+vmware.3-fips-vsc9.0.0.0","v1.30.10+vmware.1-fips-vsc0.1.12","v1.30.10+vmware.1-fips-vsc9.0.0.0100","v1.30.10+vmware.1-fips-vsc9.0.1.0","v1.30.5+vmware.4-fips-vsc9.0.0.0"],"v1.29.7+vmware.1-fips-vsc0.1.12":["v1.29.14+vmware.1-fips-vsc9.0.1.0","v1.30.10+vmware.1-fips-vsc0.1.12","v1.30.10+vmware.1-fips-vsc9.0.1.0"],"v1.29.9+vmware.3-fips-vsc9.0.0.0":["v1.29.14+vmware.1-fips-vsc9.0.0.0100","v1.29.14+vmware.1-fips-vsc9.0.1.0","v1.30.10+vmware.1-fips-vsc9.0.0.0100","v1.30.10+vmware.1-fips-vsc9.0.1.0","v1.30.5+vmware.4-fips-vsc9.0.0.0"],"v1.30.10+vmware.1-fips-vsc0.1.12":["v1.30.10+vmware.1-fips-vsc0.1.13","v1.30.10+vmware.1-fips-vsc0.1.14","v1.30.10+vmware.1-fips-vsc9.0.1.0","v1.30.10+vmware.1-fips-vsc9.0.2.0","v1.30.10+vmware.1-fips-vsc9.0.2.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0","v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.1-fips-vsc0.1.13","v1.31.11+vmware.1-fips-vsc0.1.14","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.1.0","v1.31.6+vmware.3-fips-vsc9.0.2.0","v1.31.6+vmware.3-fips-vsc9.0.2.0100"],"v1.30.10+vmware.1-fips-vsc0.1.13":["v1.30.10+vmware.1-fips-vsc0.1.14","v1.30.10+vmware.1-fips-vsc9.0.2.0","v1.30.10+vmware.1-fips-vsc9.0.2.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0","v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.1-fips-vsc0.1.13","v1.31.11+vmware.1-fips-vsc0.1.14","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.2.0","v1.31.6+vmware.3-fips-vsc9.0.2.0100"],"v1.30.10+vmware.1-fips-vsc0.1.14":["v1.30.14+vmware.8-fips-vsc9.1.0.0","v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.1-fips-vsc0.1.14","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300"],"v1.30.10+vmware.1-fips-vsc9.0.0.0100":["v1.30.10+vmware.1-fips-vsc9.0.1.0","v1.30.10+vmware.1-fips-vsc9.0.2.0","v1.30.10+vmware.1-fips-vsc9.0.2.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0","v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.1.0","v1.31.6+vmware.3-fips-vsc9.0.2.0","v1.31.6+vmware.3-fips-vsc9.0.2.0100"],"v1.30.10+vmware.1-fips-vsc9.0.1.0":["v1.30.10+vmware.1-fips-vsc9.0.2.0","v1.30.10+vmware.1-fips-vsc9.0.2.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0","v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.1.0","v1.31.6+vmware.3-fips-vsc9.0.2.0","v1.31.6+vmware.3-fips-vsc9.0.2.0100"],"v1.30.10+vmware.1-fips-vsc9.0.2.0":["v1.30.10+vmware.1-fips-vsc9.0.2.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0","v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.2.0","v1.31.6+vmware.3-fips-vsc9.0.2.0100"],"v1.30.10+vmware.1-fips-vsc9.0.2.0100":["v1.30.14+vmware.8-fips-vsc9.1.0.0","v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.2.0100"],"v1.30.14+vmware.8-fips-vsc9.1.0.0":["v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300"],"v1.30.14+vmware.8-fips-vsc9.1.0.0100":["v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300"],"v1.30.14+vmware.8-fips-vsc9.1.0.0200":["v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300"],"v1.30.14+vmware.8-fips-vsc9.1.0.0300":["v1.31.11+vmware.8-fips-vsc9.1.0.0300"],"v1.30.5+vmware.4-fips-vsc9.0.0.0":["v1.30.10+vmware.1-fips-vsc9.0.0.0100","v1.30.10+vmware.1-fips-vsc9.0.1.0","v1.30.10+vmware.1-fips-vsc9.0.2.0","v1.30.10+vmware.1-fips-vsc9.0.2.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0","v1.30.14+vmware.8-fips-vsc9.1.0.0100","v1.30.14+vmware.8-fips-vsc9.1.0.0200","v1.30.14+vmware.8-fips-vsc9.1.0.0300","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.1.0","v1.31.6+vmware.3-fips-vsc9.0.2.0","v1.31.6+vmware.3-fips-vsc9.0.2.0100"],"v1.31.11+vmware.1-fips-vsc0.1.13":["v1.31.11+vmware.1-fips-vsc0.1.14","v1.31.11+vmware.1-fips-vsc0.1.15","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.7+vmware.5-fips-vsc0.1.13","v1.32.9+vmware.2-fips-vsc0.1.14","v1.32.9+vmware.2-fips-vsc0.1.15","v1.32.9+vmware.2-fips-vsc9.0.2.0","v1.32.9+vmware.2-fips-vsc9.0.2.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.31.11+vmware.1-fips-vsc0.1.14":["v1.31.11+vmware.1-fips-vsc0.1.15","v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc0.1.14","v1.32.9+vmware.2-fips-vsc0.1.15","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.31.11+vmware.1-fips-vsc0.1.15":["v1.32.9+vmware.2-fips-vsc0.1.15"],"v1.31.11+vmware.8-fips-vsc9.1.0.0":["v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.31.11+vmware.8-fips-vsc9.1.0.0100":["v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.31.11+vmware.8-fips-vsc9.1.0.0200":["v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.31.11+vmware.8-fips-vsc9.1.0.0300":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.31.6+vmware.3-fips-vsc9.0.1.0":["v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.2.0","v1.31.6+vmware.3-fips-vsc9.0.2.0100","v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.0.2.0","v1.32.9+vmware.2-fips-vsc9.0.2.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.31.6+vmware.3-fips-vsc9.0.2.0":["v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.31.6+vmware.3-fips-vsc9.0.2.0100","v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.0.2.0","v1.32.9+vmware.2-fips-vsc9.0.2.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.31.6+vmware.3-fips-vsc9.0.2.0100":["v1.31.11+vmware.8-fips-vsc9.1.0.0","v1.31.11+vmware.8-fips-vsc9.1.0.0100","v1.31.11+vmware.8-fips-vsc9.1.0.0200","v1.31.11+vmware.8-fips-vsc9.1.0.0300","v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.0.2.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300"],"v1.32.13+vmware.30-fips-vsc9.1.1.0":["v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100"],"v1.32.13+vmware.30-fips-vsc9.1.1.0100":["v1.33.13+vmware.1-fips-vsc9.1.1.0100"],"v1.32.7+vmware.5-fips-vsc0.1.13":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc0.1.14","v1.32.9+vmware.2-fips-vsc0.1.15","v1.32.9+vmware.2-fips-vsc9.0.2.0","v1.32.9+vmware.2-fips-vsc9.0.2.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100","v1.33.9+vmware.3-fips-vsc0.1.15"],"v1.32.9+vmware.2-fips-vsc0.1.14":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc0.1.15","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100","v1.33.9+vmware.3-fips-vsc0.1.15"],"v1.32.9+vmware.2-fips-vsc0.1.15":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100","v1.33.9+vmware.3-fips-vsc0.1.15"],"v1.32.9+vmware.2-fips-vsc9.0.2.0":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.0.2.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.0.2.0100":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.1.0.0":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.1.0.0100":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0200","v1.32.9+vmware.2-fips-vsc9.1.0.0300","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.1.0.0200":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.32.9+vmware.2-fips-vsc9.1.0.0300","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.1.0.0300":["v1.32.13+vmware.30-fips-vsc9.1.1.0","v1.32.13+vmware.30-fips-vsc9.1.1.0100","v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100"],"v1.33.13+vmware.1-fips-vsc9.1.1.0":["v1.33.13+vmware.1-fips-vsc9.1.1.0100","v1.34.9+vmware.1-vsc9.1.1.0","v1.34.9+vmware.1-vsc9.1.1.0100"],"v1.33.13+vmware.1-fips-vsc9.1.1.0100":["v1.34.9+vmware.1-vsc9.1.1.0100"],"v1.33.9+vmware.3-fips-vsc0.1.15":["v1.33.13+vmware.1-fips-vsc9.1.1.0","v1.33.13+vmware.1-fips-vsc9.1.1.0100","v1.34.9+vmware.1-vsc9.1.1.0","v1.34.9+vmware.1-vsc9.1.1.0100"],"v1.34.9+vmware.1-vsc9.1.1.0":["v1.34.9+vmware.1-vsc9.1.1.0100"],"v1.34.9+vmware.1-vsc9.1.1.0100":[]},"vks_upgrade_graph":{"3.0.0":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"],"3.1.0":["3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33"],"3.1.1":["3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33"],"3.2.0":["3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34"],"3.3.0":["3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"],"3.3.1":["3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"],"3.3.2":["3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"],"3.3.3":["3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"],"3.4.0+v1.33":["3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.4.1+v1.33":["3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.4.2+v1.33":["3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.5.0+v1.34":["3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.5.1+v1.34":["3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.6.0+v1.35":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.6.1+v1.35":["3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.6.2+v1.35":["3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.6.3+v1.35":["3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"],"3.7.0+v1.36":["3.7.1+v1.36","3.7.2+v1.36"],"3.7.1+v1.36":["3.7.2+v1.36"],"3.7.2+v1.36":[]},"vks_release_dates":{"3.0.0":"2025-02-03","3.1.0":"2024-07-08","3.1.1":"2025-03-07","3.2.0":"2024-10-08","3.3.0":"2025-02-17","3.3.1":"2025-04-15","3.3.2":"2025-04-15","3.3.3":"2025-06-06","3.4.0+v1.33":"2025-06-17","3.4.1+v1.33":"2025-09-29","3.4.2+v1.33":"2026-01-27","3.5.0+v1.34":"2025-10-27","3.5.1+v1.34":"2026-03-05","3.6.0+v1.35":"2025-12-11","3.6.1+v1.35":"2026-04-13","3.6.2+v1.35":"2026-04-13","3.6.3+v1.35":"2026-06-11","3.7.0+v1.36":"2026-06-18","3.7.1+v1.36":"2026-08-13","3.7.2+v1.36":"2026-10-08"},"sv_vks_compatibility":[{"sv_k8s":"v1.26.8+vmware.1-fips.1-vsc0.1.9","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.27.5+vmware.1-fips.1-vsc0.1.10","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.27.5+vmware.1-fips.1-vsc0.1.11","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.27.5+vmware.1-fips.1-vsc0.1.9","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.28.14+vmware.3-fips-vsc9.0.0.0","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.28.14+vmware.3-fips-vsc9.0.0.0100","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.28.3+vmware.2-fips.1-vsc0.1.10","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.28.3+vmware.2-fips.1-vsc0.1.11","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.28.3+vmware.2-fips.1-vsc0.1.12","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.28.3+vmware.2-fips.1-vsc0.1.9","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3"]},{"sv_k8s":"v1.29.14+vmware.1-fips-vsc9.0.0.0100","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33"]},{"sv_k8s":"v1.29.14+vmware.1-fips-vsc9.0.1.0","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33"]},{"sv_k8s":"v1.29.7+vmware.1-fips-vsc0.1.10","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33"]},{"sv_k8s":"v1.29.7+vmware.1-fips-vsc0.1.11","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33"]},{"sv_k8s":"v1.29.7+vmware.1-fips-vsc0.1.12","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33"]},{"sv_k8s":"v1.29.9+vmware.3-fips-vsc9.0.0.0","allowed_vks":["3.0.0","3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33"]},{"sv_k8s":"v1.30.10+vmware.1-fips-vsc0.1.12","allowed_vks":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.10+vmware.1-fips-vsc0.1.13","allowed_vks":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.10+vmware.1-fips-vsc0.1.14","allowed_vks":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.10+vmware.1-fips-vsc9.0.0.0100","allowed_vks":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.10+vmware.1-fips-vsc9.0.1.0","allowed_vks":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.10+vmware.1-fips-vsc9.0.2.0","allowed_vks":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.10+vmware.1-fips-vsc9.0.2.0100","allowed_vks":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.14+vmware.8-fips-vsc9.1.0.0","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.14+vmware.8-fips-vsc9.1.0.0100","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.14+vmware.8-fips-vsc9.1.0.0200","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.14+vmware.8-fips-vsc9.1.0.0300","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.30.5+vmware.4-fips-vsc9.0.0.0","allowed_vks":["3.1.0","3.1.1","3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.11+vmware.1-fips-vsc0.1.13","allowed_vks":["3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.11+vmware.1-fips-vsc0.1.14","allowed_vks":["3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.11+vmware.1-fips-vsc0.1.15","allowed_vks":["3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.11+vmware.8-fips-vsc9.1.0.0","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.11+vmware.8-fips-vsc9.1.0.0100","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.11+vmware.8-fips-vsc9.1.0.0200","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.11+vmware.8-fips-vsc9.1.0.0300","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.6+vmware.3-fips-vsc9.0.1.0","allowed_vks":["3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.6+vmware.3-fips-vsc9.0.2.0","allowed_vks":["3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.31.6+vmware.3-fips-vsc9.0.2.0100","allowed_vks":["3.2.0","3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35"]},{"sv_k8s":"v1.32.13+vmware.30-fips-vsc9.1.1.0","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.13+vmware.30-fips-vsc9.1.1.0100","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.7+vmware.5-fips-vsc0.1.13","allowed_vks":["3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.9+vmware.2-fips-vsc0.1.14","allowed_vks":["3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.9+vmware.2-fips-vsc0.1.15","allowed_vks":["3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.9+vmware.2-fips-vsc9.0.2.0","allowed_vks":["3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.9+vmware.2-fips-vsc9.0.2.0100","allowed_vks":["3.3.0","3.3.1","3.3.2","3.3.3","3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.9+vmware.2-fips-vsc9.1.0.0","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.9+vmware.2-fips-vsc9.1.0.0100","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.9+vmware.2-fips-vsc9.1.0.0200","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.32.9+vmware.2-fips-vsc9.1.0.0300","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.33.13+vmware.1-fips-vsc9.1.1.0","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.33.13+vmware.1-fips-vsc9.1.1.0100","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.33.9+vmware.3-fips-vsc0.1.15","allowed_vks":["3.4.0+v1.33","3.4.1+v1.33","3.4.2+v1.33","3.5.0+v1.34","3.5.1+v1.34","3.6.0+v1.35","3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.34.9+vmware.1-vsc9.1.1.0","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]},{"sv_k8s":"v1.34.9+vmware.1-vsc9.1.1.0100","allowed_vks":["3.6.1+v1.35","3.6.2+v1.35","3.6.3+v1.35","3.7.0+v1.36","3.7.1+v1.36","3.7.2+v1.36"]}],"sv_vc_compatibility":{"v1.26.8+vmware.1-fips.1-vsc0.1.9":["8.0U3","8.0U3a"],"v1.27.5+vmware.1-fips.1-vsc0.1.10":["8.0U3b","8.0U3c","8.0U3d","8.0U3e"],"v1.27.5+vmware.1-fips.1-vsc0.1.11":["8.0U3e"],"v1.27.5+vmware.1-fips.1-vsc0.1.9":["8.0U3","8.0U3a","8.0U3b","8.0U3c","8.0U3d","8.0U3e"],"v1.28.14+vmware.3-fips-vsc9.0.0.0":["9.0.0.0"],"v1.28.14+vmware.3-fips-vsc9.0.0.0100":["9.0.0.0"],"v1.28.3+vmware.2-fips.1-vsc0.1.10":["8.0U3b","8.0U3c","8.0U3d","8.0U3e","8.0U3g","9.0.0.0"],"v1.28.3+vmware.2-fips.1-vsc0.1.11":["8.0U3e","8.0U3g","9.0.0.0"],"v1.28.3+vmware.2-fips.1-vsc0.1.12":["8.0U3g"],"v1.28.3+vmware.2-fips.1-vsc0.1.9":["8.0U3","8.0U3a","8.0U3b","8.0U3c","8.0U3d","8.0U3e","8.0U3g","9.0.0.0"],"v1.29.14+vmware.1-fips-vsc9.0.0.0100":["9.0.0.0","9.0.1.0"],"v1.29.14+vmware.1-fips-vsc9.0.1.0":["9.0.1.0"],"v1.29.7+vmware.1-fips-vsc0.1.10":["8.0U3b","8.0U3c","8.0U3d","8.0U3e","8.0U3g","9.0.0.0","9.0.1.0"],"v1.29.7+vmware.1-fips-vsc0.1.11":["8.0U3e","8.0U3g","9.0.0.0","9.0.1.0"],"v1.29.7+vmware.1-fips-vsc0.1.12":["8.0U3g","9.0.1.0"],"v1.29.9+vmware.3-fips-vsc9.0.0.0":["9.0.0.0","9.0.1.0"],"v1.30.10+vmware.1-fips-vsc0.1.12":["8.0U3g","8.0U3h","8.0U3i","9.0.1.0","9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.10+vmware.1-fips-vsc0.1.13":["8.0U3h","8.0U3i","9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.10+vmware.1-fips-vsc0.1.14":["8.0U3i","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.10+vmware.1-fips-vsc9.0.0.0100":["9.0.0.0","9.0.1.0","9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.10+vmware.1-fips-vsc9.0.1.0":["9.0.1.0","9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.10+vmware.1-fips-vsc9.0.2.0":["9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.10+vmware.1-fips-vsc9.0.2.0100":["9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.14+vmware.8-fips-vsc9.1.0.0":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.14+vmware.8-fips-vsc9.1.0.0100":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.14+vmware.8-fips-vsc9.1.0.0200":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.14+vmware.8-fips-vsc9.1.0.0300":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.30.5+vmware.4-fips-vsc9.0.0.0":["9.0.0.0","9.0.1.0","9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.11+vmware.1-fips-vsc0.1.13":["8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.11+vmware.1-fips-vsc0.1.14":["8.0U3i","8.0U3j","8.0U3k","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.11+vmware.1-fips-vsc0.1.15":["8.0U3j","8.0U3k"],"v1.31.11+vmware.8-fips-vsc9.1.0.0":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.11+vmware.8-fips-vsc9.1.0.0100":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.11+vmware.8-fips-vsc9.1.0.0200":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.11+vmware.8-fips-vsc9.1.0.0300":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.6+vmware.3-fips-vsc9.0.1.0":["9.0.1.0","9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.6+vmware.3-fips-vsc9.0.2.0":["9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.31.6+vmware.3-fips-vsc9.0.2.0100":["9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300"],"v1.32.13+vmware.30-fips-vsc9.1.1.0":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.13+vmware.30-fips-vsc9.1.1.0100":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.7+vmware.5-fips-vsc0.1.13":["8.0U3h","8.0U3i","8.0U3j","8.0U3k","9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc0.1.14":["8.0U3i","8.0U3j","8.0U3k","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc0.1.15":["8.0U3j","8.0U3k","9.1.1.0","9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.0.2.0":["9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.0.2.0100":["9.0.2.0","9.0.2.0100","9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.1.0.0":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.1.0.0100":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.1.0.0200":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.32.9+vmware.2-fips-vsc9.1.0.0300":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.33.13+vmware.1-fips-vsc9.1.1.0":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.33.13+vmware.1-fips-vsc9.1.1.0100":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.33.9+vmware.3-fips-vsc0.1.15":["8.0U3j","8.0U3k","9.1.1.0","9.1.1.0100"],"v1.34.9+vmware.1-vsc9.1.1.0":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"],"v1.34.9+vmware.1-vsc9.1.1.0100":["9.1.0.0","9.1.0.0100","9.1.0.0200","9.1.0.0300","9.1.1.0","9.1.1.0100"]},"sv_release_dates":{"v1.26.8+vmware.1-fips.1-vsc0.1.9":"2024-06-25","v1.27.5+vmware.1-fips.1-vsc0.1.10":"2024-09-17","v1.27.5+vmware.1-fips.1-vsc0.1.11":"2025-04-10","v1.27.5+vmware.1-fips.1-vsc0.1.9":"2024-06-25","v1.28.14+vmware.3-fips-vsc9.0.0.0":"2025-06-10","v1.28.14+vmware.3-fips-vsc9.0.0.0100":"2025-07-10","v1.28.3+vmware.2-fips.1-vsc0.1.10":"2024-09-17","v1.28.3+vmware.2-fips.1-vsc0.1.11":"2025-04-10","v1.28.3+vmware.2-fips.1-vsc0.1.12":"2024-09-26","v1.28.3+vmware.2-fips.1-vsc0.1.9":"2024-06-25","v1.29.14+vmware.1-fips-vsc9.0.0.0100":"2025-07-10","v1.29.14+vmware.1-fips-vsc9.0.1.0":"2025-09-29","v1.29.7+vmware.1-fips-vsc0.1.10":"2024-09-17","v1.29.7+vmware.1-fips-vsc0.1.11":"2025-04-10","v1.29.7+vmware.1-fips-vsc0.1.12":"2024-06-20","v1.29.9+vmware.3-fips-vsc9.0.0.0":"2025-06-10","v1.30.10+vmware.1-fips-vsc0.1.12":"2024-11-27","v1.30.10+vmware.1-fips-vsc0.1.13":"2025-12-15","v1.30.10+vmware.1-fips-vsc0.1.14":"2026-02-24","v1.30.10+vmware.1-fips-vsc9.0.0.0100":"2025-07-10","v1.30.10+vmware.1-fips-vsc9.0.1.0":"2025-09-29","v1.30.10+vmware.1-fips-vsc9.0.2.0":"2026-01-19","v1.30.10+vmware.1-fips-vsc9.0.2.0100":"2026-04-07","v1.30.14+vmware.8-fips-vsc9.1.0.0":"2026-05-12","v1.30.14+vmware.8-fips-vsc9.1.0.0100":"2026-06-05","v1.30.14+vmware.8-fips-vsc9.1.0.0200":"2026-07-13","v1.30.14+vmware.8-fips-vsc9.1.0.0300":"2026-07-29","v1.30.5+vmware.4-fips-vsc9.0.0.0":"2025-06-10","v1.31.11+vmware.1-fips-vsc0.1.13":"2025-12-15","v1.31.11+vmware.1-fips-vsc0.1.14":"2026-02-24","v1.31.11+vmware.1-fips-vsc0.1.15":"2026-05-27","v1.31.11+vmware.8-fips-vsc9.1.0.0":"2026-05-12","v1.31.11+vmware.8-fips-vsc9.1.0.0100":"2026-06-05","v1.31.11+vmware.8-fips-vsc9.1.0.0200":"2026-07-13","v1.31.11+vmware.8-fips-vsc9.1.0.0300":"2026-07-29","v1.31.6+vmware.3-fips-vsc9.0.1.0":"2025-09-29","v1.31.6+vmware.3-fips-vsc9.0.2.0":"2026-01-19","v1.31.6+vmware.3-fips-vsc9.0.2.0100":"2026-04-07","v1.32.13+vmware.30-fips-vsc9.1.1.0":"2026-09-03","v1.32.13+vmware.30-fips-vsc9.1.1.0100":"2026-10-12","v1.32.7+vmware.5-fips-vsc0.1.13":"2025-12-15","v1.32.9+vmware.2-fips-vsc0.1.14":"2026-02-24","v1.32.9+vmware.2-fips-vsc0.1.15":"2026-05-27","v1.32.9+vmware.2-fips-vsc9.0.2.0":"2026-01-19","v1.32.9+vmware.2-fips-vsc9.0.2.0100":"2026-04-07","v1.32.9+vmware.2-fips-vsc9.1.0.0":"2026-05-12","v1.32.9+vmware.2-fips-vsc9.1.0.0100":"2026-06-05","v1.32.9+vmware.2-fips-vsc9.1.0.0200":"2026-07-13","v1.32.9+vmware.2-fips-vsc9.1.0.0300":"2026-07-29","v1.33.13+vmware.1-fips-vsc9.1.1.0":"2026-09-03","v1.33.13+vmware.1-fips-vsc9.1.1.0100":"2026-10-12","v1.33.9+vmware.3-fips-vsc0.1.15":"2026-05-27","v1.34.9+vmware.1-vsc9.1.1.0":"2026-09-03","v1.34.9+vmware.1-vsc9.1.1.0100":"2026-10-12"},"sv_pre_floor_only":{"v1.15.4-vsc0.0.1":["7.0.0","7.0.0a"],"v1.16.7-vsc0.0.1":["7.0.0","7.0.0a","7.0.0b","7.0.0c","7.0.0d","7.0.1","7.0.1a"],"v1.16.7-vsc0.0.2":["7.0.0b","7.0.0c","7.0.0d","7.0.1","7.0.1a"],"v1.16.7-vsc0.0.4":["7.0.0c","7.0.0d","7.0.1","7.0.1a"],"v1.16.7-vsc0.0.5":["7.0.1","7.0.1a"],"v1.17.13-vsc0.0.8":["7.0.2","7.0.2a","7.0.2b"],"v1.17.13-vsc0.0.9":["7.0.2a","7.0.2b"],"v1.17.4-vsc0.0.1":["7.0.0a","7.0.0b","7.0.0c","7.0.0d","7.0.1","7.0.1a","7.0.1c","7.0.1d","7.0.2","7.0.2a","7.0.2b"],"v1.17.4-vsc0.0.2":["7.0.0b","7.0.0c","7.0.0d","7.0.1","7.0.1a","7.0.1c","7.0.1d","7.0.2","7.0.2a","7.0.2b"],"v1.17.4-vsc0.0.4":["7.0.0c","7.0.0d","7.0.1","7.0.1a","7.0.1c","7.0.1d","7.0.2","7.0.2a","7.0.2b"],"v1.17.4-vsc0.0.5":["7.0.1","7.0.1a","7.0.1c","7.0.1d","7.0.2","7.0.2a","7.0.2b"],"v1.17.4-vsc0.0.6":["7.0.1c","7.0.1d","7.0.2","7.0.2a","7.0.2b"],"v1.18.10-vsc0.0.10":["7.0.2c","7.0.2d"],"v1.18.10-vsc0.0.8":["7.0.2","7.0.2a","7.0.2b","7.0.2c","7.0.2d"],"v1.18.10-vsc0.0.9":["7.0.2a","7.0.2b","7.0.2c","7.0.2d"],"v1.18.2-vsc0.0.4":["7.0.0c","7.0.0d","7.0.1","7.0.1a","7.0.1c","7.0.1d","7.0.2","7.0.2a","7.0.2b","7.0.2c","7.0.2d"],"v1.18.2-vsc0.0.5":["7.0.1","7.0.1a","7.0.1c","7.0.1d","7.0.2","7.0.2a","7.0.2b","7.0.2c","7.0.2d"],"v1.18.2-vsc0.0.6":["7.0.1c","7.0.1d","7.0.2","7.0.2a","7.0.2b","7.0.2c","7.0.2d"],"v1.19.1+vmware.2-vsc0.0.10":["7.0.2c","7.0.2d","7.0.3","7.0.3a","7.0.3c","7.0.3d"],"v1.19.1+vmware.2-vsc0.0.11":["7.0.3","7.0.3a","7.0.3c","7.0.3d"],"v1.19.1+vmware.2-vsc0.0.8":["7.0.2","7.0.2a","7.0.2b","7.0.2c","7.0.2d","7.0.3","7.0.3a","7.0.3c","7.0.3d"],"v1.19.1+vmware.2-vsc0.0.9":["7.0.2a","7.0.2b","7.0.2c","7.0.2d","7.0.3","7.0.3a","7.0.3c","7.0.3d"],"v1.19.12+vmware.wcp.1-vsc0.0.12":["7.0.3a","7.0.3c","7.0.3d"],"v1.19.12+vmware.wcp.1-vsc0.0.13":["7.0.3d"],"v1.20.2+vmware.1-vsc0.0.10":["7.0.2c","7.0.2d","7.0.3","7.0.3a","7.0.3c","7.0.3d","7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j"],"v1.20.2+vmware.1-vsc0.0.11":["7.0.3","7.0.3a","7.0.3c","7.0.3d","7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j"],"v1.20.8+vmware.wcp.1-vsc0.0.12":["7.0.3a","7.0.3c","7.0.3d","7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j"],"v1.20.8+vmware.wcp.1-vsc0.0.13":["7.0.3d","7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j"],"v1.20.8+vmware.wcp.1-vsc0.0.15":["7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j"],"v1.20.8+vmware.wcp.1-vsc0.0.17":["7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j"],"v1.20.8+vmware.wcp.1-vsc0.0.19":["7.0.3h","7.0.3i","7.0.3j"],"v1.20.8+vmware.wcp.1-vsc0.0.20":["7.0.3i","7.0.3j"],"v1.21.0+vmware.1-vsc0.0.11":["7.0.3","7.0.3a","7.0.3c","7.0.3d","7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","8.0.0"],"v1.21.0+vmware.wcp.2-vsc0.0.12":["7.0.3a","7.0.3c","7.0.3d","7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","8.0.0"],"v1.21.0+vmware.wcp.2-vsc0.0.13":["7.0.3d","7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","8.0.0"],"v1.21.0+vmware.wcp.2-vsc0.0.15":["7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","8.0.0"],"v1.21.0+vmware.wcp.2-vsc0.0.17":["7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","8.0.0"],"v1.21.0+vmware.wcp.2-vsc0.0.19":["7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","8.0.0"],"v1.21.0+vmware.wcp.2-vsc0.0.20":["7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m"],"v1.21.0+vmware.wcp.2-vsc0.0.21":["7.0.3k","7.0.3l","7.0.3m"],"v1.21.0+vmware.wcp.2-vsc0.0.22":["7.0.3l","7.0.3m"],"v1.21.0+vmware.wcp.2-vsc0.1.0":["8.0.0"],"v1.22.6+vmware.1-vsc0.0.15":["7.0.3e","7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","7.0.3n","8.0.0","8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.0.17":["7.0.3f","7.0.3g","7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","7.0.3n","8.0.0","8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.0.19":["7.0.3h","7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","7.0.3n","8.0.0","8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.0.20":["7.0.3i","7.0.3j","7.0.3k","7.0.3l","7.0.3m","7.0.3n","8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.0.21":["7.0.3k","7.0.3l","7.0.3m","7.0.3n","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.0.22":["7.0.3l","7.0.3m","7.0.3n","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.0.23":["7.0.3n"],"v1.22.6+vmware.1-vsc0.1.0":["8.0.0","8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.1.1":["8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.1.2":["8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.1.3":["8.0.0c","8.0.1","8.0.1a","8.0.1b"],"v1.22.6+vmware.1-vsc0.1.4":["8.0.1","8.0.1a","8.0.1b"],"v1.23.12+vmware.wcp.1-vsc0.0.21":["7.0.3k","7.0.3l","7.0.3m","7.0.3n","7.0.3o","7.0.3p","8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e"],"v1.23.12+vmware.wcp.1-vsc0.0.22":["7.0.3l","7.0.3m","7.0.3n","7.0.3o","7.0.3p","8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e"],"v1.23.12+vmware.wcp.1-vsc0.0.23":["7.0.3n","7.0.3o","7.0.3p","8.0.1c","8.0.1d","8.0.1e"],"v1.23.12+vmware.wcp.1-vsc0.0.24":["7.0.3o","7.0.3p","8.0.1d","8.0.1e"],"v1.23.12+vmware.wcp.1-vsc0.0.25":["7.0.3p","8.0.1e"],"v1.23.17+vmware.wcp.1-vsc0.1.5":["8.0.1c","8.0.1d","8.0.1e"],"v1.23.5+vmware.wcp.2-vsc0.1.0":["8.0.0","8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e"],"v1.23.5+vmware.wcp.2-vsc0.1.1":["8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e"],"v1.23.5+vmware.wcp.2-vsc0.1.2":["8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e"],"v1.23.5+vmware.wcp.2-vsc0.1.3":["8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e"],"v1.23.5+vmware.wcp.2-vsc0.1.4":["8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e"],"v1.24.4+vmware.1-vsc0.1.1":["8.0.0a","8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e","8.0.2","8.0.2a"],"v1.24.9+vmware.1-vsc0.0.23":["7.0.3n","7.0.3o","7.0.3p","7.0.3q","7.0.3r","7.0.3s","7.0.3t","8.0.1c","8.0.1d","8.0.1e","8.0.2","8.0.2a"],"v1.24.9+vmware.1-vsc0.0.24":["7.0.3o","7.0.3p","7.0.3q","7.0.3r","7.0.3s","7.0.3t","8.0.1d","8.0.1e","8.0.2a"],"v1.24.9+vmware.1-vsc0.0.25":["7.0.3p","7.0.3q","7.0.3r","7.0.3s","7.0.3t","8.0.1e"],"v1.24.9+vmware.1-vsc0.0.26":["7.0.3q","7.0.3r","7.0.3s","7.0.3t","8.0.1e"],"v1.24.9+vmware.1-vsc0.1.2":["8.0.0b","8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e","8.0.2","8.0.2a"],"v1.24.9+vmware.1-vsc0.1.3":["8.0.0c","8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e","8.0.2","8.0.2a"],"v1.24.9+vmware.1-vsc0.1.4":["8.0.1","8.0.1a","8.0.1b","8.0.1c","8.0.1d","8.0.1e","8.0.2","8.0.2a"],"v1.24.9+vmware.1-vsc0.1.5":["8.0.1c","8.0.1d","8.0.1e","8.0.2","8.0.2a"],"v1.24.9+vmware.1-vsc0.1.6":["8.0.1d","8.0.1e","8.0.2","8.0.2a"],"v1.25.13+vmware.1-vsc0.1.7":["8.0.1e","8.0.2b","8.0.2c","8.0.2d","8.0.2e","8.0.2f"],"v1.25.13+vmware.1-vsc0.1.8":["8.0.1e","8.0.2c","8.0.2d","8.0.2e","8.0.2f"],"v1.25.6+vmware.1-vsc0.0.24":["7.0.3o","7.0.3p","7.0.3q","7.0.3r","7.0.3s","7.0.3t","7.0.3u","7.0.3v","7.0.3w","8.0.1d","8.0.1e","8.0.2a","8.0.2b","8.0.2c","8.0.2d","8.0.2e","8.0.2f"],"v1.25.6+vmware.1-vsc0.0.25":["7.0.3p","7.0.3q","7.0.3r","7.0.3s","7.0.3t","7.0.3u","7.0.3v","7.0.3w","8.0.1e","8.0.2b","8.0.2c","8.0.2d","8.0.2e","8.0.2f"],"v1.25.6+vmware.1-vsc0.0.26":["7.0.3q","7.0.3r","7.0.3s","7.0.3t","7.0.3u","7.0.3v","7.0.3w","8.0.1e","8.0.2d","8.0.2e","8.0.2f"],"v1.25.6+vmware.1-vsc0.0.27":["7.0.3u","7.0.3v","7.0.3w","8.0.2f"],"v1.25.6+vmware.1-vsc0.0.28":["7.0.3v","7.0.3w","8.0.2f"],"v1.25.6+vmware.1-vsc0.1.5":["8.0.1c","8.0.1d","8.0.1e","8.0.2","8.0.2a","8.0.2b","8.0.2c","8.0.2d","8.0.2e","8.0.2f"],"v1.25.6+vmware.1-vsc0.1.6":["8.0.1d","8.0.1e","8.0.2","8.0.2a","8.0.2b","8.0.2c","8.0.2d","8.0.2e","8.0.2f"],"v1.26.4+vmware.wcp.1-vsc0.1.6":["8.0U3","8.0U3a"],"v1.26.8+vmware.1-fips.1-vsc0.0.26":["8.0U3","8.0U3a"],"v1.26.8+vmware.1-fips.1-vsc0.0.27":["7.0.3u","7.0.3v","7.0.3w","8.0.2f"],"v1.26.8+vmware.1-fips.1-vsc0.0.28":["7.0.3v","7.0.3w","8.0.2f"],"v1.26.8+vmware.1-fips.1-vsc0.1.7":["8.0U3","8.0U3a"],"v1.26.8+vmware.1-fips.1-vsc0.1.8":["8.0U3","8.0U3a"],"v1.27.5+vmware.1-fips.1-vsc0.0.27":["8.0U3e"],"v1.27.5+vmware.1-fips.1-vsc0.0.28":["7.0.3v","7.0.3w","8.0.2f"],"v1.27.5+vmware.1-fips.1-vsc0.1.7":["8.0U3","8.0U3a","8.0U3b","8.0U3c","8.0U3d","8.0U3e"],"v1.27.5+vmware.1-fips.1-vsc0.1.8":["8.0U3","8.0U3a","8.0U3b","8.0U3c","8.0U3d","8.0U3e"]},"vkr_upgrade_graph":{"1.23.15":["1.24.9"],"1.23.8":["1.23.15","1.24.11","1.24.9"],"1.24.11":["1.25.13","1.25.7"],"1.24.9":["1.25.7"],"1.25.13":["1.26.10","1.26.12","1.26.13","1.26.5"],"1.25.7":["1.26.13","1.26.5"],"1.26.10":["1.26.12","1.26.13","1.27.10","1.27.11","1.27.16","1.27.6"],"1.26.12":["1.26.13","1.27.10","1.27.11","1.27.16","1.27.6"],"1.26.13":["1.27.11","1.27.16"],"1.26.5":["1.26.13","1.27.11","1.27.16"],"1.27.10":["1.27.11","1.27.16","1.28.15","1.28.7","1.28.8"],"1.27.11":["1.27.16","1.28.15","1.28.8"],"1.27.16":["1.28.15","1.28.8"],"1.27.6":["1.27.10","1.27.11","1.27.16","1.28.15","1.28.7","1.28.8"],"1.28.15":["1.29.15"],"1.28.7":["1.28.15","1.28.8","1.29.15","1.29.4"],"1.28.8":["1.28.15","1.29.15","1.29.4"],"1.29.15":["1.30.11","1.30.14"],"1.29.4":["1.29.15","1.30.1","1.30.11","1.30.14","1.30.8"],"1.30.1":["1.30.11","1.30.14","1.30.8","1.31.11","1.31.14","1.31.4","1.31.7"],"1.30.11":["1.30.14","1.31.11","1.31.14","1.31.7"],"1.30.14":["1.31.11","1.31.14"],"1.30.8":["1.30.11","1.30.14","1.31.11","1.31.14","1.31.4","1.31.7"],"1.31.1":["1.31.11","1.31.14","1.31.4","1.31.7","1.32.0","1.32.10","1.32.3","1.32.7"],"1.31.11":["1.31.14","1.32.10","1.32.7"],"1.31.14":["1.32.10"],"1.31.4":["1.31.11","1.31.14","1.31.7","1.32.0","1.32.10","1.32.3","1.32.7"],"1.31.7":["1.31.11","1.31.14","1.32.10","1.32.3","1.32.7"],"1.32.0":["1.32.10","1.32.3","1.32.7","1.33.1","1.33.13","1.33.3","1.33.6"],"1.32.10":["1.33.13","1.33.6"],"1.32.3":["1.32.10","1.32.7","1.33.1","1.33.13","1.33.3","1.33.6"],"1.32.7":["1.32.10","1.33.13","1.33.3","1.33.6"],"1.33.1":["1.33.13","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8","1.34.9"],"1.33.13":["1.34.9"],"1.33.3":["1.33.13","1.33.6","1.34.1","1.34.2","1.34.8","1.34.9"],"1.33.6":["1.33.13","1.34.2","1.34.8","1.34.9"],"1.34.1":["1.34.2","1.34.8","1.34.9","1.35.2","1.35.5","1.35.6"],"1.34.2":["1.34.8","1.34.9","1.35.2","1.35.5","1.35.6"],"1.34.8":["1.34.9","1.35.5","1.35.6"],"1.34.9":["1.35.6"],"1.35.0":["1.35.2","1.35.5","1.35.6","1.36.1","1.36.2"],"1.35.2":["1.35.5","1.35.6","1.36.1","1.36.2"],"1.35.5":["1.35.6","1.36.1","1.36.2"],"1.35.6":["1.36.2"],"1.36.1":["1.36.2"],"1.36.2":[]},"vkr_release_dates":{"1.23.15":"2023-04-18","1.23.8":"2023-01-06","1.24.11":"2023-07-13","1.24.9":"2023-04-18","1.25.13":"2023-12-07","1.25.7":"2023-07-27","1.26.10":"2023-12-07","1.26.12":"2024-03-15","1.26.13":"2024-03-15","1.26.5":"2023-08-24","1.27.10":"2024-04-05","1.27.11":"2024-04-18","1.27.16":"2025-06-24","1.27.6":"2024-01-31","1.28.15":"2025-06-24","1.28.7":"2024-07-12","1.28.8":"2024-05-08","1.29.15":"2025-06-24","1.29.4":"2024-06-27","1.30.1":"2024-07-08","1.30.11":"2025-06-30","1.30.14":"2025-09-26","1.30.8":"2025-02-20","1.31.1":"2024-10-08","1.31.11":"2025-09-26","1.31.14":"2026-01-30","1.31.4":"2025-02-17","1.31.7":"2025-04-24","1.32.0":"2025-02-17","1.32.10":"2026-01-29","1.32.3":"2025-04-24","1.32.7":"2025-09-26","1.33.1":"2025-06-17","1.33.13":"2026-08-17","1.33.3":"2025-09-26","1.33.6":"2026-01-29","1.34.1":"2025-10-27","1.34.2":"2026-01-28","1.34.8":"2026-05-27","1.34.9":"2026-08-17","1.35.0":"2026-02-11","1.35.2":"2026-04-13","1.35.5":"2026-05-27","1.35.6":"2026-08-17","1.36.1":"2026-06-18","1.36.2":"2026-08-17"},"vkr_status":{"1.31.1":{"state":"superseded","by":"1.31.4"},"1.35.0":{"state":"superseded","by":"1.35.2"}},"lifecycle":{"vkr":{"1.35":{"eos":"2028-02-28","status":"supported","description":"VKr 1.35"},"1.34":{"eos":"2027-10-28","status":"supported","description":"VKr 1.34"},"1.33":{"eos":"2027-06-28","status":"supported","description":"VKr 1.33"},"1.32":{"eos":"2026-02-28","status":"eos","description":"VKr 1.32"},"1.31":{"eos":"2025-11-28","status":"eos","description":"VKr 1.31"},"1.30":{"eos":"2025-09-28","status":"eos","description":"VKr 1.30"},"1.29":{"eos":"2025-07-28","status":"eos","description":"VKr 1.29"}},"vkr_patch":{"1.28.15":{"eos":"2025-05-28","status":"eos","description":"TKr 1.28.15 for vSphere 8.x"},"1.27.16":{"eos":"2025-03-28","status":"eos","description":"TKr 1.27.16 for vSphere 8.x"},"1.28.7":{"eos":"2025-05-28","status":"eos","description":"TKr 1.28.7 for vSphere 7.x"},"1.28.8":{"eos":"2025-05-28","status":"eos","description":"TKr 1.28.8 for vSphere 8.x"},"1.27.11":{"eos":"2025-03-28","status":"eos","description":"TKr 1.27.11 for vSphere 8.x"},"1.27.10":{"eos":"2025-03-28","status":"eos","description":"TKr 1.27.10 for vSphere 7x"},"1.27.6":{"eos":"2025-03-28","status":"eos","description":"TKr 1.27.6 for vSphere 7.x"},"1.26.10":{"eos":"2025-01-28","status":"eos","description":"TKr 1.26.10 for vSphere 7.x"},"1.25.13":{"eos":"2024-09-28","status":"eos","description":"TKr 1.25.13 for vSphere 7.x"},"1.26.5":{"eos":"2025-01-28","status":"eos","description":"TKr 1.26.5 for vSphere 8.x"},"1.25.7":{"eos":"2024-09-28","status":"eos","description":"TKr 1.25.7 for vSphere 8.x"},"1.24.11":{"eos":"2024-06-28","status":"eos","description":"TKr 1.24.11 for vSphere 7.x"},"1.23.8":{"eos":"2024-04-28","status":"eos","description":"TKr 1.23.8 for vSphere 8.x"},"1.24.9":{"eos":"2024-06-28","status":"eos","description":"TKr 1.24.9 for vSphere 8.x"},"1.23.15":{"eos":"2024-04-28","status":"eos","description":"TKr 1.23.15 for vSphere 8.x"},"1.26.13":{"eos":"2025-01-28","status":"eos","description":"TKr 1.26.13 for vSphere 8.x"},"1.26.12":{"eos":"2025-01-28","status":"eos","description":"TKr 1.26.12 for vSphere 7.x"}},"vks":{"3.7.1+v1.36":{"eos":"2027-02-28","status":"supported","description":"vSphere Kubernetes Service"},"3.7.0+v1.36":{"eos":"2027-06-28","status":"supported","description":"vSphere Kubernetes Service"},"3.6.3+v1.35":{"eos":"2027-02-28","status":"supported","description":"vSphere Kubernetes Service"},"3.6.2+v1.35":{"eos":"2027-02-28","status":"supported","description":"vSphere Kubernetes Service"},"3.6.1+v1.35":{"eos":"2027-02-28","status":"supported","description":"vSphere Kubernetes Service"},"3.6.0+v1.35":{"eos":"2027-02-28","status":"supported","description":"vSphere Kubernetes Service"},"3.4.2+v1.33":{"eos":"2026-06-28","status":"eos","description":"vSphere Kubernetes Service"},"3.5.0+v1.34":{"eos":"2026-10-28","status":"supported","description":"vSphere Kubernetes Service"},"3.4.0+v1.33":{"eos":"2026-06-28","status":"eos","description":"vSphere Kubernetes Service"},"3.3.3":{"eos":"2026-02-28","status":"eos","description":"vSphere Kubernetes Service"},"3.3.2":{"eos":"2026-02-28","status":"eos","description":"vSphere Kubernetes Service"},"3.3.1":{"eos":"2026-02-28","status":"eos","description":"vSphere Kubernetes Service"},"3.1.1":{"eos":"2025-09-28","status":"eos","description":"vSphere Kubernetes Service"},"3.3.0":{"eos":"2026-02-28","status":"eos","description":"vSphere Kubernetes Service"},"3.2.0":{"eos":"2025-11-28","status":"eos","description":"vSphere Kubernetes Service"},"3.1.0":{"eos":"2025-09-28","status":"eos","description":"vSphere Kubernetes Service"}},"vc":{"9.1.0.0":{"eos":"2028-08-12","status":"supported","description":"VMware vSphere Foundation"},"9.0.2.0":{"eos":"2027-09-17","status":"supported","description":"VMware vSphere Foundation"},"9.0.1.0":{"eos":"2027-09-17","status":"supported","description":"VMware vSphere Foundation"},"9.0.0.0":{"eos":"2027-09-17","status":"supported","description":"VMware vSphere Foundation"},"8.0U3":{"eos":"2027-10-11","status":"supported","description":"VMware vCenter Server"}}},"vkr_type":{"1.23.15":"non-legacy","1.23.8":"legacy","1.24.11":"legacy","1.24.9":"non-legacy","1.25.13":"legacy","1.25.7":"non-legacy","1.26.10":"legacy","1.26.12":"legacy","1.26.13":"non-legacy","1.26.5":"non-legacy","1.27.10":"legacy","1.27.11":"non-legacy","1.27.16":"non-legacy","1.27.6":"legacy","1.28.15":"non-legacy","1.28.7":"legacy","1.28.8":"non-legacy","1.29.15":"non-legacy","1.29.4":"non-legacy","1.30.1":"non-legacy","1.30.11":"non-legacy","1.30.14":"non-legacy","1.30.8":"non-legacy","1.31.1":"non-legacy","1.31.11":"non-legacy","1.31.14":"non-legacy","1.31.4":"non-legacy","1.31.7":"non-legacy","1.32.0":"non-legacy","1.32.10":"non-legacy","1.32.3":"non-legacy","1.32.7":"non-legacy","1.33.1":"non-legacy","1.33.13":"non-legacy","1.33.3":"non-legacy","1.33.6":"non-legacy","1.34.1":"non-legacy","1.34.2":"non-legacy","1.34.8":"non-legacy","1.34.9":"non-legacy","1.35.0":"non-legacy","1.35.2":"non-legacy","1.35.5":"non-legacy","1.35.6":"non-legacy","1.36.1":"non-legacy","1.36.2":"non-legacy"},"vks_vkr_compatibility":[{"vks":"3.0.0","allowed_vkr":["1.25.13","1.25.7","1.26.10","1.26.12","1.26.13","1.26.5","1.27.10","1.27.11","1.27.16","1.27.6","1.28.15","1.28.7","1.28.8","1.29.4"]},{"vks":"3.1.0","allowed_vkr":["1.25.13","1.25.7","1.26.10","1.26.12","1.26.13","1.26.5","1.27.10","1.27.11","1.27.16","1.27.6","1.28.15","1.28.7","1.28.8","1.29.4","1.30.1"]},{"vks":"3.1.1","allowed_vkr":["1.25.13","1.25.7","1.26.10","1.26.12","1.26.13","1.26.5","1.27.10","1.27.11","1.27.16","1.27.6","1.28.15","1.28.7","1.28.8","1.29.4","1.30.1"]},{"vks":"3.2.0","allowed_vkr":["1.27.10","1.27.11","1.27.16","1.27.6","1.28.15","1.28.7","1.28.8","1.29.4","1.30.1","1.30.8","1.31.1","1.31.4"]},{"vks":"3.3.0","allowed_vkr":["1.28.15","1.28.7","1.28.8","1.29.4","1.30.1","1.30.8","1.31.4","1.32.0"]},{"vks":"3.3.1","allowed_vkr":["1.28.15","1.28.7","1.28.8","1.29.4","1.30.1","1.30.8","1.31.4","1.32.0"]},{"vks":"3.3.2","allowed_vkr":["1.28.15","1.28.7","1.28.8","1.29.4","1.30.1","1.30.8","1.31.4","1.32.0"]},{"vks":"3.3.3","allowed_vkr":["1.28.15","1.28.7","1.28.8","1.29.15","1.29.4","1.30.1","1.30.11","1.30.14","1.30.8","1.31.11","1.31.14","1.31.4","1.31.7","1.32.0","1.32.10","1.32.3","1.32.7"]},{"vks":"3.4.0+v1.33","allowed_vkr":["1.29.15","1.29.4","1.30.1","1.30.11","1.30.14","1.30.8","1.31.11","1.31.14","1.31.4","1.31.7","1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.3","1.33.6"]},{"vks":"3.4.1+v1.33","allowed_vkr":["1.29.15","1.29.4","1.30.1","1.30.11","1.30.14","1.30.8","1.31.11","1.31.14","1.31.4","1.31.7","1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.3","1.33.6"]},{"vks":"3.4.2+v1.33","allowed_vkr":["1.29.15","1.29.4","1.30.1","1.30.11","1.30.14","1.30.8","1.31.11","1.31.14","1.31.4","1.31.7","1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.3","1.33.6"]},{"vks":"3.5.0+v1.34","allowed_vkr":["1.31.11","1.31.14","1.31.4","1.31.7","1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.3","1.33.6","1.34.1","1.34.2"]},{"vks":"3.5.1+v1.34","allowed_vkr":["1.31.11","1.31.14","1.31.4","1.31.7","1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8"]},{"vks":"3.6.0+v1.35","allowed_vkr":["1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8","1.35.0","1.35.2","1.35.5"]},{"vks":"3.6.1+v1.35","allowed_vkr":["1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8","1.35.0","1.35.2","1.35.5"]},{"vks":"3.6.2+v1.35","allowed_vkr":["1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8","1.35.0","1.35.2","1.35.5"]},{"vks":"3.6.3+v1.35","allowed_vkr":["1.32.0","1.32.10","1.32.3","1.32.7","1.33.1","1.33.13","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8","1.34.9","1.35.0","1.35.2","1.35.5","1.35.6"]},{"vks":"3.7.0+v1.36","allowed_vkr":["1.33.1","1.33.13","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8","1.34.9","1.35.2","1.35.5","1.35.6","1.36.1","1.36.2"]},{"vks":"3.7.1+v1.36","allowed_vkr":["1.33.1","1.33.13","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8","1.34.9","1.35.2","1.35.5","1.35.6","1.36.1","1.36.2"]},{"vks":"3.7.2+v1.36","allowed_vkr":["1.33.1","1.33.13","1.33.3","1.33.6","1.34.1","1.34.2","1.34.8","1.34.9","1.35.2","1.35.5","1.35.6","1.36.1","1.36.2"]}],"golden_path_destination":"9.1.1.0100","golden_path_8x_destination":"8.0U3k","golden_path_8x_destinations":["8.0U3k","8.0U3l"],"golden_path_9x_gateway":{"via":"8.0U3g","min_target_train":"9.1","then":{"via":"8.0U3i","min_target_train":"9.1.1"}},"sv_min_version":"v1.26.8+vmware.1-fips.1-vsc0.1.9"}</script>
+
+<script src="vks-solver.js"></script>
+<script>
+// ======================================================================
+// Presentation layer. The planning rules all live in vks-solver.js, which
+// is a verbatim port of the wcp-interop solver — everything below
+// only chooses what to ask for and how to draw the answer.
+// Picker/filter/validation and warning rendering reviewed against wcp-interop fd9da7e7,
+// 2026-10-21, retaining this page's target policy and accessible field feedback.
+// ======================================================================
+
+const REASON_TEXT = {
+  'overlap-required': 'Mandatory sequential Supervisor Kubernetes upgrade required to reach a version compatible with the next vCenter release on the path to your target.',
+  'sv-replatform-to-vc-build': 'Mandatory Supervisor upgrade required to finalize your target vCenter upgrade: moves Supervisor onto the build that shipped with that vCenter (or a later one), never an earlier build. Same Kubernetes minor — a newer patch build, via a supported Supervisor upgrade path.',
+  'vkr-forced': 'Mandatory VKS upgrade required to support the upcoming Kubernetes Release (VKr) upgrades on the path to your target.',
+  'target-requires-newer-sv': 'Mandatory Supervisor upgrade required to support the VKS version needed for your target.',
+  'target-sv-requested': 'Required to reach the Supervisor version you asked for.',
+  'sv-currency-default': 'Recommended Supervisor Kubernetes upgrade (not mandatory) to advance to the latest version supported by your target vCenter, since no target version was specified.',
+  'vks-requires-newer-sv': 'Mandatory Supervisor upgrade required to support the VKS version needed for your target.',
+  'target-vks-requested': 'Upgrades vSphere Kubernetes Service (VKS) to your requested target version.',
+  'vks-currency-default': 'Recommended VKS upgrade (not mandatory) to advance to the latest version supported by your target Supervisor, since no target version was specified.',
+  'vks-forces-vkr-floor': 'Mandatory sequential Kubernetes Release upgrade required to reach the minimum version compatible with the upcoming VKS upgrade on the path to your target.',
+  'vks-enables-vkr-climb': 'Mandatory intermediate VKS upgrade required to allow your Kubernetes Releases (VKr) to advance toward the minimum version required by the upcoming VKS upgrade on the path to your target.',
+  'vc-sv-forces-vks-bump': 'Mandatory VKS upgrade required to reach a version compatible with the upcoming Supervisor Kubernetes release on the path to your target.',
+  'async-sv-upgrade': 'Mandatory sequential Supervisor upgrade delivered asynchronously (out-of-band) — requires no vCenter upgrade.',
+  'vc-target-requested': 'The vCenter version you asked for.',
+  'vc-intermediate-to-target': 'Mandatory intermediate vCenter upgrade required to reach your target vCenter — there is no direct upgrade path from the version you are on.',
+  'vc-enables-sv-climb': 'Mandatory intermediate vCenter upgrade required to support the sequential Supervisor Kubernetes upgrades needed to reach your target vCenter.',
+  'vc-required-by-sv-target': 'Mandatory vCenter upgrade required to support your requested target Supervisor Kubernetes version.',
+  'vc-required-by-vks-target': 'Mandatory vCenter upgrade required to support the Supervisor Kubernetes version needed for your target VKS.',
+  'vc-modernization-crossing': 'This path crosses to vCenter 9.x. Nothing in your target requires it \u2014 it is offered as the modernization alternative.',
+  'vc-golden-destination': 'Recommended, not required: nothing in your target needs this hop, but it brings vCenter to the golden path destination, the latest build this path can stop on.',
+  'sv-replatform-minor-climb': 'Mandatory Supervisor upgrade required to finalize your target vCenter upgrade: the build that shipped with that vCenter for your current Supervisor Kubernetes version is older than the one you are running, so Supervisor moves to the next Kubernetes version on that vCenter\'s build instead — never an earlier build.',
+  'leave-superseded-vkr': 'Required first: the Kubernetes Release you are running has been withdrawn, so newer VKS versions no longer list it — this moves you to the nearest compatible release on your current VKS before anything else can proceed.',
+};
+
+const PHASE_ICON = { 'vCenter': '\u{1F5A5}️', 'Supervisor': '⚙️', 'VKS': '\u{1F4E6}', 'VKr': '☘️' };
+const PHASE_CLASS = { 'vCenter': 'layer-vc', 'Supervisor': 'layer-sv', 'VKS': 'layer-vks', 'VKr': 'layer-vkr' };
+const PHASE_LABEL = { 'vCenter': 'vCenter', 'Supervisor': 'Supervisor', 'VKS': 'VKS', 'VKr': 'Kubernetes Release (VKr)' };
+
+// What each stage of the plan actually means for the operator, so a stage header reads as an
+// instruction rather than just a layer name.
+const STAGE_BLURB = {
+  'vCenter': 'Update vCenter Server. Each hop is a separate maintenance window.',
+  'Supervisor': 'Supervisor Kubernetes upgrades are done one minor at a time, no skips.',
+  'VKS': 'Update the VMware Kubernetes Service (VKS) Supervisor Service.',
+  'VKr': 'Upgrade your VKS clusters to newer Kubernetes Releases, one minor at a time.',
+};
+
+function defaultDesc(phase) {
+  if (phase.phase === 'vCenter') return 'Advances vCenter to a build required to reach your target.';
+  if (phase.phase === 'Supervisor') return 'Sequential Supervisor Kubernetes upgrade.';
+  if (phase.phase === 'VKS') return 'Upgrades the Supervisor Service (VKS) toward your requested target.';
+  if (phase.phase === 'VKr') return 'Sequential Kubernetes Release upgrade toward your target (no minor skips permitted).';
+  return '';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ----------------------------------------------------------------------
+// The four layers the wcp-interop planner collects current/target
+// versions for. Every field is optional on its own; validateForm() below
+// enforces the cross-layer prerequisites the solver needs.
+// ----------------------------------------------------------------------
+
+const LAYERS = [
+  { key: 'VC',  cur: 'curVC',  tgt: 'tgtVC',  label: 'vCenter' },
+  { key: 'SV',  cur: 'curSV',  tgt: 'tgtSV',  label: 'Supervisor' },
+  { key: 'VKS', cur: 'curVKS', tgt: 'tgtVKS', label: 'VKS' },
+  { key: 'VKr', cur: 'curVKr', tgt: 'tgtVKr', label: 'VKr' },
+];
+
+// Single entry point: every layer is available on both sides, and none of curVKS/tgtVKS/
+// curVKr/tgtVKr are mandatory on their own — the plan can be for VC/SV alone, VKS alone, VKr
+// alone, or any mix. Cross-layer prerequisites are enforced in validateForm().
+const ALL_FIELDS = ['curVC', 'curSV', 'curVKS', 'curVKr', 'tgtVC', 'tgtSV', 'tgtVKS', 'tgtVKr'];
+
+let MATRIX = null;
+let LAST_PLAN = null;
+
+function setActiveNav(id) {
+  for (const el of document.querySelectorAll('.nav-item')) el.classList.remove('active');
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+function scrollToElement(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  setActiveNav(id === 'screenResult' ? 'navPlan' : 'navInputs');
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+}
+
+function toggleDarkMode() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  document.getElementById('themeToggle').classList.toggle('active', next === 'dark');
+}
+
+// ----------------------------------------------------------------------
+// Picker population. Ported from the wcp-interop planner: every
+// list is derived from the matrix, newest-first, and Supervisor is
+// filtered to builds that can run on the chosen vCenter (rule 14f).
+// ----------------------------------------------------------------------
+
+function populateSelect(sel, values, opts) {
+  opts = opts || {};
+  sel.innerHTML = '';
+  if (opts.leading) sel.appendChild(opts.leading);
+  for (const v of values) {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  }
+}
+
+/** Populate from labelled groups, so a customer can pick at whatever precision they have to hand. */
+function populateGroupedSelect(sel, groups, leading) {
+  sel.innerHTML = '';
+  if (leading) sel.appendChild(leading);
+  for (const g of groups) {
+    if (!g.values.length) continue;
+    const grp = document.createElement('optgroup');
+    grp.label = g.label;
+    for (const v of g.values) {
+      const o = document.createElement('option');
+      o.value = v; o.textContent = v;
+      grp.appendChild(o);
+    }
+    sel.appendChild(grp);
+  }
+}
+
+function blankOption(text) {
+  const o = document.createElement('option');
+  o.value = ''; o.textContent = text;
+  return o;
+}
+
+// Target restriction: a plan may only end on the 8.x golden destinations the matrix publishes
+// (golden_path_8x_destinations, e.g. 8.0U3k / 8.0U3l) or on vCenter 9.1+. A target Supervisor is
+// "9.1+" when the build shipped in (is runnable on) one of those vCenters.
+function isAllowedTargetVc(vc) {
+  const golden8x = MATRIX ? (MATRIX.golden_path_8x_destinations || [MATRIX.golden_path_8x_destination]) : [];
+  return golden8x.includes(vc) || vcTrainAtLeast(vc, '9.1');
+}
+function isAllowedTargetSv(matrix, build) {
+  const vcs = (matrix.sv_vc_compatibility || {})[build];
+  return Boolean(vcs) && vcs.some(isAllowedTargetVc);
+}
+
+function refreshSvPickers(matrix) {
+  const curVc = document.getElementById('curVC').value;
+  const tgtVc = document.getElementById('tgtVC').value;
+  // Target SV: an explicit target vCenter is a literal endpoint (rule 14b), so the target
+  // Supervisor list is restricted to builds that vCenter itself runs, not merely something
+  // "reachable" from the current one — reachable-from-current is only the right filter when no
+  // target vCenter was named, letting the plan's own vCenter choice make the build installable.
+  const tgtVcForFilter = tgtVc || curVc, tgtReachable = !tgtVc;
+  for (const [id, placeholder, vc, reachable] of
+       [['curSV', '— not specified —', curVc, false], ['tgtSV', '— none —', tgtVcForFilter, tgtReachable]]) {
+    const el = document.getElementById(id);
+    const keep = el.value;
+    let allow = svBuildsForVc(matrix, vc, reachable);
+    if (id === 'tgtSV') {
+      const base = allow;
+      allow = (b) => isAllowedTargetSv(matrix, b) && (!base || base(b));
+    }
+    populateGroupedSelect(el, svGroups(matrix, allow), blankOption(placeholder));
+    if (keep && [...el.querySelectorAll('option')].some((o) => o.value === keep)) el.value = keep;
+    else if (keep) noteCleared(id, keep, 'it cannot run on the selected vCenter or target path');
+  }
+}
+
+function svGroups(matrix, allow) {
+  const v = allSvVersions(matrix);
+  // A build absent from sv_vc_compatibility is incompatible with *every* vCenter (closed world,
+  // rule 14f), so offering it is offering a guaranteed-invalid choice. Drop those regardless.
+  const known = (b) => Boolean((matrix.sv_vc_compatibility || {})[b]);
+  const builds = (allow ? v.builds.filter(allow) : v.builds.filter(known));
+
+  const suffix = allow ? ' — runnable on your vCenter' : '';
+  return [
+    { label: `Supervisor Release Version (${builds.length})${suffix}`, values: builds.slice().reverse() },
+  ];
+}
+
+/** Rule 14f: Supervisor builds runnable on `vc` (or on anything reachable from it, for a target). */
+function svBuildsForVc(matrix, vc, includeReachable) {
+  const compat = matrix.sv_vc_compatibility;
+  if (!vc || !compat) return null;
+  const allowed = new Set([vc]);
+  if (includeReachable) for (const k of vcReachable(matrix, vc, true).keys()) allowed.add(k);
+  return (build) => {
+    const vcs = compat[build];
+    return Boolean(vcs) && vcs.some((v) => allowed.has(v));
+  };
+}
+
+function initForm(matrix) {
+  for (const id of ALL_FIELDS) {
+    const select = document.getElementById(id);
+    const field = select.closest('.field');
+    const label = field.querySelector('label');
+    if (!label.querySelector('.req-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'req-badge';
+      badge.setAttribute('aria-hidden', 'true');
+      label.appendChild(badge);
+    }
+    if (!field.querySelector('.field-msgs')) {
+      const messages = document.createElement('div');
+      messages.className = 'field-msgs';
+      messages.id = `${id}-messages`;
+      messages.setAttribute('aria-live', 'polite');
+      field.appendChild(messages);
+      const hint = field.querySelector('.hint');
+      if (hint) hint.id = `${id}-hint`;
+      select.setAttribute('aria-describedby', [hint && hint.id, messages.id].filter(Boolean).join(' '));
+    }
+  }
+  beginRefresh();
+  // Newest-first everywhere; the underlying matrix lists are oldest-first.
+  const vcList = Object.keys(matrix.vc_sv_matrix).slice().reverse();
+  const vksList = Object.keys(matrix.vks_upgrade_graph).sort(compareVks).reverse();
+  const vkrList = Object.keys(matrix.vkr_upgrade_graph).sort(compareVkr).reverse();
+
+  populateSelect(document.getElementById('curVC'), vcList, { leading: blankOption('— not specified —') });
+  refreshSvPickers(matrix);
+  populateSelect(document.getElementById('curVKS'), vksList, { leading: blankOption('— not specified —') });
+  populateSelect(document.getElementById('curVKr'), vkrList, { leading: blankOption('— not specified / no VKS Clusters —') });
+  populateSelect(document.getElementById('tgtVC'), vcList.filter(isAllowedTargetVc), { leading: blankOption('— none —') });
+  populateSelect(document.getElementById('tgtVKS'), vksList, { leading: blankOption('— none —') });
+  populateSelect(document.getElementById('tgtVKr'), vkrList, { leading: blankOption('— none —') });
+
+  for (const l of LAYERS) {
+    document.getElementById(l.cur).addEventListener('change', () => {
+      beginRefresh();
+      // Clear a backward vCenter endpoint before rebuilding Supervisor choices. Otherwise
+      // the stale endpoint can discard a Supervisor that is valid on the new current vCenter.
+      const targetVC = document.getElementById('tgtVC');
+      if (targetVC.value && !isForward(matrix, 'VC', document.getElementById('curVC').value, targetVC.value)) {
+        noteCleared('tgtVC', targetVC.value, 'it is older than the selected Current vCenter');
+        targetVC.value = '';
+      }
+      if (l.key === 'VC') refreshSvPickers(matrix);   // rule 14f: re-filter the Supervisor lineage
+      applyCurrentCompatFilters(matrix);              // rule 14j, current side
+      applyForwardOnlyTargets(matrix);
+      endRefresh();
+    });
+    // Rule 14j (target side): a target Supervisor/VKS change must re-filter the layer below it on
+    // the SAME side — otherwise tgtSV changing never re-evaluates tgtVKS.
+    document.getElementById(l.tgt).addEventListener('change', () => {
+      beginRefresh();
+      // Rule 14e/14b: naming a target vCenter narrows the target Supervisor list to builds that
+      // vCenter itself runs. Without this, tgtSV keeps offering builds reachable from curVC in
+      // general (e.g. a minor only 8.0U3l supports) even after the customer pins tgtVC to a build
+      // that cannot run them, so submitting produces a solver-level rejection instead of the
+      // picker simply not offering the invalid combination.
+      if (l.key === 'VC') refreshSvPickers(matrix);
+      applyForwardOnlyTargets(matrix);
+      endRefresh();
+    });
+  }
+  applyCurrentCompatFilters(matrix);
+  applyForwardOnlyTargets(matrix);
+  endRefresh();
+  document.getElementById('status').textContent =
+    `Matrix loaded — ${vcList.length} vCenter, ${allSvVersions(matrix).builds.length} Supervisor, ` +
+    `${vksList.length} VKS, ${vkrList.length} Kubernetes Release versions.`;
+}
+
+async function loadMatrix() {
+  const statusEl = document.getElementById('status');
+
+  // Prefer the copy embedded in this file: it makes the page work when opened as a plain file://
+  // URL, where fetch() of a sibling JSON is blocked by the browser and every picker would come up
+  // empty. Injected by embed_vks_matrix.py — re-run it after updating k8s-upgrade-matrix.json.
+  const inline = document.getElementById('matrix-data');
+  if (inline && inline.textContent.trim() && !inline.textContent.includes('__MATRIX_PLACEHOLDER__')) {
+    // Parse and initialise are caught separately: lumping them together means any bug in initForm
+    // falls through to the fetch path, which then blames file:// for what is our own error.
+    let parsed;
+    try {
+      parsed = JSON.parse(inline.textContent);
+    } catch (e) {
+      statusEl.textContent = 'Embedded matrix is malformed; trying to fetch instead…';
+    }
+    if (parsed) {
+      MATRIX = parsed;
+      initForm(MATRIX);   // deliberately unguarded: a failure here is our bug, and must be visible
+      return;
+    }
+  }
+
+  try {
+    const res = await fetch('k8s-upgrade-matrix.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    MATRIX = await res.json();
+  } catch (e) {
+    statusEl.textContent = 'Could not load the interoperability matrix automatically.';
+    statusEl.classList.add('err');
+    document.getElementById('matrixFallback').classList.remove('hidden');
+    document.getElementById('matrixFile').addEventListener('change', async (ev) => {
+      const file = ev.target.files[0];
+      if (!file) return;
+      MATRIX = JSON.parse(await file.text());
+      statusEl.classList.remove('err');
+      initForm(MATRIX);
+    });
+    return;
+  }
+  initForm(MATRIX);   // deliberately unguarded: a failure here is our bug, and must be visible
+}
+
+// ----------------------------------------------------------------------
+// Rule 14d: a target must be forward of its source. Narrow (disable, not
+// remove) each target picker to versions at or ahead of the current one.
+// ----------------------------------------------------------------------
+
+function isForward(matrix, layer, current, candidate) {
+  if (!current) return true;
+  if (current === candidate) return true;
+  if (layer === 'VC') {
+    const order = Object.keys(matrix.vc_sv_matrix);
+    return order.indexOf(candidate) >= order.indexOf(current);
+  }
+  if (layer === 'SV') return compareSv(matrix, candidate, current) >= 0;
+  if (layer === 'VKS') return compareVks(candidate, current) >= 0;
+  return compareVkr(candidate, current) >= 0;
+}
+
+function applyForwardOnlyTargets(matrix) {
+  const currentVCsel = document.getElementById('curVC').value;
+  for (const l of LAYERS) {
+    const tgtEl = document.getElementById(l.tgt);
+    const current = document.getElementById(l.cur).value;
+    const previously = tgtEl.value;
+    // Read each upstream target after the previous layer's filter may have cleared it.
+    const tgtSVsel = document.getElementById('tgtSV').value;
+    const tgtVKSsel = document.getElementById('tgtVKS').value;
+
+    let stillValid = false;
+    for (const opt of tgtEl.querySelectorAll('option')) {
+      if (!opt.value) continue;
+      let ok = isForward(matrix, l.key, current, opt.value);
+      // Rule 14e/5a: gate a Supervisor target on where it can *run*, not on its -vsc lineage.
+      if (ok && l.key === 'SV' && currentVCsel && matrix.sv_vc_compatibility) {
+        const compat = matrix.sv_vc_compatibility[opt.value];
+        if (compat) {
+          const reach = new Set([currentVCsel, ...vcReachable(matrix, currentVCsel, true).keys()]);
+          if (!compat.some((v) => reach.has(v))) ok = false;
+        }
+      }
+      // Rule 14j: target VKS/VKr must be compatible with the TARGET Supervisor/VKS one layer up,
+      // when one is named. Left unfiltered otherwise — an unqualified target VKS may legitimately
+      // require a Supervisor upgrade the customer hasn't named (rule 14a).
+      if (ok && l.key === 'VKS' && tgtSVsel) {
+        if (!vksAllowedForSvBuildOrMinor(matrix, tgtSVsel).has(opt.value)) ok = false;
+      }
+      if (ok && l.key === 'VKr' && tgtVKSsel && !vkrAllowedForVks(matrix, tgtVKSsel).has(opt.value)) ok = false;
+      opt.disabled = !ok;
+      if (ok && opt.value === previously) stillValid = true;
+    }
+    if (previously && !stillValid) {
+      tgtEl.value = '';
+      noteCleared(l.tgt, previously, 'it no longer fits your other selections');
+    }
+  }
+
+  // Rule 0b, target side: mirrors the solver, which only rejects on this when a target vCenter is
+  // explicitly named (an unqualified target VKS/VKr may resolve to any reachable vCenter, so there
+  // is nothing concrete to disable against). Applied last, after the loop above, so it wins over
+  // any earlier enabling.
+  disableAllIfBelowVksFloor(matrix, document.getElementById('tgtVC').value, ['tgtVKS', 'tgtVKr']);
+}
+
+/**
+ * Rule 0b: when `vc` is below the 8.0U3 VKS/VKr floor, disable every option in the given selects.
+ * A no-op when `vc` is empty or at/after the floor — it must never *re-enable* options, since it
+ * runs after the compatibility/forward-only filters and would otherwise undo them.
+ */
+function disableAllIfBelowVksFloor(matrix, vc, selectIds) {
+  if (!vc || !vcBefore8u3(matrix, vc)) return false;
+  for (const id of selectIds) {
+    const el = document.getElementById(id);
+    for (const opt of el.querySelectorAll('option')) if (opt.value) opt.disabled = true;
+    if (el.value) {
+      noteCleared(id, el.value, 'VKS and Kubernetes Releases need vCenter 8.0U3 or newer');
+      el.value = '';
+    }
+  }
+  return true;
+}
+
+/**
+ * Rule 14j, current side: current VKS restricted to what the current Supervisor allows, and
+ * current VKr to what the current VKS allows — so an impossible combination can't be described in
+ * the first place, rather than being rejected after the fact by the solver's rule-0 check.
+ */
+function applyCurrentCompatFilters(matrix) {
+  const curSV = document.getElementById('curSV').value;
+  const curVKSel = document.getElementById('curVKS');
+  const curVKSprev = curVKSel.value;
+  let vksStillValid = !curSV;
+  if (curSV) {
+    // Builds of the same Supervisor minor can support different VKS versions.
+    const allowedVks = vksAllowedForSvBuildOrMinor(matrix, curSV);
+    for (const opt of curVKSel.querySelectorAll('option')) {
+      if (!opt.value) continue;
+      const ok = allowedVks.has(opt.value);
+      opt.disabled = !ok;
+      if (ok && opt.value === curVKSprev) vksStillValid = true;
+    }
+  } else {
+    for (const opt of curVKSel.querySelectorAll('option')) opt.disabled = false;
+  }
+  if (curVKSprev && !vksStillValid) {
+    curVKSel.value = '';
+    noteCleared('curVKS', curVKSprev, 'it is not compatible with the selected Current Supervisor');
+  }
+
+  const curVKS = curVKSel.value;
+  const curVKrEl = document.getElementById('curVKr');
+  const curVKrPrev = curVKrEl.value;
+  let vkrStillValid = !curVKS;
+  if (curVKS) {
+    const allowedVkr = vkrAllowedForVks(matrix, curVKS);
+    for (const opt of curVKrEl.querySelectorAll('option')) {
+      if (!opt.value) continue;
+      const ok = allowedVkr.has(opt.value);
+      opt.disabled = !ok;
+      if (ok && opt.value === curVKrPrev) vkrStillValid = true;
+    }
+  } else {
+    for (const opt of curVKrEl.querySelectorAll('option')) opt.disabled = false;
+  }
+  if (curVKrPrev && !vkrStillValid) {
+    curVKrEl.value = '';
+    noteCleared('curVKr', curVKrPrev, 'it is not compatible with the selected Current VKS');
+  }
+
+  // Rule 0b: VKS/VKr require vCenter 8.0U3+, a floor distinct from (and later than) the vCenter
+  // scope floor. Applied LAST so it overrides the passes above rather than being undone by them —
+  // a below-floor vCenter makes VKS/VKr moot regardless of Supervisor compatibility.
+  disableAllIfBelowVksFloor(matrix, document.getElementById('curVC').value, ['curVKS', 'curVKr']);
+}
+
+// ----------------------------------------------------------------------
+// Validation. There's a single entry point now — every layer is optional
+// on its own — so these are all cross-layer prerequisites the solver
+// depends on, rather than scenario-specific requirements.
+// ----------------------------------------------------------------------
+
+// Adapted from wcp-interop 1fb0854c9a96, SPEC rule 14r: show prerequisites
+// immediately, with the same structured requirements used at submission time.
+function formRequirements(form) {
+  const issues = [];
+  const named = LAYERS.filter((l) => form[l.tgt]);
+  if (!LAYERS.some((l) => form[l.cur])) {
+    issues.push({ kind: 'at-least-one', fields: [], short: 'Specify at least one current version.' });
+  }
+  if (!named.length) {
+    issues.push({ kind: 'at-least-one', fields: [], short: 'Specify at least one target version.' });
+  }
+
+  const required = new Map();
+  const need = (id, because, message) => {
+    if (!form[id] && !required.has(id)) required.set(id, { because, message });
+  };
+  for (const layer of named) {
+    need(layer.cur, layer.tgt,
+      `${labelOf(layer.tgt)} is set, but ${labelOf(layer.cur)} is not — a target needs the matching current version to plan from. Either set ${labelOf(layer.cur)}, or clear ${labelOf(layer.tgt)}.`);
+  }
+  if (form.tgtVKr) need('curVKS', 'tgtVKr',
+    'Planning a Kubernetes Release (VKr) target also needs Current VKS — each release upgrade is gated on what the running VKS supports.');
+  for (const [id, { because, message }] of required) {
+    issues.push({ kind: 'required', fields: [id], because, message,
+      short: `${labelOf(id)} — required because ${labelOf(because)} is set.` });
+  }
+  if ((form.tgtVKS || form.tgtVKr) && !form.curVC && !form.curSV) {
+    const because = form.tgtVKS ? 'tgtVKS' : 'tgtVKr';
+    issues.push({ kind: 'one-of', fields: ['curVC', 'curSV'], because,
+      message: 'Planning a VKS or Kubernetes Release (VKr) target needs either Current vCenter or Current Supervisor, so the Supervisor starting point is known.',
+      short: `Set either Current vCenter or Current Supervisor because ${labelOf(because)} is set.` });
+  }
+  return issues;
+}
+
+function labelOf(id) {
+  const layer = LAYERS.find((l) => l.cur === id || l.tgt === id);
+  const label = layer.key === 'VKr' ? 'Kubernetes Release (VKr)' : layer.label;
+  return `${layer.cur === id ? 'Current' : 'Target'} ${label}`;
+}
+
+function validateForm(form) {
+  return formRequirements(form).map((issue) => issue.message || issue.short);
+}
+
+function setFieldMsg(id, className, text) {
+  const host = document.getElementById(`${id}-messages`);
+  let message = host.querySelector(`.${className}`);
+  if (!text) {
+    if (message) message.remove();
+    return;
+  }
+  if (!message) {
+    message = document.createElement('div');
+    message.className = className;
+    host.appendChild(message);
+  }
+  message.textContent = text;
+}
+
+function renderRequirements() {
+  const form = readForm();
+  const issues = formRequirements(form);
+  for (const id of ALL_FIELDS) {
+    const select = document.getElementById(id);
+    const field = select.closest('.field');
+    const badge = field.querySelector('.req-badge');
+    // Prefer a strict requirement if this field also participates in a one-of choice.
+    const mine = issues.find((issue) => issue.kind === 'required' && issue.fields.includes(id)) ||
+      issues.find((issue) => issue.fields.includes(id));
+    field.classList.toggle('invalid', Boolean(mine));
+    select.setAttribute('aria-invalid', String(Boolean(mine)));
+    select.setAttribute('aria-required', String(Boolean(mine && mine.kind === 'required')));
+    badge.textContent = mine ? (mine.kind === 'one-of' ? 'One of these required' : 'Required') : '';
+    setFieldMsg(id, 'n-req', mine ? (mine.kind === 'one-of' ? mine.short :
+      `Required because ${labelOf(mine.because)} is set.`) : '');
+  }
+  for (const [summaryId, side] of [['curSummary', 'cur'], ['tgtSummary', 'tgt']]) {
+    const ids = LAYERS.map((layer) => layer[side]);
+    const count = ids.filter((id) => form[id]).length;
+    const missing = issues.filter((issue) => issue.fields.some((id) => ids.includes(id))).length;
+    const summary = document.getElementById(summaryId);
+    summary.textContent = missing ? `${missing} requirement${missing === 1 ? '' : 's'} missing` :
+      count ? `${count} set` : 'specify at least one';
+    summary.classList.toggle('missing', missing > 0 || count === 0);
+  }
+  const list = document.getElementById('reqList');
+  list.replaceChildren();
+  for (const issue of issues) {
+    const item = document.createElement('li');
+    item.textContent = issue.short;
+    list.appendChild(item);
+  }
+  document.getElementById('planBtn').disabled = !MATRIX || issues.length > 0;
+}
+
+let clearedNotes = new Map();
+function beginRefresh() { clearedNotes = new Map(); }
+function noteCleared(id, value, why) {
+  clearedNotes.set(id, `${labelOf(id)} ${value} was cleared: ${why}.`);
+}
+function endRefresh() {
+  for (const id of ALL_FIELDS) setFieldMsg(id, 'n-clear', clearedNotes.get(id) || '');
+  renderRequirements();
+}
+
+// ----------------------------------------------------------------------
+// Rendering. The solver returns a flat, ordered list of phases; we group
+// consecutive same-layer phases into stages so the plan reads the way the
+// VCF Upgrade Planner presents one — numbered stages, steps within each.
+// ----------------------------------------------------------------------
+
+function toStages(phases) {
+  const stages = [];
+  let stepNo = 0;
+  for (const p of phases) {
+    let stage = stages[stages.length - 1];
+    if (!stage || stage.layer !== p.phase) {
+      stage = { layer: p.phase, steps: [] };
+      stages.push(stage);
+    }
+    stage.steps.push({ phase: p, num: ++stepNo });
+  }
+  return stages;
+}
+
+function vkrCeilingNote(p) {
+  if (p.phase !== 'VKr' || !p.vksInEffect) return '';
+  const atCeiling = p.to === p.vksSupportsVkrUpTo;
+  return `<div class="step-note">On VKS ${escapeHtml(p.vksInEffect)}, Kubernetes Releases are compatible up to ` +
+    `<b>${escapeHtml(p.vksSupportsVkrUpTo)}</b>${atCeiling ? ' — this step reaches that ceiling, so going further needs a newer VKS.' : '.'}</div>`;
+}
+
+// The export keeps a plain sentence; show trailing reference URLs as named links in the UI.
+function renderNoteText(n) {
+  if (n.kind === 'avi-lb-compatibility' || n.kind === 'lcm-reset-data-loss') {
+    const label = n.kind === 'avi-lb-compatibility' ? 'Broadcom Product Interoperability Matrix' : 'KB 455737';
+    const match = /^(.*?)\s*(https?:\/\/\S+)$/.exec(n.text);
+    if (match) {
+      return `${escapeHtml(match[1])} ` +
+        `<a href="${escapeHtml(match[2])}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+    }
+  }
+  return escapeHtml(n.text);
+}
+
+function transitionNotes(p) {
+  if (!p.transitionNotes) return '';
+  return p.transitionNotes.map((n) =>
+    `<div class="step-note step-note-warn">⚠️ ${renderNoteText(n)}` +
+    (n.link ? ` <a href="${escapeHtml(n.link)}" target="_blank" rel="noopener">Rolling update model</a>` : '') +
+    `</div>`).join('');
+}
+
+function targetReachedNote(p) {
+  // Rule 15f: the boundary between what the customer asked for and what we recommend. Styled as a
+  // milestone rather than a warning - nothing is wrong at this step, it is the answer to their
+  // question, and everything after it is optional.
+  if (!p.targetReachedNote) return '';
+  return `<div class="step-note step-note-ok">✓ ${escapeHtml(p.targetReachedNote)}</div>`;
+}
+
+function stepNote(p) {
+  // Instance-specific "why recommended" rationale (e.g. the sv-replatform-to-vc-build step),
+  // kept separate from the shared per-reason-code `explanation` (rule 15c requires that string
+  // hold for every step carrying the code, so it stays neutral and points here instead).
+  if (!p.note) return '';
+  return `<div class="step-note">${escapeHtml(p.note)}</div>`;
+}
+
+function renderStep(step) {
+  const p = step.phase;
+  const reason = p.reason ? REASON_TEXT[p.reason] || p.reason : defaultDesc(p);
+  return `
+    <li class="step">
+      <div class="step-num">${step.num}</div>
+      <div class="step-body">
+        <div class="step-title">${escapeHtml(p.from)}<span class="step-arrow">&rarr;</span>${escapeHtml(p.to)}</div>
+        <div class="step-desc">${escapeHtml(reason)}</div>
+        ${vkrCeilingNote(p)}
+        ${stepNote(p)}
+        ${targetReachedNote(p)}
+        ${transitionNotes(p)}
+      </div>
+    </li>`;
+}
+
+function renderStage(stage, i) {
+  const cls = PHASE_CLASS[stage.layer] || '';
+  const first = stage.steps[0].phase.from;
+  const last = stage.steps[stage.steps.length - 1].phase.to;
+  const n = stage.steps.length;
+  return `
+    <div class="stage ${cls}">
+      <div class="stage-head">
+        <div class="stage-badge">${i + 1}</div>
+        <div>
+          <div class="stage-title">${PHASE_ICON[stage.layer] || '▸'} ${escapeHtml(PHASE_LABEL[stage.layer] || stage.layer)}
+            &mdash; ${escapeHtml(first)} &rarr; ${escapeHtml(last)}</div>
+          <div class="stage-sub">${n} step${n === 1 ? '' : 's'}. ${escapeHtml(STAGE_BLURB[stage.layer] || '')}</div>
+        </div>
+      </div>
+      <ol class="stage-steps">${stage.steps.map(renderStep).join('')}</ol>
+    </div>`;
+}
+
+const LEGEND = `<div class="legend">` +
+  [['layer-vc', 'vCenter'], ['layer-sv', 'Supervisor'], ['layer-vks', 'VKS'], ['layer-vkr', 'Kubernetes Release (VKr)']]
+    .map(([cls, label]) => `<span class="${cls}"><i></i>${label}</span>`)
+    .join('') + `</div>`;
+
+function endState(path, form) {
+  const last = (phase) => {
+    const hits = path.phases.filter((p) => p.phase === phase);
+    return hits.length ? hits[hits.length - 1].to : null;
+  };
+  return {
+    vc: last('vCenter') || form.curVC || null,
+    supervisor: last('Supervisor') || form.curSV || null,
+    vks: last('VKS') || form.curVKS || null,
+    vkr: last('VKr') || form.curVKr || null,
+  };
+}
+
+function summarize(path, form, stages) {
+  const counts = { vCenter: 0, Supervisor: 0, VKS: 0, VKr: 0 };
+  for (const p of path.phases) counts[p.phase] = (counts[p.phase] || 0) + 1;
+  const end = endState(path, form);
+  const state = (vc, sv, vks, vkr) => [
+    vc ? `vCenter ${vc}` : null, sv ? `Supervisor ${sv}` : null,
+    vks ? `VKS ${vks}` : null, vkr ? `VKr ${vkr}` : null,
+  ].filter(Boolean).map(escapeHtml).join(' / ') || 'unspecified';
+
+  return `
+    <div class="plan-summary">
+      This plan takes you from <b>${state(form.curVC, form.curSV, form.curVKS, form.curVKr)}</b>
+      to <b>${state(end.vc, end.supervisor, end.vks, end.vkr)}</b>
+      in ${stages.length} stage${stages.length === 1 ? '' : 's'} / ${path.phases.length} step${path.phases.length === 1 ? '' : 's'}.
+      ${path.requiresWorkloadPrecheck ? '<div class="note"><b>Required before execution:</b> complete the per-cluster runtime compatibility check on every VKS step. Higher cluster releases are not automatically validated by the lowest-VKr input.</div>' : ''}
+      <div class="counts">
+        <span class="chip">${counts.vCenter} vCenter</span>
+        <span class="chip">${counts.Supervisor} Supervisor</span>
+        <span class="chip">${counts.VKS} VKS</span>
+        <span class="chip">${counts.VKr} Kubernetes Release</span>
+      </div>
+    </div>`;
+}
+
+function renderResult(result, form) {
+  const out = document.getElementById('output');
+  const plans = [result.pathA, result.pathB, result.pathC, result.pathD].filter(Boolean);
+
+  // Notes go above the plan: they state assumptions about the INPUT (defaulted versions), so they
+  // have to be read before the steps make sense.
+  const notesHtml = (result.notes || []).map((n) => `<div class="note">${escapeHtml(n)}</div>`).join('');
+  // Advisory only, never a path constraint — it describes a consequence of where the plan ENDS, so
+  // it belongs after the steps, not competing with them for attention above the fold.
+  const advisories = (result.advisories || [])
+    .map((a) => `<div class="advisory">⚠️ ${escapeHtml(a.message)}</div>`).join('');
+  const advisoriesHtml = advisories ? `<div class="advisories">${advisories}</div>` : '';
+
+  if (!plans.length) {
+    out.innerHTML = notesHtml + `<div class="unreachable">No path could be computed.</div>`;
+    return;
+  }
+
+  // Open on a path that actually goes somewhere. Path A (stay-in-8.x) is returned first and is
+  // legitimately unreachable whenever the target is a 9.x build, so defaulting to index 0 would
+  // greet the customer with "unreachable" while a working plan sat behind an unclicked tab.
+  const openIdx = Math.max(0, plans.findIndex((p) => !p.unreachable));
+
+  let tabsHtml = '';
+  if (plans.length > 1) {
+    tabsHtml = `<div class="tabs-wrap">${plans.map((p, i) => `
+      <button class="tab-btn${i === openIdx ? ' active' : ''}" onclick="switchPlanTab(${i})" id="plan-tab-${i}">
+        <b>${escapeHtml(p.label)}</b>${p.unreachable ? 'Not available from where you are' : `${p.phases.length} step(s)`}
+      </button>`).join('')}</div>`;
+  }
+
+  const panels = plans.map((p, i) => {
+    let body;
+    if (p.unreachable) {
+      body = `<div class="unreachable"><b>This path is unreachable:</b> ${escapeHtml(p.reason)}</div>`;
+    } else if (p.noop || !p.phases.length) {
+      // An empty step list is indistinguishable from a rendering failure, so say it outright.
+      body = `<div class="plan-summary"><b>Nothing to do — you are already at the requested versions.</b><br>
+        Every target you named is already satisfied by your current state, so this plan has no steps.</div>`;
+    } else {
+      const stages = toStages(p.phases);
+      body = summarize(p, form, stages) + LEGEND + stages.map(renderStage).join('');
+    }
+    return `<div id="plan-panel-${i}" style="${i === 0 ? '' : 'display:none'}">${body}</div>`;
+  }).join('');
+
+  out.innerHTML = notesHtml + tabsHtml + panels + advisoriesHtml;
+  window.__plans = plans;
+}
+
+function switchPlanTab(idx) {
+  (window.__plans || []).forEach((_, i) => {
+    document.getElementById(`plan-panel-${i}`).style.display = i === idx ? '' : 'none';
+    const btn = document.getElementById(`plan-tab-${i}`);
+    if (btn) btn.classList.toggle('active', i === idx);
+  });
+}
+
+// ----------------------------------------------------------------------
+// Plan / export
+// ----------------------------------------------------------------------
+
+function readForm() {
+  const form = {};
+  for (const id of ALL_FIELDS) form[id] = document.getElementById(id).value;
+  return form;
+}
+
+function showErrors(title, items) {
+  document.getElementById('screenResult').classList.remove('hidden');
+  document.getElementById('navPlan').classList.remove('nav-hidden');
+  document.getElementById('output').innerHTML = `<div class="unreachable"><b>${escapeHtml(title)}</b>
+    <ul style="margin:10px 0 0;padding-left:20px;line-height:1.6">${
+      items.map((x) => `<li style="margin-bottom:6px">${escapeHtml(x)}</li>`).join('')}</ul></div>`;
+  document.getElementById('dlBtn').style.display = 'none';
+  scrollToElement('screenResult');
+}
+
+document.getElementById('planBtn').addEventListener('click', () => {
+  const form = readForm();
+  const errors = validateForm(form);
+  if (errors.length) {
+    showErrors('Please fix the following:', errors);
+    return;
+  }
+
+  try {
+    const result = planUpgrade(MATRIX, {
+      currentVC: form.curVC || null,
+      currentSV: form.curSV || null,
+      currentVKS: form.curVKS || null,
+      currentVKr: form.curVKr || null,
+      targetVC: form.tgtVC || null,
+      targetSV: form.tgtSV || null,
+      targetVKS: form.tgtVKS || null,
+      targetVKr: form.tgtVKr || null,
+      recommend: document.getElementById('broadcomRecommend').checked,
+    });
+    document.getElementById('screenResult').classList.remove('hidden');
+    document.getElementById('navPlan').classList.remove('nav-hidden');
+    renderResult(result, form);
+    LAST_PLAN = buildExport(form, result);
+    document.getElementById('dlBtn').style.display = '';
+    scrollToElement('screenResult');
+  } catch (e) {
+    // A rejected starting/target state is about what the customer entered, not about the target
+    // being unreachable — show every inconsistency at once so all of them can be fixed in one pass.
+    if (e.invalidTargetState && e.targetStateErrors) {
+      showErrors('The target versions you entered can’t exist together, so no plan can be computed for them.',
+                 e.targetStateErrors.map((x) => x.message));
+    } else if (e.invalidStartingState && e.startingStateErrors) {
+      showErrors('The current versions you entered can’t exist together, so no plan can be computed from them.',
+                 e.startingStateErrors.map((x) => x.message));
+    } else {
+      showErrors('Error', [e.message]);
+    }
+    LAST_PLAN = null;
+  }
+});
+
+function buildExport(form, result) {
+  const exportPath = (path) => {
+    if (!path) return null;
+    if (path.unreachable) return { label: path.label, unreachable: true, reason: path.reason };
+    const counts = {};
+    for (const p of path.phases) counts[p.phase] = (counts[p.phase] || 0) + 1;
+    return {
+      label: path.label,
+      unreachable: false,
+      step_count: path.phases.length,
+      requires_workload_precheck: Boolean(path.requiresWorkloadPrecheck),
+      counts,
+      ends_on: endState(path, form),
+      // Stage numbers/step numbers match what the page shows, so "step 7 is wrong" is unambiguous.
+      stages: toStages(path.phases).map((st, i) => ({
+        stage: i + 1,
+        layer: st.layer,
+        from: st.steps[0].phase.from,
+        to: st.steps[st.steps.length - 1].phase.to,
+        steps: st.steps.map(({ phase: p, num }) => ({
+          step: num,
+          layer: p.phase,
+          from: p.from,
+          to: p.to,
+          reason_code: p.reason || null,
+          why: p.reason ? (REASON_TEXT[p.reason] || p.reason) : defaultDesc(p),
+          ...(p.from_assumed ? { from_assumed: true } : {}),
+          ...(p.transitionNotes ? { transition_notes: p.transitionNotes } : {}),
+          ...(p.targetReachedNote ? { target_reached_note: p.targetReachedNote } : {}),
+          ...(p.note ? { note: p.note } : {}),
+          ...(p.phase === 'VKr' && p.vksInEffect ? {
+            vks_in_effect: p.vksInEffect,
+            vks_supports_vkr_up_to: p.vksSupportsVkrUpTo,
+            at_vks_vkr_ceiling: p.to === p.vksSupportsVkrUpTo,
+          } : {}),
+        })),
+      })),
+    };
+  };
+
+  return {
+    tool: 'VCF Upgrade Planner — VC/Supervisor/VKS planner',
+    solver: 'wcp-interop vks-upgrade-planner/SPEC.md',
+    generated_at: new Date().toISOString(),
+    input: {
+      current: { vc: form.curVC || null, supervisor: form.curSV || null, vks: form.curVKS || null, vkr: form.curVKr || null },
+      target: { vc: form.tgtVC || null, supervisor: form.tgtSV || null, vks: form.tgtVKS || null, vkr: form.tgtVKr || null },
+      recommend: Boolean(document.getElementById('broadcomRecommend').checked),
+    },
+    resolved_target: result.resolvedTarget,
+    starting_supervisor: result.startingSv,
+    notes: result.notes,
+    paths: [result.pathA, result.pathB, result.pathC, result.pathD].filter(Boolean).map(exportPath),
+    // Rule 19: last, after `paths`. Key order is the export's reading order for a human scanning
+    // it, and an advisory keyed above the plan it describes reverses the same priority the rendered
+    // output gets right by putting the advisory block at the foot of the result.
+    eos_advisories: result.advisories || [],
+  };
+}
+
+document.getElementById('dlBtn').addEventListener('click', () => {
+  if (!LAST_PLAN) return;
+  const blob = new Blob([JSON.stringify(LAST_PLAN, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const i = LAST_PLAN.input.current;
+  a.download = `vks-upgrade-plan-${[i.vc, i.supervisor, i.vks, i.vkr].filter(Boolean).join('_').replace(/[^\w.+-]/g, '') || 'plan'}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  if (savedTheme === 'dark') document.getElementById('themeToggle').classList.add('active');
+  loadMatrix();
+});
+</script>
+</body></html>

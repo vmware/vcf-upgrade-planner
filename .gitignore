@@ -2,6 +2,8 @@
 mkdocs.yml
 security-standards.mdc
 AGENTS.md
+validate_js.py
+test_index_options.py
 
 # Local test suite
 package.json

@@ -266,7 +266,7 @@ def find_product(all_products, name_fragment, known_pid=None):
 
 # Maximum versions to keep per product (newest by GA date first).
 # Increase this if you need more history.
-MAX_VERSIONS_PER_PRODUCT = 50
+MAX_VERSIONS_PER_PRODUCT = 100
 
 
 def infer_group(version):
@@ -596,6 +596,8 @@ def main():
         products_meta[prod_key]["broadcom_product_id"] = pid
 
         versions = releases_to_versions(releases)
+        if prod_key in ("srm", "replication"):
+            versions = [v for v in versions if (m := re.match(r'^v?(\d+)', v["value"])) and int(m.group(1)) >= 8]
         if versions:
             versions_out[prod_key] = versions
             print(f"    {len(versions)} releases loaded")
