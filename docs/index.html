@@ -3403,7 +3403,7 @@
                 const errorDiv = document.createElement('div');
                 errorDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border); text-align: left;';
                 errorDiv.innerHTML = '<strong style="color: var(--warning-text); display:flex; align-items:center;">' + WARN_ICON + 'Please complete your selections:</strong><ul style="margin: 8px 0 0 20px; color: var(--warning-text);">' +
-                    validationErrors.map(function(err){ return '<li>' + err + '</li>'; }).join('') + '</ul>';
+                    validationErrors.map(function(err){ return '<li>' + escapeHtml(err) + '</li>'; }).join('') + '</ul>';
                 if (pathOptions) pathOptions.appendChild(errorDiv);
                 if (pathSelection) pathSelection.classList.remove('hidden');
                 return;
@@ -3819,7 +3819,7 @@
             if (errors.length > 0) {
                 const errorDiv = document.createElement('div');
                 errorDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border); text-align: left;';
-                errorDiv.innerHTML = '<strong style="color: var(--warning-text);">\u26a0\ufe0f Please complete your selections:</strong><ul style="margin: 8px 0 0 20px; color: var(--warning-text);">' + errors.map(function(e){ return '<li>'+e+'</li>'; }).join('') + '</ul>';
+                errorDiv.innerHTML = '<strong style="color: var(--warning-text);">\u26a0\ufe0f Please complete your selections:</strong><ul style="margin: 8px 0 0 20px; color: var(--warning-text);">' + errors.map(function(e){ return '<li>'+escapeHtml(e)+'</li>'; }).join('') + '</ul>';
                 vcfPathOptions.appendChild(errorDiv);
                 vcfPathSelection.classList.remove('hidden');
                 return;
