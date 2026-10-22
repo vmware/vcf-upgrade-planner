@@ -438,7 +438,8 @@ function generateDiagram() {
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     let html = `
@@ -538,7 +539,12 @@ function generatePrintDiagram() {
 
     function escapeHtml(str) {
         if (!str) return '';
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     var out = '<div style="margin-bottom:24px; padding:16px; background:#f8fafc; border-radius:8px; border:1px solid #d0d7de; page-break-inside:avoid; print-color-adjust:exact; -webkit-print-color-adjust:exact;">'

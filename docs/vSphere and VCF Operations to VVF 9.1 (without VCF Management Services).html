@@ -4224,6 +4224,16 @@
             G_INDEX.sort((a, b) => a.group.localeCompare(b.group) || a.name.localeCompare(b.name));
         }
 
+        function gEscapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function gRender(query) {
             const q = (query || '').trim().toLowerCase();
             const matches = q === '' ? G_INDEX : G_INDEX.filter(i =>
@@ -4240,7 +4250,7 @@
             if (!el) return;
 
             if (Object.keys(groups).length === 0) {
-                el.innerHTML = '<div class="g-empty">No matches for “' + query + '”.</div>';
+                el.innerHTML = '<div class="g-empty">No matches for “' + gEscapeHtml(query) + '”.</div>';
                 return;
             }
 

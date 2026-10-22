@@ -22,14 +22,17 @@ function joinUrl (base, path) {
 }
 
 function escapeHtml (value) {
-  return value.replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function formatResult (location, title, summary) {
-  return '<article><h3><a href="' + joinUrl(base_url, location) + '">'+ escapeHtml(title) + '</a></h3><p>' + escapeHtml(summary) +'</p></article>';
+  return '<article><h3><a href="' + escapeHtml(joinUrl(base_url, location)) + '">'+ escapeHtml(title) + '</a></h3><p>' + escapeHtml(summary) +'</p></article>';
 }
 
 function displayResults (results) {
@@ -48,7 +51,7 @@ function displayResults (results) {
     if (!noResultsText) {
       noResultsText = "No results found";
     }
-    search_results.insertAdjacentHTML('beforeend', '<p>' + noResultsText + '</p>');
+    search_results.insertAdjacentHTML('beforeend', '<p>' + escapeHtml(noResultsText) + '</p>');
   }
 }
 
