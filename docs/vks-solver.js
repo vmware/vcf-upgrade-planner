@@ -1,9 +1,8 @@
 /* VC -> Supervisor -> VKS -> VKr upgrade solver.
  * Ported verbatim from upstream:
  *   tools/upgrade-solver.js (see docs/vks-upgrade-planner.html script tag).
- * Re-synced from wcp-interop:main @ fd9da7e7, 2026-10-21.
- * Warn on affected vCenter upgrades to 9.1 before 9.1.1.0100 about possible
- * Supervisor data loss after a Lifecycle Manager database reset (KB 455737).
+ * Re-synced from wcp-interop:main @ a44e8594, 2026-10-23
+ * New paths added for VKS 3.8.0 and for VKr v1.37
  * Implements SPEC.md section 2. Keep in lockstep with that spec + solver -
  * this is a straight copy, with no local modifications.
  */
@@ -2074,8 +2073,10 @@ function planUpgrade(matrix, input) {
           const behind = starting.svFull ? compareSv(matrix, targetSV, starting.svFull) < 0
             : svMinorDistance(matrix, starting.svMinor, parseSvMinor(targetSV)) < 0;
           if (behind) {
-            return { label, unreachable: true, reason: `Target Supervisor ${targetSV} is older than your current ` +
-              `${starting.svFull || starting.svMinor}. Supervisor is never downgraded — pick a target at or ahead of it.` };
+            return {
+              label, unreachable: true, reason: `Target Supervisor ${targetSV} is older than your current ` +
+                `${starting.svFull || starting.svMinor}. Supervisor is never downgraded — pick a target at or ahead of it.`
+            };
           }
           return {
             label, unreachable: true,
@@ -2328,7 +2329,7 @@ function planUpgrade(matrix, input) {
           const why = vcFamily(landOn) === '9.x'
             ? (runsThere && sfx && compareLineage(matrix, sfx, emb) < 0
               ? `it is a ${sfx} build, older than the ${emb} build vCenter ${landOn} ships. It can keep running ` +
-                `there, but an older build is never installed on a newer vCenter. Pick a -vsc${emb} build or the patch.`
+              `there, but an older build is never installed on a newer vCenter. Pick a -vsc${emb} build or the patch.`
               : `vCenter ${landOn} cannot run it.`)
             : `vCenter ${landOn} ships Supervisor build ${emb} only, so it does not carry the bits for ` +
             `${parseVscSuffix(targetSV)}.`;
