@@ -4,6 +4,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>VCF Upgrade Planner</title>
     <script src="docs_inline.js"></script>
+    <script src="plan_io.js"></script>
     <script src="counter.js"></script>
     <!-- v2.3 2026-07-20: no-release advisory for patch targets without Supervisor/VKS builds -->
     <style>
@@ -1337,6 +1338,11 @@
                 <div class="header">
                     <h1>VCF Upgrade Planner</h1>
                 </div>
+                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn" id="exportBtnHeader" onclick="exportPlanConfigJSON()" style="display: none; background: var(--vmw-blue); color: white; padding: 7px 13px; border-radius: 6px; border: none; font-weight: 500; cursor: pointer; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; line-height: 1.2; font-family: inherit; margin: 0; box-sizing: border-box;" title="Export selections to JSON file">
+                            📥 Export (current deployment profile)
+                        </button>
+                </div>
 
                 <!-- Visual Stepper Header -->
                 <div class="stepper-wrapper" id="stepperHeader">
@@ -1370,6 +1376,14 @@
                 <option value="vcf">VCF</option>
                 <option value="vks">VKS Upgrade Planner</option>
             </select>
+        </div>
+
+         <!-- Centered Import Button -->
+        <div id="importBtnContainer" style="text-align: center; margin: 0 0 24px 0;">
+            <label class="btn" style="background: var(--jade); color: white; padding: 7px 13px; border-radius: 6px; border: none; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; line-height: 1.2; font-family: inherit; margin: 0; box-sizing: border-box;" title="Import previously saved JSON configuration">
+                📤 Import (previous deployment profile)
+                <input type="file" accept=".json" onchange="importPlanConfigJSON(this.files[0])" style="display: none;">
+            </label>
         </div>
         
         <div class="hidden" id="vsphereQuestions">
@@ -4145,7 +4159,7 @@
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(Workload-Domain).html';
             } else if (pathTitle.startsWith('VCF 9.1.0 to VCF 9.1.1 (VCF Automation not included)') || pathTitle.startsWith('VCF 9.1.1 to VCF 9.1.1 (VCF Automation not included)')) {
                 saveVcfSourceComponentVersions();
-                const vcf91Version = document.getElementById('vcf91').value;
+                const vcf91Version = (document.getElementById('vcf91') && document.getElementById('vcf91').value) || '9.1.0';
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
                 localStorage.setItem('vcf-version', vcf91Version || '9.1.0');
@@ -4155,7 +4169,7 @@
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-not-included).html';
             } else if (pathTitle.startsWith('VCF 9.1.0 to VCF 9.1.1 (VCF Automation included)') || pathTitle.startsWith('VCF 9.1.1 to VCF 9.1.1 (VCF Automation included)')) {
                 saveVcfSourceComponentVersions();
-                const vcf91Version = document.getElementById('vcf91').value;
+                const vcf91Version = (document.getElementById('vcf91') && document.getElementById('vcf91').value) || '9.1.0';
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
                 localStorage.setItem('vcf-version', vcf91Version || '9.1.0');
@@ -4165,7 +4179,7 @@
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Automation-included).html';
             } else if (pathTitle.startsWith('VCF 9.1.0 to VCF 9.1.1 (Instance)') || pathTitle.startsWith('VCF 9.1.1 to VCF 9.1.1 (Instance)')) {
                 saveVcfSourceComponentVersions();
-                const vcf91Version = document.getElementById('vcf91').value;
+                const vcf91Version = (document.getElementById('vcf91') && document.getElementById('vcf91').value) || '9.1.0';
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
                 localStorage.setItem('vcf-version', vcf91Version || '9.1.0');
@@ -4175,7 +4189,7 @@
                 window.location.href = 'VCF-9.0-to-VCF-9.1-(VCF-Instance).html';
             } else if (pathTitle.startsWith('VCF 9.1.0 to VCF 9.1.1 (Workload Domain)') || pathTitle.startsWith('VCF 9.1.1 to VCF 9.1.1 (Workload Domain)')) {
                 saveVcfSourceComponentVersions();
-                const vcf91Version = document.getElementById('vcf91').value;
+                const vcf91Version = (document.getElementById('vcf91') && document.getElementById('vcf91').value) || '9.1.0';
                 const vcf91VxrailSelected = (document.getElementById('vcf91VxrailCheck') ? document.getElementById('vcf91VxrailCheck').checked : false);
                 const vcf91VxrailVersion = document.getElementById('vcf91Vxrail') ? document.getElementById('vcf91Vxrail').value || '' : '';
                 localStorage.setItem('vcf-version', vcf91Version || '9.1.0');
@@ -4193,37 +4207,17 @@
                 localStorage.setItem('nsx-selected', nsxSelected.toString());
                 localStorage.setItem('nsx-version', nsxVersion);
                 window.location.href = 'vSphere-to-VCF-9.1-(Additonal-VCF-Instance).html';
-
             } else if (pathTitle === 'Upgrade vSphere environment to VCF Workload Domain') {
-                // Store VCF 9.0 version and election in localStorage
-               // Store all selections including NSX, VXRail, and Automation
                 const vcenterVersion = document.getElementById('vcenter').value || '8';
                 const esxVersion = document.getElementById('esx').value || '8';
                 const nsxSelected = document.getElementById('nsxCheck').checked;
                 const nsxVersion = document.getElementById('nsx').value || '4.2.x';
-
-                // If vCenter + ESX are already on 9.1.x, Operations is already deployed —
-                // force operations-selected=true so sub-pages use the correct convert_with_ops tables
-                const infraAlreadyOn91 = (vcenterVersion && vcenterVersion.startsWith('9.1')) && (esxVersion && esxVersion.startsWith('9.1'));
-
                 localStorage.setItem('vcenter-version', vcenterVersion);
                 localStorage.setItem('esx-version', esxVersion);
                 localStorage.setItem('nsx-selected', nsxSelected.toString());
                 localStorage.setItem('nsx-version', nsxVersion);
-                // Navigate to VCF 9.0 to 9.1 with automation page
                 window.location.href = 'vSphere-to-VCF-9.1-(import).html';
-            } else if (pathTitle === 'VCF 9.1.0 to VCF 9.1.0100 (VCF Automation not included)') {
-                localStorage.setItem('vcf-version', '9.1.0');
-                localStorage.setItem('vcf-detailed-version', '9.1.0');
-                localStorage.setItem('target-vcf91-version', '9.1.0100');
-                window.location.href = 'VCF-9.1-to-VCF-9.1.0100-(VCF-Automation-not-included).html';
-            } else if (pathTitle === 'VCF 9.1.0 to VCF 9.1.0100 (VCF Automation included)') {
-                localStorage.setItem('vcf-version', '9.1.0');
-                localStorage.setItem('vcf-detailed-version', '9.1.0');
-                localStorage.setItem('target-vcf91-version', '9.1.0100');
-                window.location.href = 'VCF-9.1-to-VCF-9.1.0100-(VCF-Automation-included).html';
             } else {
-                // For other paths, show alert (placeholder for future pages)
                 alert('Selected path: ' + pathTitle + '\n\nThis will navigate to the next step in the upgrade process.');
             }
         }
@@ -4345,10 +4339,14 @@
                 if (el) el.classList.add('hidden');
             });
 
-            // Clear relevant localStorage keys
-            ['vcenter-version','esx-version','nsx-version','vcf-version',
-             'supervisor-selected','supervisor-version','vks-selected','vks-version','vkr-version',
-             'avi-selected','avi-version','use-recommended-path'].forEach(k => localStorage.removeItem(k));
+            // Clear all planner localStorage keys so prior imported/selected state doesn't leak
+            if (typeof clearPlannerStorage === 'function') {
+                clearPlannerStorage();
+            } else {
+                ['vcenter-version','esx-version','nsx-version','vcf-version',
+                 'supervisor-selected','supervisor-version','vks-selected','vks-version','vkr-version',
+                 'avi-selected','avi-version','use-recommended-path'].forEach(k => localStorage.removeItem(k));
+            }
 
             // Fire change events on key checkboxes so all downstream cascade logic
             // (toggleDropdown, updateAvailablePaths) runs with everything unchecked,
@@ -5309,25 +5307,24 @@
         var data = window._compatData;
         var compat = data && data.compatibility ? data.compatibility : {};
 
-        var activeVcfKey = '';
         var startingPoint = (document.getElementById('startingPoint') ? document.getElementById('startingPoint').value : 'vsphere');
+        if (startingPoint !== 'vcf') return;
 
-        if (startingPoint === 'vcf') {
-            var vcf52Chk = document.getElementById('vcf52Check');
-            var vcf90Chk = document.getElementById('vcf90Check');
-            var vcf91Chk = document.getElementById('vcf91Check');
+        var activeVcfKey = '';
+        var vcf52Chk = document.getElementById('vcf52Check');
+        var vcf90Chk = document.getElementById('vcf90Check');
+        var vcf91Chk = document.getElementById('vcf91Check');
 
-            var vcf52 = document.getElementById('vcf52');
-            var vcf90 = document.getElementById('vcf90');
-            var vcf91 = document.getElementById('vcf91');
+        var vcf52 = document.getElementById('vcf52');
+        var vcf90 = document.getElementById('vcf90');
+        var vcf91 = document.getElementById('vcf91');
 
-            if (vcf52Chk && vcf52Chk.checked) {
-                activeVcfKey = (vcf52 && vcf52.value) ? vcf52.value : '5.2';
-            } else if (vcf90Chk && vcf90Chk.checked) {
-                activeVcfKey = (vcf90 && vcf90.value) ? vcf90.value : '9.0';
-            } else if (vcf91Chk && vcf91Chk.checked) {
-                activeVcfKey = (vcf91 && vcf91.value) ? vcf91.value : '9.1';
-            }
+        if (vcf52Chk && vcf52Chk.checked) {
+            activeVcfKey = (vcf52 && vcf52.value) ? vcf52.value : '5.2';
+        } else if (vcf90Chk && vcf90Chk.checked) {
+            activeVcfKey = (vcf90 && vcf90.value) ? vcf90.value : '9.0';
+        } else if (vcf91Chk && vcf91Chk.checked) {
+            activeVcfKey = (vcf91 && vcf91.value) ? vcf91.value : '9.1';
         }
 
         var major = activeVcfKey ? activeVcfKey.substring(0, 3) : '';

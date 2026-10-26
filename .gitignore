@@ -8,3 +8,6 @@ test_index_options.py
 # Local test suite
 package.json
 scripts/
+run_e2e_tests.py
+docs/test_scenarios_matrix.json
+setup_local_tests.py
