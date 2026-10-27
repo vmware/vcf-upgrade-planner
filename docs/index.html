@@ -5923,11 +5923,14 @@
                 populateSorted('vcfSrmVer',         srmAndVlrVers);
 
                 // ── Main product dropdowns ── pulled from compat-data ───────
-                // ── Main product dropdowns ── pulled from compat-data ───────
-                // Exclude 6.7.x, 7.x, and 8.x versions prior to 8.0U3 for vCenter and ESX
+                // Exclude versions prior to 8.0U3 for vCenter and ESX
                 function minVer80u3(v) {
-                    if (v.group.startsWith('6.7') || v.group.startsWith('7.')) return false;
-                    if (v.value.startsWith('8.')) {
+                    var grp = (v.group || v.value || '').trim();
+                    var m = grp.match(/^v?(\d+)/i);
+                    if (!m) return false;
+                    var maj = parseInt(m[1], 10);
+                    if (maj < 8) return false;
+                    if (maj === 8) {
                         return v.value.toLowerCase().includes('u3');
                     }
                     return true;

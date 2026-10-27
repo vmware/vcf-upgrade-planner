@@ -598,6 +598,18 @@ def main():
         versions = releases_to_versions(releases)
         if prod_key in ("srm", "replication"):
             versions = [v for v in versions if (m := re.match(r'^v?(\d+)', v["value"])) and int(m.group(1)) >= 8]
+        elif prod_key in ("vcenter", "esx"):
+            def _is_v80u3_or_higher(v):
+                m = re.match(r'^v?(\d+)', v["value"])
+                if not m:
+                    return False
+                maj = int(m.group(1))
+                if maj < 8:
+                    return False
+                if maj == 8:
+                    return "u3" in v["value"].lower()
+                return True
+            versions = [v for v in versions if _is_v80u3_or_higher(v)]
         if versions:
             versions_out[prod_key] = versions
             print(f"    {len(versions)} releases loaded")
