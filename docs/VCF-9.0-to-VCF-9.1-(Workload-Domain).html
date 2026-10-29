@@ -1156,9 +1156,9 @@
             <div style="margin-bottom: 20px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--vmw-blue); border-radius: 12px;">
                 <h3 style="color:var(--text-primary); margin-bottom:12px; font-size:16px;">&#x1F9E9; Optional Components & Features</h3>
                 <p style="margin-bottom:14px; color:var(--text-secondary); font-size:0.9rem;">Select any additional components or features &mdash; your plan updates automatically.</p>
-                <input type="checkbox" id="vlcmCheck"       style="display:none" onchange="autoGenerateUpgradePlan()">
-                <input type="checkbox" id="elmCheck"        style="display:none" onchange="autoGenerateUpgradePlan()">
-                <input type="checkbox" id="supervisorCheck" style="display:none" onchange="autoGenerateUpgradePlan()">
+                <input type="checkbox" id="vlcmCheck"       style="display:none" onchange="autoGenerateUpgradePlan(true)">
+                <input type="checkbox" id="elmCheck"        style="display:none" onchange="autoGenerateUpgradePlan(true)">
+                <input type="checkbox" id="supervisorCheck" style="display:none" onchange="autoGenerateUpgradePlan(true)">
                 <div id="advancedProductsGrid" style="display:none"></div>
                 <div id="gResults" style="margin-bottom:10px;"></div>
                 <div style="margin-top:12px;"><button class="btn" onclick="gReset()" style="background:var(--vmw-gray);color:white;font-size:0.82rem;padding:7px 16px;">&#x21BA; Reset Selections</button></div>
@@ -1452,7 +1452,7 @@
             if (!window.selectedAdvancedProducts) window.selectedAdvancedProducts = {};
             if (replicationSelected || localStorage.getItem('replication-selected') === 'true' || !!replicationVersion) window.selectedAdvancedProducts['replication'] = true;
             if (srmSelected || localStorage.getItem('srm-selected') === 'true' || !!srmVersion) window.selectedAdvancedProducts['srm'] = true;
-            if (aviSelected || localStorage.getItem('avi-selected') === 'true' || !!aviVersion) window.selectedAdvancedProducts['avi'] = true;
+            if ((aviSelected || localStorage.getItem('avi-selected') === 'true') && localStorage.getItem('avi-selected') !== 'false') window.selectedAdvancedProducts['avi'] = true;
             if (supervisorSelected || localStorage.getItem('supervisor-selected') === 'true' || !!supervisorVersion || vksSelected || !!vksVersion) window.selectedAdvancedProducts['supervisor'] = true;
 
             console.log('=== LOAD SELECTIONS DEBUG ===');
@@ -1635,13 +1635,13 @@
         }
 
 
-        function updateDeploymentSize() {
+        function updateDeploymentSize(keepStepIndex = true) {
             const simpleRadio = document.getElementById('simpleRadio');
             const haRadio = document.getElementById('haRadio');
             const sizeSelect = document.getElementById('deploymentSize');
             if (!sizeSelect || !simpleRadio) {
                 if (typeof autoGenerateUpgradePlan === "function") {
-                    autoGenerateUpgradePlan();
+                    autoGenerateUpgradePlan(keepStepIndex);
                 }
                 return;
             }
@@ -1678,7 +1678,7 @@
             
             // Regenerate the plan with new deployment config
             if (typeof autoGenerateUpgradePlan === 'function') {
-                autoGenerateUpgradePlan();
+                autoGenerateUpgradePlan(keepStepIndex);
             }
         }
 
@@ -1686,7 +1686,7 @@
 
 
 
-        function autoGenerateUpgradePlan() {
+        function autoGenerateUpgradePlan(keepStepIndex) {
             supervisorSelected = document.getElementById('supervisorCheck') ? document.getElementById('supervisorCheck').checked : false;
 
             
@@ -1714,7 +1714,7 @@
          
             
             // Auto-generate without requiring button click
-            generateUpgradePlan();
+            generateUpgradePlan(keepStepIndex);
         }
 
         
@@ -2038,7 +2038,7 @@
             }
         }
 
-        function generateUpgradePlan() {
+        function generateUpgradePlan(keepStepIndex) {
             const phases = [];
             const selectedProducts = window.selectedAdvancedProducts || {};
             const _is910To911Plan = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
@@ -2130,7 +2130,7 @@
                             console.error('Error injecting warning notice into ESX:', e);
                         }
                     }
-                                } else if (componentId === 'vcenter') {
+                } else if (componentId === 'vcenter') {
                     if (k8sPhasesObj && k8sPhasesObj.preVcPhases && k8sPhasesObj.preVcPhases.length > 0) {
                         k8sPhasesObj.preVcPhases.forEach(function(kp) {
                             phases.push({
@@ -2203,7 +2203,8 @@
                         : 'NSX Finalize';
                     phaseDescription = selectedProducts['nsx_edge'] === true
                         ? (_is910To911Plan ? 'Patch NSX Edge nodes and finalize NSX patch' : 'Upgrade NSX Edge nodes and finalize NSX upgrade')
-                        : (_is910To911Plan ? 'Finalize NSX patch' : 'Finalize NSX upgrade');                                                                } else if (componentId === 'vlr' || componentId === 'replication') {
+                        : (_is910To911Plan ? 'Finalize NSX patch' : 'Finalize NSX upgrade');                                                                
+                } else if (componentId === 'vlr' || componentId === 'replication') {
                     shouldInclude = false;
                     const isRepSelected = selectedProducts['replication'] === true || (typeof replicationSelected !== 'undefined' && replicationSelected) || localStorage.getItem('replication-selected') === 'true' || !!(localStorage.getItem('replication-version'));
                     const isSrmSelected = selectedProducts['srm'] === true || (typeof srmSelected !== 'undefined' && srmSelected) || localStorage.getItem('srm-selected') === 'true' || !!(localStorage.getItem('srm-version'));
@@ -2254,14 +2255,23 @@
                                         'Upgrade vSphere Replication from ' + (curRepVer || '8.x') + ' to intermediate release 8.8. Direct upgrade from versions prior to 8.6 to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported. For full guidance, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.',
                                         'Re-verify site pairings, active replication state, and appliance health on build 8.8.'
                                     ],
-                                    notices: [{
-                                        type: 'warning',
-                                        title: '3-Step Upgrade Path Required for vSphere Replication < 8.6',
-                                        bullets: [
-                                            'Direct upgrade from vSphere Replication ' + (curRepVer || '8.x') + ' to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported.',
-                                            'You must first upgrade from ' + (curRepVer || '8.x') + ' to intermediate release 8.8, then upgrade from 8.8 to VMware Live Recovery 9.0.2.3 prior to upgrading to VCF 9.1.'
-                                        ]
-                                    }]
+                                    notices: [
+                                        {
+                                            type: 'warning',
+                                            title: '3-Step Upgrade Path Required for vSphere Replication < 8.6',
+                                            bullets: [
+                                                'Direct upgrade from vSphere Replication ' + (curRepVer || '8.x') + ' to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported.',
+                                                'You must first upgrade from ' + (curRepVer || '8.x') + ' to intermediate release 8.8, then upgrade from 8.8 to VMware Live Recovery 9.0.2.3 prior to upgrading to VCF 9.1.'
+                                            ]
+                                        },
+                                        {
+                                            type: 'info',
+                                            title: 'Upgrade of Protection and Recovery Site',
+                                            bullets: [
+                                                'During a vSphere Replication upgrade, ensure that both the Protected and Recovery sites are fully upgraded before proceeding to the next phases.'                                            
+                                            ]
+                                        }
+                                    ]
                                 },
                                 componentId: 'replication_prereq'
                             });
@@ -2290,14 +2300,23 @@
                                         'Upgrade vSphere Replication from ' + (curRepVer || '8.8/9.0.x') + ' to intermediate version 9.0.2.3 (VMware Live Recovery) before proceeding with VCF 9.1 upgrade. Direct upgrade from ' + (curRepVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix. For full guidance, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.',
                                         'Re-establish replication site pairings, verify appliance health, and confirm active replication tasks after updating to 9.0.2.3.'
                                     ],
-                                    notices: [{
-                                        type: 'warning',
-                                        title: '2-Step Upgrade Path Required for vSphere Replication',
-                                        bullets: [
-                                            'Direct upgrade from vSphere Replication ' + (curRepVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix.',
-                                            'You must first upgrade vSphere Replication ' + (curRepVer || '8.8/9.0.x') + ' to intermediate version 9.0.2.3 (VMware Live Recovery) prior to upgrading to VCF 9.1. See <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.'
-                                        ]
-                                    }]
+                                    notices: [
+                                        {
+                                            type: 'warning',
+                                            title: '2-Step Upgrade Path Required for vSphere Replication',
+                                            bullets: [
+                                                'Direct upgrade from vSphere Replication ' + (curRepVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix.',
+                                                'You must first upgrade vSphere Replication ' + (curRepVer || '8.8/9.0.x') + ' to intermediate version 9.0.2.3 (VMware Live Recovery) prior to upgrading to VCF 9.1. See <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.'
+                                            ]
+                                        },
+                                        {
+                                            type: 'info',
+                                            title: 'Upgrade of Protection and Recovery Site',
+                                            bullets: [
+                                                'During a vSphere Replication upgrade, ensure that both the Protected and Recovery sites are fully upgraded before proceeding to the next phases.'                                            
+                                            ]
+                                        }
+                                    ]
                                 },
                                 componentId: 'replication_prereq'
                             });
@@ -2319,14 +2338,23 @@
                                             'Upgrade Site Recovery Manager from ' + (curSrmVer || '8.x') + ' to intermediate release 8.8. Direct upgrade from versions prior to 8.6 to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported. For full guidance, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.',
                                             'Verify site pairings, protection groups, and recovery plans on build 8.8.'
                                         ],
-                                        notices: [{
-                                            type: 'warning',
-                                            title: '3-Step Upgrade Path Required for Site Recovery Manager < 8.6',
-                                            bullets: [
-                                                'Direct upgrade from Site Recovery Manager ' + (curSrmVer || '8.x') + ' to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported in Broadcom TechDocs.',
-                                                'You must first upgrade from ' + (curSrmVer || '8.x') + ' to intermediate release 8.8, then upgrade from 8.8 to VMware Live Recovery 9.0.2.3 prior to upgrading to VCF 9.1.'
-                                            ]
-                                        }]
+                                        notices: [
+                                            {
+                                                type: 'warning',
+                                                title: '3-Step Upgrade Path Required for Site Recovery Manager < 8.6',
+                                                bullets: [
+                                                    'Direct upgrade from Site Recovery Manager ' + (curSrmVer || '8.x') + ' to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported in Broadcom TechDocs.',
+                                                    'You must first upgrade from ' + (curSrmVer || '8.x') + ' to intermediate release 8.8, then upgrade from 8.8 to VMware Live Recovery 9.0.2.3 prior to upgrading to VCF 9.1.'
+                                                ]
+                                            },
+                                            {
+                                                type: 'info',
+                                                title: 'Upgrade of Protection and Recovery Site',
+                                                bullets: [
+                                                    'During a Site Recovery Manager / VLSR upgrade, ensure that both the Protected and Recovery sites are fully upgraded before proceeding to the next phases.'                                            
+                                                ]
+                                            }
+                                        ]
                                     },
                                     componentId: 'srm_prereq'
                                 });
@@ -2355,14 +2383,23 @@
                                             'Upgrade and migrate Site Recovery Manager / VLSR from ' + (curSrmVer || '8.8/9.0.x') + ' to VMware Live Recovery (VLSR) 9.0.2.3 before proceeding with VCF 9.1 upgrade. Direct upgrade from ' + (curSrmVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix. For full guidance, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.',
                                             'Verify site pair database migration, inventory mappings, and recovery plans after migrating to VMware Live Recovery (VLSR) 9.0.2.3.'
                                         ],
-                                        notices: [{
-                                            type: 'warning',
-                                            title: '2-Step Upgrade Path Required for Site Recovery Manager',
-                                            bullets: [
-                                                'Direct upgrade from Site Recovery Manager / VLSR ' + (curSrmVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix.',
-                                                'You must first upgrade Site Recovery Manager / VLSR ' + (curSrmVer || '8.8/9.0.x') + ' to VMware Live Recovery (VLSR) 9.0.2.3 prior to upgrading to VCF 9.1. See <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.'
-                                            ]
-                                        }]
+                                        notices: [
+                                            {
+                                                type: 'warning',
+                                                title: '2-Step Upgrade Path Required for Site Recovery Manager',
+                                                bullets: [
+                                                    'Direct upgrade from Site Recovery Manager / VLSR ' + (curSrmVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix.',
+                                                    'You must first upgrade Site Recovery Manager / VLSR ' + (curSrmVer || '8.8/9.0.x') + ' to VMware Live Recovery (VLSR) 9.0.2.3 prior to upgrading to VCF 9.1. See <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.'
+                                                ]
+                                            },
+                                            {
+                                                type: 'info',
+                                                title: 'Upgrade of Protection and Recovery Site',
+                                                bullets: [
+                                                    'During a Site Recovery Manager / VLSR upgrade, ensure that both the Protected and Recovery sites are fully upgraded before proceeding to the next phases.'                                            
+                                                ]
+                                            }
+                                        ]
                                     },
                                     componentId: 'srm_prereq'
                                 });
@@ -2387,7 +2424,8 @@
                                         type: 'info',
                                         title: 'Protection and Recovery Appliance Convergence',
                                         bullets: [
-                                            'vSphere Replication and Site Recovery Manager are unified into the single Protection and Recovery Appliance for VCF 9.1 (target build ' + convergenceBuild + '). Refer to <a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html" target="_blank" rel="noopener">Protection and Recovery Appliance Overview</a> for complete instructions.'
+                                            'vSphere Replication and Site Recovery Manager are unified into the single Protection and Recovery Appliance for VCF 9.1 (target build ' + convergenceBuild + '). Refer to <a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/site-recovery-manager-appliance-overview.html" target="_blank" rel="noopener">Protection and Recovery Appliance Overview</a> for complete instructions.',
+                                            'During Protection and Recovery Appliance Convergence, ensure that both the Protected and Recovery sites are fully converge before proceeding to the next phases.'
                                         ]
                                     }]
                                 },
@@ -2462,14 +2500,23 @@
                                         'Upgrade Site Recovery Manager from ' + (curSrmVer || '8.x') + ' to intermediate release 8.8. Direct upgrade from versions prior to 8.6 to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported. For full guidance, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.',
                                         'Verify site pairings, protection groups, and recovery plans on build 8.8.'
                                     ],
-                                    notices: [{
-                                        type: 'warning',
-                                        title: '3-Step Upgrade Path Required for Site Recovery Manager < 8.6',
-                                        bullets: [
-                                            'Direct upgrade from Site Recovery Manager ' + (curSrmVer || '8.x') + ' to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported in Broadcom TechDocs.',
-                                            'You must first upgrade from ' + (curSrmVer || '8.x') + ' to intermediate release 8.8, then upgrade from 8.8 to VMware Live Recovery 9.0.2.3 prior to upgrading to VCF 9.1.'
-                                        ]
-                                    }]
+                                    notices: [
+                                        {
+                                            type: 'warning',
+                                            title: '3-Step Upgrade Path Required for Site Recovery Manager < 8.6',
+                                            bullets: [
+                                                'Direct upgrade from Site Recovery Manager ' + (curSrmVer || '8.x') + ' to VMware Live Recovery 9.0.2.3 or VCF 9.1 is not supported in Broadcom TechDocs.',
+                                                'You must first upgrade from ' + (curSrmVer || '8.x') + ' to intermediate release 8.8, then upgrade from 8.8 to VMware Live Recovery 9.0.2.3 prior to upgrading to VCF 9.1.'
+                                            ]
+                                        },
+                                        {
+                                            type: 'info',
+                                            title: 'Upgrade of Protection and Recovery Site',
+                                            bullets: [
+                                                'During a Site Recovery Manager / VLSR upgrade, ensure that both the Protected and Recovery sites are fully upgraded before proceeding to the next phases.'                                            
+                                            ]
+                                        }
+                                    ]
                                 },
                                 componentId: 'srm_prereq'
                             });
@@ -2498,14 +2545,23 @@
                                         'Upgrade and migrate Site Recovery Manager / VLSR from ' + (curSrmVer || '8.8/9.0.x') + ' to VMware Live Recovery (VLSR) 9.0.2.3 before proceeding with VCF 9.1 upgrade. Direct upgrade from ' + (curSrmVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix. For full guidance, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.',
                                         'Verify site pair database migration, inventory mappings, and recovery plans after migrating to VMware Live Recovery (VLSR) 9.0.2.3.'
                                     ],
-                                    notices: [{
-                                        type: 'warning',
-                                        title: '2-Step Upgrade Path Required for Site Recovery Manager',
-                                        bullets: [
-                                            'Direct upgrade from Site Recovery Manager / VLSR ' + (curSrmVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix.',
-                                            'You must first upgrade Site Recovery Manager / VLSR ' + (curSrmVer || '8.8/9.0.x') + ' to VMware Live Recovery (VLSR) 9.0.2.3 prior to upgrading to VCF 9.1. See <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.'
-                                        ]
-                                    }]
+                                    notices: [
+                                        {
+                                            type: 'warning',
+                                            title: '2-Step Upgrade Path Required for Site Recovery Manager',
+                                            bullets: [
+                                                'Direct upgrade from Site Recovery Manager / VLSR ' + (curSrmVer || '8.8/9.0.x') + ' to VCF 9.1 Protection and Recovery Appliance (' + convergenceBuild + ') is not supported in the Broadcom Interoperability Matrix.',
+                                                'You must first upgrade Site Recovery Manager / VLSR ' + (curSrmVer || '8.8/9.0.x') + ' to VMware Live Recovery (VLSR) 9.0.2.3 prior to upgrading to VCF 9.1. See <a href="https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-recovery-appliance/9-0-5/upgrading-srm/migrate-to-the-combined-vmware-live-recovery-appliance.html" target="_blank" rel="noopener">Migrate to Combined VMware Live Recovery Appliance Documentation</a>.'
+                                            ]
+                                        },
+                                        {
+                                            type: 'info',
+                                            title: 'Upgrade of Protection and Recovery Site',
+                                            bullets: [
+                                                'During a Site Recovery Manager / VLSR upgrade, ensure that both the Protected and Recovery sites are fully upgraded before proceeding to the next phases.'                                            
+                                            ]
+                                        }
+                                    ]
                                 },
                                 componentId: 'srm_prereq'
                             });
@@ -2529,7 +2585,7 @@
                     }
                  } else if (componentId === 'avi') {
                     shouldInclude = false;
-                    const isAviSelected = selectedProducts['avi'] === true || (typeof aviSelected !== 'undefined' && aviSelected) || localStorage.getItem('avi-selected') === 'true' || !!(localStorage.getItem('avi-version'));
+                    const isAviSelected = (selectedProducts['avi'] === true || (typeof aviSelected !== 'undefined' && aviSelected) || localStorage.getItem('avi-selected') === 'true') && localStorage.getItem('avi-selected') !== 'false';
                     if (isAviSelected) {
                         const curAviVer = (localStorage.getItem('avi-version') || (typeof window.aviVersion !== 'undefined' ? window.aviVersion : '') || '').trim();
                         const _aviMap = {
@@ -2642,7 +2698,11 @@
             allSteps = steps;
 
 
-            currentStepIndex = 0; // Always start from first step
+            if (!keepStepIndex) {
+                currentStepIndex = 0; // Always start from first step
+            } else {
+                currentStepIndex = Math.min(currentStepIndex, Math.max(0, steps.length - 1));
+            }
             
             // Update counter
             const counter = document.getElementById('phaseCounter');
@@ -2669,13 +2729,20 @@
             setTimeout(() => { if (typeof initInlineDocumentation === "function") initInlineDocumentation(); }, 100);
             
             // Smooth scroll on first generation
-            if (steps.length > 0) {
+            if (steps.length > 0 && !keepStepIndex) {
                 setTimeout(() => {
                     document.getElementById('step3') && document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
             }
         }
         
+        function handleAviLicenseHubToggle(isEnabled) {
+            localStorage.setItem('avi-deploy-license-hub', isEnabled ? 'true' : 'false');
+            if (typeof autoGenerateUpgradePlan === 'function') {
+                autoGenerateUpgradePlan(true);
+            }
+        }
+
         function groupPhasesIntoSteps(phases, orderArray) {
             const steps = [];
             const _is910To911Plan = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1'));
@@ -2754,15 +2821,15 @@
             const aviPhases = optionalPreInfraPhases.filter(p => p.componentId === 'avi');
             // Inject License Hub into AVI step when AVI is selected (skip ONLY for 9.1.0.x source TO 9.1.1 as License Hub already exists)
             const _is910To911Lh = (vcfVersion === '9.1.0' || (vcfVersion || '').startsWith('9.1') || (localStorage.getItem('vcf-version') || '').startsWith('9.1')) && (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').startsWith('9.1.1');
-            if (aviPhases.length > 0 && !_is910To911Lh) {
+            const userWantsLicenseHubOnAvi = localStorage.getItem('avi-deploy-license-hub') === 'true';
+            if (aviPhases.length > 0 && !_is910To911Lh && userWantsLicenseHubOnAvi) {
                 const _lhDataAvi = upgradeData.components['license_hub'];
                 if (_lhDataAvi) aviPhases.push({ number: Math.max(0, ...aviPhases.map(p => p.number)) + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataAvi, componentId: 'license_hub' });
             }
             const hcxPhases = optionalPreInfraPhases.filter(p => p.componentId === 'hcx');
-            // Inject License Hub into NSX step only when vDefend selected AND AVI not selected (skip ONLY for 9.1.0.x source TO 9.1.1 as License Hub already exists)
+            // Inject License Hub into NSX step only when vDefend selected AND License Hub is NOT on Avi (skip ONLY for 9.1.0.x source TO 9.1.1 as License Hub already exists)
             const _selProds = window.selectedAdvancedProducts || {};
-            const _aviWasSelected = optionalPreInfraPhases.some(p => p.componentId === 'avi');
-            if (nsxPhases.length > 0 && _selProds['vdefend'] === true && !_aviWasSelected && !_is910To911Lh) {
+            if (nsxPhases.length > 0 && _selProds['vdefend'] === true && !userWantsLicenseHubOnAvi && !_is910To911Lh) {
                 const _lhDataNsx = upgradeData.components['license_hub'];
                 if (_lhDataNsx) nsxPhases.push({ number: Math.max(0, ...nsxPhases.map(p => p.number)) + 1, title: 'Deploy License Hub', description: 'Deploy License Hub', data: _lhDataNsx, componentId: 'license_hub' });
             }
@@ -3171,6 +3238,28 @@
                 html += `<h4 style="margin: 0 0 10px 0; color: var(--vmw-blue);">Step ${phaseIdx + 1}: ${phase.title}</h4>`;
                 html += `<p style="margin-bottom: 10px; color: var(--text-primary);">${phase.description}</p>`;
                 
+                if (phase.componentId === 'avi') {
+                    const selProds = window.selectedAdvancedProducts || {};
+                    const isVDefendSel = selProds['vdefend'] === true;
+                    const isChecked = localStorage.getItem('avi-deploy-license-hub') === 'true';
+                    html += `
+                        <div style="background: var(--bg, #f8f9fa); border: 1px solid var(--border-color, #e9ecef); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="aviCardLicenseHubToggle" ${isChecked ? 'checked' : ''} onchange="handleAviLicenseHubToggle(this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: #0088b5;" />
+                                    <label for="aviCardLicenseHubToggle" style="font-weight: 600; font-size: 0.95rem; cursor: pointer; color: var(--text-primary, #212529);">Include License Hub Step with Avi Load Balancer</label>
+                                </div>
+                                <span class="badge ${isChecked ? 'included' : 'version'}" style="font-size: 0.78rem;">${isChecked ? 'License Hub Enabled' : 'Direct Internet Licensing'}</span>
+                            </div>
+                            <p style="margin: 8px 0 0 28px; font-size: 0.85rem; color: var(--text-secondary, #6c757d); line-height: 1.4;">
+                                ${isVDefendSel 
+                                    ? (isChecked ? 'License Hub will be deployed during this Avi step. The NSX step will automatically skip duplicate License Hub deployment.' : 'Avi will connect directly to the Internet for licensing. License Hub will automatically be included in the NSX / vDefend step.')
+                                    : (isChecked ? 'License Hub deployment step added to Avi Load Balancer.' : 'Standalone Avi Load Balancer connects directly to the Internet for licensing. Check this box if you require an air-gapped License Hub deployment.')}
+                            </p>
+                        </div>
+                    `;
+                }
+                
                 if (phase.data) {
                     if (phase.data.prereqs && phase.data.prereqs.length > 0) {
                         html += `<p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px;"><strong>Prerequisites:</strong></p><ul style="margin: 5px 0 10px 20px; font-size: 0.9rem; color: var(--text-primary);">`;
@@ -3468,6 +3557,12 @@
                             html += '</div>';
                         });
                     }
+
+                    if (phase.componentId === 'avi') {
+                        const isLhToggled = localStorage.getItem('avi-deploy-license-hub') === 'true';
+                        html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #17a2b8;"><strong>INFO: License Hub Deployment</strong><p style="margin:4px 0 0 0;font-size:0.9rem;">' + (isLhToggled ? 'License Hub deployment is included with Avi Load Balancer as requested.' : 'Avi Load Balancer connects directly to the Internet for licensing; License Hub deployment is omitted for this step.') + '</p></div>';
+                    }
+
                     if (phase.data.steps && phase.data.steps.length > 0) {
                         html += '<h4>Steps:</h4><ul>';
                         phase.data.steps.forEach(s => {
@@ -3572,9 +3667,10 @@
                     html += `<li><span class="badge included">✓ Kubernetes Release (VKr)</span><span class="badge version">v${abbrev(_vkrVer)}</span></li>`;
                 }
             }
-            if (typeof aviSelected !== 'undefined' && aviSelected || (typeof window.selectedAdvancedProducts !== 'undefined' && window.selectedAdvancedProducts && window.selectedAdvancedProducts['avi'] === true) || (localStorage.getItem('avi-selected') === 'true') || !!(localStorage.getItem('avi-version'))) {
+            if (((typeof aviSelected !== 'undefined' && aviSelected) || (typeof window.selectedAdvancedProducts !== 'undefined' && window.selectedAdvancedProducts && window.selectedAdvancedProducts['avi'] === true) || (localStorage.getItem('avi-selected') === 'true')) && localStorage.getItem('avi-selected') !== 'false') {
                 const _aviVer = (typeof aviVersion !== 'undefined' && aviVersion) || localStorage.getItem('avi-version') || '';
-                html += `<li><span class="badge included">✓ Avi Load Balancer</span>${_aviVer ? ' <span class="badge version">v' + abbrev(_aviVer) + '</span>' : ''}</li>`;
+                const aviLhTag = localStorage.getItem('avi-deploy-license-hub') === 'true' ? ' <span class="badge version">with License Hub</span>' : '';
+                html += `<li><span class="badge included">✓ Avi Load Balancer</span>${_aviVer ? ' <span class="badge version">v' + abbrev(_aviVer) + '</span>' : ''}${aviLhTag}</li>`;
             }
             if (typeof replicationSelected !== 'undefined' && replicationSelected || (typeof window.selectedAdvancedProducts !== 'undefined' && window.selectedAdvancedProducts && window.selectedAdvancedProducts['replication'] === true) || (localStorage.getItem('replication-selected') === 'true') || !!(localStorage.getItem('replication-version'))) {
                 const _repVer = (typeof replicationVersion !== 'undefined' && replicationVersion) || localStorage.getItem('replication-version') || '';
@@ -4183,7 +4279,7 @@
             const id = chip.dataset.id;
             gSelected.has(id) ? gSelected.delete(id) : gSelected.add(id);
             chip.classList.toggle('g-selected');
-            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan();
+            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan(true);
         }
 
         function gSyncCheckboxes() {
@@ -4196,7 +4292,7 @@
             
             if (typeof replicationSelected !== 'undefined' && replicationSelected || localStorage.getItem('replication-selected') === 'true' || !!(localStorage.getItem('replication-version'))) prod['replication'] = true;
             if (typeof srmSelected !== 'undefined' && srmSelected || localStorage.getItem('srm-selected') === 'true' || !!(localStorage.getItem('srm-version'))) prod['srm'] = true;
-            if (typeof aviSelected !== 'undefined' && aviSelected || localStorage.getItem('avi-selected') === 'true' || !!(localStorage.getItem('avi-version'))) prod['avi'] = true;
+            if ((typeof aviSelected !== 'undefined' && aviSelected || localStorage.getItem('avi-selected') === 'true') && localStorage.getItem('avi-selected') !== 'false') prod['avi'] = true;
             if (typeof supervisorSelected !== 'undefined' && supervisorSelected || localStorage.getItem('supervisor-selected') === 'true' || !!(localStorage.getItem('supervisor-version')) || localStorage.getItem('vks-selected') === 'true' || !!(localStorage.getItem('vks-version'))) prod['supervisor'] = true;
             window.selectedAdvancedProducts = prod;
         }
@@ -4217,13 +4313,13 @@
             gSelected.delete(id);
             const chip = document.querySelector('.g-chip[data-id="' + id + '"]');
             if (chip) chip.classList.remove('g-selected');
-            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan();
+            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan(true);
         }
 
         function gReset() {
             gSelected.clear();
             gRender('');
-            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan();
+            gSyncCheckboxes(); gUpdateSummary(); autoGenerateUpgradePlan(true);
         }
 
         function resetDropdowns() { gReset(); }

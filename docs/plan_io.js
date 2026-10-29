@@ -220,7 +220,7 @@ function exportPlanConfigJSON() {
             'vks-selected', 'vks-version',
             'srm-selected', 'srm-version',
             'replication-selected', 'replication-version',
-            'avi-selected', 'avi-version',
+            'avi-selected', 'avi-version', 'avi-deploy-license-hub',
             'vcf-version', 'vcf-detailed-version', 'target-vcf91-version',
             'selected-plan-page', 'deployment-type', 'deployment-size',
             'depot-selected', 'vidb-selected', 'vidb-is-embedded', 'vidb-on-overlay',

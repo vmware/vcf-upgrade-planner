@@ -207,6 +207,13 @@
                     "3. Roll back the precheck change on the 8.0 vCenter for Workspace ONE broker - All Guidance is provided in link (<a href='https://knowledge.broadcom.com/external/article/443558' target='_blank'>View Documentation</a>).",
                     "4. Reboot vCenter."
                 ]
+            },
+            {
+                "type": "info",
+                "title": "EOL vSphere 8.x",
+                "bullets": [
+                    "Following the successful VCF import, the environment can remain on vSphere 8.x with full vendor support until its scheduled End of General Support (EoGS) on October 11, 2027."
+                ]
             }
         ]
         },
@@ -564,6 +571,13 @@
                     "title": "NSX Version Compatibility",
                     "bullets": [
                         "Review VMware Product Interoperability Matrix"
+                    ]
+                },
+                {
+                    "type": "info",
+                    "title": "Shared NSX Managers",
+                    "bullets": [
+                        "When converging a standalone vCenter Server into a VCF Management Domain that uses a shared NSX Manager, ensure you import all other vCenters attached to that NSX Manager before performing any NSX upgrades."
                     ]
                 }
             ]

@@ -710,6 +710,13 @@
                     "bullets": [
                         "Review VMware Product Interoperability Matrix"
                     ]
+                },
+                {
+                    "type": "info",
+                    "title": "Shared NSX Managers",
+                    "bullets": [
+                        "When converging a standalone vCenter Server into a VCF Management Domain that uses a shared NSX Manager, ensure you import all other vCenters attached to that NSX Manager before performing any NSX upgrades."
+                    ]
                 }
             ]
         },
