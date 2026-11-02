@@ -2,7 +2,7 @@
   "_meta": {
     "description": "VCF product interoperability data for all key product pairs",
     "source": "Broadcom Interoperability Matrix \u2014 https://interopmatrix.broadcom.com/Interoperability",
-    "last_updated": "2026-10-25",
+    "last_updated": "2026-11-01",
     "update_instructions": "Run `python3 refresh_compat.py` to pull latest data from Broadcom API, or let the GitHub Workflow refresh-compat.yml update it automatically.",
     "api_base": "https://interop.esp.spespg1.vmw.saas.broadcom.com/external",
     "interop_base": "https://interopmatrix.broadcom.com/Interoperability",
@@ -961,13 +961,6 @@
         "ga_date": 1788393600000
       },
       {
-        "value": "8.0U2f",
-        "label": "8.0U2f",
-        "group": "8.0",
-        "broadcom_release_id": 21611,
-        "ga_date": 1785715200000
-      },
-      {
         "value": "9.1.0.0300",
         "label": "9.1.0.0300",
         "group": "9.1",
@@ -1045,13 +1038,6 @@
         "ga_date": 1759104000000
       },
       {
-        "value": "7.0U3w",
-        "label": "7.0U3w",
-        "group": "7.0",
-        "broadcom_release_id": 19683,
-        "ga_date": 1759104000000
-      },
-      {
         "value": "8.0U3g",
         "label": "8.0U3g",
         "group": "8.0",
@@ -1066,13 +1052,6 @@
         "ga_date": 1750118400000
       },
       {
-        "value": "7.0U3v",
-        "label": "7.0U3v",
-        "group": "7.0",
-        "broadcom_release_id": 19057,
-        "ga_date": 1747699200000
-      },
-      {
         "value": "8.0U3e",
         "label": "8.0U3e",
         "group": "8.0",
@@ -1080,38 +1059,10 @@
         "ga_date": 1744243200000
       },
       {
-        "value": "7.0U3u",
-        "label": "7.0U3u",
-        "group": "7.0",
-        "broadcom_release_id": 18683,
-        "ga_date": 1743379200000
-      },
-      {
-        "value": "6.7U3w",
-        "label": "6.7U3w",
-        "group": "6.7",
-        "broadcom_release_id": 19831,
-        "ga_date": 1730073600000
-      },
-      {
         "value": "8.0U3d",
         "label": "8.0U3d",
         "group": "8.0",
         "broadcom_release_id": 18575,
-        "ga_date": 1729468800000
-      },
-      {
-        "value": "8.0U2e",
-        "label": "8.0U2e",
-        "group": "8.0",
-        "broadcom_release_id": 18552,
-        "ga_date": 1729468800000
-      },
-      {
-        "value": "7.0U3t",
-        "label": "7.0U3t",
-        "group": "7.0",
-        "broadcom_release_id": 18576,
         "ga_date": 1729468800000
       },
       {
@@ -1122,24 +1073,10 @@
         "ga_date": 1728432000000
       },
       {
-        "value": "6.7U3v",
-        "label": "6.7U3v",
-        "group": "6.7",
-        "broadcom_release_id": 19829,
-        "ga_date": 1727654400000
-      },
-      {
         "value": "8.0U3b",
         "label": "8.0U3b",
         "group": "8.0",
         "broadcom_release_id": 18420,
-        "ga_date": 1726531200000
-      },
-      {
-        "value": "7.0U3s",
-        "label": "7.0U3s",
-        "group": "7.0",
-        "broadcom_release_id": 18495,
         "ga_date": 1726531200000
       },
       {
@@ -1150,501 +1087,11 @@
         "ga_date": 1721260800000
       },
       {
-        "value": "6.7U3u",
-        "label": "6.7U3u",
-        "group": "6.7",
-        "broadcom_release_id": 19835,
-        "ga_date": 1720051200000
-      },
-      {
         "value": "8.0U3",
         "label": "8.0U3",
         "group": "8.0",
         "broadcom_release_id": 17708,
         "ga_date": 1719273600000
-      },
-      {
-        "value": "8.0U2d",
-        "label": "8.0U2d",
-        "group": "8.0",
-        "broadcom_release_id": 18398,
-        "ga_date": 1718582400000
-      },
-      {
-        "value": "8.0U1e",
-        "label": "8.0U1e",
-        "group": "8.0",
-        "broadcom_release_id": 18399,
-        "ga_date": 1718582400000
-      },
-      {
-        "value": "7.0U3r",
-        "label": "7.0U3r",
-        "group": "7.0",
-        "broadcom_release_id": 18397,
-        "ga_date": 1718582400000
-      },
-      {
-        "value": "7.0U3q",
-        "label": "7.0U3q",
-        "group": "7.0",
-        "broadcom_release_id": 18127,
-        "ga_date": 1716249600000
-      },
-      {
-        "value": "8.0U2c",
-        "label": "8.0U2c",
-        "group": "8.0",
-        "broadcom_release_id": 18114,
-        "ga_date": 1711411200000
-      },
-      {
-        "value": "8.0U2b",
-        "label": "8.0U2b",
-        "group": "8.0",
-        "broadcom_release_id": 17733,
-        "ga_date": 1709164800000
-      },
-      {
-        "value": "7.0U3p",
-        "label": "7.0U3p",
-        "group": "7.0",
-        "broadcom_release_id": 17846,
-        "ga_date": 1701907200000
-      },
-      {
-        "value": "8.0U2a",
-        "label": "8.0U2a",
-        "group": "8.0",
-        "broadcom_release_id": 17812,
-        "ga_date": 1698278400000
-      },
-      {
-        "value": "8.0U1d",
-        "label": "8.0U1d",
-        "group": "8.0",
-        "broadcom_release_id": 17779,
-        "ga_date": 1698105600000
-      },
-      {
-        "value": "7.0U3o",
-        "label": "7.0U3o",
-        "group": "7.0",
-        "broadcom_release_id": 17060,
-        "ga_date": 1695859200000
-      },
-      {
-        "value": "8.0U2",
-        "label": "8.0U2",
-        "group": "8.0",
-        "broadcom_release_id": 16988,
-        "ga_date": 1695254400000
-      },
-      {
-        "value": "8.0U1c",
-        "label": "8.0U1c",
-        "group": "8.0",
-        "broadcom_release_id": 17062,
-        "ga_date": 1690416000000
-      },
-      {
-        "value": "7.0U3n",
-        "label": "7.0U3n",
-        "group": "7.0",
-        "broadcom_release_id": 17144,
-        "ga_date": 1688601600000
-      },
-      {
-        "value": "8.0U1b",
-        "label": "8.0U1b",
-        "group": "8.0",
-        "broadcom_release_id": 17077,
-        "ga_date": 1687392000000
-      },
-      {
-        "value": "7.0U3m",
-        "label": "7.0U3m",
-        "group": "7.0",
-        "broadcom_release_id": 17078,
-        "ga_date": 1687392000000
-      },
-      {
-        "value": "8.0U1a",
-        "label": "8.0U1a",
-        "group": "8.0",
-        "broadcom_release_id": 17072,
-        "ga_date": 1685577600000
-      },
-      {
-        "value": "8.0U1",
-        "label": "8.0U1",
-        "group": "8.0",
-        "broadcom_release_id": 6428,
-        "ga_date": 1681776000000
-      },
-      {
-        "value": "8.0.0c",
-        "label": "8.0.0c",
-        "group": "8.0",
-        "broadcom_release_id": 16770,
-        "ga_date": 1680134400000
-      },
-      {
-        "value": "7.0U3l",
-        "label": "7.0U3l",
-        "group": "7.0",
-        "broadcom_release_id": 17058,
-        "ga_date": 1680134400000
-      },
-      {
-        "value": "7.0U3k",
-        "label": "7.0U3k",
-        "group": "7.0",
-        "broadcom_release_id": 9999,
-        "ga_date": 1677110400000
-      },
-      {
-        "value": "8.0.0b",
-        "label": "8.0.0b",
-        "group": "8.0",
-        "broadcom_release_id": 17056,
-        "ga_date": 1676332800000
-      },
-      {
-        "value": "7.0U3j",
-        "label": "7.0U3j",
-        "group": "7.0",
-        "broadcom_release_id": 10000,
-        "ga_date": 1671667200000
-      },
-      {
-        "value": "8.0.0a",
-        "label": "8.0.0a",
-        "group": "8.0",
-        "broadcom_release_id": 9975,
-        "ga_date": 1671062400000
-      },
-      {
-        "value": "7.0U3i",
-        "label": "7.0U3i",
-        "group": "7.0",
-        "broadcom_release_id": 8454,
-        "ga_date": 1670457600000
-      },
-      {
-        "value": "8.0",
-        "label": "8.0",
-        "group": "8.0",
-        "broadcom_release_id": 5891,
-        "ga_date": 1665446400000
-      },
-      {
-        "value": "7.0U3h",
-        "label": "7.0U3h",
-        "group": "7.0",
-        "broadcom_release_id": 9997,
-        "ga_date": 1663027200000
-      },
-      {
-        "value": "7.0U3g",
-        "label": "7.0U3g",
-        "group": "7.0",
-        "broadcom_release_id": 9995,
-        "ga_date": 1658534400000
-      },
-      {
-        "value": "7.0U3f",
-        "label": "7.0U3f",
-        "group": "7.0",
-        "broadcom_release_id": 6717,
-        "ga_date": 1657584000000
-      },
-      {
-        "value": "7.0U3e",
-        "label": "7.0U3e",
-        "group": "7.0",
-        "broadcom_release_id": 9993,
-        "ga_date": 1652313600000
-      },
-      {
-        "value": "7.0U3d",
-        "label": "7.0U3d",
-        "group": "7.0",
-        "broadcom_release_id": 6778,
-        "ga_date": 1648512000000
-      },
-      {
-        "value": "7.0U3c",
-        "label": "7.0U3c",
-        "group": "7.0",
-        "broadcom_release_id": 6547,
-        "ga_date": 1643241600000
-      },
-      {
-        "value": "7.0U3b",
-        "label": "7.0U3b",
-        "group": "7.0",
-        "broadcom_release_id": 6672,
-        "ga_date": 1636675200000
-      },
-      {
-        "value": "7.0U3a",
-        "label": "7.0U3a",
-        "group": "7.0",
-        "broadcom_release_id": 9990,
-        "ga_date": 1634774400000
-      },
-      {
-        "value": "7.0U3",
-        "label": "7.0U3",
-        "group": "7.0",
-        "broadcom_release_id": 5559,
-        "ga_date": 1633392000000
-      },
-      {
-        "value": "7.0U2d",
-        "label": "7.0U2d",
-        "group": "7.0",
-        "broadcom_release_id": 9991,
-        "ga_date": 1632182400000
-      },
-      {
-        "value": "7.0U2c",
-        "label": "7.0U2c",
-        "group": "7.0",
-        "broadcom_release_id": 6687,
-        "ga_date": 1629763200000
-      },
-      {
-        "value": "7.0U2b",
-        "label": "7.0U2b",
-        "group": "7.0",
-        "broadcom_release_id": 9989,
-        "ga_date": 1621900800000
-      },
-      {
-        "value": "7.0U2a",
-        "label": "7.0U2a",
-        "group": "7.0",
-        "broadcom_release_id": 9980,
-        "ga_date": 1619481600000
-      },
-      {
-        "value": "7.0U2",
-        "label": "7.0U2",
-        "group": "7.0",
-        "broadcom_release_id": 5088,
-        "ga_date": 1615248000000
-      },
-      {
-        "value": "7.0U1d",
-        "label": "7.0U1d",
-        "group": "7.0",
-        "broadcom_release_id": 9981,
-        "ga_date": 1612224000000
-      },
-      {
-        "value": "7.0U1c",
-        "label": "7.0U1c",
-        "group": "7.0",
-        "broadcom_release_id": 6605,
-        "ga_date": 1608163200000
-      },
-      {
-        "value": "7.0U1a",
-        "label": "7.0U1a",
-        "group": "7.0",
-        "broadcom_release_id": 9988,
-        "ga_date": 1603324800000
-      },
-      {
-        "value": "7.0U1",
-        "label": "7.0U1",
-        "group": "7.0",
-        "broadcom_release_id": 4276,
-        "ga_date": 1601942400000
-      },
-      {
-        "value": "7.0.0d",
-        "label": "7.0.0d",
-        "group": "7.0",
-        "broadcom_release_id": 9987,
-        "ga_date": 1598313600000
-      },
-      {
-        "value": "7.0.0c",
-        "label": "7.0.0c",
-        "group": "7.0",
-        "broadcom_release_id": 9986,
-        "ga_date": 1596067200000
-      },
-      {
-        "value": "7.0.0b",
-        "label": "7.0.0b",
-        "group": "7.0",
-        "broadcom_release_id": 6476,
-        "ga_date": 1592870400000
-      },
-      {
-        "value": "7.0.0a",
-        "label": "7.0.0a",
-        "group": "7.0",
-        "broadcom_release_id": 9979,
-        "ga_date": 1589846400000
-      },
-      {
-        "value": "7.0",
-        "label": "7.0",
-        "group": "7.0",
-        "broadcom_release_id": 3496,
-        "ga_date": 1585785600000
-      },
-      {
-        "value": "6.7 U3",
-        "label": "6.7 U3",
-        "group": "6.7",
-        "broadcom_release_id": 3457,
-        "ga_date": 1566259200000
-      },
-      {
-        "value": "6.5 U3",
-        "label": "6.5 U3",
-        "group": "6.5",
-        "broadcom_release_id": 3364,
-        "ga_date": 1562025600000
-      },
-      {
-        "value": "6.7 U2",
-        "label": "6.7 U2",
-        "group": "6.7",
-        "broadcom_release_id": 3222,
-        "ga_date": 1554940800000
-      },
-      {
-        "value": "6.7 U1",
-        "label": "6.7 U1",
-        "group": "6.7",
-        "broadcom_release_id": 2862,
-        "ga_date": 1539648000000
-      },
-      {
-        "value": "6.5 U2",
-        "label": "6.5 U2",
-        "group": "6.5",
-        "broadcom_release_id": 2732,
-        "ga_date": 1525305600000
-      },
-      {
-        "value": "6.7.0",
-        "label": "6.7.0",
-        "group": "6.7",
-        "broadcom_release_id": 2736,
-        "ga_date": 1523923200000
-      },
-      {
-        "value": "6.5 U1",
-        "label": "6.5 U1",
-        "group": "6.5",
-        "broadcom_release_id": 2332,
-        "ga_date": 1501113600000
-      },
-      {
-        "value": "6.0 U3",
-        "label": "6.0 U3",
-        "group": "6.0",
-        "broadcom_release_id": 2136,
-        "ga_date": 1487894400000
-      },
-      {
-        "value": "6.5.0",
-        "label": "6.5.0",
-        "group": "6.5",
-        "broadcom_release_id": 2132,
-        "ga_date": 1479168000000
-      },
-      {
-        "value": "6.0 U2",
-        "label": "6.0 U2",
-        "group": "6.0",
-        "broadcom_release_id": 998,
-        "ga_date": 1458000000000
-      },
-      {
-        "value": "5.5.3",
-        "label": "5.5.3",
-        "group": "5.5",
-        "broadcom_release_id": 792,
-        "ga_date": 1442361600000
-      },
-      {
-        "value": "5.5 U3",
-        "label": "5.5 U3",
-        "group": "5.5",
-        "broadcom_release_id": 16577,
-        "ga_date": 1442361600000
-      },
-      {
-        "value": "6.0.0 U1",
-        "label": "6.0.0 U1",
-        "group": "6.0",
-        "broadcom_release_id": 695,
-        "ga_date": 1441843200000
-      },
-      {
-        "value": "6.0.0",
-        "label": "6.0.0",
-        "group": "6.0",
-        "broadcom_release_id": 431,
-        "ga_date": 1426118400000
-      },
-      {
-        "value": "5.1 U3",
-        "label": "5.1 U3",
-        "group": "5.1",
-        "broadcom_release_id": 442,
-        "ga_date": 1417651200000
-      },
-      {
-        "value": "5.5U2",
-        "label": "5.5U2",
-        "group": "5.5",
-        "broadcom_release_id": 611,
-        "ga_date": 1410220800000
-      },
-      {
-        "value": "5.5.0 u1",
-        "label": "5.5.0 u1",
-        "group": "5.5",
-        "broadcom_release_id": 578,
-        "ga_date": 1394496000000
-      },
-      {
-        "value": "5.1 U2",
-        "label": "5.1 U2",
-        "group": "5.1",
-        "broadcom_release_id": 444,
-        "ga_date": 1389830400000
-      },
-      {
-        "value": "5.1",
-        "label": "5.1",
-        "group": "5.1",
-        "broadcom_release_id": 254,
-        "ga_date": 1389830400000
-      },
-      {
-        "value": "5.0.3",
-        "label": "5.0.3",
-        "group": "5.0",
-        "broadcom_release_id": 462,
-        "ga_date": 1381968000000
-      },
-      {
-        "value": "5.5",
-        "label": "5.5",
-        "group": "5.5",
-        "broadcom_release_id": 508,
-        "ga_date": 1379808000000
       }
     ],
     "esx": [
@@ -1661,13 +1108,6 @@
         "group": "9.1",
         "broadcom_release_id": 20814,
         "ga_date": 1788393600000
-      },
-      {
-        "value": "8.0U2f",
-        "label": "8.0U2f",
-        "group": "8.0",
-        "broadcom_release_id": 21545,
-        "ga_date": 1785715200000
       },
       {
         "value": "9.0.2.0100",
@@ -1761,32 +1201,11 @@
         "ga_date": 1752537600000
       },
       {
-        "value": "8.0U2e",
-        "label": "8.0U2e",
-        "group": "8.0",
-        "broadcom_release_id": 19264,
-        "ga_date": 1752537600000
-      },
-      {
-        "value": "7.0U3w",
-        "label": "7.0U3w",
-        "group": "7.0",
-        "broadcom_release_id": 19266,
-        "ga_date": 1752537600000
-      },
-      {
         "value": "9.0.0.0",
         "label": "9.0.0.0",
         "group": "9.0",
         "broadcom_release_id": 18609,
         "ga_date": 1750118400000
-      },
-      {
-        "value": "7.0U3v",
-        "label": "7.0U3v",
-        "group": "7.0",
-        "broadcom_release_id": 19055,
-        "ga_date": 1747699200000
       },
       {
         "value": "8.0U3e",
@@ -1803,31 +1222,10 @@
         "ga_date": 1741046400000
       },
       {
-        "value": "8.0U2d",
-        "label": "8.0U2d",
-        "group": "8.0",
-        "broadcom_release_id": 18680,
-        "ga_date": 1741046400000
-      },
-      {
-        "value": "7.0U3s",
-        "label": "7.0U3s",
-        "group": "7.0",
-        "broadcom_release_id": 18682,
-        "ga_date": 1741046400000
-      },
-      {
         "value": "8.0U3c",
         "label": "8.0U3c",
         "group": "8.0",
         "broadcom_release_id": 18603,
-        "ga_date": 1733961600000
-      },
-      {
-        "value": "7.0U3r",
-        "label": "7.0U3r",
-        "group": "7.0",
-        "broadcom_release_id": 18601,
         "ga_date": 1733961600000
       },
       {
@@ -1843,510 +1241,6 @@
         "group": "8.0",
         "broadcom_release_id": 17707,
         "ga_date": 1719273600000
-      },
-      {
-        "value": "8.0U2c",
-        "label": "8.0U2c",
-        "group": "8.0",
-        "broadcom_release_id": 18349,
-        "ga_date": 1716249600000
-      },
-      {
-        "value": "7.0U3q",
-        "label": "7.0U3q",
-        "group": "7.0",
-        "broadcom_release_id": 17735,
-        "ga_date": 1716249600000
-      },
-      {
-        "value": "8.0U1d",
-        "label": "8.0U1d",
-        "group": "8.0",
-        "broadcom_release_id": 18112,
-        "ga_date": 1709596800000
-      },
-      {
-        "value": "7.0U3p",
-        "label": "7.0U3p",
-        "group": "7.0",
-        "broadcom_release_id": 18113,
-        "ga_date": 1709596800000
-      },
-      {
-        "value": "6.7.0U3u",
-        "label": "6.7.0U3u",
-        "group": "6.7",
-        "broadcom_release_id": 19886,
-        "ga_date": 1709596800000
-      },
-      {
-        "value": "8.0U2b",
-        "label": "8.0U2b",
-        "group": "8.0",
-        "broadcom_release_id": 17732,
-        "ga_date": 1709164800000
-      },
-      {
-        "value": "7.0U3o",
-        "label": "7.0U3o",
-        "group": "7.0",
-        "broadcom_release_id": 17059,
-        "ga_date": 1695859200000
-      },
-      {
-        "value": "8.0U2",
-        "label": "8.0U2",
-        "group": "8.0",
-        "broadcom_release_id": 16987,
-        "ga_date": 1695254400000
-      },
-      {
-        "value": "8.0U1c",
-        "label": "8.0U1c",
-        "group": "8.0",
-        "broadcom_release_id": 17061,
-        "ga_date": 1690416000000
-      },
-      {
-        "value": "7.0U3n",
-        "label": "7.0U3n",
-        "group": "7.0",
-        "broadcom_release_id": 17253,
-        "ga_date": 1688601600000
-      },
-      {
-        "value": "8.0U1a",
-        "label": "8.0U1a",
-        "group": "8.0",
-        "broadcom_release_id": 17102,
-        "ga_date": 1685577600000
-      },
-      {
-        "value": "7.0U3m",
-        "label": "7.0U3m",
-        "group": "7.0",
-        "broadcom_release_id": 17006,
-        "ga_date": 1683072000000
-      },
-      {
-        "value": "8.0U1",
-        "label": "8.0U1",
-        "group": "8.0",
-        "broadcom_release_id": 6427,
-        "ga_date": 1681776000000
-      },
-      {
-        "value": "8.0c",
-        "label": "8.0c",
-        "group": "8.0",
-        "broadcom_release_id": 16831,
-        "ga_date": 1680134400000
-      },
-      {
-        "value": "7.0U3l",
-        "label": "7.0U3l",
-        "group": "7.0",
-        "broadcom_release_id": 17057,
-        "ga_date": 1680134400000
-      },
-      {
-        "value": "7.0U3k",
-        "label": "7.0U3k",
-        "group": "7.0",
-        "broadcom_release_id": 10053,
-        "ga_date": 1676937600000
-      },
-      {
-        "value": "8.0b",
-        "label": "8.0b",
-        "group": "8.0",
-        "broadcom_release_id": 17055,
-        "ga_date": 1676332800000
-      },
-      {
-        "value": "7.0U3j",
-        "label": "7.0U3j",
-        "group": "7.0",
-        "broadcom_release_id": 10001,
-        "ga_date": 1675123200000
-      },
-      {
-        "value": "8.0a",
-        "label": "8.0a",
-        "group": "8.0",
-        "broadcom_release_id": 9998,
-        "ga_date": 1670457600000
-      },
-      {
-        "value": "7.0U3i",
-        "label": "7.0U3i",
-        "group": "7.0",
-        "broadcom_release_id": 8453,
-        "ga_date": 1670457600000
-      },
-      {
-        "value": "8.0",
-        "label": "8.0",
-        "group": "8.0",
-        "broadcom_release_id": 5890,
-        "ga_date": 1665446400000
-      },
-      {
-        "value": "7.0U3g",
-        "label": "7.0U3g",
-        "group": "7.0",
-        "broadcom_release_id": 9996,
-        "ga_date": 1661990400000
-      },
-      {
-        "value": "7.0U3f",
-        "label": "7.0U3f",
-        "group": "7.0",
-        "broadcom_release_id": 6716,
-        "ga_date": 1657584000000
-      },
-      {
-        "value": "7.0U3e",
-        "label": "7.0U3e",
-        "group": "7.0",
-        "broadcom_release_id": 9994,
-        "ga_date": 1655164800000
-      },
-      {
-        "value": "7.0U3d",
-        "label": "7.0U3d",
-        "group": "7.0",
-        "broadcom_release_id": 6777,
-        "ga_date": 1648512000000
-      },
-      {
-        "value": "7.0U2e",
-        "label": "7.0U2e",
-        "group": "7.0",
-        "broadcom_release_id": 9976,
-        "ga_date": 1644883200000
-      },
-      {
-        "value": "7.0U1e",
-        "label": "7.0U1e",
-        "group": "7.0",
-        "broadcom_release_id": 9992,
-        "ga_date": 1644883200000
-      },
-      {
-        "value": "7.0U3c",
-        "label": "7.0U3c",
-        "group": "7.0",
-        "broadcom_release_id": 6546,
-        "ga_date": 1643241600000
-      },
-      {
-        "value": "7.0U3b",
-        "label": "7.0U3b",
-        "group": "7.0",
-        "broadcom_release_id": 6671,
-        "ga_date": 1636675200000
-      },
-      {
-        "value": "7.0U3a",
-        "label": "7.0U3a",
-        "group": "7.0",
-        "broadcom_release_id": 9977,
-        "ga_date": 1635379200000
-      },
-      {
-        "value": "7.0U3",
-        "label": "7.0U3",
-        "group": "7.0",
-        "broadcom_release_id": 5558,
-        "ga_date": 1633392000000
-      },
-      {
-        "value": "7.0U2d",
-        "label": "7.0U2d",
-        "group": "7.0",
-        "broadcom_release_id": 9983,
-        "ga_date": 1631577600000
-      },
-      {
-        "value": "7.0U2c",
-        "label": "7.0U2c",
-        "group": "7.0",
-        "broadcom_release_id": 6686,
-        "ga_date": 1629763200000
-      },
-      {
-        "value": "7.0U2a",
-        "label": "7.0U2a",
-        "group": "7.0",
-        "broadcom_release_id": 9978,
-        "ga_date": 1619654400000
-      },
-      {
-        "value": "7.0U2",
-        "label": "7.0U2",
-        "group": "7.0",
-        "broadcom_release_id": 5087,
-        "ga_date": 1615248000000
-      },
-      {
-        "value": "7.0U1d",
-        "label": "7.0U1d",
-        "group": "7.0",
-        "broadcom_release_id": 9982,
-        "ga_date": 1612396800000
-      },
-      {
-        "value": "7.0U1c",
-        "label": "7.0U1c",
-        "group": "7.0",
-        "broadcom_release_id": 6604,
-        "ga_date": 1608163200000
-      },
-      {
-        "value": "7.0U1b",
-        "label": "7.0U1b",
-        "group": "7.0",
-        "broadcom_release_id": 9984,
-        "ga_date": 1605744000000
-      },
-      {
-        "value": "7.0U1a",
-        "label": "7.0U1a",
-        "group": "7.0",
-        "broadcom_release_id": 9985,
-        "ga_date": 1604448000000
-      },
-      {
-        "value": "7.0U1",
-        "label": "7.0U1",
-        "group": "7.0",
-        "broadcom_release_id": 4275,
-        "ga_date": 1601942400000
-      },
-      {
-        "value": "7.0.0b",
-        "label": "7.0.0b",
-        "group": "7.0",
-        "broadcom_release_id": 6475,
-        "ga_date": 1592870400000
-      },
-      {
-        "value": "7.0",
-        "label": "7.0",
-        "group": "7.0",
-        "broadcom_release_id": 3495,
-        "ga_date": 1585785600000
-      },
-      {
-        "value": "6.7 U3",
-        "label": "6.7 U3",
-        "group": "6.7",
-        "broadcom_release_id": 3456,
-        "ga_date": 1566259200000
-      },
-      {
-        "value": "6.5 U3",
-        "label": "6.5 U3",
-        "group": "6.5",
-        "broadcom_release_id": 3363,
-        "ga_date": 1562025600000
-      },
-      {
-        "value": "6.7 U2",
-        "label": "6.7 U2",
-        "group": "6.7",
-        "broadcom_release_id": 3221,
-        "ga_date": 1554940800000
-      },
-      {
-        "value": "6.7 U1",
-        "label": "6.7 U1",
-        "group": "6.7",
-        "broadcom_release_id": 2861,
-        "ga_date": 1539648000000
-      },
-      {
-        "value": "6.5 U2",
-        "label": "6.5 U2",
-        "group": "6.5",
-        "broadcom_release_id": 2731,
-        "ga_date": 1525305600000
-      },
-      {
-        "value": "6.7.0",
-        "label": "6.7.0",
-        "group": "6.7",
-        "broadcom_release_id": 2735,
-        "ga_date": 1523923200000
-      },
-      {
-        "value": "6.5 U1",
-        "label": "6.5 U1",
-        "group": "6.5",
-        "broadcom_release_id": 2331,
-        "ga_date": 1501113600000
-      },
-      {
-        "value": "6.0 U3",
-        "label": "6.0 U3",
-        "group": "6.0",
-        "broadcom_release_id": 2135,
-        "ga_date": 1487894400000
-      },
-      {
-        "value": "6.5.0",
-        "label": "6.5.0",
-        "group": "6.5",
-        "broadcom_release_id": 2131,
-        "ga_date": 1479168000000
-      },
-      {
-        "value": "6.0 U2",
-        "label": "6.0 U2",
-        "group": "6.0",
-        "broadcom_release_id": 994,
-        "ga_date": 1458000000000
-      },
-      {
-        "value": "5.5 U3",
-        "label": "5.5 U3",
-        "group": "5.5",
-        "broadcom_release_id": 795,
-        "ga_date": 1442361600000
-      },
-      {
-        "value": "6.0.0 U1",
-        "label": "6.0.0 U1",
-        "group": "6.0",
-        "broadcom_release_id": 694,
-        "ga_date": 1441843200000
-      },
-      {
-        "value": "6.0.0",
-        "label": "6.0.0",
-        "group": "6.0",
-        "broadcom_release_id": 430,
-        "ga_date": 1426118400000
-      },
-      {
-        "value": "5.1 U3",
-        "label": "5.1 U3",
-        "group": "5.1",
-        "broadcom_release_id": 796,
-        "ga_date": 1417651200000
-      },
-      {
-        "value": "5.5U2",
-        "label": "5.5U2",
-        "group": "5.5",
-        "broadcom_release_id": 620,
-        "ga_date": 1410220800000
-      },
-      {
-        "value": "5.5.0 u1",
-        "label": "5.5.0 u1",
-        "group": "5.5",
-        "broadcom_release_id": 577,
-        "ga_date": 1394496000000
-      },
-      {
-        "value": "5.1 U2",
-        "label": "5.1 U2",
-        "group": "5.1",
-        "broadcom_release_id": 559,
-        "ga_date": 1389830400000
-      },
-      {
-        "value": "5.1",
-        "label": "5.1",
-        "group": "5.1",
-        "broadcom_release_id": 253,
-        "ga_date": 1389830400000
-      },
-      {
-        "value": "5.0.0 Update 3",
-        "label": "5.0.0 Update 3",
-        "group": "5.0",
-        "broadcom_release_id": 500,
-        "ga_date": 1381968000000
-      },
-      {
-        "value": "5.5",
-        "label": "5.5",
-        "group": "5.5",
-        "broadcom_release_id": 507,
-        "ga_date": 1379808000000
-      },
-      {
-        "value": "5.1.0 Update 1",
-        "label": "5.1.0 Update 1",
-        "group": "5.1",
-        "broadcom_release_id": 441,
-        "ga_date": 1366848000000
-      },
-      {
-        "value": "5.0.2",
-        "label": "5.0.2",
-        "group": "5.0",
-        "broadcom_release_id": 391,
-        "ga_date": 1355961600000
-      },
-      {
-        "value": "4.1 U3",
-        "label": "4.1 U3",
-        "group": "4.1",
-        "broadcom_release_id": 2980,
-        "ga_date": 1346284800000
-      },
-      {
-        "value": "4.1",
-        "label": "4.1",
-        "group": "4.1",
-        "broadcom_release_id": 18,
-        "ga_date": 1346284800000
-      },
-      {
-        "value": "5.0 Update 1",
-        "label": "5.0 Update 1",
-        "group": "5.0",
-        "broadcom_release_id": 251,
-        "ga_date": 1331769600000
-      },
-      {
-        "value": "5.1.4",
-        "label": "5.1.4",
-        "group": "5.1",
-        "broadcom_release_id": 1032,
-        "ga_date": 1325376000000
-      },
-      {
-        "value": "5.0.0.4",
-        "label": "5.0.0.4",
-        "group": "5.0",
-        "broadcom_release_id": 1033,
-        "ga_date": 1325376000000
-      },
-      {
-        "value": "4.0.4",
-        "label": "4.0.4",
-        "group": "4.0",
-        "broadcom_release_id": 243,
-        "ga_date": 1321488000000
-      },
-      {
-        "value": "5.0.0",
-        "label": "5.0.0",
-        "group": "5.0",
-        "broadcom_release_id": 141,
-        "ga_date": 1314230400000
-      },
-      {
-        "value": "4.0.3",
-        "label": "4.0.3",
-        "group": "4.0",
-        "broadcom_release_id": 96,
-        "ga_date": 1304553600000
       }
     ],
     "nsx": [
@@ -6189,7 +5083,7 @@
   },
   "compatibility": {
     "supervisor_vks": {
-      "v1.34.9+vmware.2-vsc0.1.16": {
+      "v1.34.9+vmware.6-vsc0.1.16": {
         "3.8.1+v1.37": "no",
         "3.8.0+v1.37": "no",
         "3.7.2+v1.36": "no",
@@ -6357,7 +5251,7 @@
         "3.1.0": "no",
         "3.0.0": "no"
       },
-      "v1.33.9+vmware.3-fips-vsc0.1.16": {
+      "v1.33.9+vmware.6-fips-vsc0.1.16": {
         "3.8.1+v1.37": "no",
         "3.8.0+v1.37": "no",
         "3.7.2+v1.36": "no",
@@ -6693,30 +5587,6 @@
         "3.1.0": "no",
         "3.0.0": "no"
       },
-      "v1.32.7+vmware.5-fips-vsc9.1.0.0": {
-        "3.8.1+v1.37": "no",
-        "3.8.0+v1.37": "no",
-        "3.7.2+v1.36": "no",
-        "3.7.1+v1.36": "no",
-        "3.7.0+v1.36": "no",
-        "3.6.3+1.35": "no",
-        "3.6.2+v1.35": "no",
-        "3.6.1+v1.35": "no",
-        "3.6.0+v1.35": "no",
-        "3.5.1+v1.34": "no",
-        "3.5.0+v1.34": "no",
-        "3.4.2+v1.33": "no",
-        "3.4.1+v1.33": "no",
-        "3.4.0+v1.33": "no",
-        "3.3.3": "no",
-        "3.3.2": "no",
-        "3.3.1": "no",
-        "3.3.0": "no",
-        "3.2.0": "no",
-        "3.1.1": "no",
-        "3.1.0": "no",
-        "3.0.0": "no"
-      },
       "v1.32.7+vmware.5-fips-vsc0.1.13": {
         "3.8.1+v1.37": "no",
         "3.8.0+v1.37": "no",
@@ -6822,54 +5692,6 @@
         "3.6.3+1.35": "yes",
         "3.6.2+v1.35": "yes",
         "3.6.1+v1.35": "yes",
-        "3.6.0+v1.35": "no",
-        "3.5.1+v1.34": "no",
-        "3.5.0+v1.34": "no",
-        "3.4.2+v1.33": "no",
-        "3.4.1+v1.33": "no",
-        "3.4.0+v1.33": "no",
-        "3.3.3": "no",
-        "3.3.2": "no",
-        "3.3.1": "no",
-        "3.3.0": "no",
-        "3.2.0": "no",
-        "3.1.1": "no",
-        "3.1.0": "no",
-        "3.0.0": "no"
-      },
-      "v1.31.11+vmware.5-fips-vsc9.1.0.0": {
-        "3.8.1+v1.37": "no",
-        "3.8.0+v1.37": "no",
-        "3.7.2+v1.36": "no",
-        "3.7.1+v1.36": "no",
-        "3.7.0+v1.36": "no",
-        "3.6.3+1.35": "no",
-        "3.6.2+v1.35": "no",
-        "3.6.1+v1.35": "no",
-        "3.6.0+v1.35": "no",
-        "3.5.1+v1.34": "no",
-        "3.5.0+v1.34": "no",
-        "3.4.2+v1.33": "no",
-        "3.4.1+v1.33": "no",
-        "3.4.0+v1.33": "no",
-        "3.3.3": "no",
-        "3.3.2": "no",
-        "3.3.1": "no",
-        "3.3.0": "no",
-        "3.2.0": "no",
-        "3.1.1": "no",
-        "3.1.0": "no",
-        "3.0.0": "no"
-      },
-      "v1.31.11+vmware.1-fips-vsc9.1.0.0": {
-        "3.8.1+v1.37": "no",
-        "3.8.0+v1.37": "no",
-        "3.7.2+v1.36": "no",
-        "3.7.1+v1.36": "no",
-        "3.7.0+v1.36": "no",
-        "3.6.3+1.35": "no",
-        "3.6.2+v1.35": "no",
-        "3.6.1+v1.35": "no",
         "3.6.0+v1.35": "no",
         "3.5.1+v1.34": "no",
         "3.5.0+v1.34": "no",
@@ -7110,54 +5932,6 @@
         "3.6.3+1.35": "yes",
         "3.6.2+v1.35": "yes",
         "3.6.1+v1.35": "yes",
-        "3.6.0+v1.35": "no",
-        "3.5.1+v1.34": "no",
-        "3.5.0+v1.34": "no",
-        "3.4.2+v1.33": "no",
-        "3.4.1+v1.33": "no",
-        "3.4.0+v1.33": "no",
-        "3.3.3": "no",
-        "3.3.2": "no",
-        "3.3.1": "no",
-        "3.3.0": "no",
-        "3.2.0": "no",
-        "3.1.1": "no",
-        "3.1.0": "no",
-        "3.0.0": "no"
-      },
-      "v1.30.14+vmware.5-fips-vsc9.1.0.0": {
-        "3.8.1+v1.37": "no",
-        "3.8.0+v1.37": "no",
-        "3.7.2+v1.36": "no",
-        "3.7.1+v1.36": "no",
-        "3.7.0+v1.36": "no",
-        "3.6.3+1.35": "no",
-        "3.6.2+v1.35": "no",
-        "3.6.1+v1.35": "no",
-        "3.6.0+v1.35": "no",
-        "3.5.1+v1.34": "no",
-        "3.5.0+v1.34": "no",
-        "3.4.2+v1.33": "no",
-        "3.4.1+v1.33": "no",
-        "3.4.0+v1.33": "no",
-        "3.3.3": "no",
-        "3.3.2": "no",
-        "3.3.1": "no",
-        "3.3.0": "no",
-        "3.2.0": "no",
-        "3.1.1": "no",
-        "3.1.0": "no",
-        "3.0.0": "no"
-      },
-      "v1.30.14+vmware.1-fips-vsc9.1.0.0": {
-        "3.8.1+v1.37": "no",
-        "3.8.0+v1.37": "no",
-        "3.7.2+v1.36": "no",
-        "3.7.1+v1.36": "no",
-        "3.7.0+v1.36": "no",
-        "3.6.3+1.35": "no",
-        "3.6.2+v1.35": "no",
-        "3.6.1+v1.35": "no",
         "3.6.0+v1.35": "no",
         "3.5.1+v1.34": "no",
         "3.5.0+v1.34": "no",
@@ -143469,12 +142243,12 @@
     },
     "vsphere_supervisor_upgrade": {
       "v1.34.9+vmware.1-vsc9.1.1.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -143527,12 +142301,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.34.9+vmware.1-vsc9.1.1.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "yes",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -143585,7 +142359,7 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.33.13+vmware.1-fips-vsc9.1.1.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "yes",
         "v1.34.9+vmware.1-vsc9.1.1.0": {
           "s": "no",
@@ -143593,7 +142367,7 @@
         },
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -143646,12 +142420,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.33.13+vmware.1-fips-vsc9.1.1.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "yes",
         "v1.34.9+vmware.1-vsc9.1.1.0": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -143703,13 +142477,13 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.10": "no",
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
-      "v1.33.9+vmware.3-fips-vsc0.1.16": {
-        "v1.34.9+vmware.2-vsc0.1.16": "yes",
+      "v1.33.9+vmware.6-fips-vsc0.1.16": {
+        "v1.34.9+vmware.6-vsc0.1.16": "yes",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -143762,12 +142536,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.33.9+vmware.3-fips-vsc0.1.15": {
-        "v1.34.9+vmware.2-vsc0.1.16": "yes",
+        "v1.34.9+vmware.6-vsc0.1.16": "yes",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "yes",
         "v1.34.9+vmware.1-vsc9.1.1.0": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "yes",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "yes",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -143820,7 +142594,7 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.13+vmware.30-fips-vsc9.1.1.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": {
           "s": "no",
@@ -143831,7 +142605,7 @@
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.32.13+vmware.30-fips-vsc9.1.1.0100 to target version v1.33.13+vmware.1-fips-vsc9.1.1.0 is not supported, as the source version's release date (2026-10-12) is after the target version's release date (2026-09-03), making it a newer release."
         },
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.32.13+vmware.30-fips-vsc9.1.1.0100 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-10-12) is after the target version's release date (2026-05-27), making it a newer release."
@@ -143887,12 +142661,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.13+vmware.30-fips-vsc9.1.1.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.32.13+vmware.30-fips-vsc9.1.1.0 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-09-03) is after the target version's release date (2026-05-27), making it a newer release."
@@ -143948,12 +142722,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc9.1.0.0300": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.32.9+vmware.2-fips-vsc9.1.0.0300 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-07-29) is after the target version's release date (2026-05-27), making it a newer release."
@@ -144009,12 +142783,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc9.1.0.0200": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.32.9+vmware.2-fips-vsc9.1.0.0200 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-07-13) is after the target version's release date (2026-05-27), making it a newer release."
@@ -144070,12 +142844,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc9.1.0.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.32.9+vmware.2-fips-vsc9.1.0.0100 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-06-05) is after the target version's release date (2026-05-27), making it a newer release."
@@ -144131,12 +142905,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc9.1.0.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -144189,12 +142963,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc9.0.2.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -144247,12 +143021,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc9.0.2.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -144305,12 +143079,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc0.1.16": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "yes",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "yes",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -144363,12 +143137,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc0.1.15": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "yes",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "yes",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -144430,12 +143204,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.9+vmware.2-fips-vsc0.1.14": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "yes",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "yes",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -144491,12 +143265,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.32.7+vmware.5-fips-vsc0.1.13": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "yes",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "yes",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "yes",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "yes",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -144549,12 +143323,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.11+vmware.8-fips-vsc9.1.0.0300": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.31.11+vmware.8-fips-vsc9.1.0.0300 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-07-29) is after the target version's release date (2026-05-27), making it a newer release."
@@ -144634,12 +143408,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.11+vmware.8-fips-vsc9.1.0.0200": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.31.11+vmware.8-fips-vsc9.1.0.0200 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-07-13) is after the target version's release date (2026-05-27), making it a newer release."
@@ -144716,12 +143490,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.11+vmware.8-fips-vsc9.1.0.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.31.11+vmware.8-fips-vsc9.1.0.0100 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-06-05) is after the target version's release date (2026-05-27), making it a newer release."
@@ -144795,12 +143569,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.11+vmware.8-fips-vsc9.1.0.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -144865,12 +143639,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.11+vmware.1-fips-vsc0.1.15": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -144941,12 +143715,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.11+vmware.1-fips-vsc0.1.14": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -145005,12 +143779,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.11+vmware.1-fips-vsc0.1.13": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -145063,12 +143837,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.6+vmware.3-fips-vsc9.0.2.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -145136,12 +143910,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.6+vmware.3-fips-vsc9.0.2.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -145200,12 +143974,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.31.6+vmware.3-fips-vsc9.0.1.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "yes",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "yes",
@@ -145258,12 +144032,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.14+vmware.8-fips-vsc9.1.0.0300": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.30.14+vmware.8-fips-vsc9.1.0.0300 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-07-29) is after the target version's release date (2026-05-27), making it a newer release."
@@ -145370,12 +144144,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.14+vmware.8-fips-vsc9.1.0.0200": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.30.14+vmware.8-fips-vsc9.1.0.0200 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-07-13) is after the target version's release date (2026-05-27), making it a newer release."
@@ -145476,12 +144250,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.14+vmware.8-fips-vsc9.1.0.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": {
           "s": "no",
           "n": "Upgrading VMware vSphere Supervisor from source version v1.30.14+vmware.8-fips-vsc9.1.0.0100 to target version v1.33.9+vmware.3-fips-vsc0.1.15 is not supported, as the source version's release date (2026-06-05) is after the target version's release date (2026-05-27), making it a newer release."
@@ -145576,12 +144350,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.14+vmware.8-fips-vsc9.1.0.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -145661,12 +144435,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.10+vmware.1-fips-vsc9.0.2.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -145740,12 +144514,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.10+vmware.1-fips-vsc9.0.2.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -145807,12 +144581,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.10+vmware.1-fips-vsc9.0.1.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -145865,12 +144639,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.10+vmware.1-fips-vsc9.0.0.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -145923,12 +144697,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.10+vmware.1-fips-vsc0.1.14": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146005,12 +144779,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.10+vmware.1-fips-vsc0.1.13": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146072,12 +144846,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.10+vmware.1-fips-vsc0.1.12": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146130,12 +144904,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.30.5+vmware.4-fips-vsc9.0.0.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146191,12 +144965,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.29.14+vmware.1-fips-vsc9.0.1.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146258,12 +145032,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.29.14+vmware.1-fips-vsc9.0.0.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146322,12 +145096,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.29.9+vmware.3-fips-vsc9.0.0.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146383,12 +145157,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.29.7+vmware.1-fips-vsc0.1.12": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146441,12 +145215,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.29.7+vmware.1-fips-vsc0.1.11": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146499,12 +145273,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.29.7+vmware.1-fips-vsc0.1.10": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146557,12 +145331,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.28.14+vmware.3-fips-vsc9.0.0.0100": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146633,12 +145407,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.28.14+vmware.3-fips-vsc9.0.0.0": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146703,12 +145477,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.28.3+vmware.2-fips.1-vsc0.1.12": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146764,12 +145538,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.28.3+vmware.2-fips.1-vsc0.1.11": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146828,12 +145602,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.28.3+vmware.2-fips.1-vsc0.1.10": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146886,12 +145660,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.28.3+vmware.2-fips.1-vsc0.1.9": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -146944,12 +145718,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.27.5+vmware.1-fips.1-vsc0.1.11": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -147020,12 +145794,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.27.5+vmware.1-fips.1-vsc0.1.10": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -147084,12 +145858,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.27.5+vmware.1-fips.1-vsc0.1.9": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",
@@ -147145,12 +145919,12 @@
         "v1.27.5+vmware.1-fips.1-vsc0.1.9": "no"
       },
       "v1.26.8+vmware.1-fips.1-vsc0.1.9": {
-        "v1.34.9+vmware.2-vsc0.1.16": "no",
+        "v1.34.9+vmware.6-vsc0.1.16": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0100": "no",
         "v1.34.9+vmware.1-vsc9.1.1.0": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0100": "no",
         "v1.33.13+vmware.1-fips-vsc9.1.1.0": "no",
-        "v1.33.9+vmware.3-fips-vsc0.1.16": "no",
+        "v1.33.9+vmware.6-fips-vsc0.1.16": "no",
         "v1.33.9+vmware.3-fips-vsc0.1.15": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0100": "no",
         "v1.32.13+vmware.30-fips-vsc9.1.1.0": "no",

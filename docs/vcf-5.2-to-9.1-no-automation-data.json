@@ -414,7 +414,7 @@
         "tables_simple_small": [
         {
           "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
+          "description": "Prepare the following IP addresses and DNS:",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
@@ -438,7 +438,7 @@
       "tables_simple_small_9.1.1.0": [
         {
           "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
+          "description": "Prepare the following IP addresses and DNS entries",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
@@ -463,7 +463,7 @@
       "tables_ha_small_9.1.1.0": [
         {
           "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
+          "description": "Prepare the following IP addresses and DNS entries",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
@@ -488,7 +488,7 @@
       "tables_ha_medium": [
         {
           "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
+          "description": "Prepare the following IP addresses and DNS entries",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
@@ -536,7 +536,7 @@
       "tables_ha_large": [
         {
           "title": "Required Network Configuration",
-          "description": "Prepare the following IP addresses and DNS entries before SDDC Manager upgrade:",
+          "description": "Prepare the following IP addresses and DNS entries",
           "headers": ["Component", "Number of Address(es)", "FQDN", "Example"],
           "rows": [
             ["VCF management services", "Minimum of /28 (CIDR block)", "None", "N/A"],
