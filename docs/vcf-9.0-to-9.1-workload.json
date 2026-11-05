@@ -3,6 +3,7 @@
         "vlr",
         "vsan_data_protection",
         "avi",
+        "dsm",
         "hcx",
         "nsx_federation",
         "nsx",

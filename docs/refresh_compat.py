@@ -520,7 +520,17 @@ def fetch_compat_matrix(key, col_pid, row_pid):
                     compat  = STATUS_MAP.get(status, "no")  # unknown codes default to "no"
                     if col_ver and row_ver and compat:
                         note = _extract_note(row_rel, footnote_lookup=footnote_lookup)
-                        val  = {"s": compat, "n": note} if note else compat
+                        # status 2 = red X "Incompatible" (known broken); other "no" codes are the grey
+                        # "not supported" dash. Both stay "no"; the red X also gets x=1 so planners can tell them apart.
+                        red_x = (status == 2)
+                        if note or red_x:
+                            val = {"s": compat}
+                            if note:
+                                val["n"] = note
+                            if red_x:
+                                val["x"] = 1
+                        else:
+                            val = compat
                         matrix.setdefault(col_ver, {})[row_ver] = val
     return matrix
 

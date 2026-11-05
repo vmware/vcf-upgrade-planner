@@ -221,6 +221,7 @@ function exportPlanConfigJSON() {
             'srm-selected', 'srm-version',
             'replication-selected', 'replication-version',
             'avi-selected', 'avi-version', 'avi-deploy-license-hub',
+            'dsm-selected', 'dsm-version', 'dsm-aria-plugin', 'dsm-aria-approach', 'dsm-dpb-version',
             'vcf-version', 'vcf-detailed-version', 'target-vcf91-version',
             'selected-plan-page', 'deployment-type', 'deployment-size',
             'depot-selected', 'vidb-selected', 'vidb-is-embedded', 'vidb-on-overlay',

@@ -92,6 +92,9 @@ MANUAL_URLS = [
     'https://knowledge.broadcom.com/external/article/455225/sddc-manager-upgrade-prechecks-fail-with.html',
     'https://knowledge.broadcom.com/external/article/455439',
     'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0100-release-notes.html',
+    'https://cormachogan.com/2025/03/14/vmware-data-services-manager-2-2-1-and-aria-automation-enhancements/',
+    'https://knowledge.broadcom.com/external/article/399285',
+    'https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/getting-started-with-vmware-data-services-manager/managing-dsm-plugin-software-updates.html'
 ]
 
 # Collects (url, reason) tuples for every link that fails during the run

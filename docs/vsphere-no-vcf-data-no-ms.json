@@ -7,6 +7,7 @@
     "srm",
     "vsan_data_protection",
     "avi",
+    "dsm",
     "vcha",
     "vcenter",
     "vum_migration",

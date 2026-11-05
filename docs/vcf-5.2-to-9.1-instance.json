@@ -4,6 +4,7 @@
         "srm",
         "vsan_data_protection",
         "avi",
+        "dsm",
         "sddc_manager",
         "vcfms",
         "hcx",

@@ -1328,6 +1328,8 @@
         let vkrVersion = '';
         let aviSelected = false;
         let aviVersion = '';
+        let dsmSelected = false;
+        let dsmVersion = '';
         let replicationSelected = false;
         let replicationVersion = '';
         let srmSelected = false;
@@ -1399,6 +1401,11 @@
             } catch (e) {
                 console.warn('Could not load k8s-upgrade-matrix.json:', e);
             }
+            try {
+                if (window.DsmVksCompat) await window.DsmVksCompat.loadData();
+            } catch (e) {
+                console.warn('Could not load compat-data.json:', e);
+            }
         }
 
         function generateAdvancedProductsFromJSON() {
@@ -1459,6 +1466,8 @@
             vkrVersion         = localStorage.getItem('vkr-version')         || '';
             aviSelected        = localStorage.getItem('avi-selected')        === 'true';
             aviVersion         = localStorage.getItem('avi-version')         || '';
+            dsmSelected        = localStorage.getItem('dsm-selected')        === 'true';
+            dsmVersion         = localStorage.getItem('dsm-version')         || '';
             replicationSelected = localStorage.getItem('replication-selected') === 'true';
             replicationVersion  = localStorage.getItem('replication-version')  || '';
             srmSelected         = localStorage.getItem('srm-selected')         === 'true';
@@ -1474,6 +1483,7 @@
             if (replicationSelected || localStorage.getItem('replication-selected') === 'true' || !!replicationVersion) window.selectedAdvancedProducts['replication'] = true;
             if (srmSelected || localStorage.getItem('srm-selected') === 'true' || !!srmVersion) window.selectedAdvancedProducts['srm'] = true;
             if ((aviSelected || localStorage.getItem('avi-selected') === 'true') && localStorage.getItem('avi-selected') !== 'false') window.selectedAdvancedProducts['avi'] = true;
+            if (dsmSelected || localStorage.getItem('dsm-selected') === 'true' || !!dsmVersion) window.selectedAdvancedProducts['dsm'] = true;
             if (supervisorSelected || localStorage.getItem('supervisor-selected') === 'true' || !!supervisorVersion || vksSelected || !!vksVersion) window.selectedAdvancedProducts['supervisor'] = true;
             }
 
@@ -1594,6 +1604,9 @@
             }
             if (aviSelected) {
                 html += `<li><span class="badge included">✓ Avi Load Balancer</span>${aviVersion ? ' <span class="badge version">' + abbrev(aviVersion) + '</span>' : ''}</li>`;
+            }
+            if (dsmSelected) {
+                html += `<li><span class="badge included">✓ VMware Data Services Manager</span>${dsmVersion ? ' <span class="badge version">v' + abbrev(dsmVersion) + '</span>' : ''}</li>`;
             }
             if (replicationSelected) {
                 html += `<li><span class="badge included">✓ vSphere Replication</span>${replicationVersion ? ' <span class="badge version">v' + abbrev(replicationVersion) + '</span>' : ''}</li>`;
@@ -2617,6 +2630,94 @@
                             });
                         }
                     }
+                } else if (componentId === 'dsm') {
+                    shouldInclude = false;
+                    const isDsmSelected = (selectedProducts['dsm'] === true || (typeof dsmSelected !== 'undefined' && dsmSelected) || localStorage.getItem('dsm-selected') === 'true') && localStorage.getItem('dsm-selected') !== 'false';
+                    if (isDsmSelected) {
+                        const curDsmVer = (localStorage.getItem('dsm-version') || (typeof window.dsmVersion !== 'undefined' ? window.dsmVersion : '') || '').trim();
+                        const tgtDsmVer = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0').trim();
+                        const targetDsmVerString = tgtDsmVer.startsWith('9.1.1') ? '9.1.1.0' : '9.1.0.0';
+                        const isDsm2x = curDsmVer.startsWith('2.');
+
+                        if (isDsm2x) {
+                            phases.push({
+                                number: phases.length + 1,
+                                title: 'Upgrade Data Services Manager Appliance (Step 1: ' + (curDsmVer || '2.x') + ' → 9.0.1.0)',
+                                description: 'Upgrade Data Services Manager Appliance to intermediate release 9.0.1.0 before vCenter upgrade',
+                                data: {
+                                    name: 'Data Services Manager Appliance (Step 1: ' + (curDsmVer || '2.x') + ' → 9.0.1.0)',
+                                    steps: [
+                                        'Confirm source Data Services Manager Appliance (' + (curDsmVer || '2.x') + ') is healthy.',
+                                        'Perform intermediate upgrade of Data Services Manager Provider Appliance to 9.0.1.0 prior to upgrading vCenter Server. For details, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/getting-started-with-vmware-data-services-manager/managing-dsm-plugin-software-updates.html" target="_blank" rel="noopener">Data Services Manager Documentation</a>.',
+                                        'Verify Data Services Manager Appliance health and status.'
+                                    ],
+                                    notices: [{
+                                        type: 'warning',
+                                        title: 'Two-Step Upgrade Required for DSM 2.x',
+                                        bullets: [
+                                            'DSM 2.x cannot be upgraded directly to 9.1.1. You must first upgrade the DSM Provider Appliance to 9.0.1.0 prior to vCenter upgrade, then upgrade to ' + targetDsmVerString + ' after vCenter upgrade.',
+                                            'DSM Control Plane upgrade from 2.2.x to 9.0.x fails if appliance has manually-installed RPM files - <a href="https://knowledge.broadcom.com/external/article/399285" target="_blank" rel="noopener">KB 399285</a>.'
+
+                                        ]
+                                    }]
+                                },
+                                componentId: 'dsm_appliance_step1'
+                            });
+
+                            phases.push({
+                                number: phases.length + 1,
+                                title: 'Upgrade Data Services Manager Appliance (9.0.1.0 → ' + targetDsmVerString + ')',
+                                description: 'Upgrade Data Services Manager Appliance from 9.0.1.0 to ' + targetDsmVerString,
+                                data: {
+                                    name: 'Data Services Manager Appliance (Step 2: 9.0.1.0 → ' + targetDsmVerString + ')',
+                                    steps: [
+                                        'Upgrade Data Services Manager Provider Appliance to ' + targetDsmVerString + '. For details, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/getting-started-with-vmware-data-services-manager/managing-dsm-plugin-software-updates.html" target="_blank" rel="noopener">Upgrading Your Data Services Manager in a VCF Environment</a>.',
+                                        'Verify Provider Appliance service health and vCenter integration.'
+                                    ]
+                                },
+                                componentId: 'dsm_appliance_upgrade'
+                            });
+                        } else {
+                            const dsmVerStr = curDsmVer ? ' (' + curDsmVer + ' → ' + targetDsmVerString + ')' : '';
+                            phases.push({
+                                number: phases.length + 1,
+                                title: 'Upgrade Data Services Manager Appliance' + dsmVerStr,
+                                description: 'Upgrade Data Services Manager Appliance',
+                                data: {
+                                    name: 'Data Services Manager Appliance' + dsmVerStr,
+                                    steps: [
+                                        'Upgrade Data Services Manager Provider Appliance to ' + targetDsmVerString + '. For details, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/getting-started-with-vmware-data-services-manager/managing-dsm-plugin-software-updates.html" target="_blank" rel="noopener">Upgrading Your Data Services Manager in a VCF Environment</a>.',
+                                        'Verify Provider Appliance service health and vCenter integration.'
+                                    ]
+                                },
+                                componentId: 'dsm_appliance_upgrade'
+                            });
+                        }
+
+                        phases.push({
+                            number: phases.length + 1,
+                            title: 'Upgrade DSM Data Plane Bundles & Managed Databases',
+                            description: 'Upgrade Data Services Manager Data Plane Bundles and managed database engines to ' + targetDsmVerString,
+                            data: {
+                                name: 'DSM Data Plane Bundles & Managed Databases',
+                                steps: [
+                                    'Upload the required interim Data Services Manager data plane bundles to version ' + targetDsmVerString + '. For details, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/working-with-databases-in-vmware-data-services-manager/upgrading-data-services-in-vmware-data-services-manager/upgrading-databases-in-vmware-data-services-manager.html" target="_blank" rel="noopener">Upgrading Your Data Services Databases</a>.',
+                                    'Upgrade managed database instances (PostgreSQL, MySQL, etc.) to the supported database engine versions for DSM ' + targetDsmVerString + '.'
+                                ]
+                            },
+                            componentId: 'dsm_dataplane'
+                        });
+
+                        // DSM <-> vCenter compatibility: DSM must reach 9.1.x before vCenter is upgraded to 9.1.x
+                        if (window.DsmVksCompat && window.DsmVksCompat.annotateVcenter) {
+                            window.DsmVksCompat.annotateVcenter(phases, window.DsmVksCompat.evaluateVcenter({
+                                srcDsm: curDsmVer, tgtDsm: targetDsmVerString,
+                                srcVc: (localStorage.getItem('vcenter-version') || localStorage.getItem('vcf-vcenter-version') || '').trim(),
+                                tgtVc: window.DsmVksCompat.targetVcenter()
+                            }));
+                        }
+
+                    }
                 } else if (componentId === 'supervisor') {
                     const isSupSelected = selectedProducts['supervisor'] === true || (typeof supervisorSelected !== 'undefined' && supervisorSelected) || localStorage.getItem('supervisor-selected') === 'true' || !!(localStorage.getItem('supervisor-version'));
                     if (k8sPhasesObj && k8sPhasesObj.postVcPhases && k8sPhasesObj.postVcPhases.length > 0) {
@@ -2710,6 +2811,35 @@
 
             // Buckets — ordered: DR → AVI → Operations+License → vCHA → vCenter → vLCM → Witness → supervisor → VxRail/ESX → Post-infra
             const prereqPhases = [];
+            const dsmPreVcPhases = [];
+            const dsmPostVcPhases = [];
+            const dsmDataPlanePhases = [];
+            const dsmConnectPhases = [];
+            let dsmPreVcPushed = false;
+            let dsmPostVcPushed = false;
+            let dsmDataPlanePushedStep = false;
+
+            const pushDsmPreVc = () => {
+                if (!dsmPreVcPushed && dsmPreVcPhases.length > 0) {
+                    dsmPreVcPhases.forEach(p => steps.push({ number: steps.length + 1, title: p.title, description: p.description, phases: [p] }));
+                    dsmPreVcPushed = true;
+                }
+            };
+            const pushDsmPostVc = () => {
+                if (!dsmPostVcPushed && dsmPostVcPhases.length > 0) {
+                    dsmPostVcPhases.forEach(p => steps.push({ number: steps.length + 1, title: p.title, description: p.description, phases: [p] }));
+                    dsmPostVcPushed = true;
+                }
+            };
+            const pushDsmDataPlane = () => {
+                if (!dsmDataPlanePushedStep && dsmDataPlanePhases.length > 0) {
+                    dsmDataPlanePhases.forEach(p => steps.push({ number: steps.length + 1, title: p.title, description: p.description, phases: [p] }));
+                    dsmDataPlanePushedStep = true;
+                }
+                if (dsmConnectPhases.length > 0) {
+                    dsmConnectPhases.forEach(p => steps.push({ number: steps.length + 1, title: p.title, description: p.description, phases: [p] }));
+                }
+            };
             const drPhases = [];
             const aviPrereqPhases = [];
             const aviPhases = [];
@@ -2755,6 +2885,12 @@
                     esxPhases.push(phase);
                 } else if (phase.componentId === 'vsan_file_service') {
                     vsan_file_servicePhases.push(phase);
+                } else if (phase.componentId === 'dsm_appliance_step1' || phase.componentId === 'dsm_appliance_upgrade' || phase.componentId === 'dsm_disconnect' || phase.componentId === 'dsm_reconnect') {
+                    dsmPreVcPhases.push(phase);
+                } else if (phase.componentId === 'dsm_dataplane' || phase.componentId === 'dsm_databases') {
+                    dsmDataPlanePhases.push(phase);
+                } else if (phase.componentId === 'dsm_vcfa_connect') {
+                    dsmConnectPhases.push(phase);
                 } else if (isPostInfraOptional) {
                     advancedPhases.push(phase);
                 }
@@ -2880,12 +3016,14 @@
             }
 
             if (vcenterPhases.length > 0) {
-                steps.push({
+                pushDsmPreVc();
+            steps.push({
                     number: steps.length + 1,
                     title: (vcenterPhases[0] && vcenterPhases[0].title) ? vcenterPhases[0].title : 'vCenter Upgrade',
                     description: 'Upgrade vCenter',
                     phases: vcenterPhases
                 });
+            pushDsmPostVc();
             }
 
             if (vlcmPhases.length > 0) {
@@ -2933,6 +3071,7 @@
                     description: 'Upgrade ESX host infrastructure',
                     phases: esxPhases
                 });
+            pushDsmDataPlane();
             }
 
             if (advancedPhases.length > 0) {
@@ -2976,7 +3115,8 @@
                     'VCF Operations orchestrator': ['9.1.0.0100', '9.1.0.0400', '9.1.1.0100'],
                     'Protection and Recovery (vSphere Replication & SRM)': ['9.1.0.0', '9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
                     'VMware Live Recovery (VLR)': ['9.1.0.0', '9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
-                    'vSphere Replication': ['9.1.0.0', '9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100']
+                    'vSphere Replication': ['9.1.0.0', '9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
+                    'Data Services Manager Appliance': ['9.1.1.0100'],
                 };
 
                 // Avi uses its own version scheme — map VCF patch build → Avi version string
@@ -3115,6 +3255,7 @@
                 if (_isSupNow) _pathBComponents.push('vSphere Supervisor');
                 if (_isVksNow) _pathBComponents.push('VKS');
                 if (_isVkrNow) _pathBComponents.push('Kubernetes Release (VKr)');
+                if (_selProdsNow['dsm']) _pathBComponents.push('Data Services Manager Appliance');
 
                 var _tableA = _buildVerTable(_pathAComponents);
                 var _tableB = _buildVerTable(_pathBComponents);
@@ -3682,6 +3823,10 @@
                 const _aviVer = (typeof aviVersion !== 'undefined' && aviVersion) || localStorage.getItem('avi-version') || '';
                 const aviLhTag = localStorage.getItem('avi-deploy-license-hub') === 'true' ? ' <span class="badge version">with License Hub</span>' : '';
                 html += `<li><span class="badge included">✓ Avi Load Balancer</span>${_aviVer ? ' <span class="badge version">v' + abbrev(_aviVer) + '</span>' : ''}${aviLhTag}</li>`;
+            }
+            if (((typeof dsmSelected !== 'undefined' && dsmSelected) || (typeof window.selectedAdvancedProducts !== 'undefined' && window.selectedAdvancedProducts && window.selectedAdvancedProducts['dsm'] === true) || (localStorage.getItem('dsm-selected') === 'true')) && localStorage.getItem('dsm-selected') !== 'false') {
+                const _dsmVer = (typeof dsmVersion !== 'undefined' && dsmVersion) || localStorage.getItem('dsm-version') || '';
+                html += `<li><span class="badge included">✓ VMware Data Services Manager</span>${_dsmVer ? ' <span class="badge version">v' + abbrev(_dsmVer) + '</span>' : ''}</li>`;
             }
             if (typeof replicationSelected !== 'undefined' && replicationSelected || (typeof window.selectedAdvancedProducts !== 'undefined' && window.selectedAdvancedProducts && window.selectedAdvancedProducts['replication'] === true) || (localStorage.getItem('replication-selected') === 'true') || !!(localStorage.getItem('replication-version'))) {
                 const _repVer = (typeof replicationVersion !== 'undefined' && replicationVersion) || localStorage.getItem('replication-version') || '';
@@ -4401,6 +4546,7 @@
             if (typeof replicationSelected !== 'undefined' && replicationSelected || localStorage.getItem('replication-selected') === 'true' || !!(localStorage.getItem('replication-version'))) prod['replication'] = true;
             if (typeof srmSelected !== 'undefined' && srmSelected || localStorage.getItem('srm-selected') === 'true' || !!(localStorage.getItem('srm-version'))) prod['srm'] = true;
             if ((typeof aviSelected !== 'undefined' && aviSelected || localStorage.getItem('avi-selected') === 'true') && localStorage.getItem('avi-selected') !== 'false') prod['avi'] = true;
+            if ((typeof dsmSelected !== 'undefined' && dsmSelected || localStorage.getItem('dsm-selected') === 'true') && localStorage.getItem('dsm-selected') !== 'false') prod['dsm'] = true;
             if (typeof supervisorSelected !== 'undefined' && supervisorSelected || localStorage.getItem('supervisor-selected') === 'true' || !!(localStorage.getItem('supervisor-version')) || localStorage.getItem('vks-selected') === 'true' || !!(localStorage.getItem('vks-version'))) prod['supervisor'] = true;
             window.selectedAdvancedProducts = prod;
         }
@@ -4779,5 +4925,6 @@ function showToast(message) {
     }, 3500);
 }
 </script>
+<script src="dsm-vks-compat.js"></script>
 </body>
 </html>

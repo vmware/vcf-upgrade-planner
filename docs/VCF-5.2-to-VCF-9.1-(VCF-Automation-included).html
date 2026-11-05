@@ -1338,6 +1338,8 @@
         let vkrVersion = null;
         let aviSelected = false;
         let aviVersion = null;
+        let dsmSelected = false;
+        let dsmVersion = '';
         let replicationSelected = false;
         let replicationVersion = null;
         let srmSelected = false;
@@ -1457,6 +1459,11 @@
             } catch (e) {
                 console.warn('Could not load k8s-upgrade-matrix.json:', e);
             }
+            try {
+                if (window.DsmVksCompat) await window.DsmVksCompat.loadData();
+            } catch (e) {
+                console.warn('Could not load compat-data.json:', e);
+            }
         }
 
         function generateAdvancedProductsFromJSON() {
@@ -1563,6 +1570,8 @@
             vkrVersion         = localStorage.getItem('vkr-version')         || '';
             aviSelected        = localStorage.getItem('avi-selected')        === 'true';
             aviVersion         = localStorage.getItem('avi-version')         || '';
+            dsmSelected        = localStorage.getItem('dsm-selected')        === 'true';
+            dsmVersion         = localStorage.getItem('dsm-version')         || '';
             replicationSelected = localStorage.getItem('replication-selected') === 'true';
             replicationVersion  = localStorage.getItem('replication-version')  || '';
             srmSelected         = localStorage.getItem('srm-selected')         === 'true';
@@ -1582,6 +1591,7 @@
             if (replicationSelected || localStorage.getItem('replication-selected') === 'true' || !!replicationVersion) window.selectedAdvancedProducts['replication'] = true;
             if (srmSelected || localStorage.getItem('srm-selected') === 'true' || !!srmVersion) window.selectedAdvancedProducts['srm'] = true;
             if ((aviSelected || localStorage.getItem('avi-selected') === 'true') && localStorage.getItem('avi-selected') !== 'false') window.selectedAdvancedProducts['avi'] = true;
+            if (dsmSelected || localStorage.getItem('dsm-selected') === 'true' || !!dsmVersion) window.selectedAdvancedProducts['dsm'] = true;
             if (supervisorSelected || localStorage.getItem('supervisor-selected') === 'true' || !!supervisorVersion || vksSelected || !!vksVersion) window.selectedAdvancedProducts['supervisor'] = true;
 
             console.log('=== LOAD SELECTIONS DEBUG ===');
@@ -1854,6 +1864,9 @@
             }
             if (aviSelected) {
                 html += `<li><span class="badge included">✓ Avi Load Balancer</span>${aviVersion ? ' <span class="badge version">' + abbrev(aviVersion) + '</span>' : ''}</li>`;
+            }
+            if (dsmSelected) {
+                html += `<li><span class="badge included">✓ VMware Data Services Manager</span>${dsmVersion ? ' <span class="badge version">v' + abbrev(dsmVersion) + '</span>' : ''}</li>`;
             }
             if (replicationSelected) {
                 html += `<li><span class="badge included">✓ vSphere Replication</span>${replicationVersion ? ' <span class="badge version">v' + abbrev(replicationVersion) + '</span>' : ''}</li>`;
@@ -2474,27 +2487,25 @@
                     // Select size-variant tables based on upgrade vs install path
                     if (componentData) {
                         try {
-                            if (window.automationIsUpgrade) {
-                                // Upgrade: pick tables_simple_small / tables_ha_medium / tables_ha_large
-                                const upgradeTableKey = deploymentType === 'simple'
-                                    ? 'upgrade_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'upgrade_tables_ha_large' : 'upgrade_tables_ha_medium');
-                                const cloned = JSON.parse(JSON.stringify(componentData));
-                                if (cloned[upgradeTableKey]) {
-                                    console.log('automation upgrade: using table key:', upgradeTableKey);
-                                    cloned.tables = cloned[upgradeTableKey];
+                            const _targetVerAutoRaw = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0').trim();
+                            const is911Tgt = (_targetVerAutoRaw || '').startsWith('9.1.1');
+                            const baseInstallKey = deploymentType === 'simple'
+                                ? 'install_tables_simple_small'
+                                : (deploymentSize === 'large' ? 'install_tables_ha_large' : (deploymentSize === 'small' ? 'install_tables_ha_small' : 'install_tables_ha_medium'));
+
+                            const keysToTry = [];
+                            if (is911Tgt) {
+                                keysToTry.push(`${baseInstallKey}_9_1_1_0`, `${baseInstallKey}_9_1_1`);
+                            }
+                            keysToTry.push(baseInstallKey, 'install_tables_simple_small_9_1_1_0', 'install_tables_simple_small');
+
+                            const cloned = JSON.parse(JSON.stringify(componentData));
+                            for (const k of keysToTry) {
+                                if (cloned[k]) {
+                                    console.log('automation tables: using table key:', k);
+                                    cloned.tables = cloned[k];
                                     componentData = cloned;
-                                }
-                            } else {
-                                // Install: pick automation_install_tableKey
-                                const automation_install_tableKey = deploymentType === 'simple'
-                                    ? 'install_tables_simple_small'
-                                    : (deploymentSize === 'large' ? 'install_tables_ha_large' : 'install_tables_ha_medium');
-                                const cloned = JSON.parse(JSON.stringify(componentData));
-                                if (cloned[automation_install_tableKey]) {
-                                    console.log('automation install: using table key:', automation_install_tableKey);
-                                    cloned.tables = cloned[automation_install_tableKey];
-                                    componentData = cloned;
+                                    break;
                                 }
                             }
                         } catch (e) {
@@ -3081,6 +3092,116 @@
                             });
                         }
                     }
+                } else if (componentId === 'dsm') {
+                    shouldInclude = false;
+                    const isDsmSelected = (selectedProducts['dsm'] === true || (typeof dsmSelected !== 'undefined' && dsmSelected) || localStorage.getItem('dsm-selected') === 'true') && localStorage.getItem('dsm-selected') !== 'false';
+                    if (isDsmSelected) {
+                        const curDsmVer = (localStorage.getItem('dsm-version') || (typeof window.dsmVersion !== 'undefined' ? window.dsmVersion : '') || '').trim();
+                        const tgtDsmVer = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0').trim();
+                        const targetDsmVerString = tgtDsmVer.startsWith('9.1.1') ? '9.1.1.0' : '9.1.0.0';
+                        const isDsm2x = curDsmVer.startsWith('2.');
+                        const dsmAriaChoice = (isDsm2x && typeof window.getDsmAriaChoice === 'function') ? window.getDsmAriaChoice() : 'none';
+
+                        if (isDsm2x && dsmAriaChoice === 'migrate' && typeof window.buildDsmAriaMigrationPhases === 'function') {
+                            // Aria Automation plugin users: build new DSM and migrate (see Recommended-Approach-Detailed-Steps)
+                            window.buildDsmAriaMigrationPhases(curDsmVer, targetDsmVerString).forEach(function (p) {
+                                phases.push(Object.assign({ number: phases.length + 1 }, p));
+                            });
+                        } else if (isDsm2x) {
+                            phases.push({
+                                number: phases.length + 1,
+                                title: 'Upgrade Data Services Manager Appliance (Step 1: ' + (curDsmVer || '2.x') + ' → 9.0.1.0)',
+                                description: 'Upgrade Data Services Manager Appliance to intermediate release 9.0.1.0 before vCenter upgrade',
+                                data: {
+                                    name: 'Data Services Manager Appliance (Step 1: ' + (curDsmVer || '2.x') + ' → 9.0.1.0)',
+                                    steps: [
+                                        'Confirm source Data Services Manager Appliance (' + (curDsmVer || '2.x') + ') is healthy.',
+                                        'Perform intermediate upgrade of Data Services Manager Provider Appliance to 9.0.1.0 prior to upgrading vCenter Server. For details, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/getting-started-with-vmware-data-services-manager/managing-dsm-plugin-software-updates.html" target="_blank" rel="noopener">Data Services Manager Documentation</a>.',
+                                        'Verify Data Services Manager Appliance health and status.'
+                                    ],
+                                    notices: [{
+                                        type: 'warning',
+                                        title: 'Two-Step Upgrade Required for DSM 2.x',
+                                        bullets: [
+                                            'DSM 2.x cannot be upgraded directly to 9.1.1. You must first upgrade the DSM Provider Appliance to 9.0.1.0 prior to vCenter upgrade, then upgrade to ' + targetDsmVerString + ' after vCenter upgrade.',
+                                            'If you are using the Aria Automation plugin for DSM (as described <a href="https://cormachogan.com/2025/03/14/vmware-data-services-manager-2-2-1-and-aria-automation-enhancements/" target="_blank" rel="noopener">here</a>), use the <a href="Recommended-Approach-Detailed-Steps.html" target="_blank" rel="noopener">recommended alternative approach</a> instead.',
+                                            'DSM Control Plane upgrade from 2.2.x to 9.0.x fails if appliance has manually-installed RPM files - <a href="https://knowledge.broadcom.com/external/article/399285" target="_blank" rel="noopener">KB 399285</a>.'
+                                        ]
+                                    }]
+                                },
+                                componentId: 'dsm_appliance_step1'
+                            });
+
+                            phases.push({
+                                number: phases.length + 1,
+                                title: 'Upgrade Data Services Manager Appliance (9.0.1.0 → ' + targetDsmVerString + ')',
+                                description: 'Upgrade Data Services Manager Appliance from 9.0.1.0 to ' + targetDsmVerString,
+                                data: {
+                                    name: 'Data Services Manager Appliance (Step 2: 9.0.1.0 → ' + targetDsmVerString + ')',
+                                    steps: [
+                                        'Upgrade Data Services Manager Provider Appliance from 9.0.1.0 to ' + targetDsmVerString + '.',
+                                        'Verify Provider Appliance service health and vCenter integration.'
+                                    ]
+                                },
+                                componentId: 'dsm_appliance_upgrade'
+                            });
+                        } else {
+                            const dsmVerStr = curDsmVer ? ' (' + curDsmVer + ' → ' + targetDsmVerString + ')' : '';
+                            phases.push({
+                                number: phases.length + 1,
+                                title: 'Upgrade Data Services Manager Appliance' + dsmVerStr,
+                                description: 'Upgrade Data Services Manager Appliance',
+                                data: {
+                                    name: 'Data Services Manager Appliance' + dsmVerStr,
+                                    steps: [
+                                        'Upgrade Data Services Manager Provider Appliance to ' + targetDsmVerString + '. For details, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/getting-started-with-vmware-data-services-manager/managing-dsm-plugin-software-updates.html" target="_blank" rel="noopener">Upgrading Your Data Services Manager in a VCF Environment</a>.',
+                                        'Verify Provider Appliance service health and vCenter integration.'
+                                    ]
+                                },
+                                componentId: 'dsm_appliance_upgrade'
+                            });
+                        }
+                        if (typeof window.applyDsmAriaChoiceToStep1 === 'function') window.applyDsmAriaChoiceToStep1(phases, dsmAriaChoice);
+
+                        if (dsmAriaChoice !== 'migrate') {
+                        phases.push({
+                            number: phases.length + 1,
+                            title: 'Upgrade DSM Data Plane Bundles & Managed Databases',
+                            description: 'Upgrade Data Services Manager Data Plane Bundles and managed database engines to ' + targetDsmVerString,
+                            data: {
+                                name: 'DSM Data Plane Bundles & Managed Databases',
+                                steps: [
+                                    'Upload the required interim Data Services Manager data plane bundles to version ' + targetDsmVerString + '. For details, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/working-with-databases-in-vmware-data-services-manager/upgrading-data-services-in-vmware-data-services-manager/upgrading-databases-in-vmware-data-services-manager.html" target="_blank" rel="noopener">Upgrading Your Data Services Databases</a>.',,
+                                    'Upgrade managed database instances (PostgreSQL, MySQL, etc.) to the supported database engine versions for DSM ' + targetDsmVerString + '.'
+                                ]
+                            },
+                            componentId: 'dsm_dataplane'
+                        });
+
+                        phases.push({
+                            number: phases.length + 1,
+                            title: 'Connect DSM to VCF Automation',
+                            description: 'Connect Data Services Manager to VCF Automation',
+                            data: {
+                                name: 'Connect DSM to VCF Automation',
+                                steps: [
+                                    'Add DSM as a Standalone region in VCF Automation - For details, see <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-provider/troubleshooting-data-services-manager-in-vcf-automation/disconnect-and-reconnect-data-services-manager-when-upgrading-vcf-automation-to-version-911.html" target="_blank" rel="noopener">Connect DSM to VCF Automation(Step 3)</a>.',
+                                    'Assign provider organization privileges and verify database provisioning workflows in VCF Automation UI.'
+                                ]
+                            },
+                            componentId: 'dsm_vcfa_connect'
+                        });
+                        } // end non-migrate DSM phases
+
+                        // DSM <-> vCenter compatibility: DSM must reach 9.1.x before vCenter is upgraded to 9.1.x
+                        if (window.DsmVksCompat && window.DsmVksCompat.annotateVcenter) {
+                            window.DsmVksCompat.annotateVcenter(phases, window.DsmVksCompat.evaluateVcenter({
+                                srcDsm: curDsmVer, tgtDsm: targetDsmVerString,
+                                srcVc: (localStorage.getItem('vcenter-version') || localStorage.getItem('vcf-vcenter-version') || '').trim(),
+                                tgtVc: window.DsmVksCompat.targetVcenter()
+                            }));
+                        }
+                    }
                 } else {
                     // ALL OTHER components are OPTIONAL - only include if selected
                     shouldInclude = selectedProducts[componentId] === true;
@@ -3178,6 +3299,35 @@
             // 9. Post-Infrastructure (Logs, Network)
             
             const prereqPhases = [];
+            const dsmPreVcPhases = [];
+            const dsmPostVcPhases = [];
+            const dsmDataPlanePhases = [];
+            const dsmConnectPhases = [];
+            let dsmPreVcPushed = false;
+            let dsmPostVcPushed = false;
+            let dsmDataPlanePushedStep = false;
+
+            const pushDsmPreVc = () => {
+                if (!dsmPreVcPushed && dsmPreVcPhases.length > 0) {
+                    dsmPreVcPhases.forEach(p => steps.push({ number: steps.length + 1, title: p.title, description: p.description, phases: [p] }));
+                    dsmPreVcPushed = true;
+                }
+            };
+            const pushDsmPostVc = () => {
+                if (!dsmPostVcPushed && dsmPostVcPhases.length > 0) {
+                    dsmPostVcPhases.forEach(p => steps.push({ number: steps.length + 1, title: p.title, description: p.description, phases: [p] }));
+                    dsmPostVcPushed = true;
+                }
+            };
+            const pushDsmDataPlane = () => {
+                if (dsmConnectPhases.length > 0) {
+                    dsmConnectPhases.forEach(p => steps.push({ number: steps.length + 1, title: p.title, description: p.description, phases: [p] }));
+                }
+                if (!dsmDataPlanePushedStep && dsmDataPlanePhases.length > 0) {
+                    dsmDataPlanePhases.forEach(p => steps.push({ number: steps.length + 1, title: p.title, description: p.description, phases: [p] }));
+                    dsmDataPlanePushedStep = true;
+                }
+            };
             const optionalPreInfraPhases = [];
             const operationsPhases = [];
             const sddcPhases = [];
@@ -3237,10 +3387,16 @@
                     nsx_edgePhases.push(phase);
                 } else if (phase.componentId === 'automation' || phase.componentId === 'automation_install') {
                     automationPhases.push(phase);
+                } else if (phase.componentId === 'dsm_appliance_step1' || phase.componentId === 'dsm_appliance_upgrade' || phase.componentId === 'dsm_disconnect' || phase.componentId === 'dsm_reconnect') {
+                    dsmPreVcPhases.push(phase);
                 } else if (phase.componentId === 'operations_orchestrator') {
                     operations_orchestratorPhases.push(phase);
                 } else if (phase.componentId === 'vidm') {
                     vidmPhases.push(phase);
+                } else if (phase.componentId === 'dsm_dataplane' || phase.componentId === 'dsm_databases') {
+                    dsmDataPlanePhases.push(phase);
+                } else if (phase.componentId === 'dsm_vcfa_connect') {
+                    dsmConnectPhases.push(phase);
                 } else if (phase.componentId === 'network') {
                     networkPhases.push(phase);
                 } else if (isPostInfraOptional) {
@@ -3461,6 +3617,13 @@
             
             // Iterate through currentOrder and add step groups in that sequence
             currentOrder.forEach(componentId => {
+                // Aria plugin "new DSM + migrate": prepare the old DSM before SDDC Manager is upgraded
+                if (componentId === 'sddc_manager' && dsmPreVcPhases.some(p => p.ariaMigration)) {
+                    pushDsmPreVc();
+                }
+                if (componentId === 'nsx' || componentId === 'nsx_federation' || componentId === 'vcenter') {
+                    pushDsmPreVc();
+                }
                 const stepGroup = componentToStepGroup[componentId];
                 if (stepGroup && !addedStepGroups.has(stepGroup)) {
                     const stepDef = stepDefinitions[stepGroup];
@@ -3486,6 +3649,7 @@
                     }
                 }
             });
+            pushDsmDataPlane();
             
             // Inject final "Apply Patches" step when a patch build is selected
                         var _patchBuilds = ['9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0100', '9.1.1.0200'];
@@ -3527,7 +3691,8 @@
                     'Telemetry': ['9.1.1.0', '9.1.1.0100'],
                     'Protection and Recovery (vSphere Replication & SRM)': ['9.1.0.0', '9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
                     'VMware Live Recovery (VLR)': ['9.1.0.0', '9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
-                    'vSphere Replication': ['9.1.0.0', '9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100']
+                    'vSphere Replication': ['9.1.0.0', '9.1.0.0100', '9.1.0.0200', '9.1.0.0300', '9.1.0.0400', '9.1.1.0', '9.1.1.0100'],
+                    'Data Services Manager Appliance': ['9.1.1.0100'],
                 };
 
                 // Avi uses its own version scheme — map VCF patch build → Avi version string
@@ -3701,6 +3866,7 @@
                 if (_isSupNow) _pathBComponents.push('vSphere Supervisor');
                 if (_isVksNow) _pathBComponents.push('VKS');
                 if (_isVkrNow) _pathBComponents.push('Kubernetes Release (VKr)');
+                if (_selProdsNow['dsm']) _pathBComponents.push('Data Services Manager Appliance');
 
                 var _tableA = _buildVerTable(_pathAComponents);
                 var _tableB = _buildVerTable(_pathBComponents);
@@ -4229,6 +4395,10 @@
                 const _aviVer = (typeof aviVersion !== 'undefined' && aviVersion) || localStorage.getItem('avi-version') || '';
                 const aviLhTag = localStorage.getItem('avi-deploy-license-hub') === 'true' ? ' <span class="badge version">with License Hub</span>' : '';
                 html += `<li><span class="badge included">✓ Avi Load Balancer</span>${_aviVer ? ' <span class="badge version">v' + abbrev(_aviVer) + '</span>' : ''}${aviLhTag}</li>`;
+            }
+            if (((typeof dsmSelected !== 'undefined' && dsmSelected) || (typeof window.selectedAdvancedProducts !== 'undefined' && window.selectedAdvancedProducts && window.selectedAdvancedProducts['dsm'] === true) || (localStorage.getItem('dsm-selected') === 'true')) && localStorage.getItem('dsm-selected') !== 'false') {
+                const _dsmVer = (typeof dsmVersion !== 'undefined' && dsmVersion) || localStorage.getItem('dsm-version') || '';
+                html += `<li><span class="badge included">✓ VMware Data Services Manager</span>${_dsmVer ? ' <span class="badge version">v' + abbrev(_dsmVer) + '</span>' : ''}</li>`;
             }
             if (typeof replicationSelected !== 'undefined' && replicationSelected || (typeof window.selectedAdvancedProducts !== 'undefined' && window.selectedAdvancedProducts && window.selectedAdvancedProducts['replication'] === true) || (localStorage.getItem('replication-selected') === 'true') || !!(localStorage.getItem('replication-version'))) {
                 const _repVer = (typeof replicationVersion !== 'undefined' && replicationVersion) || localStorage.getItem('replication-version') || '';
@@ -4890,6 +5060,7 @@
             if (typeof replicationSelected !== 'undefined' && replicationSelected || localStorage.getItem('replication-selected') === 'true' || !!(localStorage.getItem('replication-version'))) prod['replication'] = true;
             if (typeof srmSelected !== 'undefined' && srmSelected || localStorage.getItem('srm-selected') === 'true' || !!(localStorage.getItem('srm-version'))) prod['srm'] = true;
             if ((typeof aviSelected !== 'undefined' && aviSelected || localStorage.getItem('avi-selected') === 'true') && localStorage.getItem('avi-selected') !== 'false') prod['avi'] = true;
+            if ((typeof dsmSelected !== 'undefined' && dsmSelected || localStorage.getItem('dsm-selected') === 'true') && localStorage.getItem('dsm-selected') !== 'false') prod['dsm'] = true;
             if (typeof supervisorSelected !== 'undefined' && supervisorSelected || localStorage.getItem('supervisor-selected') === 'true' || !!(localStorage.getItem('supervisor-version')) || localStorage.getItem('vks-selected') === 'true' || !!(localStorage.getItem('vks-version'))) prod['supervisor'] = true;
             window.selectedAdvancedProducts = prod;
         }
@@ -5256,6 +5427,149 @@ function showToast(message) {
         toast.style.transform = 'translateY(10px)';
     }, 3500);
 }
+</script>
+<script src="dsm-vks-compat.js"></script>
+<script>
+/* DSM 2.x + Aria Automation plugin: phase builders (additive helpers).
+   Choice is captured on the product-select screen (index.html) and stored in
+   localStorage: 'dsm-aria-plugin' = yes|no, 'dsm-aria-approach' = migrate|inplace. */
+(function () {
+    var DOC = 'Recommended-Approach-Detailed-Steps.html';
+    var PLUGIN_URL = 'https://cormachogan.com/2025/03/14/vmware-data-services-manager-2-2-1-and-aria-automation-enhancements/';
+    var DSM_DOCS = 'https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/';
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+    function link(href, text) {
+        return '<a href="' + href + '" target="_blank" rel="noopener">' + text + '</a>';
+    }
+
+    // Returns 'none' (unanswered), 'no', 'migrate' or 'inplace'.
+    window.getDsmAriaChoice = function () {
+        var plugin = localStorage.getItem('dsm-aria-plugin');
+        if (plugin === 'no') return 'no';
+        if (plugin !== 'yes') return 'none';
+        return localStorage.getItem('dsm-aria-approach') === 'inplace' ? 'inplace' : 'migrate';
+    };
+
+    // Phases for "build new DSM and migrate". Caller assigns phase numbers.
+    window.buildDsmAriaMigrationPhases = function (curDsmVer, targetDsmVerString) {
+        var detail = link(DOC, 'Detailed steps');
+        var cur = escapeHtml(curDsmVer || '2.x');   // version strings come from localStorage (can be set by an imported plan)
+        var tgtVcf = escapeHtml(String(window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.1').split('.').slice(0, 3).join('.'));
+        var prepPhase = '<em>Before the VCF Upgrade DSM Phase</em>';
+        return [
+            {
+                title: 'Before the VCF Upgrade DSM Phase',
+                description: 'DSM migration: enable replication on the existing PostgreSQL database and collect what the migration needs. Do not upgrade the existing DSM (' + cur + ').',
+                data: {
+                    name: 'Before the VCF Upgrade DSM Phase',
+                    steps: [
+                        'Enable replication on the existing PostgreSQL database (<code>16.8+vmware.v2.2.1</code>) through ' + link(PLUGIN_URL, 'Aria Automation') + ', and note the replication connection string. <strong>Important:</strong> Only enable replication. Don\'t create a replica at this stage.',
+                        'As the DSM admin, ' + link('https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/2-2/getting-started-with-vmware-data-services-manager/using-trusted-certificates-in-data-services-manager/establish-secure-connection-to-a-database-cluster-in-vmware-data-services-manager.html', 'get the CA certificate') + ' of the existing PostgreSQL database from the VMware Data Services Manager UI. The read replica created after the upgrade needs this certificate to trust the source database.',
+                        'Upgrade VCF to ' + tgtVcf + ' <strong>without upgrading DSM</strong>, by following the VCF upgrade phases in this plan.'
+                    ],
+                    notices: [{
+                        type: 'info',
+                        title: 'Recommended (optional)',
+                        bullets: ['Before you upgrade VCF, enable backups on the existing PostgreSQL database if they aren\'t enabled already. This isn\'t required for the migration, but it gives you a recovery point if something goes wrong during the upgrade or the migration.']
+                    }, {
+                        type: 'info',
+                        title: 'Approach summary',
+                        bullets: [
+                            'The existing DSM is not upgraded. After the VCF and VCF Automation upgrades, the existing database is moved to a new VCF-native DSM ' + tgtVcf + ' deployment by using PostgreSQL replication (Disaster Recovery).',
+                            'Starting point: Aria Automation integrated with DSM ' + cur + '.'
+                        ]
+                    }, {
+                        type: 'warning',
+                        title: 'Prerequisite: VCF Automation native tenancy model',
+                        bullets: [
+                            'Confirm that you are willing to adopt the new VCF Automation (VCFA) native tenancy model on VCFA ' + tgtVcf + '. This approach only works with that model, because DSM integrates with VCFA through native tenant organizations only. Legacy tenants that are moved into VM Apps organizations can\'t be used for the DSM database migration.',
+                            detail + ' for the full procedure.'
+                        ]
+                    }]
+                },
+                componentId: 'dsm_appliance_step1',
+                ariaMigration: true
+            },
+            {
+                title: 'After the Upgrade to VCF Automation ' + tgtVcf + ', Set Up the New DSM',
+                description: 'After the VCF and VCF Automation upgrades are complete, install a new DSM and configure it in VCF Automation',
+                data: {
+                    name: 'Set Up the New DSM',
+                    steps: [
+                        link(DSM_DOCS + 'using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-provider/managing-data-services-manager-regions-in-vcf-automation-911-and-later/configure-vmware-data-services-manager-in-vmware-cloud-foundation-automation.html', 'Install a new DSM ' + tgtVcf + ' as a VCF-native deployment') + '.',
+                        'As the VCFA provider admin, ' + link(DSM_DOCS + 'using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-provider/managing-data-services-manager-regions-in-vcf-automation-911-and-later/assign-a-dedicated-dsm-provider-organization.html', 'assign a dedicated provider organization') + '.',
+                        'Log in to the standalone DSM UI as the DSM admin, and ' + link(DSM_DOCS + 'getting-started-with-vmware-data-services-manager/administering-vmware-data-services-manager/activate-data-services-in-vmware-data-services-manager.html', 'enable the PostgreSQL 16.14 ' + tgtVcf + ' data service version') + '.',
+                        'As the VCFA provider admin, ' + link(DSM_DOCS + 'using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-provider/create-a-data-service-policy.html', 'create a data services policy (DSP)') + ' for PostgreSQL.'
+                    ]
+                },
+                componentId: 'dsm_dataplane'
+            },
+            {
+                title: 'Migrate the DSM Database',
+                description: 'Replicate the existing database to the new DSM, then promote the replica',
+                data: {
+                    name: 'Migrate the Database',
+                    steps: [
+                        'As a tenant admin or user, ' + link(DSM_DOCS + 'using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-tenant/multisite-deployment-enabling-disaster-recovery-for-postgresql-databases-using-data-services-manager-in-vcf-automation/create-the-read-replica-instance-using-data-services-manager-in-vcf-automation.html', 'create a PostgreSQL read replica instance using version 16.14 via Data Services Manager in VCF Automation') + '. In the <strong>Data Availability and Protection</strong> step:'
+                            + '<ol style="margin:4px 0 0 20px;">'
+                            + '<li>Change the scheme of the replication user connection string that you noted in the ' + prepPhase + ' phase from <code><strong>postgres</strong>://&lt;connection-string&gt;</code> to <code><strong>postgresql</strong>://&lt;connection-string&gt;</code>.</li>'
+                            + '<li>Under <strong>Certificate Trust Source</strong>, select <strong>Custom CA</strong>.</li>'
+                            + '<li>Paste the PEM-formatted CA certificate of the primary database that you collected in the ' + prepPhase + ' phase.</li>'
+                            + '</ol>',
+                        'Confirm that the read replica is in sync with the primary and that replication lag is close to zero. You can check the replication lag on the primary instance in the DSM ' + cur + ' standalone UI, on the database\'s <strong>Summary</strong> page, in the <strong>Data Availability and Remote Replication</strong> section.',
+                        '<strong>Block client connections to the existing PostgreSQL database.</strong>',
+                        link(DSM_DOCS + 'using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-tenant/multisite-deployment-enabling-disaster-recovery-for-postgresql-databases-using-data-services-manager-in-vcf-automation/promote-a-read-replica-to-primary-using-data-services-manager-in-vcf-automation.html', 'Promote the read replica to primary') + '.',
+                        'Switch the application connections from the old instance to the new primary database instance.',
+                        'Verify that the applications can connect and work against the new database.'
+                    ],
+                    notices: [{
+                        type: 'warning',
+                        title: 'Downtime',
+                        bullets: ['Application downtime starts when client connections to the existing database are blocked and ends when the applications are switched to the new primary. Plan a maintenance window for this.']
+                    }]
+                },
+                componentId: 'dsm_dataplane'
+            },
+            {
+                title: 'Cleanup Old DSM',
+                description: 'Remove the old database and DSM instance after the new database is validated',
+                data: {
+                    name: 'Cleanup Old DSM',
+                    steps: [
+                        'Delete the old PostgreSQL database by using the DSM API.',
+                        'Delete the old DSM ' + cur + ' instance from vCenter.'
+                    ],
+                    notices: [{
+                        type: 'info',
+                        title: 'Validate first',
+                        bullets: ['Do these steps only after the new database has been validated.']
+                    }]
+                },
+                componentId: 'dsm_dataplane'
+            }
+        ];
+    };
+
+    // Adjusts the existing 2.x "Step 1" phase once the Aria plugin question is answered.
+    window.applyDsmAriaChoiceToStep1 = function (phases, choice) {
+        if (choice !== 'no' && choice !== 'inplace') return;
+        var p = (phases || []).filter(function (x) { return x.componentId === 'dsm_appliance_step1'; })[0];
+        if (!p || !p.data || !p.data.notices || !p.data.notices[0]) return;
+        var n = p.data.notices[0];
+        n.bullets = (n.bullets || []).filter(function (b) { return b.indexOf(DOC) < 0; });
+        if (choice === 'inplace') {
+            n.bullets.push('You chose to upgrade in place while using the Aria Automation plugin for DSM. Confirm that provisioning through the Aria Automation plugin will still work after the upgrade. Building a new DSM moves management to VCF Automation native tenancy and is the recommended option: ' + link(DOC, 'build a new DSM and migrate') + '.');
+        }
+    };
+})();
 </script>
 </body>
 </html>

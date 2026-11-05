@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Recommended Approach: Detailed Steps — DSM Migration</title>
+    <script>
+        // Apply the theme saved by the other planner pages before first paint.
+        document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+    </script>
+    <style>
+        :root {
+            --vmw-blue: #0088b5;
+            --vmw-dark: #1a2d40;
+            --bg: #f0f3f6;
+            --card-bg: #f8f9fb;
+            --border-color: #cdd2d8;
+            --code-bg: #e4e8ec;
+            --text-primary: #1a2d40;
+            --text-secondary: #4a5260;
+            --warning-bg: #fdf3d8;
+            --warning-border: #e6aa00;
+            --warning-text: #7a5900;
+            --info-bg: #e6f3f8;
+        }
+
+        [data-theme="dark"] {
+            --vmw-blue: #4e90aa;
+            --vmw-dark: #d4dbe3;
+            --bg: #151c24;
+            --card-bg: #1e2730;
+            --border-color: #38424e;
+            --code-bg: #2a3540;
+            --text-primary: #c8d0d8;
+            --text-secondary: #8e9aaa;
+            --warning-bg: #2e2200;
+            --warning-border: #b88800;
+            --warning-text: #d4aa30;
+            --info-bg: #1a2e38;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.65;
+            padding: 32px 20px;
+        }
+
+        a { color: #0088b5; text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--vmw-dark); text-decoration: underline; }
+        [data-theme="dark"] a { color: #58D3FF; }
+        [data-theme="dark"] a:hover { color: #8FE3FF; }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 32px 36px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        [data-theme="dark"] .container {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header {
+            border-bottom: 3px solid var(--vmw-blue);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+        }
+
+        h1 { color: var(--vmw-blue); font-size: 2rem; margin-bottom: 4px; }
+        .subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+        h2 {
+            color: var(--vmw-dark);
+            font-size: 1.3rem;
+            margin: 32px 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        p { margin-bottom: 14px; }
+
+        ol { margin: 0 0 16px 28px; }
+        ol li { margin-bottom: 10px; padding-left: 4px; }
+        ol ol { margin: 10px 0 4px 24px; list-style-type: lower-alpha; }
+        ol ol li { margin-bottom: 6px; }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.88em;
+            background: var(--code-bg);
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+
+        .callout {
+            border-left: 4px solid var(--vmw-blue);
+            background: var(--info-bg);
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 0 0 16px;
+        }
+
+        .callout.warning {
+            border-left-color: var(--warning-border);
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .callout p { margin: 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Recommended Approach: Detailed Steps</h1>
+        <div class="subtitle">Migrating a DSM 2.2.3 database (Aria Automation integration) to VCF-native DSM 9.1.1</div>
+    </header>
+
+    <p><strong>Summary:</strong> The customer upgrades VCF to 9.1.1 without upgrading the existing DSM 2.2.3 instance. After the VCF upgrade, they move the existing database to a new VCF-native DSM 9.1.1 deployment by using PostgreSQL replication (Disaster Recovery).</p>
+
+    <p><strong>Starting point:</strong> VCF 5.2 with Aria Automation, which is integrated with DSM 2.2.3. DSM runs one PostgreSQL 16.8 database (<code>16.8+vmware.v2.2.1</code>).</p>
+
+    <p><strong>Prerequisite:</strong> Confirm that the customer is willing to adopt the new VCF Automation (VCFA) native tenancy model on VCFA 9.1.1. This approach only works with that model, because DSM integrates with VCFA through native tenant organizations only. Legacy tenants that are moved into VM Apps organizations can't be used for the DSM database migration.</p>
+
+    <p><strong>Assumption:</strong> The rest of these steps assume that the customer adopts the VCFA native tenancy model after the upgrade to VCF 9.1.1.</p>
+
+    <div class="callout warning">
+        <p><strong>Downtime:</strong> Application downtime starts when client connections to the existing database are blocked (step 10) and ends when the applications are switched to the new primary (step 12). Plan a maintenance window for this.</p>
+    </div>
+
+    <h2>Phase 1: Before the VCF Upgrade</h2>
+
+    <div class="callout">
+        <p><strong>Recommended (optional):</strong> Before you upgrade VCF, enable backups on the existing PostgreSQL database if they aren't enabled already. This isn't required for the migration, but it gives you a recovery point if something goes wrong during the upgrade or the migration.</p>
+    </div>
+
+    <ol start="1">
+        <li>Enable replication on the existing PostgreSQL database (<code>16.8+vmware.v2.2.1</code>) through <a href="https://cormachogan.com/2025/03/14/vmware-data-services-manager-2-2-1-and-aria-automation-enhancements/" target="_blank" rel="noopener">Aria Automation</a>, and note the replication connection string. <strong>Important:</strong> Only enable replication. Don't create a replica at this stage.</li>
+        <li>As the DSM admin, <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/2-2/getting-started-with-vmware-data-services-manager/using-trusted-certificates-in-data-services-manager/establish-secure-connection-to-a-database-cluster-in-vmware-data-services-manager.html#GUID-5AF63F06-5C32-428C-A10A-B813067A1A22-en:~:text=Search%20this%20product-,Get%20the%20CA%20by%20Using%20the%20VMware%20Data%20Services%20Manager%20UI,-You%20can%20download" target="_blank" rel="noopener">get the CA certificate</a> of the existing PostgreSQL database from the VMware Data Services Manager UI. The read replica created after the upgrade needs this certificate to trust the source database.</li>
+        <li>Upgrade VCF 5.2 to VCF 9.1.1 without upgrading DSM.</li>
+    </ol>
+
+    <h2>Phase 2: After the Upgrade to VCF 9.1.1, Set Up the New DSM</h2>
+
+    <ol start="4">
+        <li><a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-provider/managing-data-services-manager-regions-in-vcf-automation-911-and-later/configure-vmware-data-services-manager-in-vmware-cloud-foundation-automation.html" target="_blank" rel="noopener">Install a new DSM 9.1.1 as a VCF-native deployment.</a></li>
+        <li>As the VCFA provider admin, <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-provider/managing-data-services-manager-regions-in-vcf-automation-911-and-later/assign-a-dedicated-dsm-provider-organization.html" target="_blank" rel="noopener">assign a dedicated provider organization</a>.</li>
+        <li>Log in to the standalone DSM UI as the DSM admin, and <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/getting-started-with-vmware-data-services-manager/administering-vmware-data-services-manager/activate-data-services-in-vmware-data-services-manager.html" target="_blank" rel="noopener">enable the PostgreSQL 16.14 9.1.1 data service version</a>.</li>
+        <li>As the VCFA provider admin, <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-provider/create-a-data-service-policy.html" target="_blank" rel="noopener">create a data services policy (DSP)</a> for PostgreSQL.</li>
+    </ol>
+
+    <h2>Phase 3: Migrate the Database</h2>
+
+    <ol start="8">
+        <li>As a tenant admin or user, <a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-tenant/multisite-deployment-enabling-disaster-recovery-for-postgresql-databases-using-data-services-manager-in-vcf-automation/create-the-read-replica-instance-using-data-services-manager-in-vcf-automation.html" target="_blank" rel="noopener">create a PostgreSQL read replica instance using version 16.14 via Data Services Manager in VCF Automation</a>. In the <strong>Data Availability and Protection</strong> step:
+            <ol>
+                <li>Change the scheme of the replication user connection string that you noted in step 1 from <code><strong>postgres</strong>://&lt;connection-string&gt;</code> to <code><strong>postgresql</strong>://&lt;connection-string&gt;</code>.</li>
+                <li>Under <strong>Certificate Trust Source</strong>, select <strong>Custom CA</strong>.</li>
+                <li>Paste the PEM-formatted CA certificate of the primary database from step 2.</li>
+            </ol>
+        </li>
+        <li>Confirm that the read replica is in sync with the primary and that replication lag is close to zero. You can check the replication lag on the primary instance in the DSM 2.2.3 standalone UI, on the database's <strong>Summary</strong> page, in the <strong>Data Availability and Remote Replication</strong> section.</li>
+        <li>Block client connections to the existing PostgreSQL database.</li>
+        <li><a href="https://techdocs.broadcom.com/us/en/vmware-cis/dsm/data-services-manager/9-1/using-vmware-data-services-manager-with-vmware-cloud-foundation/using-as-a-tenant/multisite-deployment-enabling-disaster-recovery-for-postgresql-databases-using-data-services-manager-in-vcf-automation/promote-a-read-replica-to-primary-using-data-services-manager-in-vcf-automation.html" target="_blank" rel="noopener">Promote the read replica to primary.</a></li>
+        <li>Switch the application connections from the old instance to the new primary database instance.</li>
+        <li>Verify that the applications can connect and work against the new database.</li>
+    </ol>
+
+    <h2>Phase 4: Cleanup</h2>
+
+    <p>Do these steps only after the new database has been validated.</p>
+
+    <ol start="14">
+        <li>Delete the old PostgreSQL database by using the DSM API.</li>
+        <li>Delete the old DSM 2.2.3 instance from vCenter.</li>
+    </ol>
+</div>
+</body>
+</html>

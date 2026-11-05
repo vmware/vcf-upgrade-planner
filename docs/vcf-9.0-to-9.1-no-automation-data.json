@@ -4,6 +4,7 @@
         "vlr",
         "vsan_data_protection",
         "avi",
+        "dsm",
         "sddc_manager",
         "vcfms",
         "vidb",

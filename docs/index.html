@@ -1532,6 +1532,37 @@
                     </label>
                 </div>
 
+                <!-- VMware Data Services Manager (DSM) -->
+                <div class="checkbox-group" id="dsmCheckboxGroup">
+                    <label class="checkbox-label">
+                        <input id="dsmCheck" onchange="toggleDropdown('dsmCheck', 'dsmDropdown'); updateAvailablePaths();" type="checkbox"/>
+                        <span>VMware Data Services Manager (DSM)</span>
+                        <div class="version-dropdown hidden" id="dsmDropdown">
+                            <select id="dsmVer" onchange="syncDsmVer();updateAvailablePaths();">
+                                <option value="">-- Select DSM Version --</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- DSM 2.x: Aria Automation plugin question -->
+                <div id="vsDsmAriaQuestion" class="dsm-aria-question" style="display:none; margin:-4px 0 14px 28px; padding:10px 12px; border-left:3px solid #0072a3; background:rgba(0,114,163,0.06); font-size:0.92em;">
+                    <div style="margin-bottom:6px;">
+                        Are you using the Aria Automation plugin for DSM (as described <a href="https://cormachogan.com/2025/03/14/vmware-data-services-manager-2-2-1-and-aria-automation-enhancements/" target="_blank" rel="noopener">here</a>)?
+                    </div>
+                    <label style="margin-right:16px;"><input type="radio" name="vsDsmAriaPlugin" value="yes"/> Yes</label>
+                    <label><input type="radio" name="vsDsmAriaPlugin" value="no"/> No</label>
+                    <div id="vsDsmAriaApproach" style="display:none; margin-top:8px;">
+                        <div style="margin-bottom:4px;">How do you want to handle DSM?</div>
+                        <label style="display:block;"><input type="radio" name="vsDsmAriaApproach" value="migrate" checked="checked"/> Build a new DSM and migrate (recommended)</label>
+                        <label style="display:block;"><input type="radio" name="vsDsmAriaApproach" value="inplace"/> Upgrade in place</label>
+                        <div style="margin-left: 20px; font-size: 0.85em; color: #555; background-color: #f9f9f9; border-left: 3px solid #007edd; padding: 6px 10px;">
+                            <strong>DSM Upgrade in Place:</strong> Aria Automation managed databases remain active, but won't be onboarded to VCF Automation native Database UI.
+                        </div>
+                        </div>
+                    </div>
+
+
                 <!-- Supervisor -->
                 <div class="checkbox-group" id="supervisorCheckboxGroup">
                     <label class="checkbox-label">
@@ -1770,7 +1801,7 @@
                         <input id="vcf52Check" onchange="toggleVCFDropdown('vcf52Check', 'vcf52Dropdown')" type="checkbox"/>
                         <span>VCF 5.2</span>
                         <div class="version-dropdown hidden" id="vcf52Dropdown">
-                            <select id="vcf52" onchange="if(typeof filterVcfNsxOptions==='function') filterVcfNsxOptions(); if(typeof filterVcfVcenterOptions==='function') filterVcfVcenterOptions(); updateVCFPath();">
+                            <select id="vcf52" onchange="if(typeof filterVcfNsxOptions==='function') filterVcfNsxOptions(); if(typeof filterVcfVcenterOptions==='function') filterVcfVcenterOptions(); if(typeof filterVcfDsmOptions==='function') filterVcfDsmOptions(); updateVCFPath();">
                                 <option value="">-- Select Version --</option>
                             </select>
                         </div>
@@ -1783,7 +1814,7 @@
                         <input id="vcf90Check" onchange="toggleVCFDropdown('vcf90Check', 'vcf90Dropdown')" type="checkbox"/>
                         <span>VCF 9.0</span>
                         <div class="version-dropdown hidden" id="vcf90Dropdown">
-                            <select id="vcf90" onchange="if(typeof filterVcfNsxOptions==='function') filterVcfNsxOptions(); if(typeof filterVcfVcenterOptions==='function') filterVcfVcenterOptions(); updateVCFPath();">
+                            <select id="vcf90" onchange="if(typeof filterVcfNsxOptions==='function') filterVcfNsxOptions(); if(typeof filterVcfVcenterOptions==='function') filterVcfVcenterOptions(); if(typeof filterVcfDsmOptions==='function') filterVcfDsmOptions(); updateVCFPath();">
                                 <option value="">-- Select Version --</option>
                             </select>
                         </div>
@@ -1796,7 +1827,7 @@
                         <input id="vcf91Check" onchange="toggleVCFDropdown('vcf91Check', 'vcf91Dropdown')" type="checkbox"/>
                         <span>VCF 9.1</span>
                         <div class="version-dropdown hidden" id="vcf91Dropdown">
-                            <select id="vcf91" onchange="if(typeof filterVcfNsxOptions==='function') filterVcfNsxOptions(); if(typeof filterVcfVcenterOptions==='function') filterVcfVcenterOptions(); updateVCFPath();">
+                            <select id="vcf91" onchange="if(typeof filterVcfNsxOptions==='function') filterVcfNsxOptions(); if(typeof filterVcfVcenterOptions==='function') filterVcfVcenterOptions(); if(typeof filterVcfDsmOptions==='function') filterVcfDsmOptions(); updateVCFPath();">
                                 <option value="">-- Select Version --</option>
                                 <optgroup label="9.1.0.x">
                                     <option value="9.1.0.0">9.1.0.0</option>
@@ -1954,6 +1985,35 @@
                         </div>
                     </label>
                 </div>
+
+                <!-- VMware Data Services Manager (DSM) for VCF -->
+                <div class="checkbox-group" id="vcfDsmCheckboxGroup">
+                    <label class="checkbox-label">
+                        <input id="vcfDsmCheck" onchange="toggleDropdown('vcfDsmCheck', 'vcfDsmDropdown'); updateVCFPath();" type="checkbox"/>
+                        <span>VMware Data Services Manager (DSM)</span>
+                        <div class="version-dropdown hidden" id="vcfDsmDropdown">
+                            <select id="vcfDsmVer" onchange="syncVcfDsmVer();updateVCFPath();">
+                                <option value="">-- Select DSM Version --</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- DSM 2.x: Aria Automation plugin question -->
+                <div id="vcfDsmAriaQuestion" class="dsm-aria-question" style="display:none; margin:-4px 0 14px 28px; padding:10px 12px; border-left:3px solid #0072a3; background:rgba(0,114,163,0.06); font-size:0.92em;">
+                    <div style="margin-bottom:6px;">
+                        Are you using the Aria Automation plugin for DSM (as described <a href="https://cormachogan.com/2025/03/14/vmware-data-services-manager-2-2-1-and-aria-automation-enhancements/" target="_blank" rel="noopener">here</a>)?
+                    </div>
+                    <label style="margin-right:16px;"><input type="radio" name="vcfDsmAriaPlugin" value="yes"/> Yes</label>
+                    <label><input type="radio" name="vcfDsmAriaPlugin" value="no"/> No</label>
+                    <div id="vcfDsmAriaApproach" style="display:none; margin-top:8px;">
+                        <label style="display:block;"><input type="radio" name="vsDsmAriaApproach" value="migrate" checked="checked"/> Build a new DSM and migrate (recommended)</label>
+                        <label style="display:block;"><input type="radio" name="vsDsmAriaApproach" value="inplace"/> Upgrade in place</label>
+                        <div style="margin-left: 20px; font-size: 0.85em; color: #555; background-color: #f9f9f9; border-left: 3px solid #007edd; padding: 6px 10px;">
+                            <strong>DSM Upgrade in Place:</strong> Aria Automation managed databases remain active, but won't be onboarded to VCF Automation native Database UI.
+                        </div>
+                        </div>
+                    </div>
 
                 <!-- Supervisor & Tanzu Kubernetes (VKS) for VCF -->
                 <div class="checkbox-group" id="vcfSupervisorCheckboxGroup" style="margin-top:14px;">
@@ -2465,6 +2525,11 @@
                     errors.push('Avi Load Balancer version must be selected');
                 }
 
+                var dsmChk = document.getElementById('dsmCheck');
+                if (dsmChk && dsmChk.checked && document.getElementById('dsmVer') && !document.getElementById('dsmVer').value) {
+                    errors.push('VMware Data Services Manager (DSM) version must be selected');
+                }
+
                 var tgtVerSelect = document.getElementById('targetVcf91Version');
                 if (tgtVerSelect && !tgtVerSelect.value) {
                     errors.push('Target VCF 9.1 Version must be selected');
@@ -2522,6 +2587,11 @@
                 var vcfAviChk = document.getElementById('vcfAviCheck');
                 if (vcfAviChk && vcfAviChk.checked && document.getElementById('vcfAviVer') && !document.getElementById('vcfAviVer').value) {
                     errors.push('Avi Load Balancer version must be selected');
+                }
+
+                var vcfDsmChk = document.getElementById('vcfDsmCheck');
+                if (vcfDsmChk && vcfDsmChk.checked && document.getElementById('vcfDsmVer') && !document.getElementById('vcfDsmVer').value) {
+                    errors.push('VMware Data Services Manager (DSM) version must be selected');
                 }
 
                 var vcfRepChk = document.getElementById('vcfReplicationCheck');
@@ -3057,6 +3127,17 @@
             if (vcfAviVer && avi) avi.value = vcfAviVer.value;
         }
 
+        function syncDsmVer() {
+            var vcfDsmVer = document.getElementById('vcfDsmVer');
+            var dsmVer = document.getElementById('dsmVer');
+            if (vcfDsmVer && dsmVer) vcfDsmVer.value = dsmVer.value;
+        }
+        function syncVcfDsmVer() {
+            var vcfDsmVer = document.getElementById('vcfDsmVer');
+            var dsmVer = document.getElementById('dsmVer');
+            if (vcfDsmVer && dsmVer) dsmVer.value = vcfDsmVer.value;
+        }
+
         function syncReplicationVer() {
             var vcfRepVer = document.getElementById('vcfReplicationVer');
             var repVer = document.getElementById('replicationVer');
@@ -3193,6 +3274,10 @@
             var vcfAviVal = document.getElementById('vcfAviVer') ? document.getElementById('vcfAviVer').value : '';
             var aviVer    = (startingPoint === 'vcf') ? (vcfAviVal || vsAviVal) : (vsAviVal || vcfAviVal);
 
+            var vsDsmVal  = document.getElementById('dsmVer') ? document.getElementById('dsmVer').value : '';
+            var vcfDsmVal = document.getElementById('vcfDsmVer') ? document.getElementById('vcfDsmVer').value : '';
+            var dsmVer    = (startingPoint === 'vcf') ? (vcfDsmVal || vsDsmVal) : (vsDsmVal || vcfDsmVal);
+
             var vsRepVal  = document.getElementById('replicationVer') ? document.getElementById('replicationVer').value : '';
             var vcfRepVal = document.getElementById('vcfReplicationVer') ? document.getElementById('vcfReplicationVer').value : '';
             var repVer    = (startingPoint === 'vcf') ? (vcfRepVal || vsRepVal) : (vsRepVal || vcfRepVal);
@@ -3213,6 +3298,10 @@
             var vcfAviChk = document.getElementById('vcfAviCheck') && document.getElementById('vcfAviCheck').checked;
             var vsAviChk  = document.getElementById('aviCheck') && document.getElementById('aviCheck').checked;
             var aviChk    = (startingPoint === 'vcf') ? vcfAviChk : vsAviChk;
+
+            var vcfDsmChk = document.getElementById('vcfDsmCheck') && document.getElementById('vcfDsmCheck').checked;
+            var vsDsmChk  = document.getElementById('dsmCheck') && document.getElementById('dsmCheck').checked;
+            var dsmChk    = (startingPoint === 'vcf') ? vcfDsmChk : vsDsmChk;
 
             var vcfRepChk = document.getElementById('vcfReplicationCheck') && document.getElementById('vcfReplicationCheck').checked;
             var vsRepChk  = document.getElementById('replicationCheck') && document.getElementById('replicationCheck').checked;
@@ -3235,6 +3324,8 @@
             localStorage.setItem('vkr-version',         vkrVer);
             localStorage.setItem('avi-selected',        aviChk ? 'true' : 'false');
             localStorage.setItem('avi-version',         aviVer);
+            localStorage.setItem('dsm-selected',        dsmChk ? 'true' : 'false');
+            localStorage.setItem('dsm-version',         dsmVer);
             localStorage.setItem('replication-selected', repChk ? 'true' : 'false');
             localStorage.setItem('replication-version',  repVer);
             localStorage.setItem('srm-selected',         srmChk ? 'true' : 'false');
@@ -3477,6 +3568,7 @@
 
              if (intent === 'fleet') {
                 const automationSelected = document.getElementById('automationCheck') && (document.getElementById('automationCheck') ? document.getElementById('automationCheck').checked : false);
+                const dsmSelected = document.getElementById('dsmCheck') && (document.getElementById('dsmCheck') ? document.getElementById('dsmCheck').checked : false);
                 const nsxSelected = document.getElementById('nsxCheck') && (document.getElementById('nsxCheck') ? document.getElementById('nsxCheck').checked : false);
                 const _vcFleet = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
                 if ((_vcFleet.startsWith('8.0u3j') || _vcFleet.startsWith('8.0u3k')) && !nsxSelected && !savedTargetVer.startsWith('9.1.1')) {
@@ -3502,6 +3594,7 @@
                 }
             } else if (intent === 'instance') {
                 const nsxSelected = document.getElementById('nsxCheck') && document.getElementById('nsxCheck').checked;
+                const dsmSelected = document.getElementById('dsmCheck') && (document.getElementById('dsmCheck') ? document.getElementById('dsmCheck').checked : false);
                 const _vcInstance = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
                 if ((_vcInstance.startsWith('8.0u3j') || _vcInstance.startsWith('8.0u3k')) && !nsxSelected && !savedTargetVer.startsWith('9.1.1')) {
                     const noDestDiv = document.createElement('div');
@@ -3689,6 +3782,7 @@
 
             if (typeof window.filterVcfVcenterOptions === 'function') window.filterVcfVcenterOptions();
             if (typeof window.filterVcfNsxOptions === 'function') window.filterVcfNsxOptions();
+            if (typeof window.filterVcfDsmOptions === 'function') window.filterVcfDsmOptions();
             updateVCFPath();
         }
 
@@ -4264,8 +4358,8 @@
                 'nsxCheck','vxrailCheck','vcdCheck','replicationCheck','srmCheck',
                 'vcf52Check','vcf52VxrailCheck','vcf90Check','vcf90VxrailCheck','vcf91Check',
                 'vcfVcenterCheck','vcfOperationsCheck','vcfNsxCheck','vcfAutomationCheck',
-                'supervisorCheck','aviCheck',
-                'vcfSupervisorCheck','vcfAviCheck','vcfReplicationCheck','vcfSrmCheck'
+                'supervisorCheck','aviCheck','dsmCheck',
+                'vcfSupervisorCheck','vcfAviCheck','vcfDsmCheck','vcfReplicationCheck','vcfSrmCheck'
             ];
             checkboxIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -4278,8 +4372,8 @@
                 'vcf52','vcf52Vxrail','vcf90','vcf90Vxrail','vcf91',
                 'vcfOperations','vcfNsx','vcfAutomation',
                 'targetVcf91Version','vcfTargetVcf91Version',
-                'supervisorVer','vksVer','vkrVer','avi','replicationVer','srmVer',
-                'vcfSupervisorVer','vcfVksVer','vcfVkrVer','vcfAviVer','vcfReplicationVer','vcfSrmVer',
+                'supervisorVer','vksVer','vkrVer','avi','dsmVer','replicationVer','srmVer',
+                'vcfSupervisorVer','vcfVksVer','vcfVkrVer','vcfAviVer','vcfDsmVer','vcfReplicationVer','vcfSrmVer',
                 'haproxy','vcfHaproxy'
             ];
             selectIds.forEach(id => {
@@ -4299,8 +4393,8 @@
                 'nsxDropdown','vxrailDropdown','replicationDropdown','srmDropdown',
                 'vcf52Dropdown','vcf52VxrailDropdown','vcf90Dropdown','vcf90VxrailDropdown','vcf91Dropdown',
                 'vcfVcenterDropdown','vcfOperationsDropdown','vcfNsxDropdown','vcfAutomationDropdown',
-                'supervisorDropdown','vksDropdownContainer','aviDropdown',
-                'vcfSupervisorDropdown','vcfVksDropdownContainer','vcfAviDropdown',
+                'supervisorDropdown','vksDropdownContainer','aviDropdown','dsmDropdown',
+                'vcfSupervisorDropdown','vcfVksDropdownContainer','vcfAviDropdown','vcfDsmDropdown',
                 'vcfReplicationDropdown','vcfSrmDropdown'
             ];
             dropdownIds.forEach(id => {
@@ -4345,15 +4439,15 @@
             } else {
                 ['vcenter-version','esx-version','nsx-version','vcf-version',
                  'supervisor-selected','supervisor-version','vks-selected','vks-version','vkr-version',
-                 'avi-selected','avi-version','use-recommended-path'].forEach(k => localStorage.removeItem(k));
+                 'avi-selected','avi-version','dsm-selected','dsm-version','use-recommended-path'].forEach(k => localStorage.removeItem(k));
             }
 
             // Fire change events on key checkboxes so all downstream cascade logic
             // (toggleDropdown, updateAvailablePaths) runs with everything unchecked,
             // ensuring Destination Options and version dropdowns are fully hidden.
             ['vcenterCheck','esxCheck','nsxCheck','operationsCheck','automationCheck','vxrailCheck','vcdCheck',
-             'supervisorCheck','aviCheck',
-             'vcfSupervisorCheck','vcfAviCheck'].forEach(id => {
+             'supervisorCheck','aviCheck','dsmCheck',
+             'vcfSupervisorCheck','vcfAviCheck','vcfDsmCheck'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     el.checked = false;
@@ -4508,6 +4602,24 @@
                 return;
             }
 
+            // ── Rule 3c: DSM selected (no NSX) → only Create Fleet + Upgrade vSphere (no Fleet) ─
+            var dsmChkEl = document.getElementById('dsmCheck');
+            if (dsmChkEl && dsmChkEl.checked && !nsx) {
+                ['intentCardInstance','intentCardImport'].forEach(function(id) {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('intent-hidden');
+                });
+                clearIfInvalid(['fleet','vvf']);
+                return;
+            } else if (dsmChkEl && dsmChkEl.checked && nsx) {
+                ['intentCardInstance','intentCardImport','intentCardVVF'].forEach(function(id) {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('intent-hidden');
+                });
+                clearIfInvalid(['fleet']);
+                return;
+            }
+
             // ── Rule 4: NSX selected → Fleet, Instance, Workload Domain (hide VVF) ─
             if (nsx && !ops && !automate && !vxrail) {
                 const vvfCard = document.getElementById('intentCardVVF');
@@ -4571,6 +4683,8 @@
             var ops       = !!(opsCheck && opsCheck.checked);
             var automate  = !!(autoCheck && autoCheck.checked);
             var hasOpsOrAuto = ops || automate;
+            var vcfDsmEl = document.getElementById('vcfDsmCheck');
+            var vcfDsm   = !!(vcfDsmEl && vcfDsmEl.checked);
 
             var vcf90 = document.getElementById('vcf90Check');
             var vcf91 = document.getElementById('vcf91Check');
@@ -4581,7 +4695,7 @@
             var workloadCard = document.getElementById('intentCardVcfWorkload');
             var noteEl       = document.getElementById('vcfIntentInferNote');
 
-            if (hasOpsOrAuto) {
+            if (hasOpsOrAuto || vcfDsm) {
                 if (fleetCard) fleetCard.classList.remove('intent-hidden');
                 if (instanceCard) instanceCard.classList.add('intent-hidden');
                 if (workloadCard) workloadCard.classList.add('intent-hidden');
@@ -4594,10 +4708,14 @@
 
                 if (noteEl) {
                     noteEl.style.display = '';
+                    if (vcfDsm && !hasOpsOrAuto) {
+                        noteEl.innerHTML = '&#x1F4A1; With <strong>Data Services Manager</strong> selected, only <strong>Fleet</strong> options are available.';
+                    } else {
                     var label = (ops && automate) 
                         ? 'VCF Operations and VCF Automation' 
                         : (ops ? 'VCF Operations' : 'VCF Automation');
                     noteEl.innerHTML = '&#x1F4A1; With <strong>' + label + '</strong> selected, only <strong>Fleet</strong> options are available (Instances and Workload Domains do not include Operations or Automation).';
+                    }
                 }
             } else if (isVcf9x) {
                 if (fleetCard) fleetCard.classList.add('intent-hidden');
@@ -5578,6 +5696,44 @@
         }
         filterSelect(document.getElementById('vcfAutomation'), allowedAuto, autoFallback);
         filterSelect(document.getElementById('automation'), allowedAuto, autoFallback);
+
+        if (typeof window.filterVcfDsmOptions === 'function') window.filterVcfDsmOptions();
+    };
+
+    window.filterVcfDsmOptions = function() {
+        var startingPoint = (document.getElementById('startingPoint') ? document.getElementById('startingPoint').value : 'vsphere');
+        var hide2x = false;
+
+        if (startingPoint === 'vcf') {
+            var vcf90Chk = document.getElementById('vcf90Check');
+            var vcf91Chk = document.getElementById('vcf91Check');
+            if ((vcf90Chk && vcf90Chk.checked) || (vcf91Chk && vcf91Chk.checked)) {
+                hide2x = true;
+            }
+        }
+
+        ['dsmVer', 'vcfDsmVer'].forEach(function(selectId) {
+            var sel = document.getElementById(selectId);
+            if (!sel) return;
+            Array.from(sel.options).forEach(function(opt) {
+                if (!opt.value) {
+                    opt.disabled = false;
+                    opt.style.display = '';
+                    return;
+                }
+                var is2x = opt.value.trim().startsWith('2.');
+                if (hide2x && is2x) {
+                    opt.disabled = true;
+                    opt.style.display = 'none';
+                    if (sel.value === opt.value) {
+                        sel.value = '';
+                    }
+                } else {
+                    opt.disabled = false;
+                    opt.style.display = '';
+                }
+            });
+        });
     };
 
     window.filterVsphereDropdownsBasedOnVc = function() {
@@ -5910,6 +6066,9 @@
                 populateSorted('vcfSupervisorVer', (data.versions && data.versions['vsphere_supervisor']) || []);
                 populateSorted('avi',              (data.versions && data.versions['avi'])               || []);
                 populateSorted('vcfAviVer',        (data.versions && data.versions['avi'])               || []);
+                populateSorted('dsmVer',           (data.versions && data.versions['dsm'])               || []);
+                populateSorted('vcfDsmVer',        (data.versions && data.versions['dsm'])               || []);
+                if (typeof window.filterVcfDsmOptions === 'function') window.filterVcfDsmOptions();
                 function minVer8(v) {
                     var grp = (v.group || v.value || '').trim();
                     var m = grp.match(/^v?(\d+)/i);
@@ -6664,6 +6823,223 @@
                 .observe(el, { attributes: true, attributeFilter: ['style'] });
         });
     });
+})();
+</script>
+<script>
+/* DSM 2.x + Aria Automation plugin question. Shows only when DSM is selected with a 2.x version.
+   Stores 'dsm-aria-plugin' (yes|no) and 'dsm-aria-approach' (migrate|inplace) in localStorage,
+   read by the upgrade-plan pages. The vSphere and VCF copies are kept in sync. */
+(function () {
+    var PREFIXES = ['vs', 'vcf'];
+    var CFG = { vs: { chk: 'dsmCheck', ver: 'dsmVer', auto: 'automationCheck' }, vcf: { chk: 'vcfDsmCheck', ver: 'vcfDsmVer', auto: 'vcfAutomationCheck' } };
+    function radio(name) { var r = document.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ''; }
+    function setRadio(name, value) {
+        var els = document.querySelectorAll('input[name="' + name + '"]');
+        for (var i = 0; i < els.length; i++) els[i].checked = (els[i].value === value);
+    }
+    function isActive(p) {
+        var c = document.getElementById(CFG[p].chk), v = document.getElementById(CFG[p].ver);
+        var a = document.getElementById(CFG[p].auto); // plugin implies Aria/VCF Automation is in the plan
+        return !!(c && c.checked && a && a.checked && v && String(v.value || '').indexOf('2.') === 0);
+    }
+    function refresh() {
+        var anyActive = false;
+        PREFIXES.forEach(function (p) {
+            var box = document.getElementById(p + 'DsmAriaQuestion');
+            if (!box) return;
+            var active = isActive(p);
+            anyActive = anyActive || active;
+            box.style.display = active ? 'block' : 'none';
+            var ap = document.getElementById(p + 'DsmAriaApproach');
+            if (ap) ap.style.display = (active && radio(p + 'DsmAriaPlugin') === 'yes') ? 'block' : 'none';
+        });
+        // Persist only while the question applies, so stale answers never leak into the plan.
+        var src = isActive('vcf') && !isActive('vs') ? 'vcf' : 'vs';
+        var plugin = anyActive ? radio(src + 'DsmAriaPlugin') : '';
+        if (plugin) {
+            localStorage.setItem('dsm-aria-plugin', plugin);
+            localStorage.setItem('dsm-aria-approach', radio(src + 'DsmAriaApproach') || 'migrate');
+        } else {
+            localStorage.removeItem('dsm-aria-plugin');
+            localStorage.removeItem('dsm-aria-approach');
+        }
+    }
+    document.addEventListener('change', function (e) {
+        var n = e.target && e.target.name;
+        if (n && /^(vs|vcf)DsmAria(Plugin|Approach)$/.test(n)) {
+            var other = n.indexOf('vcf') === 0 ? 'vs' : 'vcf';
+            setRadio(other + n.replace(/^(vs|vcf)/, ''), e.target.value);
+        }
+        refresh();
+    });
+    document.addEventListener('DOMContentLoaded', refresh);
+    // DSM selection changes which goal cards are offered (see updateIntentCardHints, Rule 3c)
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.id === 'dsmCheck' && typeof inferIntentFromProducts === 'function') inferIntentFromProducts();
+    });
+})();
+</script>
+<script src="dsm-vks-compat.js"></script>
+<script>
+/* DSM <-> vCenter version filter for the DSM dropdowns (uses dsm-vks-compat.js and compat-data.json: compatibility.dsm_vcenter). */
+(function () {
+    function val(id) { var e = document.getElementById(id); return e ? String(e.value || '') : ''; }
+    function checked(id) { var e = document.getElementById(id); return !!(e && e.checked); }
+    // ---- Filter the DSM version dropdowns by the selected vCenter version (compat-data.json: dsm_vcenter) ----
+    var VC = {
+        vs:  { vc: 'vcenter',    chk: 'vcenterCheck',    dsm: 'dsmVer' },
+        vcf: { vc: 'vcfVcenter', chk: 'vcfVcenterCheck', dsm: 'vcfDsmVer' }
+    };
+    var origFilterDsm = window.filterVcfDsmOptions;   // existing 2.x-vs-VCF 9.x filter (hides 2.x for VCF 9.x sources)
+
+    // Snapshot of every DSM option (value, label, optgroup) so versions can be removed and restored.
+    // Options are removed (not just hidden) because some browsers ignore display:none on <option>.
+    function dsmMaster(sel) {
+        var live = [], i, j, kids = sel.children, g, ch;
+        for (i = 1; i < kids.length; i++) {                    // child 0 is the "-- Select --" placeholder
+            ch = kids[i];
+            if (ch.tagName === 'OPTGROUP') {
+                for (j = 0; j < ch.children.length; j++) live.push({ g: ch.label, v: ch.children[j].value, t: ch.children[j].textContent });
+            } else if (ch.tagName === 'OPTION') {
+                live.push({ g: '', v: ch.value, t: ch.textContent });
+            }
+        }
+        var m = sel._dsmMaster;
+        var known = m ? m.map(function (x) { return x.v; }) : [];
+        // Keep the earlier (fuller) snapshot unless the select was repopulated with versions we have not seen.
+        var repopulated = !m || live.some(function (x) { return known.indexOf(x.v) < 0; });
+        if (repopulated) sel._dsmMaster = live;
+        return sel._dsmMaster;
+    }
+    function rebuildDsmOptions(sel, allowed) {
+        var master = dsmMaster(sel), prev = sel.value, lastG = null, grp = null;
+        while (sel.children.length > 1) sel.removeChild(sel.lastChild);
+        master.forEach(function (x) {
+            if (!allowed(x.v)) return;
+            var o = document.createElement('option');
+            o.value = x.v; o.textContent = x.t;
+            if (x.g) {
+                if (x.g !== lastG) { grp = document.createElement('optgroup'); grp.label = x.g; sel.appendChild(grp); lastG = x.g; }
+                grp.appendChild(o);
+            } else { sel.appendChild(o); lastG = null; }
+        });
+        var keep = prev && Array.prototype.some.call(sel.options, function (o) { return o.value === prev; });
+        sel.value = keep ? prev : '';
+        return !!prev && !keep;   // true when the previous selection was dropped
+    }
+    function applyVcenterFilter() {
+        var C = window.DsmVksCompat;
+        if (!C) return;
+        Object.keys(VC).forEach(function (p) {
+            var vcVal = val(VC[p].vc), on = checked(VC[p].chk) && vcVal;
+            var sel = document.getElementById(VC[p].dsm);
+            if (!sel) return;
+            var dropped = rebuildDsmOptions(sel, function (v) { return !on || C.dsmAllowedWithVcenter(v, vcVal); });
+            sel.title = on ? 'Only DSM versions supported with vCenter ' + vcVal + ' are listed' : '';
+            if (dropped) sel.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    }
+    function filterDsmByVcenter() {
+        applyVcenterFilter();
+        if (typeof origFilterDsm === 'function') origFilterDsm();   // re-apply the existing 2.x hiding on the rebuilt lists
+    }
+    if (typeof origFilterDsm === 'function') {
+        window.filterVcfDsmOptions = function () { applyVcenterFilter(); origFilterDsm.apply(this, arguments); };
+    }
+
+    function refresh() { filterDsmByVcenter(); }
+    document.addEventListener('change', refresh);
+    document.addEventListener('DOMContentLoaded', function () {
+        refresh();
+        if (window.DsmVksCompat) window.DsmVksCompat.loadData().then(refresh);
+    });
+})();
+</script>
+<script>
+/* VCF 9.x source: only list product versions numbered 9.0 or higher in the VCF section.
+   Additive: runs after the existing filters. Options are removed and restored from a snapshot
+   (some browsers ignore display:none on <option>). Avi, VKS and Supervisor use their own
+   version schemes, so they are not touched. */
+(function () {
+    var IDS = ['vcfNsx', 'vcfOperations', 'vcfAutomation', 'vcfReplicationVer', 'vcfSrmVer', 'vcfDsmVer'];
+    function isVcf9Source() {
+        var sp = document.getElementById('startingPoint');
+        if (!sp || sp.value !== 'vcf') return false;
+        var a = document.getElementById('vcf90Check'), b = document.getElementById('vcf91Check');
+        return !!((a && a.checked) || (b && b.checked));
+    }
+    // First number found in the label/value, e.g. "9.0.2.0" -> 9, "VLSR 9.0.5.1" -> 9, "SRM 8.8" -> 8, "2.2.3" -> 2.
+    function major(text) {
+        var m = String(text || '').match(/(\d+)\./) || String(text || '').match(/(\d+)/);
+        return m ? parseInt(m[1], 10) : null;
+    }
+    function snapshot(sel) {
+        var live = [], i, j, k, ch;
+        for (i = 0; i < sel.children.length; i++) {
+            ch = sel.children[i];
+            if (ch.tagName === 'OPTGROUP') {
+                for (j = 0; j < ch.children.length; j++) live.push({ g: ch.label, v: ch.children[j].value, t: ch.children[j].textContent });
+            } else if (ch.tagName === 'OPTION') {
+                live.push({ g: '', v: ch.value, t: ch.textContent });
+            }
+        }
+        var m = sel._min9Master;
+        if (!m) { sel._min9Master = live; return live; }
+        var known = {};
+        m.forEach(function (x) { known[x.g + '|' + x.v] = 1; });
+        for (k = 0; k < live.length; k++) {
+            if (live[k].v && !known[live[k].g + '|' + live[k].v]) { sel._min9Master = live; break; }   // repopulated elsewhere
+        }
+        return sel._min9Master;
+    }
+    function rebuild(sel, keepFn) {
+        var master = snapshot(sel), prev = sel.value, lastG = null, grp = null;
+        while (sel.firstChild) sel.removeChild(sel.firstChild);
+        master.forEach(function (x) {
+            if (x.v && !keepFn(x)) return;
+            var o = document.createElement('option');
+            o.value = x.v; o.textContent = x.t;
+            if (x.g) {
+                if (x.g !== lastG) { grp = document.createElement('optgroup'); grp.label = x.g; sel.appendChild(grp); lastG = x.g; }
+                grp.appendChild(o);
+            } else { sel.appendChild(o); lastG = null; }
+        });
+        var keep = !prev || Array.prototype.some.call(sel.options, function (o) { return o.value === prev; });
+        sel.value = keep ? prev : '';
+        return !keep;
+    }
+    var busy = false;
+    function apply() {
+        if (busy) return;
+        busy = true;
+        try {
+            var on = isVcf9Source();
+            IDS.forEach(function (id) {
+                var sel = document.getElementById(id);
+                if (!sel || !sel.options.length) return;
+                var dropped = rebuild(sel, function (x) {
+                    if (!on) return true;
+                    var n = major(x.v || x.t);
+                    return n === null || n >= 9;
+                });
+                sel.title = on ? 'Only versions 9.0 or higher are listed for a VCF 9.x source' : '';
+                if (dropped) sel.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+        } finally { busy = false; }
+    }
+    function wrap(name) {
+        var orig = window[name];
+        if (typeof orig !== 'function') return;
+        window[name] = function () { var r = orig.apply(this, arguments); apply(); return r; };
+    }
+    wrap('filterVcfVcenterOptions');   // also runs after the main dropdowns are populated from compat-data
+    wrap('filterVcfDsmOptions');
+    wrap('filterVcfNsxOptions');
+    document.addEventListener('change', function (e) {
+        var id = e.target && e.target.id;
+        if (id === 'startingPoint' || id === 'vcf52Check' || id === 'vcf90Check' || id === 'vcf91Check' || id === 'vcf52' || id === 'vcf90' || id === 'vcf91') apply();
+    });
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(apply, 0); });
 })();
 </script>
 </body>
