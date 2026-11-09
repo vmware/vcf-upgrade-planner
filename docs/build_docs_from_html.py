@@ -13,6 +13,7 @@ import concurrent.futures
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
+from html_truncate import safe_truncate, close_open_tags
 
 # Configuration
 JSON_FILE = ['vsphere-no-vcf-data-ms.json', 'vsphere-no-vcf-data-no-ms.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.1-to-9.1.0100-no-automation-data.json', 'vcf-9.1-to-9.1.0100-with-automation-data.json']
@@ -512,7 +513,7 @@ def scrape_documentation(url):
 
         # Truncate if too large
         if len(content_html) > MAX_CONTENT_SIZE:
-            content_html = content_html[:MAX_CONTENT_SIZE] + '<p><em>... (content truncated for PDF)</em></p>'
+            content_html = safe_truncate(content_html, MAX_CONTENT_SIZE, '<p><em>... (content truncated for PDF)</em></p>')
         
         print(f"    ✅ Success: {len(content_html)} chars")
         
