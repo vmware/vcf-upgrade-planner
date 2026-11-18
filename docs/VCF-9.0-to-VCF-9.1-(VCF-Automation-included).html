@@ -3256,7 +3256,7 @@
                         const tgtDsm = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0').trim();
                         const dsmVerStr = curDsm ? ' (' + curDsm + ' → ' + tgtDsm + ')' : '';
                         // Disconnect/reconnect is only needed when VCF Automation goes to 9.1.1; a 9.1.0 target is a plain DSM upgrade
-                        const _dsmNeedsReconnect = tgtDsm.startsWith('9.1.1');
+                        const _dsmNeedsReconnect = tgtDsm.startsWith('9.1.1') && !curDsm.startsWith('9.1.1');
 
                         if (_dsmNeedsReconnect) phases.push({
                             number: phases.length + 1,
