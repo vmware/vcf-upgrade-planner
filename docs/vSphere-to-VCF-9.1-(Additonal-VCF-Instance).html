@@ -2382,6 +2382,12 @@
             
             // Use appropriate upgrade order based on NSX selection
             const orderArray = nsxSelected ? upgradeData.upgrade_order : upgradeData.upgrade_order_without_nsx;
+            const _hostUpgradeTarget = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').trim().toLowerCase();
+            const _vcSourceVersion = (vcenterVersion || '').trim().toLowerCase();
+            const _skipVcenterAndEsxUpgrade = nsxSelected && (
+                _vcSourceVersion.startsWith('8.0u3m') ||
+                (_hostUpgradeTarget.startsWith('9.1.0') && (_vcSourceVersion.startsWith('8.0u3j') || _vcSourceVersion.startsWith('8.0u3k')))
+            );
             console.log('Using upgrade order:', nsxSelected ? 'WITH NSX' : 'WITHOUT NSX');
             console.log('Order array:', orderArray);
             
@@ -2422,7 +2428,7 @@
                     const effVcVer = (!_skipUpgrade && ((vcenterVersion || '').startsWith('8.0u1') || (vcenterVersion || '').startsWith('8.0u2'))) ? '8.0u3' : vcenterVersion;
                     const curVc = abbrev((window.k8sPhasesObj && window.k8sPhasesObj.mainVcStart) || effVcVer || '8.0');
                     const _is910To911Vc = isVerGte(vcenterVersion, '9.1') || isVerGte(curVc, '9.1');
-                    shouldInclude = !_skipUpgrade && (curVc !== tgtVc && !(vcenterVersion || '').startsWith(tgtVc) || (window.k8sPhasesObj && window.k8sPhasesObj.mainVcStart != null));
+                    shouldInclude = !_skipVcenterAndEsxUpgrade && !_skipUpgrade && (curVc !== tgtVc && !(vcenterVersion || '').startsWith(tgtVc) || (window.k8sPhasesObj && window.k8sPhasesObj.mainVcStart != null));
                     phaseTitle = (_is910To911Vc ? 'Patch vCenter Server' : 'Upgrade vCenter Server') + (curVc ? ' (' + curVc + ' → ' + tgtVc + ')' : '');
                     phaseDescription = _is910To911Vc ? 'Patch vCenter Server' : 'Upgrade vCenter Server';
                     phaseTitle = hopPhaseTitle(_is910To911Vc ? 'Patch vCenter Server' : 'Upgrade vCenter Server', 'vcenter', vcenterVersion, tgtVc, phaseTitle);
@@ -2574,14 +2580,14 @@
                 } else if (componentId === 'esx') {
                     // ESX always included
                     // 8.0u3j/8.0u3k: converge-only path
-                    shouldInclude = !isVerGte(esxVersion, '9.1') && !isConvergeOnly;
+                    shouldInclude = !_skipVcenterAndEsxUpgrade && !isVerGte(esxVersion, '9.1') && !isConvergeOnly;
                     const _rawTgtEsx = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0').trim();
                     const _esxTgtMap = releaseTargetMap('esx');
                     const tgtEsx = _esxTgtMap[_rawTgtEsx] || _rawTgtEsx;
                     const effEsxVer = (!isConvergeOnly && (esxVersion.startsWith('8.0u1') || esxVersion.startsWith('8.0u2'))) ? '8.0u3' : esxVersion;
                     phaseTitle = 'Upgrade ESX Hosts' + (effEsxVer ? ' (' + effEsxVer + ' → ' + tgtEsx + ')' : '');
                     phaseDescription = 'Upgrade ESX Hosts';
-                    if (!isConvergeOnly && needsUpgradeByMatrix('esx', esxVersion, tgtEsx) === true) shouldInclude = true;
+                    if (!_skipVcenterAndEsxUpgrade && !isConvergeOnly && needsUpgradeByMatrix('esx', esxVersion, tgtEsx) === true) shouldInclude = true;
                     phaseTitle = hopPhaseTitle('Upgrade ESX Hosts', 'esx', esxVersion, tgtEsx, phaseTitle);
                 } else if (componentId === 'nsx_edge') {
                     // NSX Edge/Finalize always included after ESX
@@ -3749,6 +3755,13 @@
                 function _buildVerTable(componentNames, customTargetVersions) {
                     var selTgt = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                     var customTargets = customTargetVersions || {};
+                    var tableSourceVc = (typeof vcenterVersion !== 'undefined' ? vcenterVersion : localStorage.getItem('vcenter-version') || '').trim();
+                    var tableSourceEsx = (typeof esxVersion !== 'undefined' ? esxVersion : localStorage.getItem('esx-version') || '').trim();
+                    var tableNsxSelected = localStorage.getItem('nsx-selected') === 'true';
+                    var tableSkipVcEsx = tableNsxSelected && (
+                        tableSourceVc.toLowerCase().startsWith('8.0u3m') ||
+                        (selTgt.toLowerCase().startsWith('9.1.0') && (tableSourceVc.toLowerCase().startsWith('8.0u3j') || tableSourceVc.toLowerCase().startsWith('8.0u3k')))
+                    );
                     var rows = '';
 
                     componentNames.forEach(function(name) {
@@ -3758,6 +3771,11 @@
                         // A. Priority 1: Use explicitly passed dynamic target version
                         if (customTargets[name]) {
                             verCell = '<strong>' + escapeHtml(customTargets[name]) + '</strong>';
+
+                        } else if (tableSkipVcEsx && lowerName === 'vcenter server' && tableSourceVc) {
+                            verCell = '<strong>' + escapeHtml(tableSourceVc) + '</strong>';
+                        } else if (tableSkipVcEsx && lowerName === 'esx' && tableSourceEsx) {
+                            verCell = '<strong>' + escapeHtml(tableSourceEsx) + '</strong>';
 
                         } else if (lowerName.includes('avi') || lowerName.includes('nsx advanced load balancer')) {
                             var passedAvi = window.aviVersion || localStorage.getItem('avi-version') || '';
@@ -3795,7 +3813,9 @@
                             verCell = '<strong>' + escapeHtml(targetRep) + '</strong>';
 
                         } else if (selTgt === '9.1.1.0200') {
-                            if (name === 'SDDC lifecycle' || name === 'SDDC Manager') {
+                            if (lowerName === 'vcenter' || lowerName === 'vcenter server') {
+                                verCell = '<strong>9.1.1.0200</strong>';
+                            } else if (name === 'SDDC lifecycle' || name === 'SDDC Manager') {
                                 verCell = '<strong>9.1.1.0200</strong>';
                             } else {
                                 verCell = '<strong>9.1.1.0100</strong>';

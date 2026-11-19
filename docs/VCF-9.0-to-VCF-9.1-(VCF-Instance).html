@@ -3802,7 +3802,9 @@
 
                         // G. Specific Target Override for 9.1.1.0200
                         } else if (selTgt === '9.1.1.0200') {
-                            if (name === 'SDDC lifecycle' || name === 'SDDC Manager' || name === 'Software Depot') {
+                            if (lowerName === 'vcenter' || lowerName === 'vcenter server') {
+                                verCell = '<strong>9.1.1.0200</strong>';
+                            } else if (name === 'SDDC lifecycle' || name === 'SDDC Manager' || name === 'Software Depot') {
                                 verCell = '<strong>9.1.1.0200</strong>';
                             } else {
                                 verCell = '<strong>9.1.1.0100</strong>';

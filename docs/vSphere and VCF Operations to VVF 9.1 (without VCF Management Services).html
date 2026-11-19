@@ -3339,7 +3339,7 @@
 
                         // G. Specific Target Override for 9.1.1.0200
                         } else if (selTgt === '9.1.1.0200') {
-                                verCell = '<strong>9.1.1.0100</strong>';
+                                verCell = '<strong>' + (lowerName === 'vcenter' || lowerName === 'vcenter server' ? '9.1.1.0200' : ((name === 'Fleet lifecycle' || name === 'SDDC lifecycle' || name === 'SDDC Manager' || name === 'VCF Automation' || lowerName.includes('migration')) ? '9.1.1.0200' : '9.1.1.0100')) + '</strong>';
                         } else if (selTgt === '9.1.1.0100') {
                             verCell = '<strong>9.1.1.0</strong>';
                         } else {

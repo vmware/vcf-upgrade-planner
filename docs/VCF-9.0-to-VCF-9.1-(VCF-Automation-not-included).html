@@ -3892,7 +3892,9 @@
                             verCell = '<strong>' + escapeHtml(targetRep) + '</strong>';
 
                         } else if (selTgt === '9.1.1.0200') {
-                            if (name === 'Fleet lifecycle' || name === 'SDDC lifecycle' || name === 'SDDC Manager' || name === 'VCF Automation' || lowerName.includes('migration')) {
+                            if (lowerName === 'vcenter' || lowerName === 'vcenter server') {
+                                verCell = '<strong>9.1.1.0200</strong>';
+                            } else if (name === 'Fleet lifecycle' || name === 'SDDC lifecycle' || name === 'SDDC Manager' || name === 'VCF Automation' || lowerName.includes('migration')) {
                                 verCell = '<strong>9.1.1.0200</strong>';
                             } else {
                                 verCell = '<strong>9.1.1.0100</strong>';

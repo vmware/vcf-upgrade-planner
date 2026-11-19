@@ -3403,17 +3403,32 @@
                 const dsmSelected = document.getElementById('dsmCheck') && (document.getElementById('dsmCheck') ? document.getElementById('dsmCheck').checked : false);
                 const nsxSelected = document.getElementById('nsxCheck') && (document.getElementById('nsxCheck') ? document.getElementById('nsxCheck').checked : false);
                 const _vcFleet = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
-                if ((_vcFleet.startsWith('8.0u3j') || _vcFleet.startsWith('8.0u3k')) && !nsxSelected && !isVerGte(savedTargetVer, '9.1.1')) {
-                    // 8.0u3j/k without NSX going to 9.1.0.x — no Convert/fleet destination available
+                if (_vcFleet.startsWith('8.0u3m') && !nsxSelected) {
                     const noDestDiv = document.createElement('div');
-                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
-                    noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; Target Version 9.1.1 Required</h3>' +
-                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">vCenter <strong>' + (_vcFleet.startsWith('8.0u3j') ? '8.0U3j' : '8.0U3k') + '</strong> is supported for upgrade to VCF <strong>9.1.1</strong> via the fleet path. ' +
-                        'Please select target version <strong>9.1.1</strong> to proceed, or select NSX to use the Convert path for 9.1.0.x.</p>';
+                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
+                    'border: 1px solid var(--warning-border);';
+                    const sourceVersion = _vcFleet.toUpperCase();
+                    noDestDiv.innerHTML =
+                    '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">' + '&#9888;&#65039; No Supported Upgrade Path</h3>' +
+                    '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">' + 'vCenter <strong>' + escapeHtml(sourceVersion) + '</strong> has no supported upgrade path ' +
+                    'via the fleet path. There is no supported destination.</p>';
                     pathOptions.appendChild(noDestDiv);
                     pathSelection.classList.remove('hidden');
-                    if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                    if (targetVersionGroup) {
+                        targetVersionGroup.classList.remove('hidden');
+                    }
                     return;
+                } else if ((_vcFleet.startsWith('8.0u3j') || _vcFleet.startsWith('8.0u3k')) && !nsxSelected && !isVerGte(savedTargetVer, '9.1.1')) {
+                        // 8.0u3j/k without NSX going to 9.1.0.x — no Convert/fleet destination available
+                        const noDestDiv = document.createElement('div');
+                        noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                        noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">&#9888;&#65039; Target Version 9.1.1 Required</h3>' +
+                            '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">vCenter <strong>' + (_vcFleet.startsWith('8.0u3j') ? '8.0U3j' : '8.0U3k') + '</strong> is supported for upgrade to VCF <strong>9.1.1</strong> via the fleet path. ' +
+                            'Please select target version <strong>9.1.1</strong> to proceed, or select NSX to use the Convert path for 9.1.0.x.</p>';
+                        pathOptions.appendChild(noDestDiv);
+                        pathSelection.classList.remove('hidden');
+                        if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
+                        return;
                 } else if (automationSelected) {
                     paths = [
                         { title: 'vSphere to VCF 9.1 (VCF Automation included)', desc: 'Converge your vSphere environment into a VCF managed fleet with VCF Automation fully integrated from the start.', icon: '' }
@@ -3428,7 +3443,22 @@
                 const nsxSelected = document.getElementById('nsxCheck') && document.getElementById('nsxCheck').checked;
                 const dsmSelected = document.getElementById('dsmCheck') && (document.getElementById('dsmCheck') ? document.getElementById('dsmCheck').checked : false);
                 const _vcInstance = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
-                if ((_vcInstance.startsWith('8.0u3j') || _vcInstance.startsWith('8.0u3k')) && !nsxSelected && !isVerGte(savedTargetVer, '9.1.1')) {
+                 if (_vcInstance.startsWith('8.0u3m') && !nsxSelected) {
+                    const noDestDiv = document.createElement('div');
+                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
+                    'border: 1px solid var(--warning-border);';
+                    const sourceVersion = _vcInstance.toUpperCase();
+                    noDestDiv.innerHTML =
+                    '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">' + '&#9888;&#65039; No Supported Upgrade Path</h3>' +
+                    '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">' + 'vCenter <strong>' + escapeHtml(sourceVersion) + '</strong> has no supported upgrade path ' +
+                    'via the fleet path. There is no supported destination.</p>';
+                    pathOptions.appendChild(noDestDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) {
+                        targetVersionGroup.classList.remove('hidden');
+                    }
+                    return;
+                } else if ((_vcInstance.startsWith('8.0u3j') || _vcInstance.startsWith('8.0u3k')) && !nsxSelected && !isVerGte(savedTargetVer, '9.1.1')) {
                     const noDestDiv = document.createElement('div');
                     noDestDiv.style.cssText = 'background: var(--warning-bg); border: 1px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; text-align: center;';
                     noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600; text-align: center;">&#9888;&#65039; Target Version 9.1.1 Required</h3>' +
@@ -3444,12 +3474,27 @@
                 }
             } else if (intent === 'import') {
                 const nsxSelected = document.getElementById('nsxCheck') && document.getElementById('nsxCheck').checked;
-                const _vcInstance = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
-                if ((_vcInstance.startsWith('8.0u3j') || _vcInstance.startsWith('8.0u3k')) && !nsxSelected && !isVerGte(savedTargetVer, '9.1.1')) {
+                const _import = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
+                 if (_import.startsWith('8.0u3m') && !nsxSelected) {
+                    const noDestDiv = document.createElement('div');
+                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
+                    'border: 1px solid var(--warning-border);';
+                    const sourceVersion = _import.toUpperCase();
+                    noDestDiv.innerHTML =
+                    '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">' + '&#9888;&#65039; No Supported Upgrade Path</h3>' +
+                    '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">' + 'vCenter <strong>' + escapeHtml(sourceVersion) + '</strong> has no supported upgrade path ' +
+                    'via the fleet path. There is no supported destination.</p>';
+                    pathOptions.appendChild(noDestDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) {
+                        targetVersionGroup.classList.remove('hidden');
+                    }
+                    return;
+                } else if ((_import.startsWith('8.0u3j') || _import.startsWith('8.0u3k')) && !nsxSelected && !isVerGte(savedTargetVer, '9.1.1')) {
                     const noDestDiv = document.createElement('div');
                     noDestDiv.style.cssText = 'background: var(--warning-bg); border: 1px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; text-align: center;';
                     noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600; text-align: center;">&#9888;&#65039; Target Version 9.1.1 Required</h3>' +
-                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0; text-align: center;">vCenter <strong>' + (_vcInstance.startsWith('8.0u3j') ? '8.0U3j' : '8.0U3k') + '</strong> is supported for upgrade to VCF <strong>9.1.1</strong> via the Instance path. Please select target version <strong>9.1.1</strong> to proceed, or select NSX to use the Convert path for 9.1.0.x.</p>';
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0; text-align: center;">vCenter <strong>' + (_import.startsWith('8.0u3j') ? '8.0U3j' : '8.0U3k') + '</strong> is supported for upgrade to VCF <strong>9.1.1</strong> via the Instance path. Please select target version <strong>9.1.1</strong> to proceed, or select NSX to use the Convert path for 9.1.0.x.</p>';
                     pathOptions.appendChild(noDestDiv);
                     pathSelection.classList.remove('hidden');
                     if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
@@ -3460,12 +3505,27 @@
                 ];
                 }
             } else if (intent === 'vvf') {
-                const _vcInstance = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
-                if ((_vcInstance.startsWith('8.0u3j') || _vcInstance.startsWith('8.0u3k')) && !isVerGte(savedTargetVer, '9.1.1')) {
+                const _vvf = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
+                  if (_vvf.startsWith('8.0u3m')) {
+                    const noDestDiv = document.createElement('div');
+                    noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
+                    'border: 1px solid var(--warning-border);';
+                    const sourceVersion = _vvf.toUpperCase();
+                    noDestDiv.innerHTML =
+                    '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">' + '&#9888;&#65039; No Supported Upgrade Path</h3>' +
+                    '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">' + 'vCenter <strong>' + escapeHtml(sourceVersion) + '</strong> has no supported upgrade path ' +
+                    'via the fleet path. There is no supported destination.</p>';
+                    pathOptions.appendChild(noDestDiv);
+                    pathSelection.classList.remove('hidden');
+                    if (targetVersionGroup) {
+                        targetVersionGroup.classList.remove('hidden');
+                    }
+                    return;
+                } else if ((_vvf.startsWith('8.0u3j') || _vvf.startsWith('8.0u3k')) && !isVerGte(savedTargetVer, '9.1.1')) {
                     const noDestDiv = document.createElement('div');
                     noDestDiv.style.cssText = 'background: var(--warning-bg); border: 1px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; text-align: center;';
                     noDestDiv.innerHTML = '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600; text-align: center;">&#9888;&#65039; Target Version 9.1.1 Required</h3>' +
-                    '<p style="color: var(--warning-text); line-height: 1.6; margin: 0; text-align: center;">vCenter <strong>' + (_vcInstance.startsWith('8.0u3j') ? '8.0U3j' : '8.0U3k') + '</strong> is supported for upgrade to <strong>9.1.1</strong></p>';
+                    '<p style="color: var(--warning-text); line-height: 1.6; margin: 0; text-align: center;">vCenter <strong>' + (_vvf.startsWith('8.0u3j') ? '8.0U3j' : '8.0U3k') + '</strong> is supported for upgrade to <strong>9.1.1</strong></p>';
                     pathOptions.appendChild(noDestDiv);
                     pathSelection.classList.remove('hidden');
                     if (targetVersionGroup) targetVersionGroup.classList.remove('hidden');
@@ -3916,8 +3976,33 @@
             }
 
             if (vcf52Checked && vcf52Version) {
-                // ── VCF 5.2.4 block — requires 9.1.1 ──────────
-                if (vcf52Version.toLowerCase().startsWith('5.2.4')) {
+                const _vCenterRaw = document.getElementById('vcenter') ? document.getElementById('vcenter').value : '';
+                const _vCenter = _vCenterRaw.toLowerCase();
+                const _vcf52Intent = localStorage.getItem('vcf-intent') || 'fleet';
+                const _vcf52PathLabel = _vcf52Intent === 'instance'
+                    ? 'VCF Instance'
+                    : (_vcf52Intent === 'workload' ? 'VCF Workload Domain' : 'VCF Fleet');
+                const _vcf52TargetLabel = savedVcfTargetVer || 'VCF 9.1.x';
+                const _vcf52BlockedByVcenter = _vCenter.startsWith('8.0u3m');
+                const _vcf52BlockedBySource = vcf52Version.toLowerCase().startsWith('5.2.5');
+
+                if (_vcf52BlockedByVcenter || _vcf52BlockedBySource) {
+                    const vcf525BlockDiv = document.createElement('div');
+                    vcf525BlockDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
+                    'border: 1px solid var(--warning-border);';
+                    const _vcf52BlockReason = _vcf52BlockedByVcenter
+                        ? 'vCenter <strong>' + escapeHtml(_vCenterRaw || '8.0u3m') + '</strong> is not supported for this upgrade.'
+                        : 'The selected source version <strong>VCF ' + escapeHtml(vcf52Version) + '</strong> has no supported upgrade path to this target.';
+                    vcf525BlockDiv.innerHTML =
+                    '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">' + '&#9888;&#65039; No Supported Upgrade Path</h3>' +
+                    '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">' +
+                    'The selected <strong>' + escapeHtml(_vcf52PathLabel) + '</strong> path from <strong>VCF ' + escapeHtml(vcf52Version) + '</strong> to <strong>' + escapeHtml(_vcf52TargetLabel) + '</strong> cannot proceed. ' +
+                    _vcf52BlockReason + ' There is no supported destination for this path.</p>';
+                    vcfPathOptions.appendChild(vcf525BlockDiv);
+                    vcfPathSelection.classList.remove('hidden');
+                    if (vcfTargetVersionGroup) vcfTargetVersionGroup.classList.remove('hidden');
+                    return;
+                } else if (vcf52Version.toLowerCase().startsWith('5.2.4')) {
                     if (!isVerGte(savedVcfTargetVer, '9.1.1')) {
                         const vcf524BlockDiv = document.createElement('div');
                         vcf524BlockDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border); text-align: center;';

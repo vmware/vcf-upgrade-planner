@@ -362,7 +362,7 @@
     },
     "9.1.1.0200": {
       "components": {
-        "vcenter": "9.1.1.0100",
+        "vcenter": "9.1.1.0200",
         "esx": "9.1.1.0100",
         "nsx": "9.1.1.0100",
         "operations": "9.1.1.0100",
@@ -393,8 +393,8 @@
         "VCF Operations": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-9-1-1-0100-release-notes.html",
         "VCF Operations for Networks": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-for-networks-9-1-1-0100-release-notes.html",
         "VCF Operations orchestrator": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vcf-operations/9100100/vcf-operations-orchestrator-9-1-1-0100-release-notes.html",
-        "vCenter": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0100-release-notes.html",
-        "vCenter Server": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0100-release-notes.html",
+        "vCenter": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0200-release-notes.html",
+        "vCenter Server": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/vcenter/vcenter-9-1-1-0200-release-notes.html",
         "vSAN": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsan/vsan-9-1-1-0100-release-notes.html",
         "vSAN Witness": "https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsan/vsan-9-1-1-0100-release-notes.html"
       },
