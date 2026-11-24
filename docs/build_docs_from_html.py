@@ -14,6 +14,7 @@ import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
 from html_truncate import safe_truncate, close_open_tags
+from inline_docs_format import write_inline_docs
 
 # Configuration
 JSON_FILE = ['vsphere-no-vcf-data-ms.json', 'vsphere-no-vcf-data-no-ms.json', 'vsphere-to-vcf-no-automation-data.json', 'vsphere-to-vcf-with-automation-data.json', 'vcf-5.2-to-9.1-no-automation-data.json', 'vcf-5.2-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.0-to-9.1-no-automation-data.json', 'vcf-9.0-to-9.1-with-automation-data.json', 'vcf-9.1-to-9.1.0100-no-automation-data.json', 'vcf-9.1-to-9.1.0100-with-automation-data.json']
@@ -601,10 +602,7 @@ def generate_docs_file(docs, output_path):
         'subpages': doc.get('subpages', [])
     } for doc in docs}
     
-    js_content = 'window.INLINE_DOCS = ' + json.dumps(docs_dict, ensure_ascii=False, indent=2) + ';'
-    
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(js_content)
+    write_inline_docs(docs_dict, output_path)
     
     file_size = Path(output_path).stat().st_size
     print(f"  ✅ Generated: {output_path} ({file_size:,} bytes)")

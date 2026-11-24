@@ -3403,7 +3403,10 @@
                 const dsmSelected = document.getElementById('dsmCheck') && (document.getElementById('dsmCheck') ? document.getElementById('dsmCheck').checked : false);
                 const nsxSelected = document.getElementById('nsxCheck') && (document.getElementById('nsxCheck') ? document.getElementById('nsxCheck').checked : false);
                 const _vcFleet = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
-                if (_vcFleet.startsWith('8.0u3m') && !nsxSelected && !isVerGte(savedTargetVer, '9.1.2')) {
+                const _esxFleet = (document.getElementById('esx') ? document.getElementById('esx').value : '').toLowerCase();
+                if (((_vcFleet.startsWith('8.0u3m') && !nsxSelected) ||
+                     (_vcFleet.startsWith('9.0.2.0300') || _esxFleet.startsWith('9.0.2.0200'))) &&
+                    !isVerGte(savedTargetVer, '9.1.2')) {
                     const noDestDiv = document.createElement('div');
                     noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
                     'border: 1px solid var(--warning-border);';
@@ -3443,7 +3446,10 @@
                 const nsxSelected = document.getElementById('nsxCheck') && document.getElementById('nsxCheck').checked;
                 const dsmSelected = document.getElementById('dsmCheck') && (document.getElementById('dsmCheck') ? document.getElementById('dsmCheck').checked : false);
                 const _vcInstance = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
-                 if (_vcInstance.startsWith('8.0u3m') && !nsxSelected && !isVerGte(savedTargetVer, '9.1.2')) {
+                const _esxinstance= (document.getElementById('esx') ? document.getElementById('esx').value : '').toLowerCase();
+                 if (((_vcInstance.startsWith('8.0u3m') && !nsxSelected) ||
+                     (_vcInstance.startsWith('9.0.2.0300') || _esxinstance.startsWith('9.0.2.0200'))) &&
+                    !isVerGte(savedTargetVer, '9.1.2')) {
                     const noDestDiv = document.createElement('div');
                     noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
                     'border: 1px solid var(--warning-border);';
@@ -3475,7 +3481,10 @@
             } else if (intent === 'import') {
                 const nsxSelected = document.getElementById('nsxCheck') && document.getElementById('nsxCheck').checked;
                 const _import = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
-                 if (_import.startsWith('8.0u3m') && !nsxSelected && !isVerGte(savedTargetVer, '9.1.2')) {
+                const _esximport= (document.getElementById('esx') ? document.getElementById('esx').value : '').toLowerCase();
+                if (((_import.startsWith('8.0u3m') && !nsxSelected) ||
+                     (_import.startsWith('9.0.2.0300') || _esximport.startsWith('9.0.2.0200'))) &&
+                    !isVerGte(savedTargetVer, '9.1.2')) {
                     const noDestDiv = document.createElement('div');
                     noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
                     'border: 1px solid var(--warning-border);';
@@ -3506,7 +3515,10 @@
                 }
             } else if (intent === 'vvf') {
                 const _vvf = (document.getElementById('vcenter') ? document.getElementById('vcenter').value : '').toLowerCase();
-                  if (_vvf.startsWith('8.0u3m') && !isVerGte(savedTargetVer, '9.1.2')) {
+                const _esxvvf = (document.getElementById('esx') ? document.getElementById('esx').value : '').toLowerCase();
+                  if ((_vvf.startsWith('8.0u3m') ||
+                       (_vvf.startsWith('9.0.2.0300') || _esxvvf.startsWith('9.0.2.0200'))) &&
+                      !isVerGte(savedTargetVer, '9.1.2')) {
                     const noDestDiv = document.createElement('div');
                     noDestDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); ' + 'padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; ' +
                     'border: 1px solid var(--warning-border);';
@@ -3983,7 +3995,8 @@
                     ? 'VCF Instance'
                     : (_vcf52Intent === 'workload' ? 'VCF Workload Domain' : 'VCF Fleet');
                 const _vcf52TargetLabel = savedVcfTargetVer || 'VCF 9.1.x';
-                const _vcf52BlockedByVcenter = _vCenter.startsWith('8.0u3m') && !isVerGte(savedVcfTargetVer, '9.1.2');
+                const _vcf52BlockedByVcenter =
+                    (_vCenter.startsWith('8.0u3m')) && !isVerGte(savedVcfTargetVer, '9.1.2');
                 const _vcf52BlockedBySource = vcf52Version.toLowerCase().startsWith('5.2.5') && !isVerGte(savedVcfTargetVer, '9.1.2');
 
                 if (_vcf52BlockedByVcenter || _vcf52BlockedBySource) {
@@ -4045,6 +4058,29 @@
             // ── VCF 9.0 selected ──────────────────────────────────────────────
             } else if (vcf90Checked && vcf90Version) {
                 const tgt90 = savedVcfTargetVer || '9.1.x';
+                const vcf90VcenterRaw = document.getElementById('vcenter') ? document.getElementById('vcenter').value : '';
+                const vcf90Vcenter = vcf90VcenterRaw.toLowerCase();
+                const vcf90EsxRaw = document.getElementById('esx') ? document.getElementById('esx').value : '';
+                const vcf90Esx = vcf90EsxRaw.toLowerCase();
+                const vcf90RestrictedSource =
+                    vcf90Vcenter.startsWith('9.0.2.0300') ||
+                    vcf90Esx.startsWith('9.0.2.0200');
+                if (vcf90RestrictedSource && !isVerGte(savedVcfTargetVer, '9.1.2')) {
+                    const vcf90BlockDiv = document.createElement('div');
+                    vcf90BlockDiv.style.cssText = 'background: var(--warning-bg); border-left: 4px solid var(--warning-border); padding: 20px 24px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--warning-border);';
+                    const vcf90BlockReason = vcf90Vcenter.startsWith('9.0.2.0300')
+                        ? 'vCenter <strong>' + escapeHtml(vcf90VcenterRaw) + '</strong> is not supported for this upgrade.'
+                        : 'ESX <strong>' + escapeHtml(vcf90EsxRaw) + '</strong> is not supported for this upgrade.';
+                    vcf90BlockDiv.innerHTML =
+                        '<h3 style="color: var(--warning-text); margin-bottom: 12px; font-size: 1.1rem; font-weight: 600;">' + WARN_ICON + ' No Supported Upgrade Path</h3>' +
+                        '<p style="color: var(--warning-text); line-height: 1.6; margin: 0;">' +
+                        'The selected <strong>VCF 9.0</strong> path to <strong>' + escapeHtml(tgt90) + '</strong> cannot proceed. ' +
+                        vcf90BlockReason + ' There is no supported destination for this path.</p>';
+                    vcfPathOptions.appendChild(vcf90BlockDiv);
+                    vcfPathSelection.classList.remove('hidden');
+                    if (vcfTargetVersionGroup) vcfTargetVersionGroup.classList.remove('hidden');
+                    return;
+                }
                 if (vcfIntent === 'fleet') {
                     if (isAutoChecked) {
                         paths = [

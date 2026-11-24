@@ -2475,7 +2475,7 @@
                     if (isDsmSelected) {
                         const curDsmVer = (localStorage.getItem('dsm-version') || (typeof window.dsmVersion !== 'undefined' ? window.dsmVersion : '') || '').trim();
                         const tgtDsmVer = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0').trim();
-                        const targetDsmVerString = tgtDsmVer.startsWith('9.1.1') ? '9.1.1.0' : '9.1.0.0';
+                        const targetDsmVerString = (window.DsmVksCompat && window.DsmVksCompat.targetDsm) ? window.DsmVksCompat.targetDsm(tgtDsmVer) : (tgtDsmVer.startsWith('9.1.1') ? '9.1.1.0' : '9.1.0.0');
                         const isDsm2x = curDsmVer.startsWith('2.');
 
                         if (isDsm2x) {

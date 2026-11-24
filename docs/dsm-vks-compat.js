@@ -62,6 +62,30 @@
     // Target vCenter version of the plan (same mapping the plan pages use for the vCenter upgrade phase).
     function targetVcenter() {
         var raw = String(window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0').trim();
+        return targetVcenterFor(raw);
+    }
+
+    // Select the DSM version for the same VCF release train as the selected target.
+    // Prefer the newest DSM version present in compat-data.json that is supported by
+    // the effective target vCenter. VCF patch targets may map to the latest DSM
+    // patch available in that train (for example, VCF 9.1.1.0200 -> DSM 9.1.1.0100).
+    function targetDsm(targetVcf) {
+        var raw = String(targetVcf || window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '9.1.0').trim();
+        var train = raw.split('.').slice(0, 3).join('.');
+        var data = window._compatData;
+        var versions = data && data.versions && data.versions.dsm;
+        var targetVc = targetVcenterFor(raw);
+        if (Array.isArray(versions) && targetVc) {
+            var candidates = versions.map(function (v) { return v && v.value; }).filter(function (v) {
+                return v && String(v).split('.').slice(0, 3).join('.') === train && cmpVer(v, raw) <= 0 && lookupVcenterCI(v, targetVc) === 'yes';
+            }).sort(function (a, b) { return cmpVer(b, a); });
+            if (candidates.length) return candidates[0];
+        }
+        return raw.indexOf('9.1.1') === 0 ? '9.1.1.0' : '9.1.0.0';
+    }
+
+    function targetVcenterFor(targetVcf) {
+        var raw = String(targetVcf || '').trim();
         var map = { '9.1.0.0400': '9.1.0.0300', '9.1.1.0100': '9.1.1.0', '9.1.1.0200': '9.1.1.0100' };
         raw = map[raw] || raw;
         return raw.split('.').length < 4 ? raw + '.0' : raw;
@@ -400,6 +424,7 @@
         evaluateVcenter: evaluateVcenter,
         annotateVcenter: annotateVcenter,
         targetVcenter: targetVcenter,
+        targetDsm: targetDsm,
         dsmAllowedWithVcenter: dsmAllowedWithVcenter,
         unrestrictedVksAbove: unrestrictedVksAbove,
         dpbBreaches: dpbBreaches

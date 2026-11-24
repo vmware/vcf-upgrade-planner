@@ -8,9 +8,9 @@ Reprocesses docs_inline.js in-place to fix subpages:
     (no book-wide TOC sidebar on KB pages; all links are body content refs)
 """
 
-import json
-import re
 from urllib.parse import urlparse
+
+from inline_docs_format import read_inline_docs, write_inline_docs
 
 INPUT_FILE  = 'docs_inline.js'
 OUTPUT_FILE = 'docs_inline.js'
@@ -38,16 +38,8 @@ def is_direct_child(child_url: str, parent_url: str) -> bool:
 
 def main():
     print(f"Reading {INPUT_FILE}...")
-    with open(INPUT_FILE, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    # Strip JS wrapper: window.INLINE_DOCS = {...};
-    json_str = re.sub(r'^window\.INLINE_DOCS\s*=\s*', '', content.strip())
-    if json_str.endswith(';'):
-        json_str = json_str[:-1]
-
-    print("Parsing JSON (large file — please wait)...")
-    data = json.loads(json_str)
+    print("Parsing pooled documentation bundle (large file — please wait)...")
+    data = read_inline_docs(INPUT_FILE)
     print(f"Loaded {len(data)} entries")
 
     total_before = 0
@@ -82,9 +74,7 @@ def main():
     print(f"  Subpages removed : {removed}")
 
     print(f"\nWriting {OUTPUT_FILE}...")
-    js_content = 'window.INLINE_DOCS = ' + json.dumps(data, ensure_ascii=False, indent=2) + ';'
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        f.write(js_content)
+    write_inline_docs(data, OUTPUT_FILE)
 
     import os
     size = os.path.getsize(OUTPUT_FILE)
