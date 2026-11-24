@@ -1,8 +1,10 @@
 /* VC -> Supervisor -> VKS -> VKr upgrade solver.
  * Ported verbatim from upstream:
  *   tools/upgrade-solver.js (see docs/vks-upgrade-planner.html script tag).
- * Re-synced from wcp-interop:main @ a44e8594, 2026-10-23
- * New paths added for VKS 3.8.0 and for VKr v1.37
+ * Re-synced from upstream wcp-interop/vks-upgrade-planner @ 2026-11-20 (GCM-23085). Carries: accurate
+ * unsupported-upgrade reasons (back-in-time Supervisor, unreachable vCenter targets), laterBlock/
+ * compareSvBuild ordering fixes, per-step async-sv labels, vc-modernization-crossing label, and the
+ * clusterclass-pre-9.1-info transition note.
  * Implements SPEC.md section 2. Keep in lockstep with that spec + solver -
  * this is a straight copy, with no local modifications.
  */
@@ -151,6 +153,19 @@ function vcReachable(matrix, fromVc, allow9x) {
   return bfsWalk(graph, fromVc);
 }
 
+// "Supported targets from X — direct: ...; more than one hop: Y (via A → B)" for the
+// [vc, {hops, path}] entries of vcReachable: direct upgrades first, then the vCenters that need
+// intermediate hops, each with the route that reaches it.
+function describeVcTargets(fromVc, reachable) {
+  const direct = reachable.filter(([, e]) => e.hops === 1).map(([vc]) => vc);
+  const multi = reachable.filter(([, e]) => e.hops > 1)
+    .map(([vc, e]) => `${vc} (via ${e.path.slice(1, -1).join(' → ')})`);
+  const parts = [];
+  if (direct.length) parts.push(`direct: ${direct.join(', ')}`);
+  if (multi.length) parts.push(`more than one hop: ${multi.join(', ')}`);
+  return `Supported targets from ${fromVc} — ${parts.join('; ')}.`;
+}
+
 function realVcEdge(matrix, a, b) {
   const edges = matrix.vc_upgrade_graph[a];
   if (!edges || !edges.includes(b)) return false;
@@ -208,6 +223,21 @@ function goldenThenFor(matrix, fromVc, toVc) {
   return then.via;
 }
 
+/**
+ * Is `a` a later hop target than `b` for the derived walk? Builds are grouped into blocks by train
+ * (9.0.2.x, 9.1.0.x, 9.1.1.x ...): the higher block wins, and only inside one block does release
+ * order decide. A late express patch (9.0.2.0200, dated after 9.1.0.0300) stays in the 9.0.2 block
+ * and so never outranks a 9.1.0 build; likewise 9.1.1.0200 belongs with 9.1.1.0 / 9.1.1.0100.
+ */
+function laterBlock(a, b, idx) {
+  const train = (v) => v.split('.').slice(0, 3).map(Number);
+  const ta = train(a), tb = train(b);
+  if (!ta.concat(tb).some(Number.isNaN)) {
+    for (let i = 0; i < 3; i++) if (ta[i] !== tb[i]) return ta[i] > tb[i];
+  }
+  return idx.get(a) > idx.get(b);
+}
+
 function recommendedVcPath(matrix, fromVc, toVc) {
   const via = goldenGatewayFor(matrix, fromVc, toVc);
   const then = goldenThenFor(matrix, fromVc, toVc);
@@ -240,7 +270,7 @@ function derivedVcPath(matrix, fromVc, toVc) {
     let next = null;
     for (const b of (matrix.vc_upgrade_graph[cur] || [])) {
       const i = idx.get(b);
-      if (i !== undefined && i < to && realVcEdge(matrix, cur, b) && (next === null || i > idx.get(next))) {
+      if (i !== undefined && i < to && realVcEdge(matrix, cur, b) && (next === null || laterBlock(b, next, idx))) {
         next = b;
       }
     }
@@ -531,6 +561,24 @@ function compareSv(matrix, a, b) {
   const ka = svSortKeyFull(matrix, a), kb = svSortKeyFull(matrix, b);
   for (let i = 0; i < ka.length; i++) if (ka[i] !== kb[i]) return ka[i] < kb[i] ? -1 : 1;
   return 0;
+}
+
+// Kubernetes version only (minor, patch, vmware.N), ignoring the -vsc lineage. Lineage order is a
+// release-date question (compareLineage), so the downgrade test must not decide it from the
+// suffix's digits, which would call -vsc0.1.15 older than the earlier-shipped -vsc9.1.0.0.
+function compareSvKubernetesVersion(matrix, a, b) {
+  const ka = svSortKeyFull(matrix, a).slice(0, 3), kb = svSortKeyFull(matrix, b).slice(0, 3);
+  for (let i = 0; i < ka.length; i++) if (ka[i] !== kb[i]) return ka[i] < kb[i] ? -1 : 1;
+  return 0;
+}
+
+// Whether build a is behind, equal to or ahead of build b, for deciding "is this a forward move":
+// Kubernetes version first, then lineage by release date (rule 5c), never the suffix's digits.
+// compareSv stays for sorting builds of one lineage, where the digits and the dates agree.
+function compareSvBuild(matrix, a, b) {
+  const sa = parseVscSuffix(a), sb = parseVscSuffix(b);
+  return compareSvKubernetesVersion(matrix, a, b) ||
+    (sa && sb && sa !== sb ? compareLineage(matrix, sa, sb) : compareSv(matrix, a, b));
 }
 
 /**
@@ -886,6 +934,12 @@ function svBuildAvailableInFds(matrix, build) {
   return !!ownerVc && isUnifiedDepotVc(matrix, ownerVc);
 }
 
+// True when a Supervisor build was stamped by a 9.1+ (unified depot) vCenter, i.e. is Supervisor 9.1+.
+function svIsUnifiedDepotBuild(matrix, build) {
+  const owner = deriveVcFromSv(matrix, build);
+  return Boolean(owner) && isUnifiedDepotVc(matrix, owner);
+}
+
 function needsAsyncStaging(matrix, vc, build) {
   const entry = matrix.vc_sv_matrix[vc];
   if (!entry || !isUnifiedDepotVc(matrix, vc)) return false;
@@ -910,9 +964,11 @@ function climbSvTo(matrix, ctx, targetMinor, phases, reason, recommendedTo) {
     const topHere = candidates.length ? candidates[candidates.length - 1] : null;
 
     if (topHere && topHere !== ctx.svMinor) {
-      const asyncReach = !shipped.includes(topHere);
-      phases.push(...expandSvMinorSteps(matrix, ctx.svMinor, topHere,
-        asyncReach ? 'async-sv-upgrade' : reason));
+      // Label each minor step on its own: only a step to a minor this vCenter does not ship is
+      // async. A climb 1.31 -> 1.33 on 9.1.0.0 (ships 1.30-1.32) is an embedded 1.32 step followed
+      // by an async 1.33 one, not two async steps.
+      phases.push(...expandSvMinorSteps(matrix, ctx.svMinor, topHere, reason).map((ph) =>
+        (shipped.includes(ph.to) ? ph : { ...ph, reason: 'async-sv-upgrade' })));
       ctx.svMinor = topHere;
       if (ctx.svMinor === targetMinor) return true;
     }
@@ -1350,6 +1406,7 @@ function eosAdvisories(matrix, dest, asOf) {
 function walkToVc(matrix, fromVc, toVc, svMinor, allow9x, phases, preferMinor, preferReason, vcReason) {
   if (fromVc === toVc) return { ok: true, vc: fromVc, svMinor };
 
+  const firstNew = phases.length;
   const order = allSvMinorsOrdered(matrix);
   const tgtEntry = matrix.vc_sv_matrix[toVc];
   const prep = { vc: fromVc, svMinor, allow9x };
@@ -1373,6 +1430,16 @@ function walkToVc(matrix, fromVc, toVc, svMinor, allow9x, phases, preferMinor, p
   }
   const walked = walkVcTrajectory(matrix, reach.path, prep.svMinor, preferMinor, preferReason, vcReason);
   phases.push(...walked.phases);
+  // An unrequired crossing into 9.x (rule 15) names the one hop that leaves 8.x, wherever it falls
+  // in the walk - including a hop the Supervisor climb above already emitted - and no other: a later
+  // 9.x -> 9.x hop is a move to the golden destination, not a crossing.
+  if (vcReason === 'vc-modernization-crossing') {
+    for (const ph of phases.slice(firstNew)) {
+      if (ph.phase !== 'vCenter') continue;
+      if (vcFamily(ph.from) === '8.x' && vcFamily(ph.to) === '9.x') ph.reason = 'vc-modernization-crossing';
+      else if (ph.reason === 'vc-modernization-crossing') ph.reason = 'vc-golden-destination';
+    }
+  }
   return { ok: true, vc: toVc, svMinor: walked.endingSvMinor };
 }
 
@@ -1506,6 +1573,21 @@ function annotateTransitions(matrix, phases, currentVKS, hasWorkloadClusters = f
         text: 'If using AVI Load Balancer, confirm the AVI release is compatible with this ' +
           'Supervisor build before upgrading: ' +
           'https://interopmatrix.broadcom.com/Interoperability?col=1795,&row=1378,&isHidePatch=true&isHideLegacyReleases=false',
+      });
+    }
+
+    // Moving onto Supervisor 9.1+ from a pre-9.1 Supervisor. Never shown when already on 9.1+.
+    // Shown whether or not workload clusters were entered (hasWorkloadClusters): the planner cannot
+    // see the customer's clusters, so the reminder applies to any they may have.
+    if (p.phase === 'Supervisor' && svIsUnifiedDepotBuild(matrix, p.to) && !svIsUnifiedDepotBuild(matrix, p.from)) {
+      notes.push({
+        kind: 'clusterclass-pre-9.1-info',
+        severity: 'info',
+        text: 'Before upgrading to Supervisor 9.1 or later, ensure all VKS clusters are using ClusterClass 3.6.0 or ' +
+          'later. Clusters on earlier ClusterClasses may experience system-initiated rolling updates, ' +
+          'either as a result of the upgrade to Supervisor 9.1 or later or due to subsequent configuration changes. ' +
+          'See Understanding the Update Model for VKS Clusters for more information.',
+        link: 'https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-consumption/latest/managing-vsphere-kuberenetes-service-clusters-and-workloads/updating-tkg-service-clusters/understanding-the-rolling-update-model-for-tkg-service-clusters.html',
       });
     }
 
@@ -1716,7 +1798,7 @@ function adviseSvReplatform(matrix, phases, startingVc, startingSvFull, starting
   const vks = vksSteps.length ? vksSteps[vksSteps.length - 1].to : startingVks;
   const edges = (matrix.sv_upgrade_graph || {})[running] || [];
   const legal = (b) => {
-    if (b === running || compareSv(matrix, b, running) <= 0) return false;
+    if (b === running || compareSvBuild(matrix, b, running) <= 0) return false;
     if (!edges.includes(b)) return false;
     if (lineageRank(parseVscSuffix(b)) < finalRank) return false;
     const compat = matrix.sv_vks_compatibility.find((e) => e.sv_k8s === b);
@@ -2070,12 +2152,38 @@ function planUpgrade(matrix, input) {
           const installable = Object.keys(matrix.vc_sv_matrix).filter((vc) => svBuildInstallableOn(matrix, vc, targetSV) &&
             (allow9x || vcFamily(vc) === vcFamily(currentVC)) && (!require9x || vcFamily(vc) === '9.x'));
           if (!installable.length) return null;
-          const behind = starting.svFull ? compareSv(matrix, targetSV, starting.svFull) < 0
+          const installableOn = `Target Supervisor ${targetSV} can only be installed on vCenter ${installable.join(', ')}.`;
+          // Rule 5c: a named target is rejected on two independent axes, lineage first. The lineage
+          // test orders -vsc suffixes by release date; the downgrade test compares the Kubernetes
+          // version only (minor, patch, vmware.N), so the two never disagree on the same pair.
+          const startSuffix = starting.svFull && parseVscSuffix(starting.svFull);
+          const targetSuffix = parseVscSuffix(targetSV);
+          if (startSuffix && targetSuffix && compareLineage(matrix, targetSuffix, startSuffix) < 0) {
+            const listed = ((matrix.sv_upgrade_graph || {})[starting.svFull] || []);
+            return { label, unreachable: true, reason: `Supervisor upgrade ${starting.svFull} -> ${targetSV} is not supported: ` +
+              `the target build shipped before the running build, so it would be a back-in-time upgrade and is not in the ` +
+              `Supervisor upgrade matrix. ${installableOn}` +
+              (listed.length ? ` Supported Supervisor targets from ${starting.svFull}: ${listed.join(', ')}.` : '') };
+          }
+          const behind = starting.svFull ? compareSvKubernetesVersion(matrix, targetSV, starting.svFull) < 0
             : svMinorDistance(matrix, starting.svMinor, parseSvMinor(targetSV)) < 0;
           if (behind) {
+            return { label, unreachable: true, reason: `Target Supervisor ${targetSV} is older than your current ` +
+              `${starting.svFull || starting.svMinor}. Supervisor is never downgraded — pick a target at or ahead of it.` };
+          }
+          // None of the installable vCenters can be reached from the current one, in any number of
+          // hops (e.g. they predate it): say the vCenter upgrade itself is unsupported and list every
+          // vCenter that is reachable, direct upgrades first, then those that need intermediate hops.
+          const reachableVcs = [...vcReachable(matrix, currentVC, allow9x)]
+            .filter(([vc]) => !require9x || vcFamily(vc) === '9.x');
+          if (reachableVcs.length) {
+            const dateOf = (vc) => matrix.vc_sv_matrix[vc].release_date;
+            const older = installable.every((vc) => dateOf(vc) && dateOf(currentVC) && dateOf(vc) < dateOf(currentVC));
             return {
-              label, unreachable: true, reason: `Target Supervisor ${targetSV} is older than your current ` +
-                `${starting.svFull || starting.svMinor}. Supervisor is never downgraded — pick a target at or ahead of it.`
+              label, unreachable: true,
+              reason: `vCenter ${currentVC} cannot be upgraded to ${installable.join(', ')} (not a supported ` +
+                `upgrade${older ? `; ${installable.length === 1 ? 'it predates' : 'they predate'} your current build` : ''}). ` +
+                `${installableOn} ${describeVcTargets(currentVC, reachableVcs)}`,
             };
           }
           return {
@@ -2315,8 +2423,15 @@ function planUpgrade(matrix, input) {
         return { label, unreachable: true, reason: `Target Supervisor ${targetSV} (${tgtMinor}) is older than Supervisor ${svMinor}.${because} Supervisor is never downgraded, so no combination of vCenter or Supervisor versions produces a plan for this — pick a target at or ahead of ${svMinor}.` };
       }
       if (ti === ci && starting.svFull && targetSV.includes('+vmware.') &&
-        compareSv(matrix, targetSV, starting.svFull) < 0) {
-        return { label, unreachable: true, reason: `Target Supervisor ${targetSV} is an older build than your current ${starting.svFull} — same Kubernetes version, lower vmware build number. Supervisor is never downgraded.` };
+        compareSvBuild(matrix, targetSV, starting.svFull) < 0) {
+        // Say which axis makes it older: the Kubernetes patch, the vmware build number, or (same
+        // version) a -vsc lineage that shipped before the running one (rule 5c).
+        const [, tPatch] = svSortKeyFull(matrix, targetSV), [, cPatch] = svSortKeyFull(matrix, starting.svFull);
+        const why = compareSvKubernetesVersion(matrix, targetSV, starting.svFull) < 0
+          ? (tPatch < cPatch ? 'lower Kubernetes patch' : 'same Kubernetes version, lower vmware build number')
+          : `same Kubernetes version and vmware build, but its -vsc${parseVscSuffix(targetSV)} lineage shipped before ` +
+            `your -vsc${parseVscSuffix(starting.svFull)}, so it would be a back-in-time upgrade`;
+        return { label, unreachable: true, reason: `Target Supervisor ${targetSV} is an older build than your current ${starting.svFull} — ${why}. Supervisor is never downgraded.` };
       }
       const targetIsSpecific = /^v?\d+\.\d+\.\d+/.test(targetSV);
       const alreadyOnTarget = starting.svFull === targetSV;
@@ -2329,7 +2444,7 @@ function planUpgrade(matrix, input) {
           const why = vcFamily(landOn) === '9.x'
             ? (runsThere && sfx && compareLineage(matrix, sfx, emb) < 0
               ? `it is a ${sfx} build, older than the ${emb} build vCenter ${landOn} ships. It can keep running ` +
-              `there, but an older build is never installed on a newer vCenter. Pick a -vsc${emb} build or the patch.`
+                `there, but an older build is never installed on a newer vCenter. Pick a -vsc${emb} build or the patch.`
               : `vCenter ${landOn} cannot run it.`)
             : `vCenter ${landOn} ships Supervisor build ${emb} only, so it does not carry the bits for ` +
             `${parseVscSuffix(targetSV)}.`;
@@ -2342,7 +2457,7 @@ function planUpgrade(matrix, input) {
         const last = priorSv.length ? priorSv[priorSv.length - 1] : null;
         const from = last ? last.to : (starting.svFull || svMinor);
         if (from === targetSV) return null;
-        if (starting.svFull && compareSv(matrix, targetSV, starting.svFull) <= 0) return null;
+        if (starting.svFull && compareSvBuild(matrix, targetSV, starting.svFull) <= 0) return null;
         const landedOnVc = targetVC || endpoint.vc || currentVC;
         // targetSV may be a bare patch (e.g. "1.33.9"); resolve it to the full
         // vmware build string shipped by the vCenter we land on, so this phase's
