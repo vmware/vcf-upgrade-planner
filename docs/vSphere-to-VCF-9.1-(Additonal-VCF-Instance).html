@@ -2385,10 +2385,13 @@
             const orderArray = nsxSelected ? upgradeData.upgrade_order : upgradeData.upgrade_order_without_nsx;
             const _hostUpgradeTarget = (window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '').trim().toLowerCase();
             const _vcSourceVersion = (vcenterVersion || '').trim().toLowerCase();
-            const _skipVcenterAndEsxUpgrade = nsxSelected && (
-                _vcSourceVersion.startsWith('8.0u3m') ||
-                (_hostUpgradeTarget.startsWith('9.1.0') && (_vcSourceVersion.startsWith('8.0u3j') || _vcSourceVersion.startsWith('8.0u3k')))
-            );
+            const canUpgradeVcenterAndEsx =
+            nsxSelected &&
+            _vcSourceVersion.startsWith('8.0u3m') &&
+            _hostUpgradeTarget.startsWith('9.1.2');
+
+            const _skipVcenterAndEsxUpgrade =
+            nsxSelected && !canUpgradeVcenterAndEsx;
             console.log('Using upgrade order:', nsxSelected ? 'WITH NSX' : 'WITHOUT NSX');
             console.log('Order array:', orderArray);
             
