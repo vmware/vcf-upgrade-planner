@@ -113,7 +113,7 @@ function search (query) {
   var results = index.search(query);
   for (var i=0; i < results.length; i++){
     var result = results[i];
-    doc = documents[result.ref];
+    var doc = documents[result.ref];
     doc.summary = doc.text.substring(0, 200);
     resultDocuments.push(doc);
   }

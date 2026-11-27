@@ -411,7 +411,7 @@ lunr.Token.prototype.clone = function (fn) {
  * @see {@link lunr.Pipeline}
  */
 lunr.tokenizer = function (obj, metadata) {
-  if (obj == null || obj == undefined) {
+  if (obj == null) {
     return []
   }
 
@@ -1032,7 +1032,7 @@ lunr.stemmer = (function(){
     }
 
     // Step 1a
-    re = re_1a
+    re = re_1a;
     re2 = re2_1a;
 
     if (re.test(w)) { w = w.replace(re,"$1$2"); }
@@ -1145,7 +1145,7 @@ lunr.stemmer = (function(){
 
   return function (token) {
     return token.update(porterStemmer);
-  }
+  };
 })();
 
 lunr.Pipeline.registerFunction(lunr.stemmer, 'stemmer')
@@ -2124,8 +2124,8 @@ lunr.Index.prototype.query = function (fn) {
                 metadata = fieldPosting[matchingDocumentRef],
                 fieldMatch
 
-            if ((fieldMatch = matchingFields[matchingFieldRef]) === undefined) {
-              matchingFields[matchingFieldRef] = new lunr.MatchData (expandedTerm, field, metadata)
+            if ((fieldMatch = matchingFields[matchingFieldRef.toString()]) === undefined) {
+              matchingFields[matchingFieldRef.toString()] = new lunr.MatchData (expandedTerm, field, metadata)
             } else {
               fieldMatch.add(expandedTerm, field, metadata)
             }
@@ -2190,7 +2190,6 @@ lunr.Index.prototype.query = function (fn) {
 
     for (var i = 0; i < matchingFieldRefs.length; i++) {
       var matchingFieldRef = matchingFieldRefs[i]
-      var fieldRef = lunr.FieldRef.fromString(matchingFieldRef)
       matchingFields[matchingFieldRef] = new lunr.MatchData
     }
   }
@@ -2483,11 +2482,11 @@ lunr.Builder.prototype.add = function (doc, attributes) {
         fieldRef = new lunr.FieldRef (docRef, fieldName),
         fieldTerms = Object.create(null)
 
-    this.fieldTermFrequencies[fieldRef] = fieldTerms
-    this.fieldLengths[fieldRef] = 0
+    this.fieldTermFrequencies[fieldRef.toString()] = fieldTerms
+    this.fieldLengths[fieldRef.toString()] = 0
 
     // store the length of this field for this document
-    this.fieldLengths[fieldRef] += terms.length
+    this.fieldLengths[fieldRef.toString()] += terms.length
 
     // calculate term frequencies for this field
     for (var j = 0; j < terms.length; j++) {
@@ -3000,7 +2999,7 @@ lunr.QueryLexer.prototype.run = function () {
 lunr.QueryLexer.prototype.sliceString = function () {
   var subSlices = [],
       sliceStart = this.start,
-      sliceEnd = this.pos
+      sliceEnd
 
   for (var i = 0; i < this.escapeCharPositions.length; i++) {
     sliceEnd = this.escapeCharPositions[i]

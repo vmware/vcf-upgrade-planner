@@ -265,7 +265,7 @@ function derivedVcPath(matrix, fromVc, toVc) {
   let guard = 0;
   while (cur !== toVc) {
     if (++guard > order.length) return null;
-    if (realVcEdge(matrix, cur, toVc)) { path.push(toVc); cur = toVc; break; }
+    if (realVcEdge(matrix, cur, toVc)) { path.push(toVc); break; }
 
     let next = null;
     for (const b of (matrix.vc_upgrade_graph[cur] || [])) {
@@ -755,7 +755,7 @@ function findEarliestVksStrand(matrix, vcPhases, startingVc, startingMinor, star
   };
   for (let i = 0; i < vcPhases.length; i++) {
     const ph = vcPhases[i];
-    if (ph.phase === 'vCenter') { vc = ph.to; const r = checkAt(i, ph); if (r) return r; }
+    if (ph.phase === 'vCenter') { const r = checkAt(i, ph); if (r) return r; }
     else if (ph.phase === 'Supervisor') { minor = svMinorOf(ph.to) || minor; const r = checkAt(i, ph); if (r) return r; }
   }
   return null;
@@ -2589,8 +2589,7 @@ function planUpgrade(matrix, input) {
       };
     }
     if (landOnVks && landedVks !== landOnVks) {
-      const bumped = ensureSvSupportsVks(matrix, finalSvMinor, landOnVks, vcPhases, 'vks-requires-newer-sv', ctx);
-      if (bumped) finalSvMinor = bumped;
+      ensureSvSupportsVks(matrix, finalSvMinor, landOnVks, vcPhases, 'vks-requires-newer-sv', ctx);
       const vksWalk = walkVksSegment(matrix, landedVks, landOnVks,
         resolvedTargetVKS ? 'target-vks-requested' : 'vks-currency-default');
       if (!vksWalk.ok) return { label, unreachable: true, reason: vksWalk.reason };
