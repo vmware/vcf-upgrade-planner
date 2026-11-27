@@ -4124,26 +4124,47 @@
                     var customTargets = customTargetVersions || {};
                     var tableSourceVc = (typeof vcenterVersion !== 'undefined' ? vcenterVersion : localStorage.getItem('vcenter-version') || '').trim();
                     var tableSourceEsx = (typeof esxVersion !== 'undefined' ? esxVersion : localStorage.getItem('esx-version') || '').trim();
+                    var tableSourceNsx = (typeof nsxVersion !== 'undefined' ? nsxVersion : localStorage.getItem('nsx-version') || '').trim().toLowerCase();
+                    var sourceVcNormalized = tableSourceVc.toLowerCase();
+                    var targetVersion = String(selTgt).trim().toLowerCase();
+                    var sourceNsxNormalized = tableSourceNsx.toLowerCase();
                     var tableNsxSelected = localStorage.getItem('nsx-selected') === 'true';
-                    var tableSkipVcEsx = tableNsxSelected && (
-                        tableSourceVc.toLowerCase().startsWith('8.0u3m') ||
-                        (selTgt.toLowerCase().startsWith('9.1.0') && (tableSourceVc.toLowerCase().startsWith('8.0u3j') || tableSourceVc.toLowerCase().startsWith('8.0u3k')))
-                    );
+                    var tableSkipVcEsx = tableNsxSelected && sourceNsxNormalized !== '' &&
+                   (
+                        sourceVcNormalized.startsWith('8.0u3m') ||
+                        (
+                            targetVersion.startsWith('9.1.0') &&
+                            (
+                                sourceVcNormalized.startsWith('8.0u3j') ||
+                                sourceVcNormalized.startsWith('8.0u3k')
+                            )
+                        )
+                   );
                     var rows = '';
+                    console.log({
+                        tableSourceVc,
+                        tableSourceEsx,
+                        tableSourceNsx,
+                        targetVersion,
+                        tableNsxSelected,
+                        tableSkipVcEsx
+                    });
 
                     componentNames.forEach(function(name) {
                         var lowerName = (name || '').toLowerCase();
 
                         // A. Priority 1: Use explicitly passed dynamic target version
                         if (customTargets[name]) {
-                            var verCell = '';
                             verCell = '<strong>' + escapeHtml(customTargets[name]) + '</strong>';
 
                         } else if (tableSkipVcEsx && lowerName === 'vcenter server' && tableSourceVc) {
                             verCell = '<strong>' + escapeHtml(tableSourceVc) + '</strong>';
                         } else if (tableSkipVcEsx && lowerName === 'esx' && tableSourceEsx) {
                             verCell = '<strong>' + escapeHtml(tableSourceEsx) + '</strong>';
-
+                        } else if (
+                            tableSkipVcEsx && ( lowerName === 'nsx' || lowerName === 'nsx local manager') && tableSourceNsx) 
+                            {
+                            verCell = '<strong>' + escapeHtml(tableSourceNsx) + '</strong>';
                         // B. Dynamic Avi Target Version (resolved from version map or target state)
                         } else if (lowerName.includes('avi') || lowerName.includes('nsx advanced load balancer')) {
                             var passedAvi = window.aviVersion || localStorage.getItem('avi-version') || '';
