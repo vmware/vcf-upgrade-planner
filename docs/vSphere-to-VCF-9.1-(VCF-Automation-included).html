@@ -2501,8 +2501,7 @@
             _vcSourceVersion.startsWith('8.0u3m') &&
             _hostUpgradeTarget.startsWith('9.1.2');
 
-            const _skipVcenterAndEsxUpgrade =
-            nsxSelected && !canUpgradeVcenterAndEsx;
+            const _skipVcenterAndEsxUpgrade = _stopAfterConverge && !canUpgradeVcenterAndEsx;
             console.log('Using upgrade order:', nsxSelected ? 'WITH NSX' : (isVerGte(nsxVersion, '9.1') ? 'NSX91' : 'WITHOUT NSX'));
             console.log('Order array:', orderArray);
             

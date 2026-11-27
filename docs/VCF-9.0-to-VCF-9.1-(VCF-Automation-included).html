@@ -2583,9 +2583,14 @@
                 } else if (componentId === 'automation') {
                     const _targetVerAuto = window.targetVcf91Version || localStorage.getItem('target-vcf91-version') || '';
                     const _isSource910Auto = (vcfVersion === '9.1.0' || isVerGte((vcfVersion || ''), '9.1') || isVerGte((localStorage.getItem('vcf-version') || ''), '9.1') || isVerGte((vcfdetailVersion || ''), '9.1'));
+                    const _sourceVcfBuild = String(vcfVersion || localStorage.getItem('vcf-version') || vcfdetailVersion || '').trim();
+                    const _isVcf91ToVcf91Patch = /^9\.1(?:\.|$)/.test(_sourceVcfBuild) && /^9\.1(?:\.|$)/.test(String(_targetVerAuto).trim());
                     // With DSM selected, keep the standalone Automation phase on 9.1.x -> 9.1.1 so DSM can be disconnected before and reconnected after it
                     const _dsmOnAuto = selectedProducts['dsm'] === true || localStorage.getItem('dsm-selected') === 'true' || !!(localStorage.getItem('dsm-version'));
-                    if (_isSource910Auto && _targetVerAuto.startsWith('9.1.1') && !_dsmOnAuto) {
+                    // VCF Automation is patched by the VCF Management Services / Fleet Lifecycle phase
+                    // for every 9.1.x -> 9.1.x patch. Keep this limited to the same 9.1 release line;
+                    // 9.0.x -> 9.1.x and older upgrade/install paths still use their existing phases.
+                    if (_isVcf91ToVcf91Patch || (_isSource910Auto && _targetVerAuto.startsWith('9.1.1') && !_dsmOnAuto)) {
                         shouldInclude = false;
                     } else {
                         // Automation always included; checkbox selects upgrade vs install

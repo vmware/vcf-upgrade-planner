@@ -29,8 +29,6 @@
             --warning-text: #7a5900;
         }
 
-                var nsxSelected = false;
-
         [data-theme="dark"] {
             --vmw-blue: #4e90aa;
             --vmw-dark: #d4dbe3;
@@ -2446,8 +2444,7 @@
             _vcSourceVersion.startsWith('8.0u3m') &&
             _hostUpgradeTarget.startsWith('9.1.2');
 
-            const _skipVcenterAndEsxUpgrade =
-            nsxSelected && !canUpgradeVcenterAndEsx;
+            const _skipVcenterAndEsxUpgrade = _stopAfterConverge && !canUpgradeVcenterAndEsx;
             console.log('Using upgrade order:', nsxSelected ? 'WITH NSX' : 'WITHOUT NSX');
             console.log('Order array:', orderArray);
             
