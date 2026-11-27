@@ -3419,14 +3419,27 @@
 
             var blob = new Blob([printHtml], { type: 'text/html; charset=utf-8' });
             var blobUrl = URL.createObjectURL(blob);
-            var win = window.open(blobUrl, '_blank', 'width=960,height=700');
+            // Open the popup synchronously from the button click, then navigate
+            // it to the Blob URL. This avoids popup-blocker timing issues.
+            var win = window.open('', '_blank', 'width=960,height=700');
             if (!win) {
                 alert('Pop-up blocked — please allow pop-ups for this page and try again.');
                 URL.revokeObjectURL(blobUrl);
                 return;
             }
-            win.focus();
-            setTimeout(function() { win.print(); win.close(); URL.revokeObjectURL(blobUrl); }, 600);
+            var printed = false;
+            var printWhenReady = function() {
+                if (printed) return;
+                printed = true;
+                win.focus();
+                win.print();
+            };
+            win.addEventListener('load', printWhenReady, { once: true });
+            win.location.href = blobUrl;
+            // Keep a fallback for browsers that do not deliver load on a Blob
+            // popup. The window remains open until printing is complete.
+            setTimeout(printWhenReady, 2000);
+            setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 300000);
         }
         function exportStep(stepNumber) {
             if ('https://hits.sh/vmware.github.io/vcf-upgrade-planner/exports-r4/phase-vcf5.2-to-vcf9.1-with-automation.svg') new Image().src = 'https://hits.sh/vmware.github.io/vcf-upgrade-planner/exports-r4/phase-vcf5.2-to-vcf9.1-with-automation.svg';
@@ -3460,7 +3473,13 @@
                             html += '<div style="padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;"><strong>WARNING: ' + stripHtml(notice.title) + '</strong>';
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += '<ul style="margin: 8px 0 0 20px;">';
-                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                                notice.bullets.forEach(b => {
+                                    const rawBullet = typeof b === 'string' ? b : '';
+                                    const renderedBullet = /<table\b/i.test(rawBullet)
+                                        ? (typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawBullet, { ADD_TAGS: ['table', 'thead', 'tbody', 'tr', 'th', 'td'], ADD_ATTR: ['style'] }) : rawBullet)
+                                        : stripHtml(b);
+                                    html += '<li>' + renderedBullet + '</li>';
+                                });
                                 html += '</ul>';
                             }
                             html += '</div>';
@@ -3477,9 +3496,10 @@
                                     html += '<li>' + stripHtml(b.text) + '<ul style="margin: 4px 0 0 20px;">';
                                     b.sub_bullets.forEach(sb => html += '<li>' + stripHtml(sb) + '</li>');
                                     html += '</ul></li>';
-                                } else if (phase.componentId === 'vcf_patch_base' || phase.componentId === 'vcf_patch_direct') {
-                                    // Patch version tables contain raw HTML — output directly without stripping
-                                    html += '<li>' + b + '</li>';
+                                } else if ((typeof b === 'string' && /<table\b/i.test(b)) || phase.componentId === 'vcf_patch_base' || phase.componentId === 'vcf_patch_direct') {
+                                    // Preserve internally generated version tables in complete-plan exports.
+                                    const safeBullet = (typeof DOMPurify !== 'undefined') ? DOMPurify.sanitize(String(b || '')) : String(b || '');
+                                    html += '<li>' + safeBullet + '</li>';
                                 } else {
                                     html += '<li>' + stripHtml(b) + '</li>';
                                 }
@@ -3731,7 +3751,13 @@
                             html += '<strong>WARNING: ' + stripHtml(notice.title) + '</strong>';
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += '<ul style="margin: 8px 0 0 20px;">';
-                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                                notice.bullets.forEach(b => {
+                                    const rawBullet = typeof b === 'string' ? b : '';
+                                    const renderedBullet = /<table\b/i.test(rawBullet)
+                                        ? (typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawBullet, { ADD_TAGS: ['table', 'thead', 'tbody', 'tr', 'th', 'td'], ADD_ATTR: ['style'] }) : rawBullet)
+                                        : stripHtml(b);
+                                    html += '<li>' + renderedBullet + '</li>';
+                                });
                                 html += '</ul>';
                             }
                             html += '</div>';
@@ -3745,7 +3771,13 @@
                             html += '<strong>' + icon + ': ' + stripHtml(notice.title) + '</strong>';
                             if (notice.bullets && notice.bullets.length > 0) {
                                 html += '<ul style="margin: 8px 0 0 20px;">';
-                                notice.bullets.forEach(b => { html += '<li>' + stripHtml(b) + '</li>'; });
+                                notice.bullets.forEach(b => {
+                                    const rawBullet = typeof b === 'string' ? b : '';
+                                    const renderedBullet = /<table\b/i.test(rawBullet)
+                                        ? (typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawBullet, { ADD_TAGS: ['table', 'thead', 'tbody', 'tr', 'th', 'td'], ADD_ATTR: ['style'] }) : rawBullet)
+                                        : stripHtml(b);
+                                    html += '<li>' + renderedBullet + '</li>';
+                                });
                                 html += '</ul>';
                             }
                             html += '</div>';
